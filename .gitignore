@@ -6,6 +6,8 @@
 .pydevproject
 .Rhistory
 .vscode/
+.mypy_cache/
+.ropeproject/
 *.iml
 *.prefs
 *.csv

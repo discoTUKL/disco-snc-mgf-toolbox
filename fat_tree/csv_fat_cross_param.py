@@ -153,47 +153,47 @@ if __name__ == '__main__':
             total_iterations=REPETITIONS,
             mc_dist=MC_UNIF20))
 
-    # def fun1():
-    #     print(
-    #         csv_fat_cross_param(
-    #             arrival=MMOO_ARRIVAL1,
-    #             service=CONST_RATE1,
-    #             number_servers=2,
-    #             perform_param=DELAY_PROB10,
-    #             opt_method=COMMON_OPTIMIZATION,
-    #             total_iterations=REPETITIONS,
-    #             mc_dist=MC_EXP1))
-    #
-    # def fun2():
-    #     print(
-    #         csv_fat_cross_param(
-    #             arrival=EXP_ARRIVAL1,
-    #             service=CONST_RATE1,
-    #             number_servers=2,
-    #             perform_param=DELAY_PROB10,
-    #             opt_method=COMMON_OPTIMIZATION,
-    #             total_iterations=REPETITIONS,
-    #             mc_dist=MC_EXP1))
-    #
-    # def fun3():
-    #     print(
-    #         csv_fat_cross_param(
-    #             arrival=EXP_ARRIVAL1,
-    #             service=CONST_RATE1,
-    #             number_servers=2,
-    #             perform_param=DELAY_PROB10,
-    #             opt_method=COMMON_OPTIMIZATION,
-    #             total_iterations=REPETITIONS,
-    #             mc_dist=MC_UNIF20))
-    #
-    # def run_in_parallel(*funcs):
-    #     """Run auxiliary functions in parallel."""
-    #     proc = []
-    #     for func in funcs:
-    #         process_instance = Process(target=func)
-    #         process_instance.start()
-    #         proc.append(process_instance)
-    #     for process_instance in proc:
-    #         process_instance.join()
-    #
-    # run_in_parallel(fun1, fun2, fun3)
+    def fun1():
+        print(
+            csv_fat_cross_param(
+                arrival=MMOO_ARRIVAL1,
+                service=CONST_RATE1,
+                number_servers=2,
+                perform_param=DELAY_PROB10,
+                opt_method=COMMON_OPTIMIZATION,
+                total_iterations=REPETITIONS,
+                mc_dist=MC_EXP1))
+
+    def fun2():
+        print(
+            csv_fat_cross_param(
+                arrival=EXP_ARRIVAL1,
+                service=CONST_RATE1,
+                number_servers=2,
+                perform_param=DELAY_PROB10,
+                opt_method=COMMON_OPTIMIZATION,
+                total_iterations=REPETITIONS,
+                mc_dist=MC_EXP1))
+
+    def fun3():
+        print(
+            csv_fat_cross_param(
+                arrival=EXP_ARRIVAL1,
+                service=CONST_RATE1,
+                number_servers=2,
+                perform_param=DELAY_PROB10,
+                opt_method=COMMON_OPTIMIZATION,
+                total_iterations=REPETITIONS,
+                mc_dist=MC_UNIF20))
+
+    def run_in_parallel(*funcs):
+        """Run auxiliary functions in parallel."""
+        proc = []
+        for func in funcs:
+            process_instance = Process(target=func)
+            process_instance.start()
+            proc.append(process_instance)
+        for process_instance in proc:
+            process_instance.join()
+
+    run_in_parallel(fun1, fun2, fun3)

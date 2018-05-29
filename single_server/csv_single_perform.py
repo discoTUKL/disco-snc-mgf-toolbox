@@ -77,14 +77,14 @@ def single_server_df(arr1: ArrivalDistribution, ser1: Service,
 
 
 def csv_single_perform(arrival: ArrivalDistribution,
-                       parameters: List[DistribParam],
+                       list_of_parameters: List[DistribParam],
                        perform_param_list: PerformParamList,
                        opt_method: OptMethod) -> pd.DataFrame:
     """Writes dataframe results into a csv file
 
     Args:
         arrival: String that represents the arrival process
-        parameters: dictionaries of actual values
+        list_of_parameters: dictionaries of actual values
         perform_param_list: list of performance parameter values
         opt_method: optimization method
 
@@ -95,16 +95,17 @@ def csv_single_perform(arrival: ArrivalDistribution,
     filename = "single_" + perform_param_list.perform_metric.name
 
     if isinstance(arrival, ExponentialArrival):
-        arr1 = ExponentialArrival(parameters[0].lamb)
-        filename += parameters[0].get_exp_string(1)
+        arr1 = ExponentialArrival(list_of_parameters[0].lamb)
+        filename += list_of_parameters[0].get_exp_string(1)
     elif isinstance(arrival, MMOO):
-        arr1 = MMOO(parameters[0].mu, parameters[0].lamb, parameters[0].burst)
-        filename += parameters[0].get_mmoo_string(1)
+        arr1 = MMOO(list_of_parameters[0].mu, list_of_parameters[0].lamb,
+                    list_of_parameters[0].burst)
+        filename += list_of_parameters[0].get_mmoo_string(1)
     else:
         raise NameError("This arrival process is not implemented")
 
-    rate1 = parameters[1].rate
-    filename += parameters[1].get_constant_string(1)
+    rate1 = list_of_parameters[1].rate
+    filename += list_of_parameters[1].get_constant_string(1)
 
     data_frame = single_server_df(
         arr1=arr1,
@@ -138,13 +139,13 @@ if __name__ == '__main__':
     print(
         csv_single_perform(
             arrival=EXP_ARRIVAL1,
-            parameters=parameters_exp,
+            list_of_parameters=parameters_exp,
             perform_param_list=NEW_OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
     print(
         csv_single_perform(
             arrival=MMOO_ARRIVAL,
-            parameters=parameters_mmoo,
+            list_of_parameters=parameters_mmoo,
             perform_param_list=NEW_OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))

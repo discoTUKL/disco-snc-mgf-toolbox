@@ -10,24 +10,13 @@ class DistribParam(object):
         self.burst = burst
         self.rate = rate
 
-    def set_exp(self, lamb: float):
-        self.lamb = lamb
-
     def get_exp_string(self, number: int) -> str:
         return "_lamb" + str(number) + "_" + str(self.lamb)
-
-    def set_mmoo(self, mu: float, lamb: float, burst: float):
-        self.mu = mu
-        self.lamb = lamb
-        self.burst = burst
 
     def get_mmoo_string(self, number: int) -> str:
         return "_mu" + str(number) + "_" + str(
             self.mu) + "_lamb" + str(number) + "_" + str(
                 self.lamb) + "_burst" + str(number) + "_" + str(self.burst)
-
-    def set_constant_rate(self, rate: float):
-        self.rate = rate
 
     def get_constant_string(self, number: int) -> str:
         return "_rate" + str(number) + "_" + str(self.rate)
