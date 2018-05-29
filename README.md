@@ -44,13 +44,12 @@ print(SINGLE_SERVER.get_new_bound([0.1, 2.7]))
 #### Compute Optimized Bound
 Assume we want to optimize the parameter for the above setting.
 Therefore, we choose to optimize via grid search.
-We optimize the bound of the SINGLE_SERVER setting with the old approach "Optimize" and the new approach OptimizeNew and want to print the optimal parameter set ("print_x=true"):
+We optimize the bound of the SINGLE_SERVER setting with the old approach "Optimize" and the new approach OptimizeNew and want to print the optimal parameter set ("print_x=true"). The last step is to choose the method "grid_search()" and to set the granularity (in this case = 0.1):
 ```python
 print(Optimize(SINGLE_SERVER, print_x=True).grid_search(
         bound_list=[(0.1, 5.0)], delta=0.1))
 ```
-
-The last step is to choose the method gridSearch and to set the granularity (in this case = 0.1):
+and for the new version:
 ```python
 print(OptimizeNew(SINGLE_SERVER, new=True, print_x=True).grid_search(
         bound_list=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))

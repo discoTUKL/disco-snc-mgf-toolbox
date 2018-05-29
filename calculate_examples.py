@@ -30,10 +30,10 @@ if __name__ == '__main__':
         Optimize(SINGLE_SERVER, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
     print(
-        OptimizeNew(SINGLE_SERVER, new=True, print_x=True).grid_search(
+        OptimizeNew(SINGLE_SERVER, print_x=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))
     print(
-        OptimizeNew(SINGLE_SERVER, new=True, print_x=True).pattern_search(
+        OptimizeNew(SINGLE_SERVER, print_x=True).pattern_search(
             start_list=[0.5, 1.0], delta=3, delta_min=0.01))
 
     OUTPUT_TIME2 = PerformParameter(
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         Optimize(SINGLE_SERVER2, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
     print(
-        OptimizeNew(SINGLE_SERVER2, new=True, print_x=True).grid_search(
+        OptimizeNew(SINGLE_SERVER2, print_x=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 5.0)], delta=0.1))
 
     print("\n-------------------------------------------\n")
@@ -97,14 +97,14 @@ if __name__ == '__main__':
             bound_list=[(0.1, 5.0)], delta=0.1))
 
     print(
-        OptimizeNew(EXAMPLE, new=True, print_x=True).grid_search(
+        OptimizeNew(EXAMPLE, print_x=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 5)], delta=0.1))
 
     print(
         Optimize(EXAMPLE, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
-    OPTIMIZE_NEW = OptimizeNew(EXAMPLE, new=True, print_x=True)
+    OPTIMIZE_NEW = OptimizeNew(EXAMPLE, print_x=True)
 
     print(
         OPTIMIZE_NEW.pattern_search(
