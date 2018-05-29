@@ -6,7 +6,6 @@ from typing import List
 import pandas as pd
 
 from library.perform_param_list import PerformParamList
-from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
@@ -41,23 +40,23 @@ def single_server_df(arr1: ArrivalDistribution, ser1: Service,
     bound = [0.0] * len(perform_param_list.values_list)
     new_bound = [0.0] * len(perform_param_list.values_list)
 
-    for i, value in enumerate(perform_param_list.values_list):
-        perform_param = PerformParameter(
-            perform_metric=perform_param_list.perform_metric, value=value)
+    for _i in range(len(perform_param_list.values_list)):
         setting = SingleServerPerform(
-            arr=arr1, ser=ser1, perform_param=perform_param)
+            arr=arr1,
+            ser=ser1,
+            perform_param=perform_param_list.get_parameter_at_i(_i))
 
         if opt_method == OptMethod.GRID_SEARCH:
-            bound[i] = Optimize(setting=setting).grid_search_old(
+            bound[_i] = Optimize(setting=setting).grid_search_old(
                 bound_list=[(0.1, 4.0)], delta=0.1)
-            new_bound[i] = OptimizeNew(
+            new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).grid_search_old(
                     bound_list=[(0.1, 4.0), (0.9, 8.0)], delta=0.1)
         elif opt_method == OptMethod.PATTERN_SEARCH:
-            bound[i] = Optimize(setting=setting).pattern_search(
+            bound[_i] = Optimize(setting=setting).pattern_search(
                 start_list=[0.5], delta=3.0, delta_min=0.01)
 
-            new_bound[i] = OptimizeNew(
+            new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).pattern_search(
                     start_list=[0.5, 2.0], delta=3.0, delta_min=0.01)
         else:

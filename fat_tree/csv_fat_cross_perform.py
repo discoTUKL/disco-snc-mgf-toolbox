@@ -10,7 +10,6 @@ from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from library.perform_param_list import PerformParamList
-from library.perform_parameter import PerformParameter
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.distrib_param import DistribParam
@@ -36,24 +35,23 @@ def fat_cross_df(arr_list: List[ArrivalDistribution], ser_list: List[Service],
     bound = [0.0] * len(perform_param_list.values_list)
     new_bound = [0.0] * len(perform_param_list.values_list)
 
-    for i, value in enumerate(perform_param_list.values_list):
-        perform_param = PerformParameter(
-            perform_metric=perform_param_list.perform_metric, value=value)
+    for _i in range(len(perform_param_list.values_list)):
+        perform_param = perform_param_list.get_parameter_at_i(_i)
         setting = FatCrossPerform(
             arr_list=arr_list, ser_list=ser_list, perform_param=perform_param)
 
         if opt_method == OptMethod.GRID_SEARCH:
-            bound[i] = Optimize(setting=setting).grid_search(
+            bound[_i] = Optimize(setting=setting).grid_search(
                 bound_list=[(0.1, 5.0)], delta=0.1)
 
-            new_bound[i] = OptimizeNew(
+            new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).grid_search(
                     bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1)
         elif opt_method == OptMethod.PATTERN_SEARCH:
-            bound[i] = Optimize(setting=setting).pattern_search(
+            bound[_i] = Optimize(setting=setting).pattern_search(
                 start_list=[0.5], delta=3.0, delta_min=0.01)
 
-            new_bound[i] = OptimizeNew(
+            new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).pattern_search(
                     start_list=[0.5, 2.0], delta=3.0, delta_min=0.01)
         else:
