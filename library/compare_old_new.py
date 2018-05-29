@@ -38,7 +38,7 @@ def compute_improvement(setting: SettingNew,
         #     setting_new=setting, new=True, print_x=print_x).grid_search_old(
         #         bound_list=bound_array_new, delta=0.1)
         new_bound = OptimizeNew(
-            setting_new=setting, new=True, print_x=print_x).grid_search(
+            setting_new=setting, print_x=print_x).grid_search(
                 bound_list=bound_array_new, delta=0.1)
 
         # print("Deprecated GS: ", standard_bound_depr, new_bound_depr)
@@ -49,7 +49,7 @@ def compute_improvement(setting: SettingNew,
         #                  print_x=True).grid_search_old(
         #                  bound_list=bound_array, delta=0.1))
         #     print(
-        #         OptimizeNew(setting=setting, new=True,
+        #         OptimizeNew(setting=setting,
         #                     print_x=True).grid_search_old(
         #                     bound_list=bound_array_new, delta=0.1))
 
@@ -64,7 +64,7 @@ def compute_improvement(setting: SettingNew,
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
-            setting_new=setting, new=True, print_x=print_x).pattern_search(
+            setting_new=setting, print_x=print_x).pattern_search(
                 start_list=start_list_new, delta=3.0, delta_min=0.01)
 
         # This part is there to overcome opt_method issues
@@ -76,7 +76,7 @@ def compute_improvement(setting: SettingNew,
         #                    print_x=True).pattern_search(
         #         start_dict={"theta": 0.5, "l_1": 1}, delta=3, delta_min=0.01
         #     ))
-        #     print(OptimizeNew(setting=setting, new=True,
+        #     print(OptimizeNew(setting=setting,
         #                    print_x=True).pattern_search(
         #         start_dict={"theta": 0.5, "l_1": 1}, delta=3, delta_min=0.01
         #     ))
@@ -103,12 +103,12 @@ def compute_improvement(setting: SettingNew,
                                            ).gao_han(start_list=start_list_new)
 
         new_bound_depr = OptimizeNew(
-            setting_new=setting, new=True, print_x=print_x).nelder_mead_old(
+            setting_new=setting, print_x=print_x).nelder_mead_old(
                 simplex=start_simplex_new,
                 nelder_mead_param=nelder_mead_param,
                 sd_min=10**(-2))
         new_bound = OptimizeNew(
-            setting_new=setting, new=True, print_x=print_x).nelder_mead(
+            setting_new=setting, print_x=print_x).nelder_mead(
                 simplex=start_simplex_new, sd_min=10**(-2))
 
         # This part is there to overcome opt_method issues
@@ -130,7 +130,7 @@ def compute_improvement(setting: SettingNew,
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
-            setting_new=setting, new=True,
+            setting_new=setting,
             print_x=print_x).simulated_annealing(
                 start_list=start_list_new,
                 simul_anneal_param=simul_anneal_param)
@@ -174,14 +174,14 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
 
         start = timer()
         OptimizeNew(
-            setting_new=setting, new=True).grid_search_old(
+            setting_new=setting).grid_search_old(
                 bound_list=bound_array, delta=0.1)
         stop = timer()
 
         time_lyapunov_depr = stop - start
         start = timer()
         OptimizeNew(
-            setting_new=setting, new=True).grid_search(
+            setting_new=setting).grid_search(
                 bound_list=bound_array, delta=0.1)
         stop = timer()
         time_lyapunov = stop - start
@@ -201,7 +201,7 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
 
         start = timer()
         OptimizeNew(
-            setting_new=setting, new=True).pattern_search(
+            setting_new=setting).pattern_search(
                 start_list=start_list, delta=3.0, delta_min=0.01)
         stop = timer()
         time_lyapunov = stop - start
@@ -232,7 +232,7 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
 
         start = timer()
         OptimizeNew(
-            setting_new=setting, new=True).nelder_mead_old(
+            setting_new=setting).nelder_mead_old(
                 simplex=start_simplex_new,
                 nelder_mead_param=nelder_mead_param,
                 sd_min=10**(-2))
@@ -241,7 +241,7 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
 
         start = timer()
         OptimizeNew(
-            setting_new=setting, new=True).nelder_mead(
+            setting_new=setting).nelder_mead(
                 simplex=start_simplex_new, sd_min=10**(-2))
         stop = timer()
         time_lyapunov = stop - start
