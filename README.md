@@ -32,7 +32,7 @@ print(SINGLE_SERVER.get_bound(0.1))
 ```
 gives then the bound at theta = 0.1.
 
-For the new output bound computation, we have to set an array of parameters:
+For the new output bound computation, we have to set a list of parameters:
 ```python
 [0.1, 2.7]
 ```
@@ -88,9 +88,9 @@ Topologies / settings:
 Only contains the delay bound for deterministic token bucket arrivals
 - library  
 Contains all helper classes, for example:
-  - `array_to_results.py` take an input array perform an analysis and write the results in a dictionary
-  - `compare_old_new.py` compare the standard approach with the new bound
-  - `perform_parameter.py` store emum PerformMetric (delay, output,...) and its value
+  - `array_to_results.py` takes an input Numpy-array, performs an analysis and write the results in a dictionary
+  - `compare_old_new.py` compares the standard approach with the new bound
+  - `perform_parameter.py` stores emum PerformMetric (delay, output,...) and its value
 -  nc_operations  
 Network Calculus Operations, (De-)Convolution and computation of performance metrics (delay, backlog, delay probability)
 - nc_processes
