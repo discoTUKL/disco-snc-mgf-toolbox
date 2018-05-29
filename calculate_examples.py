@@ -17,37 +17,37 @@ if __name__ == '__main__':
     OUTPUT_TIME6 = PerformParameter(
         perform_metric=PerformMetric.OUTPUT, value=6)
 
-    EXP_AR = SingleServerPerform(
+    SINGLE_SERVER = SingleServerPerform(
         arr=ExponentialArrival(lamb=1.0),
         ser=ConstantRate(rate=10.0),
         perform_param=OUTPUT_TIME6)
 
-    print(EXP_AR.get_bound(0.1))
+    print(SINGLE_SERVER.get_bound(0.1))
 
-    print(EXP_AR.get_new_bound([0.1, 2.7]))
+    print(SINGLE_SERVER.get_new_bound([0.1, 2.7]))
 
     print(
-        Optimize(EXP_AR, print_x=True).grid_search_old(
+        Optimize(SINGLE_SERVER, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
     print(
-        OptimizeNew(EXP_AR, new=True, print_x=True).grid_search_old(
+        OptimizeNew(SINGLE_SERVER, new=True, print_x=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))
     print(
-        OptimizeNew(EXP_AR, new=True, print_x=True).pattern_search(
+        OptimizeNew(SINGLE_SERVER, new=True, print_x=True).pattern_search(
             start_list=[0.5, 1.0], delta=3, delta_min=0.01))
 
     OUTPUT_TIME2 = PerformParameter(
         perform_metric=PerformMetric.OUTPUT, value=2)
 
-    MMOO_AR = SingleServerPerform(
+    SINGLE_SERVER2 = SingleServerPerform(
         arr=MMOO(mu=0.7, lamb=0.4, burst=1),
         ser=ConstantRate(rate=1),
         perform_param=OUTPUT_TIME2)
     print(
-        Optimize(MMOO_AR, print_x=True).grid_search_old(
+        Optimize(SINGLE_SERVER2, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
     print(
-        OptimizeNew(MMOO_AR, new=True, print_x=True).grid_search_old(
+        OptimizeNew(SINGLE_SERVER2, new=True, print_x=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 5.0)], delta=0.1))
 
     print("\n-------------------------------------------\n")
@@ -97,11 +97,11 @@ if __name__ == '__main__':
             bound_list=[(0.1, 5.0)], delta=0.1))
 
     print(
-        OptimizeNew(EXAMPLE, new=True, print_x=True).grid_search_old(
+        OptimizeNew(EXAMPLE, new=True, print_x=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 5)], delta=0.1))
 
     print(
-        Optimize(EXAMPLE, print_x=True).grid_search_old(
+        Optimize(EXAMPLE, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
     OPTIMIZE_NEW = OptimizeNew(EXAMPLE, new=True, print_x=True)
