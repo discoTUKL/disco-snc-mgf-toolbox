@@ -97,7 +97,7 @@ def compare_aggregation(aggregations: List[int], sigma_single: float,
 
     filename = "regulated_single_{0}_sigma_{1}_rho_{2}_utilization_{3}".format(
         perform_param.to_string(), str(sigma_single), str(rho_single),
-        str(rho_single / service_rate))
+        str("%.2f" % (rho_single / service_rate)))
 
     results_df.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
