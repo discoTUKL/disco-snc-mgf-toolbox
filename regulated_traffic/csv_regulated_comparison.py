@@ -8,10 +8,9 @@ import pandas as pd
 from dnc.dnc_fifo_delay import DNCFIFODelay
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.arrival_distribution import (LeakyBucketMassOne,
-                                               LeakyBucketMassTwo,
-                                               LeakyBucketMassTwoExact,
-                                               TokenBucketConstant)
+from nc_processes.arrival_distribution import (
+    LeakyBucketMassOne, LeakyBucketMassTwo, LeakyBucketMassTwoExact,
+    TokenBucketConstant)
 from nc_processes.service import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
@@ -64,7 +63,8 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         setting=exact_mass_2, print_x=False).grid_search_old(
             bound_list=bound_list, delta=delta)
 
-    return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt, exact_mass_2_opt
+    return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt,\
+           exact_mass_2_opt
 
 
 def compare_aggregation(aggregations: List[int], sigma_single: float,

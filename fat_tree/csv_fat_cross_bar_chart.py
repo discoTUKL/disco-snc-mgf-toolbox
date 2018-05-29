@@ -10,8 +10,8 @@ from fat_tree.fat_cross_perform import FatCrossPerform
 from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.arrival_distribution import ExponentialArrival
+from nc_processes.arrival_distribution import (ArrivalDistribution,
+                                               ExponentialArrival)
 from nc_processes.service import ConstantRate, Service
 from optimization.opt_method import OptMethod
 
@@ -69,8 +69,8 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
     ]]
 
     delay_bounds_df.to_csv(
-        'bar_chart_' + str(size) + '_' + opt_method.name +
-        '_improvement_factor' + '.csv',
+        'bar_chart_{0}_{1}_improvement_factor.csv'.format(
+            str(size), opt_method.name),
         index=True,
         quoting=csv.QUOTE_NONNUMERIC)
 

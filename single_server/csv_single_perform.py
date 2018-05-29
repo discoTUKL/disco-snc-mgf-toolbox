@@ -1,7 +1,6 @@
 """Compute output bound for various delta times and write into csv file"""
 
 import csv
-from math import nan
 from typing import List
 
 import pandas as pd
@@ -92,7 +91,7 @@ def csv_single_perform(arrival: ArrivalDistribution,
         csv file
     """
 
-    filename = "single_" + perform_param_list.perform_metric.name
+    filename = "single_{0}".format(perform_param_list.perform_metric.name)
 
     if isinstance(arrival, ExponentialArrival):
         arr1 = ExponentialArrival(list_of_parameters[0].lamb)
