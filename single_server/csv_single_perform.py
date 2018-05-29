@@ -39,8 +39,8 @@ def single_server_df(arr1: ArrivalDistribution, ser1: Service,
         dataframe
     """
 
-    bound = [nan] * len(perform_param_list.values_list)
-    new_bound = [nan] * len(perform_param_list.values_list)
+    bound = [0.0] * len(perform_param_list.values_list)
+    new_bound = [0.0] * len(perform_param_list.values_list)
 
     for i, value in enumerate(perform_param_list.values_list):
         perform_param = PerformParameter(

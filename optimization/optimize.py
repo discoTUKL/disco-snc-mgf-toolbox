@@ -157,7 +157,7 @@ class Optimize(object):
         rand_vector = np.random.uniform(
             low=-search_radius, high=search_radius, size=len(input_list))
 
-        output_list = [nan] * len(input_list)
+        output_list = [0.0] * len(input_list)
 
         for index, value in enumerate(input_list):
             output_list[index] = value + rand_vector[index]
@@ -272,7 +272,7 @@ class Optimize(object):
         # first = lower bound
         # second = upper bound
 
-        param_list = [[nan] * 2] * len(bound_list)
+        param_list = [[0.0] * 2] * len(bound_list)
 
         for index, value in enumerate(bound_list):
             param_list[index] = seq(start=value[0], stop=value[1], step=delta)

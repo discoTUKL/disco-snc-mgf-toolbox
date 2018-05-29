@@ -1,7 +1,6 @@
 """Compute delay bound for various T and write into csv file."""
 
 import csv
-from math import nan
 from typing import List
 
 import pandas as pd
@@ -34,8 +33,8 @@ def fat_cross_df(arr_list: List[ArrivalDistribution], ser_list: List[Service],
         dataframe
 
     """
-    bound = [nan] * len(perform_param_list.values_list)
-    new_bound = [nan] * len(perform_param_list.values_list)
+    bound = [0.0] * len(perform_param_list.values_list)
+    new_bound = [0.0] * len(perform_param_list.values_list)
 
     for i, value in enumerate(perform_param_list.values_list):
         perform_param = PerformParameter(
