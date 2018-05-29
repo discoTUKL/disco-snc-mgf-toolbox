@@ -9,10 +9,9 @@ from dnc.dnc_fifo_delay import DNCFIFODelay
 from library.perform_param_list import PerformParamList
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.arrival_distribution import (LeakyBucketMassOne,
-                                               LeakyBucketMassTwo,
-                                               LeakyBucketMassTwoExact,
-                                               TokenBucketConstant)
+from nc_processes.arrival_distribution import (
+    LeakyBucketMassOne, LeakyBucketMassTwo, LeakyBucketMassTwoExact,
+    TokenBucketConstant)
 from nc_processes.service import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
@@ -20,7 +19,7 @@ from single_server.single_server_perform import SingleServerPerform
 
 def regulated_comparison(aggregation: int, sigma_single: float,
                          rho_single: float, service_rate: float,
-                         perform_param: PerformParameter) -> tuple():
+                         perform_param: PerformParameter) -> tuple:
     constant_rate_server = ConstantRate(service_rate)
     tb_const = TokenBucketConstant(
         sigma_const=sigma_single, rho_const=rho_single, n=aggregation)
@@ -65,7 +64,7 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         setting=exact_mass_2, print_x=False).grid_search(
             bound_list=bound_list, delta=delta)
 
-    return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt,\
+    return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt, \
            exact_mass_2_opt
 
 

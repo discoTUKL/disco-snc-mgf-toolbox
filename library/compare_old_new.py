@@ -16,7 +16,7 @@ from optimization.simul_anneal_param import SimulAnnealParam
 def compute_improvement(setting: SettingNew,
                         opt_method: OptMethod,
                         number_l=1,
-                        print_x=False) -> tuple():
+                        print_x=False) -> tuple:
     """Compare standard_bound with the new Lyapunov bound."""
 
     if opt_method == OptMethod.GRID_SEARCH:
@@ -150,7 +150,7 @@ def compute_improvement(setting: SettingNew,
 
 
 def compute_overhead(setting: SettingNew, opt_method: OptMethod,
-                     number_l=1) -> tuple():
+                     number_l=1) -> tuple:
     """Compare computation times."""
 
     if opt_method == OptMethod.GRID_SEARCH:
