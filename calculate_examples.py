@@ -7,7 +7,7 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service import ConstantRate, Service
+from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from optimization.simul_anneal_param import SimulAnnealParam
@@ -66,7 +66,8 @@ if __name__ == '__main__':
         ExponentialArrival(lamb=4)
     ]
 
-    SER_LIST: List[Service] = [ConstantRate(rate=4), ConstantRate(rate=0.5)]
+    SER_LIST: List[ServiceDistribution] = [ConstantRate(rate=4),
+                                           ConstantRate(rate=0.5)]
 
     EXAMPLE = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB6)
@@ -84,7 +85,8 @@ if __name__ == '__main__':
     DELAY_PROB4 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
 
-    SER_LIST2: List[Service] = [ConstantRate(rate=3), ConstantRate(rate=3)]
+    SER_LIST2: List[ServiceDistribution] = [ConstantRate(rate=3),
+                                            ConstantRate(rate=3)]
 
     EXAMPLE2 = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST2, perform_param=DELAY_PROB4)

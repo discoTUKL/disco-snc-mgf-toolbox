@@ -10,7 +10,7 @@ from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.distrib_param import DistribParam
-from nc_processes.service import ConstantRate, Service
+from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
@@ -23,7 +23,7 @@ from single_server.single_server_perform import SingleServerPerform
 #                              os.pardir))
 
 
-def single_server_df(arr1: ArrivalDistribution, ser1: Service,
+def single_server_df(arr1: ArrivalDistribution, ser1: ServiceDistribution,
                      opt_method: OptMethod,
                      perform_param_list: PerformParamList) -> pd.DataFrame:
     """Compute output bound for T in T_list and write into dataframe

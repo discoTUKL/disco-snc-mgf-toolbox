@@ -9,13 +9,13 @@ from nc_operations.perform_metric import PerformMetric
 from nc_operations.performance_bounds import Delay, DelayProb, Output
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.arrival_distribution import ExponentialArrival
-from nc_processes.service import ConstantRate, Service
+from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 
 
 class SingleServerPerform(SettingNew):
     """Single server topology class."""
 
-    def __init__(self, arr: ArrivalDistribution, ser: Service,
+    def __init__(self, arr: ArrivalDistribution, ser: ServiceDistribution,
                  perform_param: PerformParameter) -> None:
         """
 

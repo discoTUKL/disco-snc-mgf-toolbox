@@ -14,13 +14,13 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service import ConstantRate, Service
+from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
 
 def csv_single_server_param(arrival: ArrivalDistribution,
-                            service: Service,
+                            service: ServiceDistribution,
                             perform_param: PerformParameter,
                             opt_method: OptMethod,
                             total_iterations: int,

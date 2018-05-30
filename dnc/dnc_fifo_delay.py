@@ -4,7 +4,7 @@ from math import ceil
 
 from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival_distribution import TokenBucketConstant
-from nc_processes.service import ConstantRate
+from nc_processes.service_distribution import ConstantRate
 
 
 class DNCFIFODelay(object):

@@ -14,10 +14,11 @@ from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.distrib_param import DistribParam
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.service import ConstantRate, Service
+from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 
 
-def fat_cross_df(arr_list: List[ArrivalDistribution], ser_list: List[Service],
+def fat_cross_df(arr_list: List[ArrivalDistribution],
+                 ser_list: List[ServiceDistribution],
                  opt_method: OptMethod,
                  perform_param_list: PerformParamList) -> pd.DataFrame:
     """Compute delay bound for T in T_list and write into dataframe.
@@ -46,14 +47,14 @@ def fat_cross_df(arr_list: List[ArrivalDistribution], ser_list: List[Service],
 
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).grid_search(
-                    bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1)
+                bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1)
         elif opt_method == OptMethod.PATTERN_SEARCH:
             bound[_i] = Optimize(setting=setting).pattern_search(
                 start_list=[0.5], delta=3.0, delta_min=0.01)
 
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).pattern_search(
-                    start_list=[0.5, 2.0], delta=3.0, delta_min=0.01)
+                start_list=[0.5, 2.0], delta=3.0, delta_min=0.01)
         else:
             raise ValueError(
                 "Optimization parameter {0} is infeasible".format(opt_method))
@@ -88,7 +89,7 @@ def csv_fat_cross_perform(arrival: ArrivalDistribution,
     if len(list_of_parameters) == 2 and isinstance(
             arrival,
             ExponentialArrival) or len(list_of_parameters) == 4 and isinstance(
-                arrival, MMOO):
+        arrival, MMOO):
         filename = "simple_setting_{0}".format(
             perform_param_list.perform_metric.name)
     else:
