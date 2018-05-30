@@ -1,10 +1,13 @@
 """This serves as our main function."""
 
+from typing import List
+
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.arrival_distribution import MMOO, ExponentialArrival
-from nc_processes.service import ConstantRate
+from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
+                                               ExponentialArrival)
+from nc_processes.service import ConstantRate, Service
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from optimization.simul_anneal_param import SimulAnnealParam
@@ -58,12 +61,15 @@ if __name__ == '__main__':
     DELAY_PROB6 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=6)
 
+    ARR_LIST: List[ArrivalDistribution] = [
+        ExponentialArrival(lamb=1),
+        ExponentialArrival(lamb=4)
+    ]
+
+    SER_LIST: List[Service] = [ConstantRate(rate=4), ConstantRate(rate=0.5)]
+
     EXAMPLE = FatCrossPerform(
-        arr_list=[ExponentialArrival(lamb=1),
-                  ExponentialArrival(lamb=4)],
-        ser_list=[ConstantRate(rate=4),
-                  ConstantRate(rate=0.5)],
-        perform_param=DELAY_PROB6)
+        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB6)
     print(EXAMPLE.get_bound(theta=0.3))
     print(EXAMPLE.get_new_bound(param_list=[0.3, 1.5]))
 
@@ -71,23 +77,17 @@ if __name__ == '__main__':
         perform_metric=PerformMetric.DELAY, value=0.032)
 
     EXAMPLE_REVERSE = FatCrossPerform(
-        arr_list=[ExponentialArrival(lamb=1),
-                  ExponentialArrival(lamb=4)],
-        ser_list=[ConstantRate(rate=4),
-                  ConstantRate(rate=0.5)],
-        perform_param=DELAY_TIME)
+        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)
 
     print(EXAMPLE_REVERSE.get_bound(theta=0.3))
 
     DELAY_PROB4 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
 
+    SER_LIST2: List[Service] = [ConstantRate(rate=3), ConstantRate(rate=3)]
+
     EXAMPLE2 = FatCrossPerform(
-        arr_list=[ExponentialArrival(lamb=4),
-                  ExponentialArrival(lamb=1)],
-        ser_list=[ConstantRate(rate=3),
-                  ConstantRate(rate=3)],
-        perform_param=DELAY_PROB4)
+        arr_list=ARR_LIST, ser_list=SER_LIST2, perform_param=DELAY_PROB4)
 
     print(EXAMPLE2.get_bound(theta=0.3))
     print(EXAMPLE2.get_new_bound(param_list=[0.3, 3]))

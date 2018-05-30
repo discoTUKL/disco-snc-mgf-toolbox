@@ -2,7 +2,7 @@
 
 from abc import abstractmethod
 
-from library.Exceptions import ParameterOutOfBounds
+from library.exceptions import ParameterOutOfBounds
 
 
 class Service(object):
@@ -16,13 +16,6 @@ class Service(object):
     @abstractmethod
     def rho(self, theta: float) -> float:
         """Rho method"""
-        pass
-
-    @abstractmethod
-    def to_string(self) -> str:
-        """
-        :return string
-        """
         pass
 
 

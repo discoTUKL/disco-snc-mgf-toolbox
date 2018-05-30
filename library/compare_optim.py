@@ -23,11 +23,11 @@ def compare_optimization(setting: SettingNew,
     for opt in opt_methods:
         start = timer()
         if opt == OptMethod.GRID_SEARCH:
-            theta_bounds = [[0.1, 4.0]]
+            theta_bounds = [(0.1, 4.0)]
 
             bound_array = theta_bounds[:]
             for _i in range(1, number_l + 1):
-                bound_array.append([0.9, 4.0])
+                bound_array.append((0.9, 4.0))
 
             bound = OptimizeNew(
                 setting_new=setting, new=new, print_x=print_x).grid_search_old(

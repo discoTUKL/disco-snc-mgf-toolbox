@@ -2,7 +2,7 @@
 
 from math import exp, inf
 
-from library.Exceptions import ParameterOutOfBounds
+from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import is_equal
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service

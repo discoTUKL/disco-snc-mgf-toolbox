@@ -4,7 +4,7 @@ from math import exp, log
 from typing import List
 
 from library.helper_functions import is_equal
-from library.Exceptions import ParameterOutOfBounds
+from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 

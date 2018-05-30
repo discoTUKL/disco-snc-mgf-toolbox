@@ -5,7 +5,7 @@ from typing import List
 
 import numpy as np
 
-from library.Exceptions import ParameterOutOfBounds
+from library.exceptions import ParameterOutOfBounds
 from library.setting_new import SettingNew
 from optimization.optimize import Optimize
 from optimization.initial_simplex import InitialSimplex

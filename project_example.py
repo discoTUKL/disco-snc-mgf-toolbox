@@ -19,5 +19,5 @@ if __name__ == '__main__':
 
         print(
             Optimize(setting=EXAMPLE,
-                     print_x=False).grid_search_old(
+                     print_x=False).grid_search(
                          bound_list=[(0.01, 1.1)], delta=0.01))

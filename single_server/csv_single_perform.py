@@ -47,10 +47,10 @@ def single_server_df(arr1: ArrivalDistribution, ser1: Service,
             perform_param=perform_param_list.get_parameter_at_i(_i))
 
         if opt_method == OptMethod.GRID_SEARCH:
-            bound[_i] = Optimize(setting=setting).grid_search_old(
+            bound[_i] = Optimize(setting=setting).grid_search(
                 bound_list=[(0.1, 4.0)], delta=0.1)
             new_bound[_i] = OptimizeNew(
-                setting_new=setting, new=True).grid_search_old(
+                setting_new=setting, new=True).grid_search(
                     bound_list=[(0.1, 4.0), (0.9, 8.0)], delta=0.1)
         elif opt_method == OptMethod.PATTERN_SEARCH:
             bound[_i] = Optimize(setting=setting).pattern_search(
