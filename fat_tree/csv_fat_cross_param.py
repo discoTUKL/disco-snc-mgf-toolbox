@@ -35,7 +35,9 @@ def csv_fat_cross_param(arrival: ArrivalDistribution,
     # 1 Parameter for service
 
     size_array = [
-        total_iterations, (arrival.number_parameters() + 1) * number_servers
+        total_iterations,
+        (arrival.number_parameters() + service.number_parameters()) *
+        number_servers
     ]
     # [rows, columns]
 

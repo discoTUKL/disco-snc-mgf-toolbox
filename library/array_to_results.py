@@ -19,7 +19,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
     mean_standard_bound = np.nanmean(res_array[:, 0])
     mean_new_bound = np.nanmean(res_array[:, 1])
 
-    row_max = opt_improvement_col(res_array, 0, 1, metric)
+    row_max = opt_improvement_col(res_array, metric)
     opt_standard_bound = res_array[row_max, 0]
     opt_new_bound = res_array[row_max, 1]
 

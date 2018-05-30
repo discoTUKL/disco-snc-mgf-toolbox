@@ -29,7 +29,10 @@ def csv_single_server_param(arrival: ArrivalDistribution,
     """Chooses parameters by Monte Carlo type random choice"""
 
     # 1 Parameter for service
-    size_array = [total_iterations, arrival.number_parameters() + 1]
+    size_array = [
+        total_iterations,
+        arrival.number_parameters() + service.number_parameters()
+    ]
     # [rows, columns]
 
     if mc_dist.mc_dist_name == MCName.UNIFORM:

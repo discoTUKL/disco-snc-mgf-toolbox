@@ -60,14 +60,11 @@ def seq(start: float, stop: float, step: float) -> List[float]:
         return []
 
 
-def opt_improvement_col(ar: np.array, old_value_column: int,
-                        new_value_column: int, metric: str):
+def opt_improvement_col(ar: np.array, metric: str):
     if metric == "relative":
-        improvement_column = np.divide(ar[:, old_value_column],
-                                       ar[:, new_value_column])
+        improvement_column = np.divide(ar[:, 0], ar[:, 1])
     elif metric == "absolute":
-        improvement_column = np.subtract(ar[:, old_value_column],
-                                         ar[:, new_value_column])
+        improvement_column = np.subtract(ar[:, 0], ar[:, 1])
     else:
         raise NameError("Metric parameter {0} is infeasible".format(metric))
 
@@ -87,7 +84,7 @@ def average_towards_best_row(simplex: np.ndarray, best_index,
     index = 0
     for row in simplex:
         simplex[index] = simplex[best_index] + shrink_factor * (
-            row - simplex[best_index])
+                row - simplex[best_index])
         index += 1
 
     return simplex
