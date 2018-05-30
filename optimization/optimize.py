@@ -173,13 +173,6 @@ class Optimize(object):
         :param search_radius:   search radius
         :return:                feasible neighbor parameter set
         """
-        # """Auxiliary function 2
-        # Args:
-        #     input_list: initial parameter set
-        #     search_radius: find new parameters inside of a given radius
-        #
-        # Returns:
-        #     feasible parameter set"""
 
         param_new = self.change_param_random(
             input_list=input_list, search_radius=search_radius)

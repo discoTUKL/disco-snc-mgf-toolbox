@@ -30,7 +30,7 @@ def compare_optimization(setting: SettingNew,
                 bound_array.append((0.9, 4.0))
 
             bound = OptimizeNew(
-                setting_new=setting, new=new, print_x=print_x).grid_search_old(
+                setting_new=setting, new=new, print_x=print_x).grid_search(
                     bound_list=bound_array, delta=0.1)
 
         elif opt == OptMethod.PATTERN_SEARCH:
@@ -43,7 +43,6 @@ def compare_optimization(setting: SettingNew,
                     start_list=start_list, delta=3.0, delta_min=0.01)
 
         elif opt == OptMethod.NELDER_MEAD:
-            nelder_mead_param = NelderMeadParameters()
             theta_start = 0.5
 
             start_list = [theta_start] + [1.0] * number_l
@@ -51,9 +50,8 @@ def compare_optimization(setting: SettingNew,
                                            1).gao_han(start_list=start_list)
 
             bound = OptimizeNew(
-                setting_new=setting, new=new, print_x=print_x).nelder_mead_old(
+                setting_new=setting, new=new, print_x=print_x).nelder_mead(
                     simplex=start_simplex,
-                    nelder_mead_param=nelder_mead_param,
                     sd_min=10**(-2))
 
         elif opt == OptMethod.SIMULATED_ANNEALING:
@@ -67,6 +65,7 @@ def compare_optimization(setting: SettingNew,
                 print_x=print_x).simulated_annealing(
                     start_list=start_list,
                     simul_anneal_param=simul_anneal_param)
+
         elif opt == OptMethod.BFGS:
             theta_start = 0.5
 
@@ -75,6 +74,31 @@ def compare_optimization(setting: SettingNew,
             bound = OptimizeNew(
                 setting_new=setting, new=new,
                 print_x=print_x).bfgs(start_list=start_list)
+
+        elif opt == OptMethod.GS_OLD:
+            theta_bounds = [(0.1, 4.0)]
+
+            bound_array = theta_bounds[:]
+            for _i in range(1, number_l + 1):
+                bound_array.append((0.9, 4.0))
+
+            bound = OptimizeNew(
+                setting_new=setting, new=new, print_x=print_x).grid_search_old(
+                    bound_list=bound_array, delta=0.1)
+
+        elif opt == OptMethod.NM_OLD:
+            nelder_mead_param = NelderMeadParameters()
+            theta_start = 0.5
+
+            start_list = [theta_start] + [1.0] * number_l
+            start_simplex = InitialSimplex(parameters_to_optimize=number_l +
+                                           1).gao_han(start_list=start_list)
+
+            bound = OptimizeNew(
+                setting_new=setting, new=new, print_x=print_x).nelder_mead_old(
+                    simplex=start_simplex,
+                    nelder_mead_param=nelder_mead_param,
+                    sd_min=10**(-2))
 
         else:
             raise NameError("Optimization parameter {0} is infeasible".format(
@@ -106,17 +130,17 @@ if __name__ == '__main__':
     SETTING1 = SingleServerPerform(
         arr=EXP_ARRIVAL, ser=CONST_RATE, perform_param=OUTPUT_TIME)
     OPT_METHODS = [
-        OptMethod.GRID_SEARCH, OptMethod.PATTERN_SEARCH,
+        OptMethod.GRID_SEARCH, OptMethod.GS_OLD, OptMethod.PATTERN_SEARCH,
         OptMethod.SIMULATED_ANNEALING, OptMethod.BFGS
     ]
 
-    print(
-        compare_optimization(
-            setting=SETTING1,
-            opt_methods=OPT_METHODS,
-            new=True,
-            print_x=True,
-            number_l=1))
+    # print(
+    #     compare_optimization(
+    #         setting=SETTING1,
+    #         opt_methods=OPT_METHODS,
+    #         new=True,
+    #         print_x=True,
+    #         number_l=1))
 
     DELAY_PROB = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
