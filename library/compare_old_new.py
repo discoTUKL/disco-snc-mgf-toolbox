@@ -2,9 +2,12 @@
 
 from math import nan
 from timeit import default_timer as timer
+from typing import List
 
 from library.setting_new import SettingNew
 from nc_operations.perform_metric import PerformMetric
+from nc_processes.arrival_distribution import ArrivalDistribution
+from nc_processes.service_distribution import ServiceDistribution
 from optimization.initial_simplex import InitialSimplex
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -203,16 +206,15 @@ if __name__ == '__main__':
     CONST_RATE1 = ConstantRate(rate=5.0)
     CONST_RATE2 = ConstantRate(rate=4.0)
 
-    ARR_LIST = [EXP_ARRIVAL1, EXP_ARRIVAL2]
-    SER_LIST = [CONST_RATE1, CONST_RATE2]
+    ARR_LIST: List[ArrivalDistribution] = [EXP_ARRIVAL1, EXP_ARRIVAL2]
+    SER_LIST: List[ServiceDistribution] = [CONST_RATE1, CONST_RATE2]
 
     SETTING2 = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB)
 
     print(
         compute_improvement(
-            setting=SETTING2, opt_method=OptMethod.GRID_SEARCH,
-            print_x=True))
+            setting=SETTING2, opt_method=OptMethod.GRID_SEARCH, print_x=True))
 
     print(
         compute_improvement(
