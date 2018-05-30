@@ -16,7 +16,7 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service import ConstantRate
+from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 
 ########################################################################
@@ -27,8 +27,10 @@ from optimization.opt_method import OptMethod
 def mc_time_fat_cross(arrival: ArrivalDistribution,
                       list_number_servers: List[int],
                       perform_param: PerformParameter, opt_method: OptMethod,
-                      total_iterations: int, mc_dist: MonteCarloDist) -> dict:
+                      mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice."""
+    total_iterations = 10**4
+
     time_ratio = {"Number_of_servers": "Ratio"}
 
     for num_serv in tqdm(list_number_servers):
@@ -107,8 +109,6 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
 
 
 if __name__ == '__main__':
-    REPETITIONS = 10**4
-
     DELAY_PROB = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
 
@@ -127,7 +127,6 @@ if __name__ == '__main__':
             list_number_servers=list_number_servers1,
             perform_param=DELAY_PROB,
             opt_method=COMMON_OPTIMIZATION,
-            total_iterations=REPETITIONS,
             mc_dist=MC_UNIF20))
 
     print(
@@ -136,5 +135,4 @@ if __name__ == '__main__':
             list_number_servers=list_number_servers1,
             perform_param=DELAY_PROB,
             opt_method=COMMON_OPTIMIZATION,
-            total_iterations=REPETITIONS,
             mc_dist=MC_UNIF20))

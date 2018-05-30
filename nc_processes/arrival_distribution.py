@@ -1,9 +1,10 @@
 """Implemented arrival classes for different distributions"""
+# TODO: add discretized version for continuous distributions
 
 from abc import abstractmethod
 from math import erf, exp, inf, log, pi, sqrt
 
-from library.Exceptions import ParameterOutOfBounds
+from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival import Arrival
 
 
@@ -121,8 +122,8 @@ class LeakyBucketMassOne(ArrivalDistribution):
         if theta <= 0:
             raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
-        return self.n * log(0.5 * (exp(theta * self.sigma_single) +
-                            exp(-theta * self.sigma_single))) / theta
+        return self.n * log(0.5 * (exp(theta * self.sigma_single) + exp(
+            -theta * self.sigma_single))) / theta
 
     def rho(self, theta: float) -> float:
         if theta <= 0:

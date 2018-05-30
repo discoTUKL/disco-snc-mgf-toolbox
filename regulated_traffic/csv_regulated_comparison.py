@@ -13,7 +13,7 @@ from nc_processes.arrival_distribution import (LeakyBucketMassOne,
                                                LeakyBucketMassTwo,
                                                LeakyBucketMassTwoExact,
                                                TokenBucketConstant)
-from nc_processes.service import ConstantRate
+from nc_processes.service_distribution import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
 
@@ -27,6 +27,7 @@ def regulated_comparison(aggregation: int, sigma_single: float,
 
     bound_list = [(0.05, 15.0)]
     delta = 0.05
+    print_x = False
 
     dnc_fifo_single = DNCFIFODelay(
         token_bucket_constant=tb_const,
@@ -35,8 +36,8 @@ def regulated_comparison(aggregation: int, sigma_single: float,
     const_single = SingleServerPerform(
         arr=tb_const, ser=constant_rate_server, perform_param=perform_param)
     const_opt = Optimize(
-        setting=const_single, print_x=False).grid_search(
-            bound_list=bound_list, delta=delta)
+        setting=const_single, print_x=print_x).grid_search(
+        bound_list=bound_list, delta=delta)
 
     leaky_mass_1 = SingleServerPerform(
         arr=LeakyBucketMassOne(
@@ -44,8 +45,8 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         ser=constant_rate_server,
         perform_param=perform_param)
     leaky_mass_1 = Optimize(
-        setting=leaky_mass_1, print_x=False).grid_search(
-            bound_list=bound_list, delta=delta)
+        setting=leaky_mass_1, print_x=print_x).grid_search(
+        bound_list=bound_list, delta=delta)
 
     leaky_mass_2 = SingleServerPerform(
         arr=LeakyBucketMassTwo(
@@ -53,8 +54,8 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         ser=constant_rate_server,
         perform_param=perform_param)
     leaky_mass_2_opt = Optimize(
-        setting=leaky_mass_2, print_x=False).grid_search(
-            bound_list=bound_list, delta=delta)
+        setting=leaky_mass_2, print_x=print_x).grid_search(
+        bound_list=bound_list, delta=delta)
 
     exact_mass_2 = SingleServerPerform(
         arr=LeakyBucketMassTwoExact(
@@ -62,8 +63,8 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         ser=constant_rate_server,
         perform_param=perform_param)
     exact_mass_2_opt = Optimize(
-        setting=exact_mass_2, print_x=False).grid_search(
-            bound_list=bound_list, delta=delta)
+        setting=exact_mass_2, print_x=print_x).grid_search(
+        bound_list=bound_list, delta=delta)
 
     return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt, \
            exact_mass_2_opt
@@ -81,11 +82,11 @@ def compare_aggregation(aggregations: List[int], sigma_single: float,
     for i, agg in enumerate(aggregations):
         dnc_fifo_single[i], const_opt[i], leaky_mass_1[i], leaky_mass_2_opt[
             i], exact_mass_2_opt[i] = regulated_comparison(
-                aggregation=agg,
-                sigma_single=sigma_single,
-                rho_single=rho_single,
-                service_rate=service_rate * agg,
-                perform_param=perform_param)
+            aggregation=agg,
+            sigma_single=sigma_single,
+            rho_single=rho_single,
+            service_rate=service_rate * agg,
+            perform_param=perform_param)
 
     results_df = pd.DataFrame(
         {
@@ -119,11 +120,11 @@ def compare_probability(aggregation: int, sigma_single: float,
     for _i in range(len(perform_list.values_list)):
         dnc_fifo_single[_i], const_opt[_i], leaky_mass_1[_i], leaky_mass_2_opt[
             _i], exact_mass_2_opt[_i] = regulated_comparison(
-                aggregation=aggregation,
-                sigma_single=sigma_single,
-                rho_single=rho_single,
-                service_rate=service_rate * aggregation,
-                perform_param=perform_list.get_parameter_at_i(_i))
+            aggregation=aggregation,
+            sigma_single=sigma_single,
+            rho_single=rho_single,
+            service_rate=service_rate * aggregation,
+            perform_param=perform_list.get_parameter_at_i(_i))
 
     results_df = pd.DataFrame(
         {
@@ -135,7 +136,8 @@ def compare_probability(aggregation: int, sigma_single: float,
         },
         index=perform_list.values_list)
 
-    filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_{3}_utilization_{4}".format(
+    filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_" \
+               "{3}_utilization_{4}".format(
         perform_list.perform_metric.name, aggregation, str(sigma_single),
         str(rho_single), str("%.2f" % (rho_single / service_rate)))
 
@@ -147,7 +149,7 @@ def compare_probability(aggregation: int, sigma_single: float,
 
 if __name__ == '__main__':
     DELAY6 = PerformParameter(
-        perform_metric=PerformMetric.DELAY, value=10**(-6))
+        perform_metric=PerformMetric.DELAY, value=10 ** (-6))
 
     NUMBER_AGGREGATIONS = [
         1, 5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 350
@@ -169,8 +171,9 @@ if __name__ == '__main__':
     PERFORM_LIST = PerformParamList(
         perform_metric=PerformMetric.DELAY,
         values_list=[
-            10**(-1), 10**(-3), 10**(-6), 10**(-9), 10**(-12), 10**(-15), 10
-            **(-18), 10**(-21), 10**(-24), 10**(-27), 10**(-30)
+            10 ** (-1), 10 ** (-3), 10 ** (-6), 10 ** (-9), 10 ** (-12),
+            10 ** (-15), 10
+            ** (-18), 10 ** (-21), 10 ** (-24), 10 ** (-27), 10 ** (-30)
         ])
 
     for SIGMA in SIGMA_VALUES:

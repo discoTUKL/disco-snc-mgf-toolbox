@@ -3,7 +3,7 @@ from optimization.optimize import Optimize
 from library.perform_parameter import PerformParameter
 from nc_processes.arrival_distribution import ExponentialArrival
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.service import ConstantRate
+from nc_processes.service_distribution import ConstantRate
 
 if __name__ == '__main__':
     PROB_VALUES = [0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01, 0]
@@ -19,5 +19,5 @@ if __name__ == '__main__':
 
         print(
             Optimize(setting=EXAMPLE,
-                     print_x=False).grid_search_old(
+                     print_x=False).grid_search(
                          bound_list=[(0.01, 1.1)], delta=0.01))

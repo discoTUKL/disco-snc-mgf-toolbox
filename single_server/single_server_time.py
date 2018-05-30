@@ -12,15 +12,16 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service import ConstantRate
+from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
 
 def mc_time_single(arrival: ArrivalDistribution,
                    perform_param: PerformParameter, opt_method: OptMethod,
-                   total_iterations: int, mc_dist: MonteCarloDist) -> dict:
+                   mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
+    total_iterations = 10**4
 
     time_ratio = {"Number_of_servers": "Ratio"}
 
@@ -75,8 +76,6 @@ def mc_time_single(arrival: ArrivalDistribution,
 
 
 if __name__ == '__main__':
-    REPETITIONS = 10**4
-
     OUTPUT_TIME = PerformParameter(
         perform_metric=PerformMetric.OUTPUT, value=4)
 
@@ -92,7 +91,6 @@ if __name__ == '__main__':
             arrival=EXP_ARRIVAL1,
             perform_param=OUTPUT_TIME,
             opt_method=COMMON_OPTIMIZATION,
-            total_iterations=REPETITIONS,
             mc_dist=MC_UNIF20))
 
     print(
@@ -100,5 +98,4 @@ if __name__ == '__main__':
             arrival=MMOO_ARRIVAL1,
             perform_param=OUTPUT_TIME,
             opt_method=COMMON_OPTIMIZATION,
-            total_iterations=REPETITIONS,
             mc_dist=MC_UNIF20))

@@ -12,12 +12,12 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service import ConstantRate, Service
+from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 from optimization.opt_method import OptMethod
 
 
 def csv_bar_chart(ar_list: List[ArrivalDistribution],
-                  ser_list: List[Service],
+                  ser_list: List[ServiceDistribution],
                   perform_param: PerformParameter,
                   opt_method: OptMethod,
                   metric="relative") -> pd.DataFrame:

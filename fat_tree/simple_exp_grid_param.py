@@ -10,7 +10,7 @@ from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import ExponentialArrival
-from nc_processes.service import ConstantRate
+from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 
 ########################################################################
@@ -25,7 +25,8 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
     total_iterations = len(lamb1_range) * len(lamb2_range) * len(
         rate1_range) * len(rate2_range)
 
-    res_array = np.empty([total_iterations, 6])
+    param_array = np.empty([total_iterations, 4])
+    res_array = np.empty([total_iterations, 2])
 
     i = 0
     for lamb1 in lamb1_range:
@@ -45,10 +46,10 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
                             ConstantRate(rate=rate2)
                         ],
                         perform_param=delay_prob)
-                    res_array[i, 0] = lamb1
-                    res_array[i, 1] = lamb2
-                    res_array[i, 2] = rate1
-                    res_array[i, 3] = rate2
+                    param_array[i, 0] = lamb1
+                    param_array[i, 1] = lamb2
+                    param_array[i, 2] = rate1
+                    param_array[i, 3] = rate2
 
                     # bound, new_bound
                     res_array[i, -2], res_array[i, -1] = compute_improvement(
@@ -73,6 +74,7 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
         arrival=exp_arrival,
         service=const_service,
         metric=metric,
+        param_array=param_array,
         res_array=res_array,
         number_servers=2)
 
@@ -81,7 +83,7 @@ if __name__ == '__main__':
     print(
         grid_param_simple_exp(
             delay=4,
-            opt_method=OptMethod.PATTERN_SEARCH,
+            opt_method=OptMethod.GRID_SEARCH,
             metric="relative",
             lamb1_range=[0.1, 0.3, 0.5, 1, 2, 4, 8],
             lamb2_range=[0.1, 0.3, 0.5, 1, 2, 4, 8],

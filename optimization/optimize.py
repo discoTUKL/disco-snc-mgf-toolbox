@@ -1,13 +1,13 @@
 """Optimize theta and all Lyapunov l's"""
 
 import warnings
-from math import exp, inf, nan
+from math import exp, inf
 from typing import List
 
 import numpy as np
 import scipy.optimize
 
-from library.Exceptions import ParameterOutOfBounds
+from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import (average_towards_best_row,
                                       centroid_without_one_row, deprecated,
                                       expand_grid, is_equal, seq)
@@ -173,13 +173,6 @@ class Optimize(object):
         :param search_radius:   search radius
         :return:                feasible neighbor parameter set
         """
-        # """Auxiliary function 2
-        # Args:
-        #     input_list: initial parameter set
-        #     search_radius: find new parameters inside of a given radius
-        #
-        # Returns:
-        #     feasible parameter set"""
 
         param_new = self.change_param_random(
             input_list=input_list, search_radius=search_radius)
@@ -260,7 +253,7 @@ class Optimize(object):
 
         return bfgs_res.fun
 
-    # @deprecated
+    @deprecated
     def grid_search_old(self, bound_list: List[tuple], delta=0.1) -> float:
         """
         Search optimal values along a grid in the parameter space.

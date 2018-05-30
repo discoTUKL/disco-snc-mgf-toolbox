@@ -6,19 +6,19 @@ from typing import List
 import pandas as pd
 
 from fat_tree.fat_cross_perform import FatCrossPerform
-from optimization.opt_method import OptMethod
-from optimization.optimize import Optimize
-from optimization.optimize_new import OptimizeNew
 from library.perform_param_list import PerformParamList
+from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.distrib_param import DistribParam
-from nc_operations.perform_metric import PerformMetric
-from nc_processes.service import ConstantRate, Service
+from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from optimization.opt_method import OptMethod
+from optimization.optimize import Optimize
+from optimization.optimize_new import OptimizeNew
 
 
-def fat_cross_df(arr_list: List[ArrivalDistribution], ser_list: List[Service],
-                 opt_method: OptMethod,
+def fat_cross_df(arr_list: List[ArrivalDistribution],
+                 ser_list: List[ServiceDistribution], opt_method: OptMethod,
                  perform_param_list: PerformParamList) -> pd.DataFrame:
     """Compute delay bound for T in T_list and write into dataframe.
 

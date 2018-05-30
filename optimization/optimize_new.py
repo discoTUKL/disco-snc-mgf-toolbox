@@ -5,7 +5,7 @@ from typing import List
 
 import numpy as np
 
-from library.Exceptions import ParameterOutOfBounds
+from library.exceptions import ParameterOutOfBounds
 from library.setting_new import SettingNew
 from optimization.optimize import Optimize
 from optimization.initial_simplex import InitialSimplex
@@ -53,7 +53,7 @@ class OptimizeNew(Optimize):
 
 if __name__ == '__main__':
     from nc_processes.arrival_distribution import ExponentialArrival
-    from nc_processes.service import ConstantRate
+    from nc_processes.service_distribution import ConstantRate
     from nc_operations.perform_metric import PerformMetric
     from single_server.single_server_perform import SingleServerPerform
     from library.perform_parameter import PerformParameter
