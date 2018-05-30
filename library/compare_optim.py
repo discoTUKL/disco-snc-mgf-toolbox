@@ -13,10 +13,11 @@ from optimization.simul_anneal_param import SimulAnnealParam
 
 def compare_optimization(setting: SettingNew,
                          opt_methods: List[OptMethod],
-                         new=True,
-                         print_x=False,
-                         number_l=0) -> List[float]:
+                         number_l=1) -> List[float]:
     """Measures time for different optimizations"""
+    new = True
+    print_x = False
+
     bound_list = []
     time_list = []
 
@@ -138,8 +139,6 @@ if __name__ == '__main__':
     #     compare_optimization(
     #         setting=SETTING1,
     #         opt_methods=OPT_METHODS,
-    #         new=True,
-    #         print_x=True,
     #         number_l=1))
 
     DELAY_PROB = PerformParameter(
@@ -161,6 +160,4 @@ if __name__ == '__main__':
         compare_optimization(
             setting=SETTING2,
             opt_methods=OPT_METHODS,
-            new=True,
-            print_x=True,
             number_l=1))

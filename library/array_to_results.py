@@ -16,6 +16,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
                           metric="relative") -> dict:
     """Writes the array values into a dictionary, MMOO"""
 
+    # TODO: actually, we want a kind of "common mean"
     mean_standard_bound = np.nanmean(res_array[:, 0])
     mean_new_bound = np.nanmean(res_array[:, 1])
 

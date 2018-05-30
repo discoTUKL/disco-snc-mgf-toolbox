@@ -27,6 +27,7 @@ def regulated_comparison(aggregation: int, sigma_single: float,
 
     bound_list = [(0.05, 15.0)]
     delta = 0.05
+    print_x = False
 
     dnc_fifo_single = DNCFIFODelay(
         token_bucket_constant=tb_const,
@@ -35,7 +36,7 @@ def regulated_comparison(aggregation: int, sigma_single: float,
     const_single = SingleServerPerform(
         arr=tb_const, ser=constant_rate_server, perform_param=perform_param)
     const_opt = Optimize(
-        setting=const_single, print_x=False).grid_search(
+        setting=const_single, print_x=print_x).grid_search(
         bound_list=bound_list, delta=delta)
 
     leaky_mass_1 = SingleServerPerform(
@@ -44,7 +45,7 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         ser=constant_rate_server,
         perform_param=perform_param)
     leaky_mass_1 = Optimize(
-        setting=leaky_mass_1, print_x=False).grid_search(
+        setting=leaky_mass_1, print_x=print_x).grid_search(
         bound_list=bound_list, delta=delta)
 
     leaky_mass_2 = SingleServerPerform(
@@ -53,7 +54,7 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         ser=constant_rate_server,
         perform_param=perform_param)
     leaky_mass_2_opt = Optimize(
-        setting=leaky_mass_2, print_x=False).grid_search(
+        setting=leaky_mass_2, print_x=print_x).grid_search(
         bound_list=bound_list, delta=delta)
 
     exact_mass_2 = SingleServerPerform(
@@ -62,7 +63,7 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         ser=constant_rate_server,
         perform_param=perform_param)
     exact_mass_2_opt = Optimize(
-        setting=exact_mass_2, print_x=False).grid_search(
+        setting=exact_mass_2, print_x=print_x).grid_search(
         bound_list=bound_list, delta=delta)
 
     return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt, \

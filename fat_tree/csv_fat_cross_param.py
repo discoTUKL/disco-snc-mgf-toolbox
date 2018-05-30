@@ -28,10 +28,10 @@ def csv_fat_cross_param(arrival: ArrivalDistribution,
                         number_servers: int,
                         perform_param: PerformParameter,
                         opt_method: OptMethod,
-                        total_iterations: int,
-                        mc_dist: MonteCarloDist,
-                        metric="relative") -> dict:
+                        mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice."""
+    total_iterations = 10**4
+    metric = "relative"
 
     size_array = [
         total_iterations,
@@ -130,8 +130,6 @@ def csv_fat_cross_param(arrival: ArrivalDistribution,
 
 
 if __name__ == '__main__':
-    REPETITIONS = 10**4
-
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=10)
 
@@ -151,7 +149,6 @@ if __name__ == '__main__':
             number_servers=2,
             perform_param=DELAY_PROB10,
             opt_method=COMMON_OPTIMIZATION,
-            total_iterations=REPETITIONS,
             mc_dist=MC_UNIF20))
 
     def fun1():
@@ -162,7 +159,6 @@ if __name__ == '__main__':
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
-                total_iterations=REPETITIONS,
                 mc_dist=MC_EXP1))
 
     def fun2():
@@ -173,7 +169,6 @@ if __name__ == '__main__':
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
-                total_iterations=REPETITIONS,
                 mc_dist=MC_EXP1))
 
     def fun3():
@@ -184,7 +179,6 @@ if __name__ == '__main__':
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
-                total_iterations=REPETITIONS,
                 mc_dist=MC_UNIF20))
 
     def run_in_parallel(*funcs):

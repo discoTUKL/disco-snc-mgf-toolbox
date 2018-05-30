@@ -23,10 +23,10 @@ def csv_single_server_param(arrival: ArrivalDistribution,
                             service: ServiceDistribution,
                             perform_param: PerformParameter,
                             opt_method: OptMethod,
-                            total_iterations: int,
-                            mc_dist: MonteCarloDist,
-                            metric="relative") -> dict:
+                            mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
+    total_iterations = 10**4
+    metric = "relative"
 
     size_array = [
         total_iterations,
@@ -148,8 +148,6 @@ def grid_param_single_exp(perform_param: PerformParameter,
 
 
 if __name__ == '__main__':
-    REPETITIONS = 10**3
-
     OUTPUT_TIME4 = PerformParameter(
         perform_metric=PerformMetric.OUTPUT, value=4)
 
@@ -168,7 +166,6 @@ if __name__ == '__main__':
             service=CONST_RATE,
             perform_param=OUTPUT_TIME4,
             opt_method=COMMON_OPTIMIZATION,
-            total_iterations=REPETITIONS,
             mc_dist=MC_UNIF20))
     print(
         csv_single_server_param(
@@ -176,7 +173,6 @@ if __name__ == '__main__':
             service=CONST_RATE,
             perform_param=OUTPUT_TIME4,
             opt_method=COMMON_OPTIMIZATION,
-            total_iterations=REPETITIONS,
             mc_dist=MC_UNIF20))
 
     def fun1():
@@ -187,7 +183,6 @@ if __name__ == '__main__':
                 service=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
-                total_iterations=REPETITIONS,
                 mc_dist=MC_EXP1))
 
     def fun2():
@@ -198,7 +193,6 @@ if __name__ == '__main__':
                 service=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
-                total_iterations=REPETITIONS,
                 mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):

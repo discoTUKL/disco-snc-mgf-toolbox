@@ -1,4 +1,5 @@
 """Implemented arrival classes for different distributions"""
+# TODO: add discretized version for continuous distributions
 
 from abc import abstractmethod
 from math import erf, exp, inf, log, pi, sqrt
