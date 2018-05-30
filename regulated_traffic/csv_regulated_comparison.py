@@ -9,9 +9,10 @@ from dnc.dnc_fifo_delay import DNCFIFODelay
 from library.perform_param_list import PerformParamList
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.arrival_distribution import (
-    LeakyBucketMassOne, LeakyBucketMassTwo, LeakyBucketMassTwoExact,
-    TokenBucketConstant)
+from nc_processes.arrival_distribution import (LeakyBucketMassOne,
+                                               LeakyBucketMassTwo,
+                                               LeakyBucketMassTwoExact,
+                                               TokenBucketConstant)
 from nc_processes.service import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
