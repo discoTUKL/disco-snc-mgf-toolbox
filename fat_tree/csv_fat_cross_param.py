@@ -32,7 +32,6 @@ def csv_fat_cross_param(arrival: ArrivalDistribution,
                         mc_dist: MonteCarloDist,
                         metric="relative") -> dict:
     """Chooses parameters by Monte Carlo type random choice."""
-    # 1 Parameter for service
 
     size_array = [
         total_iterations,

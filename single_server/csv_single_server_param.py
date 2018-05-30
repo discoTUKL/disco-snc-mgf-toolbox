@@ -28,7 +28,6 @@ def csv_single_server_param(arrival: ArrivalDistribution,
                             metric="relative") -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
 
-    # 1 Parameter for service
     size_array = [
         total_iterations,
         arrival.number_parameters() + service.number_parameters()

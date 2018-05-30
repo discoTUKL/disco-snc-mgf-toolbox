@@ -60,7 +60,7 @@ def seq(start: float, stop: float, step: float) -> List[float]:
         return []
 
 
-def opt_improvement_col(ar: np.array, metric: str):
+def find_opt_improve_row(ar: np.array, metric: str):
     if metric == "relative":
         improvement_column = np.divide(ar[:, 0], ar[:, 1])
     elif metric == "absolute":
@@ -110,6 +110,6 @@ if __name__ == '__main__':
     # print(
     #     average_towards_best_row(
     #         SIMPLEX_START_TEST, best_index=0, shrink_factor=0.5))
-    # print(opt_improvement_col(SIMPLEX_START_TEST, 0, 1, "relative"))
+    # print(find_opt_improve_row(SIMPLEX_START_TEST, 0, 1, "relative"))
 
     print(seq(0.1, 0.4, 0.2))

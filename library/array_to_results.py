@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from library.helper_functions import opt_improvement_col
+from library.helper_functions import find_opt_improve_row
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.service_distribution import ConstantRate, ServiceDistribution
@@ -19,7 +19,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
     mean_standard_bound = np.nanmean(res_array[:, 0])
     mean_new_bound = np.nanmean(res_array[:, 1])
 
-    row_max = opt_improvement_col(res_array, metric)
+    row_max = find_opt_improve_row(res_array, metric)
     opt_standard_bound = res_array[row_max, 0]
     opt_new_bound = res_array[row_max, 1]
 
