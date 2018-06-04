@@ -7,6 +7,7 @@ class OptMethod(Enum):
     PATTERN_SEARCH = "PatternSearch"
     BASIN_HOPPING = "BasinHopping"
     SIMULATED_ANNEALING = "SimulatedAnnealing"
+    DIFFERENTIAL_EVOLUTION = "DifferentialEvolution"
     BFGS = "BFGS"
     GS_OLD = "GridSearchOld"
     NM_OLD = "NelderMeadOld"

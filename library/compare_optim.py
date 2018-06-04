@@ -18,21 +18,22 @@ def compare_optimization(setting: SettingNew,
     new = True
     print_x = False
 
-    bound_list = []
-    time_list = []
+    list_of_bounds: List[float] = []
+    list_of_times: List[float] = []
+    list_of_approaches: List[str] = []
 
     for opt in opt_methods:
         start = timer()
         if opt == OptMethod.GRID_SEARCH:
             theta_bounds = [(0.1, 4.0)]
 
-            bound_array = theta_bounds[:]
+            bound_list = theta_bounds[:]
             for _i in range(1, number_l + 1):
-                bound_array.append((0.9, 4.0))
+                bound_list.append((0.9, 4.0))
 
             bound = OptimizeNew(
                 setting_new=setting, new=new, print_x=print_x).grid_search(
-                    bound_list=bound_array, delta=0.1)
+                    bound_list=bound_list, delta=0.1)
 
         elif opt == OptMethod.PATTERN_SEARCH:
             theta_start = 0.5
@@ -72,8 +73,18 @@ def compare_optimization(setting: SettingNew,
             bound = OptimizeNew(
                 setting_new=setting, new=new,
                 print_x=print_x).simulated_annealing(
-                    start_list=start_list,
-                    simul_annealing=simul_anneal_param)
+                    start_list=start_list, simul_annealing=simul_anneal_param)
+
+        elif opt == OptMethod.DIFFERENTIAL_EVOLUTION:
+            theta_bounds = [(0.1, 4.0)]
+
+            bound_list = theta_bounds[:]
+            for _i in range(1, number_l + 1):
+                bound_list.append((0.9, 4.0))
+
+            bound = OptimizeNew(
+                setting_new=setting, new=new,
+                print_x=print_x).differential_evolution(bound_list=bound_list)
 
         elif opt == OptMethod.BFGS:
             theta_start = 0.5
@@ -87,13 +98,13 @@ def compare_optimization(setting: SettingNew,
         elif opt == OptMethod.GS_OLD:
             theta_bounds = [(0.1, 4.0)]
 
-            bound_array = theta_bounds[:]
+            bound_list = theta_bounds[:]
             for _i in range(1, number_l + 1):
-                bound_array.append((0.9, 4.0))
+                bound_list.append((0.9, 4.0))
 
             bound = OptimizeNew(
                 setting_new=setting, new=new, print_x=print_x).grid_search_old(
-                    bound_list=bound_array, delta=0.1)
+                    bound_list=bound_list, delta=0.1)
 
         elif opt == OptMethod.NM_OLD:
             nelder_mead_param = NelderMeadParameters()
@@ -114,12 +125,14 @@ def compare_optimization(setting: SettingNew,
                 opt.name))
 
         stop = timer()
-        bound_list.append(bound)
-        time_list.append(stop - start)
+        list_of_bounds.append(bound)
+        list_of_times.append(stop - start)
+        list_of_approaches.append(opt.name)
 
-    print("time_list: ", time_list)
-    print("bound_list: ")
-    return bound_list
+    print("list_of_approaches: ", list_of_approaches)
+    print("list_of_times: ", list_of_times)
+    print("list_of_bounds: ")
+    return list_of_bounds
 
 
 if __name__ == '__main__':
@@ -140,7 +153,8 @@ if __name__ == '__main__':
         arr=EXP_ARRIVAL, ser=CONST_RATE, perform_param=OUTPUT_TIME)
     OPT_METHODS = [
         OptMethod.GRID_SEARCH, OptMethod.GS_OLD, OptMethod.PATTERN_SEARCH,
-        OptMethod.BASIN_HOPPING, OptMethod.SIMULATED_ANNEALING, OptMethod.BFGS
+        OptMethod.BASIN_HOPPING, OptMethod.SIMULATED_ANNEALING,
+        OptMethod.DIFFERENTIAL_EVOLUTION
     ]
 
     # print(

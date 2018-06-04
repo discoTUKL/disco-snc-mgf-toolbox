@@ -42,6 +42,13 @@ class Optimize(object):
         return res
 
     def grid_search(self, bound_list: List[tuple], delta) -> float:
+        """
+        Search optimal values along a grid in the parameter space.
+
+        :param bound_list: list of tuples of lower and upper bounds
+        :param delta:      granularity of the grid search
+        :return:           optimized bound
+        """
 
         list_slices = [slice(0)] * len(bound_list)
 
@@ -143,7 +150,7 @@ class Optimize(object):
 
         return nm_res.fun
 
-    def basin_hopping(self, start_list: List[float]):
+    def basin_hopping(self, start_list: List[float]) -> float:
         """
         Basin Hopping optimization from the sciPy package.
 
@@ -154,7 +161,7 @@ class Optimize(object):
             func=self.eval_except, x0=start_list)
 
         if self.print_x:
-            print("Basinhopping optimal x: ", bh_res.x)
+            print("Basin Hopping optimal x: ", bh_res.x)
 
         return bh_res.fun
 
@@ -216,6 +223,21 @@ class Optimize(object):
             print("simulated annealing optimal x: ", param_best)
 
         return optimum_best
+    
+    def differential_evolution(self, bound_list: List[tuple]) -> float:
+        """
+        Differential Evolution optimization from the sciPy package.
+
+        :param bound_list: list of tuples of lower and upper bounds
+        :return:           optimized bound
+        """
+        de_res = scipy.optimize.differential_evolution(
+            func=self.eval_except, bounds=bound_list)
+
+        if self.print_x:
+            print("Differential Evolution optimal x: ", de_res.x)
+
+        return de_res.fun
 
     def bfgs(self, start_list: list):
         x0 = np.array(start_list)
@@ -232,7 +254,7 @@ class Optimize(object):
         """
         Search optimal values along a grid in the parameter space.
 
-        :param bound_list: array of lower and upper bounds
+        :param bound_list: list of tuples of lower and upper bounds
         :param delta:      granularity of the grid search
         :return:           optimized bound
         """
