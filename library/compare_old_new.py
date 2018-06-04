@@ -12,7 +12,7 @@ from optimization.initial_simplex import InitialSimplex
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
-from optimization.simul_anneal_param import SimulAnnealParam
+from optimization.simul_annealing import SimulAnnealing
 
 
 def compute_improvement(setting: SettingNew,
@@ -79,21 +79,21 @@ def compute_improvement(setting: SettingNew,
             new_bound = standard_bound
 
     elif opt_method == OptMethod.SIMULATED_ANNEALING:
-        simul_anneal_param = SimulAnnealParam()
+        simul_anneal_param = SimulAnnealing()
         theta_start = 0.5
 
         start_list = [theta_start]
 
         standard_bound = Optimize(
             setting=setting, print_x=print_x).simulated_annealing(
-                start_list=start_list, simul_anneal_param=simul_anneal_param)
+                start_list=start_list, simul_annealing=simul_anneal_param)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
             setting_new=setting, print_x=print_x).simulated_annealing(
                 start_list=start_list_new,
-                simul_anneal_param=simul_anneal_param)
+                simul_annealing=simul_anneal_param)
 
         # This part is there to overcome opt_method issues
         if new_bound > standard_bound:

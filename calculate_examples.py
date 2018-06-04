@@ -11,7 +11,7 @@ from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
 from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
-from optimization.simul_anneal_param import SimulAnnealParam
+from optimization.simul_annealing import SimulAnnealing
 from single_server.single_server_perform import SingleServerPerform
 
 if __name__ == '__main__':
@@ -67,8 +67,9 @@ if __name__ == '__main__':
         ExponentialArrival(lamb=4)
     ]
 
-    SER_LIST: List[ServiceDistribution] = [ConstantRate(rate=4),
-                                           ConstantRate(rate=0.5)]
+    SER_LIST: List[ServiceDistribution] = [
+        ConstantRate(rate=4), ConstantRate(rate=0.5)
+    ]
 
     EXAMPLE = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB6)
@@ -86,8 +87,9 @@ if __name__ == '__main__':
     DELAY_PROB4 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
 
-    SER_LIST2: List[ServiceDistribution] = [ConstantRate(rate=3),
-                                            ConstantRate(rate=3)]
+    SER_LIST2: List[ServiceDistribution] = [
+        ConstantRate(rate=3), ConstantRate(rate=3)
+    ]
 
     EXAMPLE2 = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST2, perform_param=DELAY_PROB4)
@@ -113,9 +115,11 @@ if __name__ == '__main__':
         OPTIMIZE_NEW.pattern_search(
             start_list=[0.5, 1.0], delta=3, delta_min=0.01))
 
-    SIMU_ANNEAL_PARAM = SimulAnnealParam(
+    SIMU_ANNEAL_PARAM = SimulAnnealing(
         rep_max=15, temp_start=1000.0, cooling_factor=0.95, search_radius=1.0)
+
+    print(OPTIMIZE_NEW.basin_hopping(start_list=[0.5, 1.0]))
 
     print(
         OPTIMIZE_NEW.simulated_annealing(
-            start_list=[0.5, 1.0], simul_anneal_param=SIMU_ANNEAL_PARAM))
+            start_list=[0.5, 1.0], simul_annealing=SIMU_ANNEAL_PARAM))

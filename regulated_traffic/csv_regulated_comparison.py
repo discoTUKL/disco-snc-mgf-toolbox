@@ -66,8 +66,7 @@ def regulated_comparison(aggregation: int, sigma_single: float,
         setting=exact_mass_2, print_x=print_x).grid_search(
             bound_list=bound_list, delta=delta)
 
-    return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt, \
-           exact_mass_2_opt
+    return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt, exact_mass_2_opt
 
 
 def compare_aggregation(aggregations: List[int], sigma_single: float,
@@ -136,8 +135,7 @@ def compare_probability(aggregation: int, sigma_single: float,
         },
         index=perform_list.values_list)
 
-    filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_" \
-               "{3}_utilization_{4}".format(
+    filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_{3}_utilization_{4}".format(
         perform_list.perform_metric.name, aggregation, str(sigma_single),
         str(rho_single), str("%.2f" % (rho_single / service_rate)))
 

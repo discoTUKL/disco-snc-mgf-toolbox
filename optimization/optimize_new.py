@@ -7,9 +7,9 @@ import numpy as np
 
 from library.exceptions import ParameterOutOfBounds
 from library.setting_new import SettingNew
-from optimization.optimize import Optimize
 from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
+from optimization.optimize import Optimize
 
 
 class OptimizeNew(Optimize):
@@ -52,17 +52,19 @@ class OptimizeNew(Optimize):
 
 
 if __name__ == '__main__':
-    from nc_processes.arrival_distribution import ExponentialArrival
-    from nc_processes.service_distribution import ConstantRate
     from nc_operations.perform_metric import PerformMetric
-    from single_server.single_server_perform import SingleServerPerform
+    from nc_processes.arrival_distribution import MMOO
+    from nc_processes.service_distribution import ConstantRate
+    from fat_tree.fat_cross_perform import FatCrossPerform
     from library.perform_parameter import PerformParameter
 
-    OUTPUT_TIME = PerformParameter(
-        perform_metric=PerformMetric.OUTPUT, value=4)
+    DELAY_4 = PerformParameter(
+        perform_metric=PerformMetric.DELAY, value=0.0001)
 
-    EXP_ARRIVAL = ExponentialArrival(lamb=4.4)
-    CONST_SERVICE = ConstantRate(rate=0.3)
+    mmoo1 = MMOO(mu=1.0, lamb=2.2, burst=3.4)
+    mmoo2 = MMOO(mu=3.6, lamb=1.6, burst=0.4)
+    const_rate1 = ConstantRate(rate=2.0)
+    const_rate2 = ConstantRate(rate=0.3)
 
     SIMPLEX_START = np.array([[0.1], [0.3]])
     # SIMPLEX_START = np.array([[100], [200]])
@@ -72,8 +74,10 @@ if __name__ == '__main__':
 
     nelder_mead_param_set = NelderMeadParameters()
 
-    SETTING = SingleServerPerform(
-        arr=EXP_ARRIVAL, ser=CONST_SERVICE, perform_param=OUTPUT_TIME)
+    SETTING = FatCrossPerform(
+        arr_list=[mmoo1, mmoo2],
+        ser_list=[const_rate1, const_rate2],
+        perform_param=DELAY_4)
 
     OPTI_OLD = Optimize(setting=SETTING, print_x=True)
     print(OPTI_OLD.grid_search(bound_list=[(0.1, 4.0)], delta=0.1))
@@ -85,6 +89,7 @@ if __name__ == '__main__':
             simplex=SIMPLEX_RAND,
             nelder_mead_param=nelder_mead_param_set))
     print(OPTI_OLD.bfgs(start_list=[0.4]))
+    print(OPTI_OLD.basin_hopping(start_list=[2.0]))
 
     OPTI_NEW = OptimizeNew(setting_new=SETTING, new=True, print_x=True)
     print(

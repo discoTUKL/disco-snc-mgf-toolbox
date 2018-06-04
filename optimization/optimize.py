@@ -13,7 +13,7 @@ from library.helper_functions import (average_towards_best_row,
                                       expand_grid, is_equal, seq)
 from library.setting import Setting
 from optimization.nelder_mead_parameters import NelderMeadParameters
-from optimization.simul_anneal_param import SimulAnnealParam
+from optimization.simul_annealing import SimulAnnealing
 
 
 class Optimize(object):
@@ -41,7 +41,7 @@ class Optimize(object):
 
         return res
 
-    def grid_search(self, bound_list: List[tuple], delta=0.1) -> float:
+    def grid_search(self, bound_list: List[tuple], delta) -> float:
 
         list_slices = [slice(0)] * len(bound_list)
 
@@ -122,12 +122,12 @@ class Optimize(object):
 
     def nelder_mead(self, simplex: np.ndarray, sd_min=10**(-2)):
         """
-        Nelder-Mead Optimization from the sciPy package.
+        Nelder-Mead optimization from the sciPy package.
 
-        :param simplex:            initial parameter simplex
-        :param sd_min:             abort criterion (detect when the changes
-                                   become very small)
-        :return:                   optimized bound
+        :param simplex:     initial parameter simplex
+        :param sd_min:      abort criterion (detect when the changes
+                            become very small)
+        :return:            optimized bound
         """
         nm_res = scipy.optimize.minimize(
             self.eval_except,
@@ -143,57 +143,29 @@ class Optimize(object):
 
         return nm_res.fun
 
-    @staticmethod
-    def change_param_random(input_list: List[float],
-                            search_radius: float) -> List[float]:
+    def basin_hopping(self, start_list: List[float]):
         """
-        Find new parameters inside of a given radius.
+        Basin Hopping optimization from the sciPy package.
 
-        :param input_list:      initial parameter set
-        :param search_radius:   search radius
-        :return:                changed parameters
+        :param start_list:  initial guess
+        :return:            optimized bound
         """
+        bh_res = scipy.optimize.basinhopping(
+            func=self.eval_except, x0=start_list)
 
-        rand_vector = np.random.uniform(
-            low=-search_radius, high=search_radius, size=len(input_list))
+        if self.print_x:
+            print("Basinhopping optimal x: ", bh_res.x)
 
-        output_list = [0.0] * len(input_list)
-
-        for index, value in enumerate(input_list):
-            output_list[index] = value + rand_vector[index]
-
-        return output_list
-
-    def search_feasible_neighbor(self, input_list: list,
-                                 search_radius: float) -> list:
-        """
-        search for feasible neighbor.
-
-        :param input_list:      initial parameter set
-        :param search_radius:   search radius
-        :return:                feasible neighbor parameter set
-        """
-
-        param_new = self.change_param_random(
-            input_list=input_list, search_radius=search_radius)
-
-        value = self.eval_except(param_list=param_new)
-
-        while value == inf:
-            param_new = self.change_param_random(
-                input_list=input_list, search_radius=search_radius)
-            value = self.eval_except(param_list=param_new)
-
-        return param_new
+        return bh_res.fun
 
     def simulated_annealing(self, start_list: List[float],
-                            simul_anneal_param: SimulAnnealParam) -> float:
+                            simul_annealing: SimulAnnealing) -> float:
         """
 
-        :param start_list:          initial parameter set
-        :param simul_anneal_param:  simul_anneal_param: object that contains
-                                    all the simulated annealing-parameters
-        :return:                    optimized bound
+        :param start_list:       initial parameter set
+        :param simul_annealing:  object that contains all the simulated
+                                 annealing-parameters and helper methods
+        :return:                 optimized bound
         """
 
         param_list = start_list[:]
@@ -202,9 +174,9 @@ class Optimize(object):
         param_best = param_list[:]
         optimum_best = optimum_current
 
-        temperature = simul_anneal_param.temp_start
-        rep_max = simul_anneal_param.rep_max
-        search_radius = simul_anneal_param.search_radius
+        temperature = simul_annealing.temp_start
+        rep_max = simul_annealing.rep_max
+        search_radius = simul_annealing.search_radius
 
         objective_change = True
 
@@ -213,8 +185,10 @@ class Optimize(object):
             random_numbers = np.random.uniform(size=rep_max)
 
             for iteration in range(rep_max):
-                param_new = self.search_feasible_neighbor(
-                    input_list=param_list, search_radius=search_radius)
+                param_new = simul_annealing.search_feasible_neighbor(
+                    objective=self.eval_except,
+                    input_list=param_list,
+                    search_radius=search_radius)
                 optimum_new = self.eval_except(param_list=param_new)
 
                 if optimum_new < optimum_current:
@@ -236,7 +210,7 @@ class Optimize(object):
                         # in the temperature
                         objective_change = True
 
-            temperature *= simul_anneal_param.cooling_factor
+            temperature *= simul_annealing.cooling_factor
 
         if self.print_x:
             print("simulated annealing optimal x: ", param_best)
@@ -254,7 +228,7 @@ class Optimize(object):
         return bfgs_res.fun
 
     @deprecated
-    def grid_search_old(self, bound_list: List[tuple], delta=0.1) -> float:
+    def grid_search_old(self, bound_list: List[tuple], delta: float) -> float:
         """
         Search optimal values along a grid in the parameter space.
 

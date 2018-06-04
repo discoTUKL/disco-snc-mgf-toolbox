@@ -8,7 +8,7 @@ from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.opt_method import OptMethod
 from optimization.optimize_new import OptimizeNew
-from optimization.simul_anneal_param import SimulAnnealParam
+from optimization.simul_annealing import SimulAnnealing
 
 
 def compare_optimization(setting: SettingNew,
@@ -52,11 +52,19 @@ def compare_optimization(setting: SettingNew,
 
             bound = OptimizeNew(
                 setting_new=setting, new=new, print_x=print_x).nelder_mead(
-                    simplex=start_simplex,
-                    sd_min=10**(-2))
+                    simplex=start_simplex, sd_min=10**(-2))
+
+        elif opt == OptMethod.BASIN_HOPPING:
+            theta_start = 0.5
+
+            start_list = [theta_start] + [1.0] * number_l
+
+            bound = OptimizeNew(
+                setting_new=setting, new=new,
+                print_x=print_x).basin_hopping(start_list=start_list)
 
         elif opt == OptMethod.SIMULATED_ANNEALING:
-            simul_anneal_param = SimulAnnealParam()
+            simul_anneal_param = SimulAnnealing()
             theta_start = 0.5
 
             start_list = [theta_start] + [1.0] * number_l
@@ -65,7 +73,7 @@ def compare_optimization(setting: SettingNew,
                 setting_new=setting, new=new,
                 print_x=print_x).simulated_annealing(
                     start_list=start_list,
-                    simul_anneal_param=simul_anneal_param)
+                    simul_annealing=simul_anneal_param)
 
         elif opt == OptMethod.BFGS:
             theta_start = 0.5
@@ -132,7 +140,7 @@ if __name__ == '__main__':
         arr=EXP_ARRIVAL, ser=CONST_RATE, perform_param=OUTPUT_TIME)
     OPT_METHODS = [
         OptMethod.GRID_SEARCH, OptMethod.GS_OLD, OptMethod.PATTERN_SEARCH,
-        OptMethod.SIMULATED_ANNEALING, OptMethod.BFGS
+        OptMethod.BASIN_HOPPING, OptMethod.SIMULATED_ANNEALING, OptMethod.BFGS
     ]
 
     # print(
@@ -144,11 +152,11 @@ if __name__ == '__main__':
     DELAY_PROB = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
 
-    EXP_ARRIVAL1 = ExponentialArrival(lamb=11.0)
-    EXP_ARRIVAL2 = ExponentialArrival(lamb=9.0)
+    EXP_ARRIVAL1 = ExponentialArrival(lamb=5.0)
+    EXP_ARRIVAL2 = ExponentialArrival(lamb=4.0)
 
-    CONST_RATE1 = ConstantRate(rate=5.0)
-    CONST_RATE2 = ConstantRate(rate=4.0)
+    CONST_RATE1 = ConstantRate(rate=3.0)
+    CONST_RATE2 = ConstantRate(rate=2.0)
 
     ARR_LIST = [EXP_ARRIVAL1, EXP_ARRIVAL2]
     SER_LIST = [CONST_RATE1, CONST_RATE2]
@@ -158,6 +166,4 @@ if __name__ == '__main__':
 
     print(
         compare_optimization(
-            setting=SETTING2,
-            opt_methods=OPT_METHODS,
-            number_l=1))
+            setting=SETTING2, opt_methods=OPT_METHODS, number_l=1))
