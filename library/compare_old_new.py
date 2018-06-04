@@ -78,6 +78,25 @@ def compute_improvement(setting: SettingNew,
         if new_bound > standard_bound:
             new_bound = standard_bound
 
+    elif opt_method == OptMethod.BASIN_HOPPING:
+        theta_start = 0.5
+
+        start_list = [theta_start]
+
+        standard_bound = Optimize(
+            setting=setting, print_x=print_x).basin_hopping(
+                start_list=start_list)
+
+        start_list_new = [theta_start] + [1.0] * number_l
+
+        new_bound = OptimizeNew(
+            setting_new=setting, print_x=print_x).basin_hopping(
+                start_list=start_list_new)
+
+        # This part is there to overcome opt_method issues
+        if new_bound > standard_bound:
+            new_bound = standard_bound
+
     elif opt_method == OptMethod.SIMULATED_ANNEALING:
         simul_anneal_param = SimulAnnealing()
         theta_start = 0.5
