@@ -14,64 +14,77 @@ from nc_processes.arrival_distribution import (LeakyBucketMassOne,
                                                LeakyBucketMassTwoExact,
                                                TokenBucketConstant)
 from nc_processes.service_distribution import ConstantRate
+from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
 
 
 def regulated_comparison(aggregation: int, sigma_single: float,
                          rho_single: float, service_rate: float,
-                         perform_param: PerformParameter) -> tuple:
+                         perform_param: PerformParameter,
+                         opt_method: OptMethod) -> tuple:
     constant_rate_server = ConstantRate(service_rate)
     tb_const = TokenBucketConstant(
         sigma_const=sigma_single, rho_const=rho_single, n=aggregation)
 
-    bound_list = [(0.05, 15.0)]
-    delta = 0.05
     print_x = False
 
-    dnc_fifo_single = DNCFIFODelay(
+    dnc_fifo_single: float = DNCFIFODelay(
         token_bucket_constant=tb_const,
         constant_rate=constant_rate_server).bound()
 
     const_single = SingleServerPerform(
         arr=tb_const, ser=constant_rate_server, perform_param=perform_param)
-    const_opt = Optimize(
-        setting=const_single, print_x=print_x).grid_search(
-            bound_list=bound_list, delta=delta)
 
     leaky_mass_1 = SingleServerPerform(
         arr=LeakyBucketMassOne(
             sigma_single=sigma_single, rho_single=rho_single, n=aggregation),
         ser=constant_rate_server,
         perform_param=perform_param)
-    leaky_mass_1 = Optimize(
-        setting=leaky_mass_1, print_x=print_x).grid_search(
-            bound_list=bound_list, delta=delta)
 
     leaky_mass_2 = SingleServerPerform(
         arr=LeakyBucketMassTwo(
             sigma_single=sigma_single, rho_single=rho_single, n=aggregation),
         ser=constant_rate_server,
         perform_param=perform_param)
-    leaky_mass_2_opt = Optimize(
-        setting=leaky_mass_2, print_x=print_x).grid_search(
-            bound_list=bound_list, delta=delta)
 
     exact_mass_2 = SingleServerPerform(
         arr=LeakyBucketMassTwoExact(
             sigma_single=sigma_single, rho_single=rho_single, n=aggregation),
         ser=constant_rate_server,
         perform_param=perform_param)
-    exact_mass_2_opt = Optimize(
-        setting=exact_mass_2, print_x=print_x).grid_search(
+
+    bound_list = [(0.05, 15.0)]
+    delta = 0.05
+
+    if opt_method == OptMethod.GRID_SEARCH:
+        const_opt = Optimize(
+            setting=const_single, print_x=print_x).grid_search(
             bound_list=bound_list, delta=delta)
 
-    return dnc_fifo_single, const_opt, leaky_mass_1, leaky_mass_2_opt, exact_mass_2_opt
+        leaky_mass_1_opt = Optimize(
+            setting=leaky_mass_1, print_x=print_x).grid_search(
+            bound_list=bound_list, delta=delta)
+
+        leaky_mass_2_opt = Optimize(
+            setting=leaky_mass_2, print_x=print_x).grid_search(
+            bound_list=bound_list, delta=delta)
+
+        exact_mass_2_opt = Optimize(
+            setting=exact_mass_2, print_x=print_x).grid_search(
+            bound_list=bound_list, delta=delta)
+
+    else:
+        raise NameError("Optimization parameter {0} is infeasible".format(
+            opt_method.name))
+
+    return dnc_fifo_single, const_opt, leaky_mass_1_opt, leaky_mass_2_opt, exact_mass_2_opt
 
 
 def compare_aggregation(aggregations: List[int], sigma_single: float,
                         rho_single: float, service_rate: float,
-                        perform_param: PerformParameter) -> pd.DataFrame:
+                        perform_param: PerformParameter,
+                        opt_method: OptMethod) -> pd.DataFrame:
     dnc_fifo_single = [0.0] * len(aggregations)
     const_opt = [0.0] * len(aggregations)
     leaky_mass_1 = [0.0] * len(aggregations)
@@ -81,11 +94,12 @@ def compare_aggregation(aggregations: List[int], sigma_single: float,
     for i, agg in enumerate(aggregations):
         dnc_fifo_single[i], const_opt[i], leaky_mass_1[i], leaky_mass_2_opt[
             i], exact_mass_2_opt[i] = regulated_comparison(
-                aggregation=agg,
-                sigma_single=sigma_single,
-                rho_single=rho_single,
-                service_rate=service_rate * agg,
-                perform_param=perform_param)
+            aggregation=agg,
+            sigma_single=sigma_single,
+            rho_single=rho_single,
+            service_rate=service_rate * agg,
+            perform_param=perform_param,
+            opt_method=opt_method)
 
     results_df = pd.DataFrame(
         {
@@ -97,9 +111,9 @@ def compare_aggregation(aggregations: List[int], sigma_single: float,
         },
         index=aggregations)
 
-    filename = "regulated_single_{0}_sigma_{1}_rho_{2}_utilization_{3}".format(
+    filename = "regulated_single_{0}_sigma_{1}_rho_{2}_utilization_{3}_{4}".format(
         perform_param.to_string(), str(sigma_single), str(rho_single),
-        str("%.2f" % (rho_single / service_rate)))
+        str("%.2f" % (rho_single / service_rate)), opt_method.name)
 
     results_df.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -109,7 +123,8 @@ def compare_aggregation(aggregations: List[int], sigma_single: float,
 
 def compare_probability(aggregation: int, sigma_single: float,
                         rho_single: float, service_rate: float,
-                        perform_list: PerformParamList) -> pd.DataFrame:
+                        perform_list: PerformParamList,
+                        opt_method: OptMethod) -> pd.DataFrame:
     dnc_fifo_single = [0.0] * len(perform_list.values_list)
     const_opt = [0.0] * len(perform_list.values_list)
     leaky_mass_1 = [0.0] * len(perform_list.values_list)
@@ -119,11 +134,12 @@ def compare_probability(aggregation: int, sigma_single: float,
     for _i in range(len(perform_list.values_list)):
         dnc_fifo_single[_i], const_opt[_i], leaky_mass_1[_i], leaky_mass_2_opt[
             _i], exact_mass_2_opt[_i] = regulated_comparison(
-                aggregation=aggregation,
-                sigma_single=sigma_single,
-                rho_single=rho_single,
-                service_rate=service_rate * aggregation,
-                perform_param=perform_list.get_parameter_at_i(_i))
+            aggregation=aggregation,
+            sigma_single=sigma_single,
+            rho_single=rho_single,
+            service_rate=service_rate * aggregation,
+            perform_param=perform_list.get_parameter_at_i(_i),
+            opt_method=opt_method)
 
     results_df = pd.DataFrame(
         {
@@ -135,9 +151,10 @@ def compare_probability(aggregation: int, sigma_single: float,
         },
         index=perform_list.values_list)
 
-    filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_{3}_utilization_{4}".format(
+    filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_{3}_utilization_{4}_{5}".format(
         perform_list.perform_metric.name, aggregation, str(sigma_single),
-        str(rho_single), str("%.2f" % (rho_single / service_rate)))
+        str(rho_single), str("%.2f" % (rho_single / service_rate)),
+        opt_method.name)
 
     results_df.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -147,7 +164,7 @@ def compare_probability(aggregation: int, sigma_single: float,
 
 if __name__ == '__main__':
     DELAY6 = PerformParameter(
-        perform_metric=PerformMetric.DELAY, value=10**(-6))
+        perform_metric=PerformMetric.DELAY, value=10 ** (-6))
 
     NUMBER_AGGREGATIONS = [
         1, 5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 350
@@ -164,13 +181,15 @@ if __name__ == '__main__':
                 sigma_single=SIGMA,
                 rho_single=RHO_SINGLE,
                 service_rate=SERVICE_RATE,
-                perform_param=DELAY6))
+                perform_param=DELAY6,
+                opt_method=OptMethod.GRID_SEARCH))
 
     PERFORM_LIST = PerformParamList(
         perform_metric=PerformMetric.DELAY,
         values_list=[
-            10**(-1), 10**(-3), 10**(-6), 10**(-9), 10**(-12), 10**(-15), 10
-            **(-18), 10**(-21), 10**(-24), 10**(-27), 10**(-30)
+            10 ** (-1), 10 ** (-3), 10 ** (-6), 10 ** (-9), 10 ** (-12),
+            10 ** (-15), 10
+            ** (-18), 10 ** (-21), 10 ** (-24), 10 ** (-27), 10 ** (-30)
         ])
 
     for SIGMA in SIGMA_VALUES:
@@ -180,4 +199,5 @@ if __name__ == '__main__':
                 sigma_single=SIGMA,
                 rho_single=RHO_SINGLE,
                 service_rate=SERVICE_RATE,
-                perform_list=PERFORM_LIST))
+                perform_list=PERFORM_LIST,
+                opt_method=OptMethod.GRID_SEARCH))
