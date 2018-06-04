@@ -19,11 +19,10 @@ from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
 
-def csv_single_server_param(arrival: ArrivalDistribution,
-                            service: ServiceDistribution,
-                            perform_param: PerformParameter,
-                            opt_method: OptMethod,
-                            mc_dist: MonteCarloDist) -> dict:
+def csv_single_server_param(
+        arrival: ArrivalDistribution, service: ServiceDistribution,
+        perform_param: PerformParameter, opt_method: OptMethod,
+        mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
     total_iterations = 10**4
     metric = "relative"

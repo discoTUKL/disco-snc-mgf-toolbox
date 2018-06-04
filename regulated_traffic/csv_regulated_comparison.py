@@ -60,19 +60,19 @@ def regulated_comparison(aggregation: int, sigma_single: float,
     if opt_method == OptMethod.GRID_SEARCH:
         const_opt = Optimize(
             setting=const_single, print_x=print_x).grid_search(
-            bound_list=bound_list, delta=delta)
+                bound_list=bound_list, delta=delta)
 
         leaky_mass_1_opt = Optimize(
             setting=leaky_mass_1, print_x=print_x).grid_search(
-            bound_list=bound_list, delta=delta)
+                bound_list=bound_list, delta=delta)
 
         leaky_mass_2_opt = Optimize(
             setting=leaky_mass_2, print_x=print_x).grid_search(
-            bound_list=bound_list, delta=delta)
+                bound_list=bound_list, delta=delta)
 
         exact_mass_2_opt = Optimize(
             setting=exact_mass_2, print_x=print_x).grid_search(
-            bound_list=bound_list, delta=delta)
+                bound_list=bound_list, delta=delta)
 
     else:
         raise NameError("Optimization parameter {0} is infeasible".format(
@@ -94,12 +94,12 @@ def compare_aggregation(aggregations: List[int], sigma_single: float,
     for i, agg in enumerate(aggregations):
         dnc_fifo_single[i], const_opt[i], leaky_mass_1[i], leaky_mass_2_opt[
             i], exact_mass_2_opt[i] = regulated_comparison(
-            aggregation=agg,
-            sigma_single=sigma_single,
-            rho_single=rho_single,
-            service_rate=service_rate * agg,
-            perform_param=perform_param,
-            opt_method=opt_method)
+                aggregation=agg,
+                sigma_single=sigma_single,
+                rho_single=rho_single,
+                service_rate=service_rate * agg,
+                perform_param=perform_param,
+                opt_method=opt_method)
 
     results_df = pd.DataFrame(
         {
@@ -134,12 +134,12 @@ def compare_probability(aggregation: int, sigma_single: float,
     for _i in range(len(perform_list.values_list)):
         dnc_fifo_single[_i], const_opt[_i], leaky_mass_1[_i], leaky_mass_2_opt[
             _i], exact_mass_2_opt[_i] = regulated_comparison(
-            aggregation=aggregation,
-            sigma_single=sigma_single,
-            rho_single=rho_single,
-            service_rate=service_rate * aggregation,
-            perform_param=perform_list.get_parameter_at_i(_i),
-            opt_method=opt_method)
+                aggregation=aggregation,
+                sigma_single=sigma_single,
+                rho_single=rho_single,
+                service_rate=service_rate * aggregation,
+                perform_param=perform_list.get_parameter_at_i(_i),
+                opt_method=opt_method)
 
     results_df = pd.DataFrame(
         {
@@ -164,7 +164,7 @@ def compare_probability(aggregation: int, sigma_single: float,
 
 if __name__ == '__main__':
     DELAY6 = PerformParameter(
-        perform_metric=PerformMetric.DELAY, value=10 ** (-6))
+        perform_metric=PerformMetric.DELAY, value=10**(-6))
 
     NUMBER_AGGREGATIONS = [
         1, 5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 350
@@ -187,9 +187,8 @@ if __name__ == '__main__':
     PERFORM_LIST = PerformParamList(
         perform_metric=PerformMetric.DELAY,
         values_list=[
-            10 ** (-1), 10 ** (-3), 10 ** (-6), 10 ** (-9), 10 ** (-12),
-            10 ** (-15), 10
-            ** (-18), 10 ** (-21), 10 ** (-24), 10 ** (-27), 10 ** (-30)
+            10**(-1), 10**(-3), 10**(-6), 10**(-9), 10**(-12), 10**(-15), 10
+            **(-18), 10**(-21), 10**(-24), 10**(-27), 10**(-30)
         ])
 
     for SIGMA in SIGMA_VALUES:
