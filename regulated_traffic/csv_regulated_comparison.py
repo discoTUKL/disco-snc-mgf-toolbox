@@ -9,9 +9,10 @@ from dnc.dnc_fifo_delay import DNCFIFODelay
 from library.perform_param_list import PerformParamList
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.arrival_distribution import (
-    LeakyBucketMassOne, LeakyBucketMassTwo, LeakyBucketMassTwoExact,
-    TokenBucketConstant)
+from nc_processes.arrival_distribution import (LeakyBucketMassOne,
+                                               LeakyBucketMassTwo,
+                                               LeakyBucketMassTwoExact,
+                                               TokenBucketConstant)
 from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -210,9 +211,9 @@ if __name__ == '__main__':
 
     RHO_SINGLE = 0.1
     SERVICE_RATE = 0.12
-    SIGMA_VALUES = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 18.0, 20.0]
+    SIGMA_VALUES_1 = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 18.0, 20.0]
 
-    for SIGMA in SIGMA_VALUES:
+    for SIGMA in SIGMA_VALUES_1:
         print(
             compare_aggregation(
                 aggregations=NUMBER_AGGREGATIONS,
@@ -225,26 +226,28 @@ if __name__ == '__main__':
     PERFORM_LIST = PerformParamList(
         perform_metric=PerformMetric.DELAY,
         values_list=[
-            10**(-1), 10**(-3), 10**(-6), 10**(-9), 10**(-12), 10**(-15), 10
-            **(-18), 10**(-21), 10**(-24), 10**(-27), 10**(-30)
+            10**(-3), 10**(-6), 10**(-9), 10**(-12), 10**(-15), 10**(-18),
+            10**(-21), 10**(-24), 10**(-27), 10**(-30)
         ])
 
-    for SIGMA in SIGMA_VALUES:
+    SIGMA_VALUES_2 = [3.0, 5.0, 10.0, 15.0, 18.0, 20.0, 50.0, 100.0]
+
+    for SIGMA in SIGMA_VALUES_2:
         print(
             compare_probability(
-                aggregation=15,
+                aggregation=10,
                 sigma_single=SIGMA,
                 rho_single=RHO_SINGLE,
                 service_rate=SERVICE_RATE,
                 perform_list=PERFORM_LIST,
                 opt_method=OptMethod.GRID_SEARCH))
 
-    SIGMAS = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 18.0, 20.0]
+    SIGMA_VALUES_3 = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 18.0, 20.0]
 
     print(
         compare_sigma(
             aggregation=200,
-            sigmas=SIGMAS,
+            sigmas=SIGMA_VALUES_3,
             rho_single=RHO_SINGLE,
             service_rate=SERVICE_RATE,
             perform_param=DELAY6,

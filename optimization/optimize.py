@@ -223,7 +223,7 @@ class Optimize(object):
             print("simulated annealing optimal x: ", param_best)
 
         return optimum_best
-    
+
     def differential_evolution(self, bound_list: List[tuple]) -> float:
         """
         Differential Evolution optimization from the sciPy package.
