@@ -206,7 +206,7 @@ if __name__ == '__main__':
         perform_metric=PerformMetric.DELAY, value=10**(-6))
 
     NUMBER_AGGREGATIONS = [
-        1, 5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 350
+        1, 5, 10, 15, 20, 25, 30, 35, 40, 50
     ]
 
     RHO_SINGLE = 0.1
