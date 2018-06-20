@@ -1,5 +1,4 @@
-"""Implements performance bounds"""
-# TODO: add discretized version for continuous distributions
+"""Performance bounds"""
 
 from math import exp, log
 
