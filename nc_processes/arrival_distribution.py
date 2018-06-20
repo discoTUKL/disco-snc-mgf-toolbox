@@ -28,9 +28,9 @@ class ArrivalDistribution(Arrival):
         pass
 
     @abstractmethod
-    def discrete_dist(self) -> bool:
+    def is_discrete(self) -> bool:
         """
-        :return true if the arrival distribution is discrete, false if not
+        :return True if the arrival distribution is discrete, False if not
         """
         pass
 
@@ -78,7 +78,7 @@ class ExponentialArrival(ArrivalDistribution):
 
         return (self.n / theta) * log(self.lamb / (self.lamb - theta))
 
-    def discrete_dist(self) -> bool:
+    def is_discrete(self) -> bool:
         return True
 
     def to_string(self) -> str:
@@ -110,7 +110,7 @@ class MMOO(ArrivalDistribution):
         return self.n * (-bb + sqrt(
             (bb**2) + 4 * self.mu * theta * self.burst)) / (2 * theta)
 
-    def discrete_dist(self) -> bool:
+    def is_discrete(self) -> bool:
         return False
 
     def to_string(self) -> str:
@@ -143,7 +143,7 @@ class LeakyBucketMassOne(ArrivalDistribution):
 
         return self.n * self.rho_single
 
-    def discrete_dist(self) -> bool:
+    def is_discrete(self) -> bool:
         return True
 
     def to_string(self) -> str:
@@ -180,7 +180,7 @@ class LeakyBucketMassTwo(ArrivalDistribution):
 
         return self.n * self.rho_single
 
-    def discrete_dist(self) -> bool:
+    def is_discrete(self) -> bool:
         return True
 
     def to_string(self) -> str:
@@ -218,7 +218,7 @@ class LeakyBucketMassTwoExact(ArrivalDistribution):
 
         return self.n * self.rho_single
 
-    def discrete_dist(self) -> bool:
+    def is_discrete(self) -> bool:
         return True
 
     def to_string(self) -> str:
@@ -246,7 +246,7 @@ class TokenBucketConstant(ArrivalDistribution):
 
         return self.n * self.rho_const
 
-    def discrete_dist(self) -> bool:
+    def is_discrete(self) -> bool:
         return True
 
     def to_string(self) -> str:

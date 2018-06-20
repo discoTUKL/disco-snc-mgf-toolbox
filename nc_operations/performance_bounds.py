@@ -1,6 +1,6 @@
 """Performance bounds"""
 
-from math import exp, log
+from math import exp, inf, log
 
 from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import is_equal
@@ -120,8 +120,9 @@ class DelayProb(object):
         rho_arr_ser = self.arr.rho(theta) + self.ser.rho(theta)
 
         if is_equal(self.arr.rho(theta), -self.ser.rho(theta)):
-            return exp(theta * (
-                self.ser.rho(theta) * delay + sigma_arr_ser)) * (tt + 1)
+            return exp(
+                theta *
+                (self.ser.rho(theta) * delay + sigma_arr_ser)) * (tt + 1)
 
         elif self.arr.rho(theta) > -self.ser.rho(theta):
             return exp(theta *
@@ -196,9 +197,14 @@ class Output(object):
         sigma_arr_ser = self.arr.sigma(theta) + self.ser.sigma(theta)
         rho_arr_ser = self.arr.rho(theta) + self.ser.rho(theta)
 
-        return exp(theta *
-                   (self.arr.rho(theta) * delta_time + sigma_arr_ser)) / (
-                       1 - exp(theta * rho_arr_ser))
+        numerator = exp(
+            theta * (self.arr.rho(theta) * delta_time + sigma_arr_ser))
+        denominator = 1 - exp(theta * rho_arr_ser)
+
+        if is_equal(denominator, 0):
+            return inf
+
+        return numerator / denominator
 
     def bound_t(self, theta: float, tt: int, ss: int) -> float:
         """Implements time dependent method"""
@@ -211,8 +217,9 @@ class Output(object):
                                 (tt - ss) + sigma_arr_ser)) * (ss + 1)
 
         elif self.arr.rho(theta) > -self.ser.rho(theta):
-            return exp(theta * (self.arr.rho(theta) * tt + self.ser.rho(
-                theta) * ss + sigma_arr_ser) / 1 - exp(-theta * rho_arr_ser))
+            return exp(theta * (self.arr.rho(theta) * tt +
+                                self.ser.rho(theta) * ss + sigma_arr_ser) / 1 -
+                       exp(-theta * rho_arr_ser))
 
         else:
             return self.bound(theta=theta, delta_time=tt - ss)

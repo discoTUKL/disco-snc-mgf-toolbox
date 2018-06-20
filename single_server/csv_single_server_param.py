@@ -159,23 +159,25 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_dist_name=MCName.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(MCName.EXPONENTIAL, [1.0])
 
-    print(
-        csv_single_server_param(
-            arrival=EXP_ARRIVAL,
-            service=CONST_RATE,
-            perform_param=OUTPUT_TIME4,
-            opt_method=COMMON_OPTIMIZATION,
-            mc_dist=MC_UNIF20))
-    print(
-        csv_single_server_param(
-            arrival=MMOO_ARRIVAL,
-            service=CONST_RATE,
-            perform_param=OUTPUT_TIME4,
-            opt_method=COMMON_OPTIMIZATION,
-            mc_dist=MC_UNIF20))
-
     def fun1():
-        """Auxiliary function for parallelization"""
+        print(
+            csv_single_server_param(
+                arrival=EXP_ARRIVAL,
+                service=CONST_RATE,
+                perform_param=OUTPUT_TIME4,
+                opt_method=COMMON_OPTIMIZATION,
+                mc_dist=MC_UNIF20))
+
+    def fun2():
+        print(
+            csv_single_server_param(
+                arrival=MMOO_ARRIVAL,
+                service=CONST_RATE,
+                perform_param=OUTPUT_TIME4,
+                opt_method=COMMON_OPTIMIZATION,
+                mc_dist=MC_UNIF20))
+
+    def fun3():
         print(
             csv_single_server_param(
                 arrival=EXP_ARRIVAL,
@@ -184,8 +186,7 @@ if __name__ == '__main__':
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))
 
-    def fun2():
-        """Auxiliary function for parallelization"""
+    def fun4():
         print(
             csv_single_server_param(
                 arrival=MMOO_ARRIVAL,
@@ -195,7 +196,6 @@ if __name__ == '__main__':
                 mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
-        """Runs auxiliary functions in parallel"""
         proc = []
         for func in funcs:
             process_instance = Process(target=func)
@@ -204,7 +204,7 @@ if __name__ == '__main__':
         for process_instance in proc:
             process_instance.join()
 
-    run_in_parallel(fun1, fun2)
+    run_in_parallel(fun1, fun2, fun3, fun4)
 
     # print(
     #     grid_param_single_exp(

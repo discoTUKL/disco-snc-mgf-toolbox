@@ -41,27 +41,24 @@ class FatCrossPerform(SettingNew):
             arr=aggregated_cross, ser=self.ser_list[0])
 
         if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
-            if self.arr_list[0].discrete_dist() is True:
-                fat_cross_delay_prob = DelayProb(
-                    arr=self.arr_list[0], ser=ser1_left)
-                return fat_cross_delay_prob.bound(
-                    theta=theta, delay=self.perform_param.value)
+            if self.arr_list[0].is_discrete():
+                return DelayProb(
+                    arr=self.arr_list[0], ser=ser1_left).bound(
+                        theta=theta, delay=self.perform_param.value)
             else:
-                fat_cross_delay_prob_discr = DelayProbDiscretized(
-                    arr=self.arr_list[0], ser=ser1_left)
-                return fat_cross_delay_prob_discr.bound(
-                    theta=theta, delay=self.perform_param.value)
+                return DelayProbDiscretized(
+                    arr=self.arr_list[0], ser=ser1_left).bound(
+                        theta=theta, delay=self.perform_param.value)
 
         elif self.perform_param.perform_metric == PerformMetric.DELAY:
-            if self.arr_list[0].discrete_dist() is True:
-                fat_cross_delay = Delay(arr=self.arr_list[0], ser=ser1_left)
-                return fat_cross_delay.bound(
-                    theta=theta, prob_d=self.perform_param.value)
+            if self.arr_list[0].is_discrete():
+                return Delay(
+                    arr=self.arr_list[0], ser=ser1_left).bound(
+                        theta=theta, prob_d=self.perform_param.value)
             else:
-                fat_cross_delay_discr = DelayDiscretized(
-                    arr=self.arr_list[0], ser=ser1_left)
-                return fat_cross_delay_discr.bound(
-                    theta=theta, prob_d=self.perform_param.value)
+                return DelayDiscretized(
+                    arr=self.arr_list[0], ser=ser1_left).bound(
+                        theta=theta, prob_d=self.perform_param.value)
 
         else:
             raise NameError(self.perform_param.perform_metric +
@@ -86,28 +83,24 @@ class FatCrossPerform(SettingNew):
             arr=aggregated_cross, ser=self.ser_list[0])
 
         if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
-            if self.arr_list[0].discrete_dist() is True:
-                fat_cross_new_delay_prob = DelayProb(
-                    arr=self.arr_list[0], ser=ser1_left)
-                return fat_cross_new_delay_prob.bound(
-                    theta=param_list[0], delay=self.perform_param.value)
+            if self.arr_list[0].is_discrete():
+                return DelayProb(
+                    arr=self.arr_list[0], ser=ser1_left).bound(
+                        theta=param_list[0], delay=self.perform_param.value)
             else:
-                fat_cross_new_delay_prob = DelayProbDiscretized(
-                    arr=self.arr_list[0], ser=ser1_left)
-                return fat_cross_new_delay_prob.bound(
-                    theta=param_list[0], delay=self.perform_param.value)
+                return DelayProbDiscretized(
+                    arr=self.arr_list[0], ser=ser1_left).bound(
+                        theta=param_list[0], delay=self.perform_param.value)
 
         elif self.perform_param.perform_metric == PerformMetric.DELAY:
-            if self.arr_list[0].discrete_dist() is True:
-                fat_cross_new_delay = Delay(
-                    arr=self.arr_list[0], ser=ser1_left)
-                return fat_cross_new_delay.bound(
-                    theta=param_list[0], prob_d=self.perform_param.value)
+            if self.arr_list[0].is_discrete():
+                return Delay(
+                    arr=self.arr_list[0], ser=ser1_left).bound(
+                        theta=param_list[0], prob_d=self.perform_param.value)
             else:
-                fat_cross_new_delay = DelayDiscretized(
-                    arr=self.arr_list[0], ser=ser1_left)
-                return fat_cross_new_delay.bound(
-                    theta=param_list[0], prob_d=self.perform_param.value)
+                return DelayDiscretized(
+                    arr=self.arr_list[0], ser=ser1_left).bound(
+                        theta=param_list[0], prob_d=self.perform_param.value)
 
         else:
             raise NameError(self.perform_param.perform_metric.name +

@@ -1,8 +1,9 @@
 """Performance bounds for continuous Process (need discretization)"""
 
-from math import exp, log
+from math import exp, inf, log
 
 from library.exceptions import ParameterOutOfBounds
+from library.helper_functions import is_equal
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
@@ -123,6 +124,12 @@ class OutputDiscretized(object):
         sigma_arr_ser = self.arr.sigma(theta) + self.ser.sigma(theta)
         rho_arr_ser = self.arr.rho(theta) + self.ser.rho(theta)
 
-        return exp(theta *
-                   (self.arr.rho(theta) * (delta_time + 1) +
-                    sigma_arr_ser)) / (1 - exp(theta * rho_arr_ser))
+        numerator = exp(
+            theta * (self.arr.rho(theta) * (delta_time + 1) + sigma_arr_ser))
+
+        denominator = 1 - exp(theta * rho_arr_ser)
+
+        if is_equal(denominator, 0):
+            return inf
+
+        return numerator / denominator
