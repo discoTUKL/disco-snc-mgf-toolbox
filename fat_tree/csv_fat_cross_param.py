@@ -142,15 +142,6 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_dist_name=MCName.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(MCName.EXPONENTIAL, [1.0])
 
-    print(
-        csv_fat_cross_param(
-            arrival=MMOO_ARRIVAL1,
-            service=CONST_RATE1,
-            number_servers=2,
-            perform_param=DELAY_PROB10,
-            opt_method=COMMON_OPTIMIZATION,
-            mc_dist=MC_UNIF20))
-
     def fun1():
         print(
             csv_fat_cross_param(
@@ -171,7 +162,18 @@ if __name__ == '__main__':
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))
 
+
     def fun3():
+        print(
+            csv_fat_cross_param(
+                arrival=MMOO_ARRIVAL1,
+                service=CONST_RATE1,
+                number_servers=2,
+                perform_param=DELAY_PROB10,
+                opt_method=COMMON_OPTIMIZATION,
+                mc_dist=MC_UNIF20))
+
+    def fun4():
         print(
             csv_fat_cross_param(
                 arrival=EXP_ARRIVAL1,
@@ -191,4 +193,4 @@ if __name__ == '__main__':
         for process_instance in proc:
             process_instance.join()
 
-    run_in_parallel(fun1, fun2, fun3)
+    run_in_parallel(fun1, fun2, fun3, fun4)
