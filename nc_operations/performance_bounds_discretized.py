@@ -124,5 +124,5 @@ class OutputDiscretized(object):
         rho_arr_ser = self.arr.rho(theta) + self.ser.rho(theta)
 
         return exp(theta *
-                   (self.arr.rho(theta) * delta_time + self.arr.rho(theta) +
+                   (self.arr.rho(theta) * (delta_time + 1) +
                     sigma_arr_ser)) / (1 - exp(theta * rho_arr_ser))

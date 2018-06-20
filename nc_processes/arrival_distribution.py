@@ -28,6 +28,13 @@ class ArrivalDistribution(Arrival):
         pass
 
     @abstractmethod
+    def discrete_dist(self) -> bool:
+        """
+        :return true if the arrival distribution is discrete, false if not
+        """
+        pass
+
+    @abstractmethod
     def to_string(self) -> str:
         """
         :return string
@@ -71,6 +78,9 @@ class ExponentialArrival(ArrivalDistribution):
 
         return (self.n / theta) * log(self.lamb / (self.lamb - theta))
 
+    def discrete_dist(self) -> bool:
+        return True
+
     def to_string(self) -> str:
         return self.__class__.__name__ + "_lambda=" + str(
             self.lamb) + "_n=" + str(self.n)
@@ -99,6 +109,9 @@ class MMOO(ArrivalDistribution):
 
         return self.n * (-bb + sqrt(
             (bb**2) + 4 * self.mu * theta * self.burst)) / (2 * theta)
+
+    def discrete_dist(self) -> bool:
+        return False
 
     def to_string(self) -> str:
         return self.__class__.__name__ + "_mu=" + str(
@@ -129,6 +142,9 @@ class LeakyBucketMassOne(ArrivalDistribution):
             raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
         return self.n * self.rho_single
+
+    def discrete_dist(self) -> bool:
+        return True
 
     def to_string(self) -> str:
         return self.__class__.__name__ + "_sigma=" + str(
@@ -163,6 +179,9 @@ class LeakyBucketMassTwo(ArrivalDistribution):
             raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
         return self.n * self.rho_single
+
+    def discrete_dist(self) -> bool:
+        return True
 
     def to_string(self) -> str:
         return self.__class__.__name__ + "_sigma=" + str(
@@ -199,6 +218,9 @@ class LeakyBucketMassTwoExact(ArrivalDistribution):
 
         return self.n * self.rho_single
 
+    def discrete_dist(self) -> bool:
+        return True
+
     def to_string(self) -> str:
         return self.__class__.__name__ + "_sigma=" + str(
             self.sigma_single) + "_rho=" + str(self.rho) + "_n=" + str(self.n)
@@ -223,6 +245,9 @@ class TokenBucketConstant(ArrivalDistribution):
             raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
         return self.n * self.rho_const
+
+    def discrete_dist(self) -> bool:
+        return True
 
     def to_string(self) -> str:
         return self.__class__.__name__ + "_sigma=" + str(

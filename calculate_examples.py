@@ -40,19 +40,17 @@ if __name__ == '__main__':
         OptimizeNew(SINGLE_SERVER, print_x=True).pattern_search(
             start_list=[0.5, 1.0], delta=3, delta_min=0.01))
 
-    OUTPUT_TIME2 = PerformParameter(
-        perform_metric=PerformMetric.OUTPUT, value=2)
+    DELAY_PROB10 = PerformParameter(
+        perform_metric=PerformMetric.DELAY_PROB, value=10)
 
     SINGLE_SERVER2 = SingleServerPerform(
-        arr=MMOO(mu=0.7, lamb=0.4, burst=1),
+        arr=MMOO(mu=0.7, lamb=0.4, burst=1.2),
         ser=ConstantRate(rate=1),
-        perform_param=OUTPUT_TIME2)
+        perform_param=DELAY_PROB10)
+
     print(
         Optimize(SINGLE_SERVER2, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
-    print(
-        OptimizeNew(SINGLE_SERVER2, print_x=True).grid_search(
-            bound_list=[(0.1, 5.0), (0.9, 5.0)], delta=0.1))
 
     print("\n-------------------------------------------\n")
 
@@ -84,7 +82,7 @@ if __name__ == '__main__':
 
     print(EXAMPLE_REVERSE.get_bound(theta=0.3))
 
-    DELAY_PROB4 = PerformParameter(
+    DELAY_PROB10 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
 
     SER_LIST2: List[ServiceDistribution] = [
@@ -92,7 +90,7 @@ if __name__ == '__main__':
     ]
 
     EXAMPLE2 = FatCrossPerform(
-        arr_list=ARR_LIST, ser_list=SER_LIST2, perform_param=DELAY_PROB4)
+        arr_list=ARR_LIST, ser_list=SER_LIST2, perform_param=DELAY_PROB10)
 
     print(EXAMPLE2.get_bound(theta=0.3))
     print(EXAMPLE2.get_new_bound(param_list=[0.3, 3]))
