@@ -4,11 +4,8 @@ from typing import List
 
 from library.perform_parameter import PerformParameter
 from library.setting import Setting
+from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import Convolve, Leftover
-from nc_operations.perform_metric import PerformMetric
-from nc_operations.performance_bounds import Delay, DelayProb
-from nc_operations.performance_bounds_discretized import (DelayDiscretized,
-                                                          DelayProbDiscretized)
 from nc_processes.arrival import Arrival
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
@@ -44,4 +41,8 @@ class TandemSFA(Setting):
         for i in range(1, number_servers):
             s_net = Convolve(s_net, leftover_service_list[i])
 
-
+        return evaluate_single_hop(
+            foi=self.arr_list[0],
+            s_net=s_net,
+            theta=theta,
+            perform_param=self.perform_param)

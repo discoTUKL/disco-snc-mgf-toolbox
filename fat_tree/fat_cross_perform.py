@@ -31,7 +31,6 @@ class FatCrossPerform(SettingNew):
 
     def get_bound(self, theta: float) -> float:
         number_servers = len(self.arr_list)
-        foi = self.arr_list[0]
 
         output_list: List[Arrival] = [
             Deconvolve(arr=self.arr_list[i], ser=self.ser_list[i])
@@ -43,7 +42,7 @@ class FatCrossPerform(SettingNew):
         s_net: Service = Leftover(arr=aggregated_cross, ser=self.ser_list[0])
 
         return evaluate_single_hop(
-            foi=foi,
+            foi=self.arr_list[0],
             s_net=s_net,
             theta=theta,
             perform_param=self.perform_param)
@@ -53,8 +52,6 @@ class FatCrossPerform(SettingNew):
             raise NameError("Check number of parameters")
 
         number_servers = len(self.arr_list)
-        foi = self.arr_list[0]
-        theta = param_list[0]
 
         output_list: List[Arrival] = [
             DeconvolveLya(
@@ -68,9 +65,9 @@ class FatCrossPerform(SettingNew):
         s_net: Service = Leftover(arr=aggregated_cross, ser=self.ser_list[0])
 
         return evaluate_single_hop(
-            foi=foi,
+            foi=self.arr_list[0],
             s_net=s_net,
-            theta=theta,
+            theta=param_list[0],
             perform_param=self.perform_param)
 
     def to_string(self) -> str:

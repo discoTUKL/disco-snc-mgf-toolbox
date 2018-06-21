@@ -29,12 +29,9 @@ class SingleServerPerform(SettingNew):
         self.perform_param = perform_param
 
     def get_bound(self, theta: float) -> float:
-        foi = self.arr
-        s_net = self.ser
-
         return evaluate_single_hop(
-            foi=foi,
-            s_net=s_net,
+            foi=self.arr,
+            s_net=self.ser,
             theta=theta,
             perform_param=self.perform_param)
 
