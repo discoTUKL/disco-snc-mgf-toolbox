@@ -10,7 +10,7 @@ class SettingNew(Setting):
     the bounds"""
 
     @abstractmethod
-    def get_bound(self, theta: float) -> float:
+    def bound(self, theta: float) -> float:
         """
         standard bound
 
@@ -19,7 +19,7 @@ class SettingNew(Setting):
         pass
 
     @abstractmethod
-    def get_new_bound(self, param_list: List[float]) -> float:
+    def new_bound(self, param_list: List[float]) -> float:
         """
         new Lyapunov bound
 

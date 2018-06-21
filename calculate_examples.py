@@ -26,9 +26,9 @@ if __name__ == '__main__':
         ser=ConstantRate(rate=10.0),
         perform_param=OUTPUT_TIME6)
 
-    print(SINGLE_SERVER.get_bound(0.1))
+    print(SINGLE_SERVER.bound(0.1))
 
-    print(SINGLE_SERVER.get_new_bound([0.1, 2.7]))
+    print(SINGLE_SERVER.new_bound([0.1, 2.7]))
 
     print(
         Optimize(SINGLE_SERVER, print_x=True).grid_search(
@@ -75,8 +75,8 @@ if __name__ == '__main__':
 
     EXAMPLE = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB6)
-    print(EXAMPLE.get_bound(theta=0.3))
-    print(EXAMPLE.get_new_bound(param_list=[0.3, 1.5]))
+    print(EXAMPLE.bound(theta=0.3))
+    print(EXAMPLE.new_bound(param_list=[0.3, 1.5]))
 
     DELAY_TIME = PerformParameter(
         perform_metric=PerformMetric.DELAY, value=0.032)
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     EXAMPLE_REVERSE = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)
 
-    print(EXAMPLE_REVERSE.get_bound(theta=0.3))
+    print(EXAMPLE_REVERSE.bound(theta=0.3))
 
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
@@ -96,8 +96,8 @@ if __name__ == '__main__':
     EXAMPLE2 = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST2, perform_param=DELAY_PROB10)
 
-    print(EXAMPLE2.get_bound(theta=0.3))
-    print(EXAMPLE2.get_new_bound(param_list=[0.3, 3]))
+    print(EXAMPLE2.bound(theta=0.3))
+    print(EXAMPLE2.new_bound(param_list=[0.3, 3]))
 
     print(
         Optimize(EXAMPLE, print_x=True).grid_search_old(

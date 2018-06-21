@@ -6,7 +6,6 @@ from library.perform_parameter import PerformParameter
 from library.setting import Setting
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import Convolve, Leftover
-from nc_processes.arrival import Arrival
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
 from nc_processes.service_distribution import ServiceDistribution
@@ -26,19 +25,16 @@ class TandemSFA(Setting):
         self.arr_list = arr_list
         self.ser_list = ser_list
         self.perform_param = perform_param
+        self.number_servers = len(ser_list)
 
-    def get_bound(self, theta: float) -> float:
-        number_servers = len(self.ser_list)
-
-        foi: Arrival = self.arr_list[0]
-
+    def bound(self, theta: float) -> float:
         leftover_service_list: List[Service] = [
             Leftover(arr=self.arr_list[i + 1], ser=self.ser_list[i])
-            for i in range(number_servers)
+            for i in range(self.number_servers)
         ]
 
         s_net: Service = leftover_service_list[0]
-        for i in range(1, number_servers):
+        for i in range(1, self.number_servers):
             s_net = Convolve(s_net, leftover_service_list[i])
 
         return evaluate_single_hop(

@@ -32,19 +32,19 @@ class OptimizeNew(Optimize):
         # debug code:
 
         # if self.new:
-        #     res = self.setting.get_new_bound(param_list=param_list)
+        #     res = self.setting.new_bound(param_list=param_list)
         #
         # else:
-        #     res = self.setting.get_bound(theta=param_list[0])
+        #     res = self.setting.bound(theta=param_list[0])
 
         if self.new:
             try:
-                res = self.setting_bound.get_new_bound(param_list=param_list)
+                res = self.setting_bound.new_bound(param_list=param_list)
             except (ParameterOutOfBounds, OverflowError):
                 res = inf
         else:
             try:
-                res = self.setting_bound.get_bound(theta=param_list[0])
+                res = self.setting_bound.bound(theta=param_list[0])
             except (ParameterOutOfBounds, OverflowError):
                 res = inf
 

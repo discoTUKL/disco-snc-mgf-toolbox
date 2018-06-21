@@ -28,13 +28,12 @@ class FatCrossPerform(SettingNew):
         self.arr_list = arr_list
         self.ser_list = ser_list
         self.perform_param = perform_param
+        self.number_servers = len(ser_list)
 
-    def get_bound(self, theta: float) -> float:
-        number_servers = len(self.arr_list)
-
+    def bound(self, theta: float) -> float:
         output_list: List[Arrival] = [
             Deconvolve(arr=self.arr_list[i], ser=self.ser_list[i])
-            for i in range(1, number_servers)
+            for i in range(1, self.number_servers)
         ]
         # we use i + 1, since i = 0 is the foi
 
@@ -47,17 +46,15 @@ class FatCrossPerform(SettingNew):
             theta=theta,
             perform_param=self.perform_param)
 
-    def get_new_bound(self, param_list: List[float]) -> float:
+    def new_bound(self, param_list: List[float]) -> float:
         if len(param_list) != len(self.arr_list):
             raise NameError("Check number of parameters")
-
-        number_servers = len(self.arr_list)
 
         output_list: List[Arrival] = [
             DeconvolveLya(
                 arr=self.arr_list[i],
                 ser=self.ser_list[i],
-                l_lya=param_list[i]) for i in range(1, number_servers)
+                l_lya=param_list[i]) for i in range(1, self.number_servers)
         ]
         # we use i + 1, since i = 0 is the foi
 

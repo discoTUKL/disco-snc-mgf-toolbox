@@ -28,14 +28,14 @@ class SingleServerPerform(SettingNew):
         self.ser = ser
         self.perform_param = perform_param
 
-    def get_bound(self, theta: float) -> float:
+    def bound(self, theta: float) -> float:
         return evaluate_single_hop(
             foi=self.arr,
             s_net=self.ser,
             theta=theta,
             perform_param=self.perform_param)
 
-    def get_new_bound(self, param_list: List[float]) -> float:
+    def new_bound(self, param_list: List[float]) -> float:
         if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
             if self.arr.is_discrete():
                 return DelayProbLya(
@@ -69,12 +69,12 @@ if __name__ == '__main__':
     OUTPUT_4 = PerformParameter(perform_metric=PerformMetric.OUTPUT, value=4)
     EX_OUTPUT = SingleServerPerform(
         arr=EXP_ARRIVAL1, ser=CONST_RATE16, perform_param=OUTPUT_4)
-    print(EX_OUTPUT.get_bound(0.5))
-    print(EX_OUTPUT.get_new_bound([0.5, 1.2]))
+    print(EX_OUTPUT.bound(0.5))
+    print(EX_OUTPUT.new_bound([0.5, 1.2]))
 
     DELAY_PROB_4 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
     EX_DELAY_PROB = SingleServerPerform(
         arr=EXP_ARRIVAL1, ser=CONST_RATE16, perform_param=DELAY_PROB_4)
-    print(EX_DELAY_PROB.get_bound(0.5))
-    print(EX_DELAY_PROB.get_new_bound([0.5, 1.2]))
+    print(EX_DELAY_PROB.bound(0.5))
+    print(EX_DELAY_PROB.new_bound([0.5, 1.2]))

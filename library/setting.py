@@ -8,7 +8,7 @@ class Setting(ABC):
     the bounds"""
 
     @abstractmethod
-    def get_bound(self, theta: float) -> float:
+    def bound(self, theta: float) -> float:
         """
         standard bound
 
