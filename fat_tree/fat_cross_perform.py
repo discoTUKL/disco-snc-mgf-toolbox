@@ -5,11 +5,8 @@ from typing import List
 from library.perform_parameter import PerformParameter
 from library.setting_new import SettingNew
 from nc_operations.deconvolve_lya import DeconvolveLya
+from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateList, Deconvolve, Leftover
-from nc_operations.perform_metric import PerformMetric
-from nc_operations.performance_bounds import Delay, DelayProb
-from nc_operations.performance_bounds_discretized import (DelayDiscretized,
-                                                          DelayProbDiscretized)
 from nc_processes.arrival import Arrival
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
@@ -23,12 +20,18 @@ class FatCrossPerform(SettingNew):
                  ser_list: List[ServiceDistribution],
                  perform_param: PerformParameter) -> None:
         # The first element in these lists in dedicated to the foi
+        if len(arr_list) is not len(ser_list):
+            raise ValueError(
+                "number of arrivals {0} and servers {1} have to match".format(
+                    len(arr_list), len(ser_list)))
+
         self.arr_list = arr_list
         self.ser_list = ser_list
         self.perform_param = perform_param
 
     def get_bound(self, theta: float) -> float:
         number_servers = len(self.arr_list)
+        foi = self.arr_list[0]
 
         output_list: List[Arrival] = [
             Deconvolve(arr=self.arr_list[i], ser=self.ser_list[i])
@@ -37,38 +40,21 @@ class FatCrossPerform(SettingNew):
         # we use i + 1, since i = 0 is the foi
 
         aggregated_cross: Arrival = AggregateList(arr_list=output_list)
-        ser1_left: Service = Leftover(
-            arr=aggregated_cross, ser=self.ser_list[0])
+        s_net: Service = Leftover(arr=aggregated_cross, ser=self.ser_list[0])
 
-        if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
-            if self.arr_list[0].is_discrete():
-                return DelayProb(
-                    arr=self.arr_list[0], ser=ser1_left).bound(
-                        theta=theta, delay=self.perform_param.value)
-            else:
-                return DelayProbDiscretized(
-                    arr=self.arr_list[0], ser=ser1_left).bound(
-                        theta=theta, delay=self.perform_param.value)
-
-        elif self.perform_param.perform_metric == PerformMetric.DELAY:
-            if self.arr_list[0].is_discrete():
-                return Delay(
-                    arr=self.arr_list[0], ser=ser1_left).bound(
-                        theta=theta, prob_d=self.perform_param.value)
-            else:
-                return DelayDiscretized(
-                    arr=self.arr_list[0], ser=ser1_left).bound(
-                        theta=theta, prob_d=self.perform_param.value)
-
-        else:
-            raise NameError(self.perform_param.perform_metric +
-                            " is an infeasible performance metric")
+        return evaluate_single_hop(
+            foi=foi,
+            s_net=s_net,
+            theta=theta,
+            perform_param=self.perform_param)
 
     def get_new_bound(self, param_list: List[float]) -> float:
         if len(param_list) != len(self.arr_list):
             raise NameError("Check number of parameters")
 
         number_servers = len(self.arr_list)
+        foi = self.arr_list[0]
+        theta = param_list[0]
 
         output_list: List[Arrival] = [
             DeconvolveLya(
@@ -79,32 +65,13 @@ class FatCrossPerform(SettingNew):
         # we use i + 1, since i = 0 is the foi
 
         aggregated_cross: Arrival = AggregateList(arr_list=output_list)
-        ser1_left: Service = Leftover(
-            arr=aggregated_cross, ser=self.ser_list[0])
+        s_net: Service = Leftover(arr=aggregated_cross, ser=self.ser_list[0])
 
-        if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
-            if self.arr_list[0].is_discrete():
-                return DelayProb(
-                    arr=self.arr_list[0], ser=ser1_left).bound(
-                        theta=param_list[0], delay=self.perform_param.value)
-            else:
-                return DelayProbDiscretized(
-                    arr=self.arr_list[0], ser=ser1_left).bound(
-                        theta=param_list[0], delay=self.perform_param.value)
-
-        elif self.perform_param.perform_metric == PerformMetric.DELAY:
-            if self.arr_list[0].is_discrete():
-                return Delay(
-                    arr=self.arr_list[0], ser=ser1_left).bound(
-                        theta=param_list[0], prob_d=self.perform_param.value)
-            else:
-                return DelayDiscretized(
-                    arr=self.arr_list[0], ser=ser1_left).bound(
-                        theta=param_list[0], prob_d=self.perform_param.value)
-
-        else:
-            raise NameError(self.perform_param.perform_metric.name +
-                            " is an infeasible performance metric")
+        return evaluate_single_hop(
+            foi=foi,
+            s_net=s_net,
+            theta=theta,
+            perform_param=self.perform_param)
 
     def to_string(self) -> str:
         for arr in self.arr_list:

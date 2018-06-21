@@ -4,11 +4,8 @@ from typing import List
 
 from library.perform_parameter import PerformParameter
 from library.setting_new import SettingNew
+from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.perform_metric import PerformMetric
-from nc_operations.performance_bounds import Delay, DelayProb, Output
-from nc_operations.performance_bounds_discretized import (DelayDiscretized,
-                                                          DelayProbDiscretized,
-                                                          OutputDiscretized)
 from nc_operations.performance_bounds_lya import (DelayProbLya, OutputLya,
                                                   OutputLyaDiscretized)
 from nc_processes.arrival_distribution import (ArrivalDistribution,
@@ -32,39 +29,14 @@ class SingleServerPerform(SettingNew):
         self.perform_param = perform_param
 
     def get_bound(self, theta: float) -> float:
-        if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
-            if self.arr.is_discrete():
-                return DelayProb(
-                    arr=self.arr, ser=self.ser).bound(
-                        theta=theta, delay=self.perform_param.value)
-            else:
-                return DelayProbDiscretized(
-                    arr=self.arr, ser=self.ser).bound(
-                        theta=theta, delay=self.perform_param.value)
+        foi = self.arr
+        s_net = self.ser
 
-        elif self.perform_param.perform_metric == PerformMetric.DELAY:
-            if self.arr.is_discrete():
-                return Delay(
-                    arr=self.arr, ser=self.ser).bound(
-                        theta=theta, prob_d=self.perform_param.value)
-            else:
-                return DelayDiscretized(
-                    arr=self.arr, ser=self.ser).bound(
-                        theta=theta, prob_d=self.perform_param.value)
-
-        elif self.perform_param.perform_metric == PerformMetric.OUTPUT:
-            if self.arr.is_discrete():
-                return Output(
-                    arr=self.arr, ser=self.ser).bound(
-                        theta=theta, delta_time=self.perform_param.value)
-            else:
-                return OutputDiscretized(
-                    arr=self.arr, ser=self.ser).bound(
-                        theta=theta, delta_time=self.perform_param.value)
-
-        else:
-            raise NameError("{0} is an infeasible performance metric".format(
-                self.perform_param.perform_metric))
+        return evaluate_single_hop(
+            foi=foi,
+            s_net=s_net,
+            theta=theta,
+            perform_param=self.perform_param)
 
     def get_new_bound(self, param_list: List[float]) -> float:
         if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
