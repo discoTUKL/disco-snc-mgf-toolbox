@@ -1,4 +1,4 @@
-"""Compute output bound for various delta times and write into csv file"""
+"""Compute output bound and write into csv file"""
 
 import csv
 from typing import List
@@ -52,10 +52,10 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ServiceDistribution,
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).grid_search(
                     bound_list=[(0.1, 4.0), (0.9, 8.0)], delta=0.1)
+
         elif opt_method == OptMethod.PATTERN_SEARCH:
             bound[_i] = Optimize(setting=setting).pattern_search(
                 start_list=[0.5], delta=3.0, delta_min=0.01)
-
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).pattern_search(
                     start_list=[0.5, 2.0], delta=3.0, delta_min=0.01)
@@ -103,7 +103,7 @@ def csv_single_perform(arrival: ArrivalDistribution,
         raise NameError("This arrival process is not implemented")
 
     rate1 = list_of_parameters[1].rate
-    filename += list_of_parameters[1].get_constant_string(1)
+    filename += list_of_parameters[1].get_service_string(1)
 
     data_frame = single_server_df(
         arr1=arr1,

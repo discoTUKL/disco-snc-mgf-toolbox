@@ -3,7 +3,7 @@
 from math import ceil
 
 from library.exceptions import ParameterOutOfBounds
-from nc_processes.arrival_distribution import TokenBucketConstant
+from nc_processes.regulated_arrivals import TokenBucketConstant
 from nc_processes.service_distribution import ConstantRate
 
 
@@ -19,7 +19,7 @@ class DNCFIFODelay(object):
         if self.token_bucket_constant.rho() >= -self.constant_rate.rho():
             raise ParameterOutOfBounds(
                 "The arrivals' rho {0} has to be smaller than"
-                "the service's rho {1}".format(
+                " the service's rho {1}".format(
                     self.token_bucket_constant.rho(),
                     -self.constant_rate.rho()))
 
