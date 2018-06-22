@@ -8,8 +8,12 @@ from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
 
-class BacklogProb(object):
-    """nc_operations.Backlog bound Violation Probability class"""
+class PerformanceBounds(object):
+    """Abstract class for all performance bounds"""
+
+
+class BacklogProb(PerformanceBounds):
+    """Backlog bound Violation Probability class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
         self.arr = arr
@@ -48,8 +52,8 @@ class BacklogProb(object):
             return self.bound(theta=theta, backlog=backlog)
 
 
-class Backlog(object):
-    """nc_operations.Backlog bound class"""
+class Backlog(PerformanceBounds):
+    """Backlog bound class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
         self.arr = arr
@@ -91,8 +95,8 @@ class Backlog(object):
             return self.bound(theta=theta, prob_b=prob_b)
 
 
-class DelayProb(object):
-    """nc_operations.Delay bound Violation Probability class"""
+class DelayProb(PerformanceBounds):
+    """Delay bound Violation Probability class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
         self.arr = arr
@@ -134,8 +138,8 @@ class DelayProb(object):
             return self.bound(theta=theta, delay=delay)
 
 
-class Delay(object):
-    """nc_operations.Delay bound class"""
+class Delay(PerformanceBounds):
+    """Delay bound class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
         self.arr = arr
@@ -178,8 +182,8 @@ class Delay(object):
             return self.bound(theta=theta, prob_d=prob_d)
 
 
-class Output(object):
-    """nc_operations.Output bound class"""
+class Output(PerformanceBounds):
+    """Output bound class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
         self.arr = arr

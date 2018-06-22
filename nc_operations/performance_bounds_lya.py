@@ -4,11 +4,12 @@ from math import exp, inf
 
 from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import is_equal
+from nc_operations.performance_bounds import PerformanceBounds
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
 
-class OutputLya(object):
+class OutputLya(PerformanceBounds):
     """New Lyapunov Output Class"""
 
     def __init__(self, arr: Arrival, ser: Service, l_lya=1.0) -> None:
@@ -68,7 +69,7 @@ class OutputLya(object):
             return self.bound(theta=theta, delta_time=tt - ss)
 
 
-class DelayProbLya(object):
+class DelayProbLya(PerformanceBounds):
     """New Lyapunov nc_operations.DelayProb Class"""
 
     def __init__(self, arr: Arrival, ser: Service, l_lya=1.0) -> None:
@@ -125,7 +126,7 @@ class DelayProbLya(object):
             return self.bound(theta=theta, delay=delay)
 
 
-class OutputLyaDiscretized(object):
+class OutputLyaDiscretized(PerformanceBounds):
     """New Lyapunov Output Class for continuous processes"""
 
     def __init__(self, arr: Arrival, ser: Service, l_lya=1.0) -> None:

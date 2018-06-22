@@ -4,11 +4,12 @@ from math import exp, inf, log
 
 from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import is_equal
+from nc_operations.performance_bounds import PerformanceBounds
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
 
-class BacklogProbDiscretized(object):
+class BacklogProbDiscretized(PerformanceBounds):
     """nc_operations.Backlog bound Violation Probability class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
@@ -32,7 +33,7 @@ class BacklogProbDiscretized(object):
                        1 - exp(theta * tau * rho_arr_ser))
 
 
-class BacklogDiscretized(object):
+class BacklogDiscretized(PerformanceBounds):
     """nc_operations.Backlog bound class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
@@ -56,7 +57,7 @@ class BacklogDiscretized(object):
         return tau * self.arr.rho(theta) + sigma_arr_ser - log_part / theta
 
 
-class DelayProbDiscretized(object):
+class DelayProbDiscretized(PerformanceBounds):
     """nc_operations.Delay bound Violation Probability class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
@@ -80,7 +81,7 @@ class DelayProbDiscretized(object):
                                 1 - exp(theta * tau * rho_arr_ser))
 
 
-class DelayDiscretized(object):
+class DelayDiscretized(PerformanceBounds):
     """nc_operations.Delay bound class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
@@ -105,7 +106,7 @@ class DelayDiscretized(object):
                 ) / self.ser.rho(theta)
 
 
-class OutputDiscretized(object):
+class OutputDiscretized(PerformanceBounds):
     """nc_operations.Output bound class"""
 
     def __init__(self, arr: Arrival, ser: Service) -> None:
