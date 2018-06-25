@@ -41,6 +41,12 @@ class ArrivalDistribution(Arrival):
         """
         pass
 
+    def to_string_long(self) -> str:
+        """
+        :return string
+        """
+        return self.__class__.__name__ + "_" + self.to_string()
+
     @abstractmethod
     def number_parameters(self) -> int:
         """
@@ -82,8 +88,7 @@ class ExponentialArrival(ArrivalDistribution):
         return True
 
     def to_string(self) -> str:
-        return self.__class__.__name__ + "_lambda=" + str(
-            self.lamb) + "_n=" + str(self.n)
+        return "_lambda=" + str(self.lamb) + "_n=" + str(self.n)
 
     def number_parameters(self) -> int:
         return 1
@@ -114,9 +119,8 @@ class MMOO(ArrivalDistribution):
         return False
 
     def to_string(self) -> str:
-        return self.__class__.__name__ + "_mu=" + str(
-            self.mu) + "_lambda=" + str(self.lamb) + "_burst=" + str(
-                self.burst) + "_n=" + str(self.n)
+        return "mu=" + str(self.mu) + "_lambda=" + str(
+            self.lamb) + "_burst=" + str(self.burst) + "_n=" + str(self.n)
 
     def number_parameters(self) -> int:
         return 3

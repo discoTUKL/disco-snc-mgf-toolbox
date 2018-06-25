@@ -33,6 +33,12 @@ class ServiceDistribution(Service):
         """
         pass
 
+    def to_string_long(self) -> str:
+        """
+        :return string
+        """
+        return self.__class__.__name__ + "_" + self.to_string()
+
     @abstractmethod
     def number_parameters(self) -> int:
         """
@@ -59,7 +65,7 @@ class ConstantRate(ServiceDistribution):
         return -self.rate
 
     def to_string(self):
-        return self.__class__.__name__ + "_rate=" + str(self.rate)
+        return "rate=" + str(self.rate)
 
     def number_parameters(self) -> int:
         return 1

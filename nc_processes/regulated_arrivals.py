@@ -41,8 +41,8 @@ class RegulatedArrivals(ArrivalDistribution):
         :return string
         """
 
-        return self.__class__.__name__ + "_sigma=" + str(
-            self.sigma_single) + "_rho=" + str(self.rho) + "_n=" + str(self.n)
+        return "sigma=" + str(self.sigma_single) + "_rho=" + str(
+            self.rho) + "_n=" + str(self.n)
 
     def number_parameters(self) -> int:
         """
