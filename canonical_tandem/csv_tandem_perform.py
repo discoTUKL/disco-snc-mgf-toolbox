@@ -11,7 +11,6 @@ from library.perform_param_list import PerformParamList
 from nc_operations.nc_analysis import NCAnalysis
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.distrib_param import DistribParam
 from nc_processes.regulated_arrivals import RegulatedArrivals
 from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 from optimization.opt_method import OptMethod
@@ -57,8 +56,9 @@ def tandem_df(arr_list: List[ArrivalDistribution],
     return results_df
 
 
-# def csv_tandem_perform(arrival: ArrivalDistribution,
+# def csv_tandem_perform(reg_arrival: RegulatedArrivals,
 #                        list_of_parameters: List[DistribParam],
+#                        number_servers: int,
 #                        perform_param_list: PerformParamList,
 #                        opt_method: OptMethod,
 #                        nc_analysis: NCAnalysis) -> pd.DataFrame:
@@ -77,30 +77,25 @@ def tandem_df(arr_list: List[ArrivalDistribution],
 #     """
 #     filename = "tandem_{0}".format(perform_param_list.perform_metric.name)
 #
-#     if isinstance(arrival, RegulatedArrivals):
-#         mu1 = list_of_parameters[0].mu
-#         mu2 = list_of_parameters[1].mu
-#         lamb1 = list_of_parameters[0].lamb
-#         lamb2 = list_of_parameters[1].lamb
-#         burst1 = list_of_parameters[0].burst
-#         burst2 = list_of_parameters[1].burst
-#         rate1 = list_of_parameters[2].rate
-#         rate2 = list_of_parameters[3].rate
+#     sigma1 = list_of_parameters[0].sigma
+#     sigma2 = list_of_parameters[1].sigma
+#     rho1 = list_of_parameters[0].rho
+#     rho2 = list_of_parameters[1].rho
+#     homogeneous_rate = list_of_parameters[2].rate
 #
-#         data_frame = fat_cross_df(
-#             arr_list=[
-#                 MMOO(mu=mu1, lamb=lamb1, burst=burst1),
-#                 MMOO(mu=mu2, lamb=lamb2, burst=burst2)
-#             ],
-#             ser_list=[ConstantRate(rate=rate1),
-#                       ConstantRate(rate=rate2)],
-#             opt_method=OptMethod.GRID_SEARCH,
-#             perform_param_list=perform_param_list)
+#     data_frame = tandem_df(
+#         arr_list=[
+#             reg_arrival(mu=mu1, lamb=lamb1, burst=burst1),
+#             MMOO(mu=mu2, lamb=lamb2, burst=burst2)
+#         ],
+#         ser_list=[ConstantRate(rate=rate1),
+#                   ConstantRate(rate=rate2)],
+#         opt_method=opt_method,
+#         perform_param_list=perform_param_list,
+#         nc_analysis=nc_analysis)
 #
-#         for item, value in enumerate(list_of_parameters):
-#             filename += "_" + value.get_mmoo_string(item)
-#     else:
-#         raise NameError("This arrival process is not implemented")
+#     for item, value in enumerate(list_of_parameters):
+#         filename += "_" + value.get_mmoo_string(item)
 #
 #     data_frame.to_csv(
 #         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)

@@ -1,15 +1,12 @@
 """Compute output bound and write into csv file"""
 
 import csv
-from typing import List
-
 import pandas as pd
 
 from library.perform_param_list import PerformParamList
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.distrib_param import DistribParam
 from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -74,15 +71,15 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ServiceDistribution,
     return delay_bounds_df
 
 
-def csv_single_perform(arrival: ArrivalDistribution,
-                       list_of_parameters: List[DistribParam],
+def csv_single_perform(foi_arrival: ArrivalDistribution,
+                       foi_service: ServiceDistribution,
                        perform_param_list: PerformParamList,
                        opt_method: OptMethod) -> pd.DataFrame:
     """Writes dataframe results into a csv file
 
     Args:
-        arrival: String that represents the arrival process
-        list_of_parameters: dictionaries of actual values
+        foi_arrival: flow of interest's arrival distribution
+        foi_service: service of the server at the foi
         perform_param_list: list of performance parameter values
         opt_method: optimization method
 
@@ -92,24 +89,13 @@ def csv_single_perform(arrival: ArrivalDistribution,
 
     filename = "single_{0}".format(perform_param_list.perform_metric.name)
 
-    if isinstance(arrival, ExponentialArrival):
-        arr1 = ExponentialArrival(list_of_parameters[0].lamb)
-        filename += list_of_parameters[0].get_exp_string(1)
-    elif isinstance(arrival, MMOO):
-        arr1 = MMOO(list_of_parameters[0].mu, list_of_parameters[0].lamb,
-                    list_of_parameters[0].burst)
-        filename += list_of_parameters[0].get_mmoo_string(1)
-    else:
-        raise NameError("This arrival process is not implemented")
-
-    rate1 = list_of_parameters[1].rate
-    filename += list_of_parameters[1].get_service_string(1)
-
     data_frame = single_server_df(
-        arr1=arr1,
-        ser1=ConstantRate(rate1),
+        arr1=foi_arrival,
+        ser1=foi_service,
         opt_method=opt_method,
         perform_param_list=perform_param_list)
+
+    filename += "_" + foi_arrival.to_string() + "_" + foi_service.to_string()
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -120,30 +106,25 @@ def csv_single_perform(arrival: ArrivalDistribution,
 if __name__ == '__main__':
     OUTPUT_LIST = PerformParamList(
         perform_metric=PerformMetric.OUTPUT, values_list=range(4, 15))
-    EXP_ARRIVAL1 = ExponentialArrival()
-    MMOO_ARRIVAL = MMOO()
 
-    exp1 = DistribParam(lamb=1.0)
-    mmoo1 = DistribParam(mu=8.0, lamb=12.0, burst=3.0)
-    const_rate1 = DistribParam(rate=2.0)
-    const_rate2 = DistribParam(rate=1.3)
+    exp1 = ExponentialArrival(lamb=1.0)
+    mmoo1 = MMOO(mu=8.0, lamb=12.0, burst=3.0)
+    const_rate1 = ConstantRate(rate=2.0)
+    const_rate2 = ConstantRate(rate=1.3)
 
     NEW_OUTPUT_LIST = PerformParamList(
         perform_metric=PerformMetric.OUTPUT, values_list=range(4, 15))
 
-    parameters_exp = [exp1, const_rate1]
-    parameters_mmoo = [mmoo1, const_rate2]
-
     print(
         csv_single_perform(
-            arrival=EXP_ARRIVAL1,
-            list_of_parameters=parameters_exp,
+            foi_arrival=exp1,
+            foi_service=const_rate1,
             perform_param_list=NEW_OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
     print(
         csv_single_perform(
-            arrival=MMOO_ARRIVAL,
-            list_of_parameters=parameters_mmoo,
+            foi_arrival=mmoo1,
+            foi_service=const_rate1,
             perform_param_list=NEW_OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
