@@ -10,8 +10,8 @@ from canonical_tandem.tandem_tfa_delay import TandemTFADelay
 from library.perform_param_list import PerformParamList
 from nc_operations.nc_analysis import NCAnalysis
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.regulated_arrivals import RegulatedArrivals
+from nc_processes.arrival_distribution import MMOO, ArrivalDistribution
+from nc_processes.regulated_arrivals import LeakyBucketMassOne
 from nc_processes.service_distribution import ConstantRate, ServiceDistribution
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -37,8 +37,8 @@ def tandem_df(arr_list: List[ArrivalDistribution],
                 ser_list=ser_list,
                 prob_d=perform_param_list.values_list[_i])
         else:
-            raise NameError("{0} is an infeasible analysis type".format(
-                nc_analysis))
+            raise NameError(
+                "{0} is an infeasible analysis type".format(nc_analysis))
 
         if opt_method == OptMethod.GRID_SEARCH:
             bounds[_i] = Optimize(setting=setting).grid_search(
@@ -56,48 +56,65 @@ def tandem_df(arr_list: List[ArrivalDistribution],
     return results_df
 
 
-# def csv_tandem_perform(reg_arrival: RegulatedArrivals,
-#                        list_of_parameters: List[DistribParam],
-#                        number_servers: int,
-#                        perform_param_list: PerformParamList,
-#                        opt_method: OptMethod,
-#                        nc_analysis: NCAnalysis) -> pd.DataFrame:
-#     """Write dataframe results into a csv file.
-#
-#     Args:
-#         arrival: String that represents the arrival process
-#         list_of_parameters: dictionaries with actual values
-#         perform_param_list: list of performance parameter values
-#         opt_method: optimization method
-#         nc_analysis: Network Calculus analysis
-#
-#     Returns:
-#         csv file
-#
-#     """
-#     filename = "tandem_{0}".format(perform_param_list.perform_metric.name)
-#
-#     sigma1 = list_of_parameters[0].sigma
-#     sigma2 = list_of_parameters[1].sigma
-#     rho1 = list_of_parameters[0].rho
-#     rho2 = list_of_parameters[1].rho
-#     homogeneous_rate = list_of_parameters[2].rate
-#
-#     data_frame = tandem_df(
-#         arr_list=[
-#             reg_arrival(mu=mu1, lamb=lamb1, burst=burst1),
-#             MMOO(mu=mu2, lamb=lamb2, burst=burst2)
-#         ],
-#         ser_list=[ConstantRate(rate=rate1),
-#                   ConstantRate(rate=rate2)],
-#         opt_method=opt_method,
-#         perform_param_list=perform_param_list,
-#         nc_analysis=nc_analysis)
-#
-#     for item, value in enumerate(list_of_parameters):
-#         filename += "_" + value.get_mmoo_string(item)
-#
-#     data_frame.to_csv(
-#         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
-#
-#     return data_frame
+def csv_tandem_perform(
+        foi_arrival: ArrivalDistribution, cross_arrival: ArrivalDistribution,
+        service: ServiceDistribution, number_servers: int,
+        perform_param_list: PerformParamList, opt_method: OptMethod,
+        nc_analysis: NCAnalysis) -> pd.DataFrame:
+    """Write dataframe results into a csv file.
+
+    Args:
+        foi_arrival: flow of interest's arrival distribution
+        cross_arrival: Distribution of cross arrivals
+        service: service of remaining servers
+        number_servers: number of servers in fat tree
+        perform_param_list: list of performance parameter values
+        opt_method: optimization method
+        nc_analysis: Network Calculus analysis type
+
+    Returns:
+        csv file
+
+    """
+    filename = "tandem_{0}".format(perform_param_list.perform_metric.name)
+
+    arr_list: List[ArrivalDistribution] = [foi_arrival]
+    ser_list: List[ServiceDistribution] = []
+
+    for _i in range(number_servers):
+        arr_list.append(cross_arrival)
+        ser_list.append(service)
+
+    data_frame = tandem_df(
+        arr_list=arr_list,
+        ser_list=ser_list,
+        opt_method=opt_method,
+        perform_param_list=perform_param_list,
+        nc_analysis=nc_analysis)
+
+    filename += "_" + foi_arrival.to_string() + "_" + cross_arrival.to_string(
+    ) + "_" + service.to_string()
+
+    data_frame.to_csv(
+        filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
+
+    return data_frame
+
+
+if __name__ == '__main__':
+    DELAY_PROB_LIST = PerformParamList(
+        perform_metric=PerformMetric.DELAY_PROB, values_list=range(4, 11))
+
+    mmoo_foi = MMOO(mu=1.0, lamb=2.2, burst=3.4)
+    mmoo_2 = MMOO(mu=3.6, lamb=1.6, burst=1.4)
+    const_rate2 = ConstantRate(rate=4.0)
+
+    print(
+        csv_tandem_perform(
+            foi_arrival=mmoo_foi,
+            cross_arrival=mmoo_2,
+            service=const_rate2,
+            number_servers=2,
+            perform_param_list=DELAY_PROB_LIST,
+            opt_method=OptMethod.GRID_SEARCH,
+            nc_analysis=NCAnalysis.SFA))

@@ -128,16 +128,14 @@ def csv_fat_cross_perform(
 if __name__ == '__main__':
     DELAY_PROB_LIST = PerformParamList(
         perform_metric=PerformMetric.DELAY_PROB, values_list=range(4, 11))
-    EXP_ARRIVAL1 = ExponentialArrival()
-    MMOO1 = MMOO()
 
-    # exp1 = ExponentialArrival(lamb=0.2)
-    # exp2 = ExponentialArrival(lamb=8.0)
+    exp1 = ExponentialArrival(lamb=0.2)
+    exp2 = ExponentialArrival(lamb=8.0)
     # const_rate1 = ConstantRate(rate=8.0)
     # const_rate2 = ConstantRate(rate=0.2)
     #
     # print(
-    #     csv_fat_cross_perform(
+    #     csv_tandem_perform(
     #         foi_arrival=exp1,
     #         cross_arrival=exp2,
     #         foi_service=const_rate1,
@@ -152,7 +150,7 @@ if __name__ == '__main__':
     # const_rate2 = ConstantRate(rate=0.4)
     #
     # print(
-    #     csv_fat_cross_perform(
+    #     csv_tandem_perform(
     #         foi_arrival=exp1,
     #         cross_arrival=exp2,
     #         foi_service=const_rate1,
@@ -167,7 +165,7 @@ if __name__ == '__main__':
     # const_rate2 = ConstantRate(rate=0.3)
 
     # print(
-    #     csv_fat_cross_perform(
+    #     csv_tandem_perform(
     #         foi_arrival=mmoo_foi,
     #         cross_arrival=mmoo_2,
     #         foi_service=foi_rate1,
