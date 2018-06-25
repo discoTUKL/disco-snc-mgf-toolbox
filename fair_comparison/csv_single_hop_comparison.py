@@ -235,7 +235,7 @@ if __name__ == '__main__':
     for SIGMA_2 in SIGMA_VALUES_2:
         print(
             compare_probability(
-                aggregation=10,
+                aggregation=20,
                 sigma_single=SIGMA_2,
                 rho_single=RHO_SINGLE,
                 service_rate=SERVICE_RATE,
@@ -246,7 +246,7 @@ if __name__ == '__main__':
 
     print(
         compare_sigma(
-            aggregation=200,
+            aggregation=100,
             sigmas=SIGMA_VALUES_3,
             rho_single=RHO_SINGLE,
             service_rate=SERVICE_RATE,
