@@ -1,22 +1,20 @@
-"""SFA for canonical tree"""
+"""TFA hop-by-hop for canonical tree"""
 
 from typing import List
 
-from library.perform_parameter import PerformParameter
 from library.setting import Setting
-from nc_operations.evaluate_single_hop import evaluate_single_hop
-from nc_operations.operations import Convolve, Leftover
+from nc_operations.operations import Deconvolve, Leftover
+from nc_operations.performance_bounds import Delay
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
 from nc_processes.service_distribution import ServiceDistribution
 
 
-class TandemSFA(Setting):
-    """Canonical tandem with SFA analysis"""
+class TandemTFADelay(Setting):
+    """Canonical tandem with hop-by-hop analysis"""
 
     def __init__(self, arr_list: List[ArrivalDistribution],
-                 ser_list: List[ServiceDistribution],
-                 perform_param: PerformParameter) -> None:
+                 ser_list: List[ServiceDistribution], prob_d: float) -> None:
         # The first element in the arrival list in dedicated to the foi
         if len(arr_list) != (len(ser_list) + 1):
             raise ValueError(
@@ -25,7 +23,7 @@ class TandemSFA(Setting):
 
         self.arr_list = arr_list
         self.ser_list = ser_list
-        self.perform_param = perform_param
+        self.prob_d = prob_d
         self.number_servers = len(ser_list)
 
     def bound(self, theta: float) -> float:
@@ -34,12 +32,16 @@ class TandemSFA(Setting):
             for i in range(self.number_servers)
         ]
 
-        s_net: Service = leftover_service_list[0]
-        for i in range(1, self.number_servers):
-            s_net = Convolve(s_net, leftover_service_list[i])
+        delay = 0.0
 
-        return evaluate_single_hop(
-            foi=self.arr_list[0],
-            s_net=s_net,
-            theta=theta,
-            perform_param=self.perform_param)
+        input_traffic = self.arr_list[0]
+
+        for i in range(self.number_servers):
+            delay += Delay(
+                arr=input_traffic, ser=leftover_service_list[i]).bound(
+                    theta=theta, prob_d=self.prob_d)
+
+            input_traffic = Deconvolve(
+                arr=input_traffic, ser=leftover_service_list[i])
+
+        return delay

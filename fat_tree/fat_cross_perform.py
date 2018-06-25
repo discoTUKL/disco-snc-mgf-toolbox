@@ -20,7 +20,7 @@ class FatCrossPerform(SettingNew):
                  ser_list: List[ServiceDistribution],
                  perform_param: PerformParameter) -> None:
         # The first element in these lists in dedicated to the foi
-        if len(arr_list) is not len(ser_list):
+        if len(arr_list) != len(ser_list):
             raise ValueError(
                 "number of arrivals {0} and servers {1} have to match".format(
                     len(arr_list), len(ser_list)))
