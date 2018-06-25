@@ -44,7 +44,7 @@ def fat_cross_df(arr_list: List[ArrivalDistribution],
                 bound_list=[(0.1, 5.0)], delta=0.1)
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).grid_search(
-                bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1)
+                    bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1)
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
             bound[_i] = Optimize(setting=setting).pattern_search(
@@ -52,14 +52,14 @@ def fat_cross_df(arr_list: List[ArrivalDistribution],
 
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).pattern_search(
-                start_list=[0.5, 2.0], delta=3.0, delta_min=0.01)
+                    start_list=[0.5, 2.0], delta=3.0, delta_min=0.01)
 
         elif opt_method == OptMethod.GS_OLD:
             bound[_i] = Optimize(setting=setting).grid_search_old(
                 bound_list=[(0.1, 5.0)], delta=0.1)
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).grid_search_old(
-                bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1)
+                    bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1)
 
         else:
             raise ValueError(
@@ -76,13 +76,11 @@ def fat_cross_df(arr_list: List[ArrivalDistribution],
     return results_df
 
 
-def csv_fat_cross_perform(foi_arrival: ArrivalDistribution,
-                          cross_arrival: ArrivalDistribution,
-                          foi_service: ServiceDistribution,
-                          cross_service: ServiceDistribution,
-                          number_servers: int,
-                          perform_param_list: PerformParamList,
-                          opt_method: OptMethod) -> pd.DataFrame:
+def csv_fat_cross_perform(
+        foi_arrival: ArrivalDistribution, cross_arrival: ArrivalDistribution,
+        foi_service: ServiceDistribution, cross_service: ServiceDistribution,
+        number_servers: int, perform_param_list: PerformParamList,
+        opt_method: OptMethod) -> pd.DataFrame:
     """Write dataframe results into a csv file.
 
     Args:
@@ -112,11 +110,14 @@ def csv_fat_cross_perform(foi_arrival: ArrivalDistribution,
         arr_list.append(cross_arrival)
         ser_list.append(cross_service)
 
-    data_frame = fat_cross_df(arr_list=arr_list, ser_list=ser_list,
-                              opt_method=opt_method,
-                              perform_param_list=perform_param_list)
+    data_frame = fat_cross_df(
+        arr_list=arr_list,
+        ser_list=ser_list,
+        opt_method=opt_method,
+        perform_param_list=perform_param_list)
 
-    filename += "_" + foi_arrival.to_string() + "_" + foi_service.to_string() + "_" + cross_arrival.to_string() + "_" + cross_service.to_string()
+    filename += "_" + foi_arrival.to_string() + "_" + foi_service.to_string(
+    ) + "_" + cross_arrival.to_string() + "_" + cross_service.to_string()
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)

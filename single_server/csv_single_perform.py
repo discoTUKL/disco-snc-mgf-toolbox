@@ -71,15 +71,15 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ServiceDistribution,
     return delay_bounds_df
 
 
-def csv_single_perform(foi_arrival: ArrivalDistribution,
-                       foi_service: ServiceDistribution,
+def csv_single_perform(arrival: ArrivalDistribution,
+                       service: ServiceDistribution,
                        perform_param_list: PerformParamList,
                        opt_method: OptMethod) -> pd.DataFrame:
     """Writes dataframe results into a csv file
 
     Args:
-        foi_arrival: flow of interest's arrival distribution
-        foi_service: service of the server at the foi
+        arrival: flow of interest's arrival distribution
+        service: service of the server at the foi
         perform_param_list: list of performance parameter values
         opt_method: optimization method
 
@@ -90,12 +90,12 @@ def csv_single_perform(foi_arrival: ArrivalDistribution,
     filename = "single_{0}".format(perform_param_list.perform_metric.name)
 
     data_frame = single_server_df(
-        arr1=foi_arrival,
-        ser1=foi_service,
+        arr1=arrival,
+        ser1=service,
         opt_method=opt_method,
         perform_param_list=perform_param_list)
 
-    filename += "_" + foi_arrival.to_string() + "_" + foi_service.to_string()
+    filename += "_" + arrival.to_string() + "_" + service.to_string()
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -117,14 +117,14 @@ if __name__ == '__main__':
 
     print(
         csv_single_perform(
-            foi_arrival=exp1,
-            foi_service=const_rate1,
+            arrival=exp1,
+            service=const_rate1,
             perform_param_list=NEW_OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
     print(
         csv_single_perform(
-            foi_arrival=mmoo1,
-            foi_service=const_rate1,
+            arrival=mmoo1,
+            service=const_rate1,
             perform_param_list=NEW_OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
