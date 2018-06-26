@@ -6,8 +6,8 @@ from library.perform_parameter import PerformParameter
 from library.setting_new import SettingNew
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.perform_metric import PerformMetric
-from nc_operations.performance_bounds_lya import (DelayProbLya, OutputLya,
-                                                  OutputLyaDiscretized)
+from nc_operations.performance_bounds_lya import (delay_prob_lya, output_lya,
+                                                  output_lya_discretized)
 from nc_processes.arrival_distribution import (ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.service_distribution import ConstantRate, ServiceDistribution
@@ -38,21 +38,28 @@ class SingleServerPerform(SettingNew):
     def new_bound(self, param_list: List[float]) -> float:
         if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
             if self.arr.is_discrete():
-                return DelayProbLya(
-                    arr=self.arr, ser=self.ser, l_lya=param_list[1]).bound(
-                        theta=param_list[0], delay=self.perform_param.value)
+                return delay_prob_lya(
+                    arr=self.arr,
+                    ser=self.ser,
+                    theta=param_list[0],
+                    delay=self.perform_param.value,
+                    l_lya=param_list[1])
 
         elif self.perform_param.perform_metric == PerformMetric.OUTPUT:
             if self.arr.is_discrete():
-                return OutputLya(
-                    arr=self.arr, ser=self.ser, l_lya=param_list[1]).bound(
-                        theta=param_list[0],
-                        delta_time=self.perform_param.value)
+                return output_lya(
+                    arr=self.arr,
+                    ser=self.ser,
+                    theta=param_list[0],
+                    delta_time=self.perform_param.value,
+                    l_lya=param_list[1])
             else:
-                return OutputLyaDiscretized(
-                    arr=self.arr, ser=self.ser, l_lya=param_list[1]).bound(
-                        theta=param_list[0],
-                        delta_time=self.perform_param.value)
+                return output_lya_discretized(
+                    arr=self.arr,
+                    ser=self.ser,
+                    theta=param_list[0],
+                    delta_time=self.perform_param.value,
+                    l_lya=param_list[1])
 
         else:
             raise NameError("{0} is an infeasible performance metric".format(
