@@ -25,7 +25,6 @@ def single_hop_comparison(aggregation: int, sigma_single: float,
                           opt_method: OptMethod) -> tuple:
 
     print_x = False
-    print("service_rate", service_rate, " aggregation", aggregation)
     constant_rate_server = ConstantRate(service_rate)
 
     tb_const = TokenBucketConstant(

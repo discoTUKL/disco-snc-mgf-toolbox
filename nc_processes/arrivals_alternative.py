@@ -30,8 +30,12 @@ def regulated_alternative(theta: float,
                           rho_single: float,
                           n=1) -> float:
     if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+        return inf
+        # raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
-    return 1 + rho_single * delta_time / (
-        sigma_single + rho_single * delta_time) * (
-            exp(n * theta * (sigma_single + rho_single * delta_time)) - 1)
+    try:
+        return 1 + rho_single * delta_time / (
+            sigma_single + rho_single * delta_time) * (
+                exp(n * theta * (sigma_single + rho_single * delta_time)) - 1)
+    except OverflowError:
+        return inf
