@@ -5,7 +5,7 @@ from typing import List
 
 import pandas as pd
 
-from dnc.dnc_performance_bounds import FIFODelay
+from nc_operations.dnc_performance_bounds import FIFODelay
 from library.perform_param_list import PerformParamList
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
