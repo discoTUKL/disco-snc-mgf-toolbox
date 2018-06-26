@@ -2,8 +2,6 @@
 
 from math import exp, inf
 
-from library.exceptions import ParameterOutOfBounds
-
 
 def constant_rate_alternative(theta: float,
                               delta_time: int,

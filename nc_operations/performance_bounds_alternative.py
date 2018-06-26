@@ -50,9 +50,7 @@ def del_prob_alter_opt(delay_value: int, t: int, print_x=False) -> float:
             theta=theta, delay_value=delay_value, t=t)
 
     grid_res = scipy.optimize.brute(
-        func=helper_fun,
-        ranges=(slice(0.05, 15.0, 0.05), ),
-        full_output=True)
+        func=helper_fun, ranges=(slice(0.05, 15.0, 0.05), ), full_output=True)
 
     if print_x:
         print("grid search optimal x: ", grid_res[0].tolist())
