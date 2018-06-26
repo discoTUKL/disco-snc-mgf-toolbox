@@ -1,4 +1,4 @@
-"""Implements new Lyapunov NC_Operations.Output Bound"""
+"""Implements new Lyapunov Output Bound"""
 
 from math import exp, inf
 
@@ -68,7 +68,8 @@ def output_lya_t(arr: Arrival,
         return numerator / denominator
 
     else:
-        return output_lya(arr=arr, ser=ser, theta=theta, delta_time=tt - ss)
+        return output_lya(
+            arr=arr, ser=ser, theta=theta, delta_time=tt - ss, l_lya=l_lya)
 
 
 def delay_prob_lya(arr: Arrival,
@@ -126,7 +127,8 @@ def delay_prob_lya_t(arr: Arrival,
         return numerator / denominator
 
     else:
-        return delay_prob_lya(arr=arr, ser=ser, theta=theta, delay=delay)
+        return delay_prob_lya(
+            arr=arr, ser=ser, theta=theta, delay=delay, l_lya=l_lya)
 
 
 def output_lya_discretized(arr: Arrival,

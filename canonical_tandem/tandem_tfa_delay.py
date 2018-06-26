@@ -4,7 +4,7 @@ from typing import List
 
 from library.setting import Setting
 from nc_operations.operations import Deconvolve, Leftover
-from nc_operations.performance_bounds import Delay
+from nc_operations.performance_bounds import delay
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
 from nc_processes.service_distribution import ServiceDistribution
@@ -32,16 +32,18 @@ class TandemTFADelay(Setting):
             for i in range(self.number_servers)
         ]
 
-        delay = 0.0
+        delay_val = 0.0
 
         input_traffic = self.arr_list[0]
 
         for i in range(self.number_servers):
-            delay += Delay(
-                arr=input_traffic, ser=leftover_service_list[i]).bound(
-                    theta=theta, prob_d=self.prob_d)
+            delay_val += delay(
+                arr=input_traffic,
+                ser=leftover_service_list[i],
+                theta=theta,
+                prob_d=self.prob_d)
 
             input_traffic = Deconvolve(
                 arr=input_traffic, ser=leftover_service_list[i])
 
-        return delay
+        return delay_val

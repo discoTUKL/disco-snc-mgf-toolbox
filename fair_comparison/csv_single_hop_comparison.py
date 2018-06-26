@@ -5,7 +5,7 @@ from typing import List
 
 import pandas as pd
 
-from dnc.dnc_fifo_delay import DNCFIFODelay
+from dnc.dnc_performance_bounds import FIFODelay
 from library.perform_param_list import PerformParamList
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
@@ -31,9 +31,8 @@ def single_hop_comparison(aggregation: int, sigma_single: float,
     tb_const = TokenBucketConstant(
         sigma_single=sigma_single, rho_single=rho_single, n=aggregation)
 
-    dnc_fifo_single: float = DNCFIFODelay(
-        token_bucket_constant=tb_const,
-        constant_rate=constant_rate_server).bound()
+    dnc_fifo_single: float = FIFODelay(
+        token_bucket_constant=tb_const, constant_rate=constant_rate_server)
 
     const_single = SingleServerPerform(
         arr=tb_const, ser=constant_rate_server, perform_param=perform_param)

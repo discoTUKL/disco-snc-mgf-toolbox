@@ -52,6 +52,7 @@ if __name__ == '__main__':
         Optimize(SINGLE_SERVER2, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
+    # TODO: stops with error
     print(
         OptimizeNew(SINGLE_SERVER2, print_x=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))
