@@ -170,10 +170,11 @@ def output(arr: Arrival, ser: Service, theta: float, delta_time: int) -> float:
     numerator = exp(theta * (arr.rho(theta) * delta_time + sigma_arr_ser))
     denominator = 1 - exp(theta * rho_arr_ser)
 
-    if is_equal(denominator, 0):
-        return inf
+    try:
+        return numerator / denominator
 
-    return numerator / denominator
+    except ZeroDivisionError:
+        return inf
 
 
 def output_t(arr: Arrival, ser: Service, theta: float, tt: int,

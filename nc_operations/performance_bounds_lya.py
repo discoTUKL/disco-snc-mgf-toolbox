@@ -32,10 +32,11 @@ def output_lya(arr: Arrival,
     numerator = exp(theta * (arr.rho(l_theta) * delta_time + sigma_l_arr_ser))
     denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
 
-    if is_equal(denominator, 0):
-        return inf
+    try:
+        return numerator / denominator
 
-    return numerator / denominator
+    except ZeroDivisionError:
+        return inf
 
 
 def output_lya_t(arr: Arrival,
@@ -96,7 +97,11 @@ def delay_prob_lya(arr: Arrival,
     numerator = exp(theta * (ser.rho(l_theta) * delay + sigma_l_arr_ser))
     denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
 
-    return numerator / denominator
+    try:
+        return numerator / denominator
+
+    except ZeroDivisionError:
+        return inf
 
 
 def delay_prob_lya_t(arr: Arrival,
@@ -156,7 +161,8 @@ def output_lya_discretized(arr: Arrival,
         theta * (arr.rho(l_theta) * (delta_time + 1) + sigma_l_arr_ser))
     denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
 
-    if is_equal(denominator, 0):
-        return inf
+    try:
+        return numerator / denominator
 
-    return numerator / denominator
+    except ZeroDivisionError:
+        return inf

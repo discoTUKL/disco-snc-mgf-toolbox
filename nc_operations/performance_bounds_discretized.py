@@ -3,7 +3,6 @@
 from math import exp, inf, log
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import is_equal
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
@@ -105,7 +104,8 @@ def output_discretized(arr: Arrival, ser: Service, theta: float,
         theta * (arr.rho(theta) * (delta_time + 1) + sigma_arr_ser))
     denominator = 1 - exp(theta * rho_arr_ser)
 
-    if is_equal(denominator, 0):
-        return inf
+    try:
+        return numerator / denominator
 
-    return numerator / denominator
+    except ZeroDivisionError:
+        return inf
