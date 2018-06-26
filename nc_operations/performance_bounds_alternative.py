@@ -5,10 +5,10 @@ import scipy.optimize
 from nc_processes.arrivals_alternative import fbm, regulated_alternative
 from nc_processes.service_alternative import constant_rate_alternative
 
-SIGMA_SINGLE = 10.0
+SIGMA_SINGLE = 6.0
 RHO_SINGLE = 0.1
-N = 10
-RATE = 2.5
+N = 5
+RATE = 6.0
 
 
 def mgf_a(theta: float, delta_time: int, process="regulated_alternative"):

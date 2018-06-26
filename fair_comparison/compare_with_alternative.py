@@ -16,8 +16,8 @@ if __name__ == '__main__':
     NUMBER_AGGREGATIONS = 5
 
     RHO_SINGLE = 0.1
-    SERVICE_RATE = 2.5
-    SIGMA_SINGLE = 10.0
+    SERVICE_RATE = 6.0
+    SIGMA_SINGLE = 6.0
 
     bound_list = [(0.05, 15.0)]
     delta = 0.05
@@ -52,5 +52,5 @@ if __name__ == '__main__':
     print("leaky_mass_1_opt", leaky_mass_1_opt)
 
     leaky_bucket_alter_opt = del_prob_alter_opt(
-        delay_value=5, t=14, print_x=print_x)
+        delay_value=5, t=30, print_x=print_x)
     print("leaky_bucket_alter_opt", leaky_bucket_alter_opt)
