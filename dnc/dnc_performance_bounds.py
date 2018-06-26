@@ -1,4 +1,4 @@
-""""DNC FIFO Delay bound class."""
+""""DNC FIFO Delay FIFODelay class."""
 
 from math import ceil
 
@@ -7,22 +7,13 @@ from nc_processes.regulated_arrivals import TokenBucketConstant
 from nc_processes.service_distribution import ConstantRate
 
 
-class DNCFIFODelay(object):
-    """DNC FIFO Delay bound class"""
+def FIFODelay(token_bucket_constant: TokenBucketConstant,
+              constant_rate: ConstantRate) -> int:
+    """DNC FIFO Delay Bound"""
+    if token_bucket_constant.rho() >= -constant_rate.rho():
+        raise ParameterOutOfBounds(
+            "The arrivals' rho {0} has to be smaller than"
+            " the service's rho {1}".format(token_bucket_constant.rho(),
+                                            -constant_rate.rho()))
 
-    def __init__(self, token_bucket_constant: TokenBucketConstant,
-                 constant_rate: ConstantRate) -> None:
-        self.token_bucket_constant = token_bucket_constant
-        self.constant_rate = constant_rate
-
-    def bound(self) -> int:
-        if self.token_bucket_constant.rho() >= -self.constant_rate.rho():
-            raise ParameterOutOfBounds(
-                "The arrivals' rho {0} has to be smaller than"
-                " the service's rho {1}".format(
-                    self.token_bucket_constant.rho(),
-                    -self.constant_rate.rho()))
-
-        return int(
-            ceil(self.token_bucket_constant.sigma() /
-                 (-self.constant_rate.rho())))
+    return int(ceil(token_bucket_constant.sigma() / (-constant_rate.rho())))
