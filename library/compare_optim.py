@@ -150,7 +150,7 @@ if __name__ == '__main__':
     CONST_RATE = ConstantRate(rate=0.24)
 
     SETTING1 = SingleServerPerform(
-        arr=EXP_ARRIVAL, ser=CONST_RATE, perform_param=OUTPUT_TIME)
+        arr=EXP_ARRIVAL, const_rate=CONST_RATE, perform_param=OUTPUT_TIME)
     OPT_METHODS = [
         OptMethod.GRID_SEARCH, OptMethod.GS_OLD, OptMethod.PATTERN_SEARCH,
         OptMethod.BASIN_HOPPING, OptMethod.SIMULATED_ANNEALING,

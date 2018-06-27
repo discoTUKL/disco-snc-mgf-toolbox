@@ -7,14 +7,14 @@ from nc_operations.operations import Deconvolve, Leftover
 from nc_operations.performance_bounds import delay
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
-from nc_processes.service_distribution import ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 
 
 class TandemTFADelay(Setting):
     """Canonical tandem with hop-by-hop analysis"""
 
     def __init__(self, arr_list: List[ArrivalDistribution],
-                 ser_list: List[ServiceDistribution], prob_d: float) -> None:
+                 ser_list: List[ConstantRate], prob_d: float) -> None:
         # The first element in the arrival list in dedicated to the foi
         if len(arr_list) != (len(ser_list) + 1):
             raise ValueError(

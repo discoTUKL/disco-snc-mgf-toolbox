@@ -128,14 +128,14 @@ if __name__ == '__main__':
         n=NUMBER_AGGREGATIONS)
 
     const_single = SingleServerPerform(
-        arr=tb_const, ser=constant_rate_server, perform_param=DELAYPROB5)
+        arr=tb_const, const_rate=constant_rate_server, perform_param=DELAYPROB5)
 
     leaky_mass_1 = SingleServerPerform(
         arr=LeakyBucketMassOne(
             sigma_single=SIGMA_SINGLE,
             rho_single=RHO_SINGLE,
             n=NUMBER_AGGREGATIONS),
-        ser=constant_rate_server,
+        const_rate=constant_rate_server,
         perform_param=DELAYPROB5)
 
     const_opt = Optimize(

@@ -8,14 +8,14 @@ from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import Convolve, Leftover
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
-from nc_processes.service_distribution import ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 
 
 class TandemSFA(Setting):
     """Canonical tandem with SFA analysis"""
 
     def __init__(self, arr_list: List[ArrivalDistribution],
-                 ser_list: List[ServiceDistribution],
+                 ser_list: List[ConstantRate],
                  perform_param: PerformParameter) -> None:
         # The first element in the arrival list in dedicated to the foi
         if len(arr_list) != (len(ser_list) + 1):

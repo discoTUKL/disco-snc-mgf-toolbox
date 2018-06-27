@@ -45,7 +45,7 @@ def mc_time_single(arrival: ArrivalDistribution,
         if isinstance(arrival, ExponentialArrival):
             setting = SingleServerPerform(
                 arr=ExponentialArrival(lamb=param_array[i, 0]),
-                ser=ConstantRate(rate=param_array[i, 1]),
+                const_rate=ConstantRate(rate=param_array[i, 1]),
                 perform_param=perform_param)
 
         elif isinstance(arrival, MMOO):
@@ -54,7 +54,7 @@ def mc_time_single(arrival: ArrivalDistribution,
                     mu=param_array[i, 0],
                     lamb=param_array[i, 1],
                     burst=param_array[i, 2]),
-                ser=ConstantRate(rate=param_array[i, 3]),
+                const_rate=ConstantRate(rate=param_array[i, 3]),
                 perform_param=perform_param)
 
         else:

@@ -7,7 +7,7 @@ from library.perform_param_list import PerformParamList
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
@@ -20,7 +20,7 @@ from single_server.single_server_perform import SingleServerPerform
 #                              os.pardir))
 
 
-def single_server_df(arr1: ArrivalDistribution, ser1: ServiceDistribution,
+def single_server_df(arr1: ArrivalDistribution, ser1: ConstantRate,
                      opt_method: OptMethod,
                      perform_param_list: PerformParamList) -> pd.DataFrame:
     """Compute output bound for T in T_list and write into dataframe
@@ -40,7 +40,7 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ServiceDistribution,
     for _i in range(len(perform_param_list.values_list)):
         setting = SingleServerPerform(
             arr=arr1,
-            ser=ser1,
+            const_rate=ser1,
             perform_param=perform_param_list.get_parameter_at_i(_i))
 
         if opt_method == OptMethod.GRID_SEARCH:
@@ -72,7 +72,7 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ServiceDistribution,
 
 
 def csv_single_perform(arrival: ArrivalDistribution,
-                       service: ServiceDistribution,
+                       service: ConstantRate,
                        perform_param_list: PerformParamList,
                        opt_method: OptMethod) -> pd.DataFrame:
     """Writes dataframe results into a csv file

@@ -14,13 +14,13 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
 
 def csv_single_server_param(
-        arrival: ArrivalDistribution, service: ServiceDistribution,
+        arrival: ArrivalDistribution, const_rate: ConstantRate,
         perform_param: PerformParameter, opt_method: OptMethod,
         mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
@@ -29,7 +29,7 @@ def csv_single_server_param(
 
     size_array = [
         total_iterations,
-        arrival.number_parameters() + service.number_parameters()
+        arrival.number_parameters() + const_rate.number_parameters()
     ]
     # [rows, columns]
 
@@ -49,7 +49,7 @@ def csv_single_server_param(
         if isinstance(arrival, ExponentialArrival):
             setting = SingleServerPerform(
                 arr=ExponentialArrival(lamb=param_array[i, 0]),
-                ser=ConstantRate(rate=param_array[i, 1]),
+                const_rate=ConstantRate(rate=param_array[i, 1]),
                 perform_param=perform_param)
 
         elif isinstance(arrival, MMOO):
@@ -58,7 +58,7 @@ def csv_single_server_param(
                     mu=param_array[i, 0],
                     lamb=param_array[i, 1],
                     burst=param_array[i, 2]),
-                ser=ConstantRate(rate=param_array[i, 3]),
+                const_rate=ConstantRate(rate=param_array[i, 3]),
                 perform_param=perform_param)
 
         else:
@@ -78,7 +78,7 @@ def csv_single_server_param(
 
     res_dict = data_array_to_results(
         arrival=arrival,
-        service=service,
+        const_rate=const_rate,
         metric=metric,
         param_array=param_array,
         res_array=res_array,
@@ -120,7 +120,7 @@ def grid_param_single_exp(perform_param: PerformParameter,
         for rate1 in rate1_range:
             setting = SingleServerPerform(
                 arr=ExponentialArrival(lamb=lamb1),
-                ser=ConstantRate(rate=rate1),
+                const_rate=ConstantRate(rate=rate1),
                 perform_param=perform_param)
             param_array[i, 0] = lamb1
             param_array[i, 1] = rate1
@@ -139,7 +139,7 @@ def grid_param_single_exp(perform_param: PerformParameter,
 
     return data_array_to_results(
         arrival=exp_arrival,
-        service=const_service,
+        const_rate=const_service,
         metric=metric,
         param_array=param_array,
         res_array=param_array,
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         print(
             csv_single_server_param(
                 arrival=EXP_ARRIVAL,
-                service=CONST_RATE,
+                const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_UNIF20))
@@ -172,7 +172,7 @@ if __name__ == '__main__':
         print(
             csv_single_server_param(
                 arrival=MMOO_ARRIVAL,
-                service=CONST_RATE,
+                const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_UNIF20))
@@ -181,7 +181,7 @@ if __name__ == '__main__':
         print(
             csv_single_server_param(
                 arrival=EXP_ARRIVAL,
-                service=CONST_RATE,
+                const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))
@@ -190,7 +190,7 @@ if __name__ == '__main__':
         print(
             csv_single_server_param(
                 arrival=MMOO_ARRIVAL,
-                service=CONST_RATE,
+                const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))

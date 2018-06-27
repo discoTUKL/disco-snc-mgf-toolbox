@@ -38,7 +38,7 @@ def single_hop_contour(sigma_single: float,
         competitor = Optimize(
             setting=SingleServerPerform(
                 arr=tb_const,
-                ser=constant_rate_server,
+                const_rate=constant_rate_server,
                 perform_param=perform_param),
             print_x=print_x).grid_search(
                 bound_list=bound_list, delta=delta)
@@ -53,7 +53,7 @@ def single_hop_contour(sigma_single: float,
                 sigma_single=sigma_single,
                 rho_single=rho_single,
                 n=aggregation),
-            ser=constant_rate_server,
+            const_rate=constant_rate_server,
             perform_param=perform_param),
         print_x=print_x).grid_search(
             bound_list=bound_list, delta=delta)
@@ -71,7 +71,7 @@ def single_hop_contour(sigma_single: float,
             competitor = Optimize(
                 setting=SingleServerPerform(
                     arr=tb_const,
-                    ser=constant_rate_server,
+                    const_rate=constant_rate_server,
                     perform_param=perform_param),
                 print_x=print_x).grid_search(
                     bound_list=bound_list, delta=delta)
@@ -87,7 +87,7 @@ def single_hop_contour(sigma_single: float,
                     sigma_single=sigma_single,
                     rho_single=rho_single,
                     n=aggregation),
-                ser=constant_rate_server,
+                const_rate=constant_rate_server,
                 perform_param=perform_param),
             print_x=print_x).grid_search(
                 bound_list=bound_list, delta=delta)

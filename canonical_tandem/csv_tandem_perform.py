@@ -12,13 +12,13 @@ from nc_operations.nc_analysis import NCAnalysis
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import MMOO, ArrivalDistribution
 from nc_processes.regulated_arrivals import LeakyBucketMassOne
-from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 
 
 def tandem_df(arr_list: List[ArrivalDistribution],
-              ser_list: List[ServiceDistribution], opt_method: OptMethod,
+              ser_list: List[ConstantRate], opt_method: OptMethod,
               perform_param_list: PerformParamList,
               nc_analysis: NCAnalysis) -> pd.DataFrame:
     bounds = [0.0] * len(perform_param_list.values_list)
@@ -58,7 +58,7 @@ def tandem_df(arr_list: List[ArrivalDistribution],
 
 def csv_tandem_perform(
         foi_arrival: ArrivalDistribution, cross_arrival: ArrivalDistribution,
-        service: ServiceDistribution, number_servers: int,
+        const_rate: ConstantRate, number_servers: int,
         perform_param_list: PerformParamList, opt_method: OptMethod,
         nc_analysis: NCAnalysis) -> pd.DataFrame:
     """Write dataframe results into a csv file.
@@ -66,7 +66,7 @@ def csv_tandem_perform(
     Args:
         foi_arrival: flow of interest's arrival distribution
         cross_arrival: Distribution of cross arrivals
-        service: service of remaining servers
+        const_rate: service of remaining servers
         number_servers: number of servers in fat tree
         perform_param_list: list of performance parameter values
         opt_method: optimization method
@@ -79,11 +79,11 @@ def csv_tandem_perform(
     filename = "tandem_{0}".format(perform_param_list.perform_metric.name)
 
     arr_list: List[ArrivalDistribution] = [foi_arrival]
-    ser_list: List[ServiceDistribution] = []
+    ser_list: List[ConstantRate] = []
 
     for _i in range(number_servers):
         arr_list.append(cross_arrival)
-        ser_list.append(service)
+        ser_list.append(const_rate)
 
     data_frame = tandem_df(
         arr_list=arr_list,
@@ -93,7 +93,7 @@ def csv_tandem_perform(
         nc_analysis=nc_analysis)
 
     filename += "_" + foi_arrival.to_string() + "_" + cross_arrival.to_string(
-    ) + "_" + service.to_string()
+    ) + "_" + const_rate.to_string()
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -113,7 +113,7 @@ if __name__ == '__main__':
         csv_tandem_perform(
             foi_arrival=mmoo_foi,
             cross_arrival=mmoo_2,
-            service=const_rate2,
+            const_rate=const_rate2,
             number_servers=2,
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH,

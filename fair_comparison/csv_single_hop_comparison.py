@@ -34,24 +34,24 @@ def single_hop_comparison(aggregation: int, sigma_single: float,
         token_bucket_constant=tb_const, constant_rate=constant_rate_server)
 
     const_single = SingleServerPerform(
-        arr=tb_const, ser=constant_rate_server, perform_param=perform_param)
+        arr=tb_const, const_rate=constant_rate_server, perform_param=perform_param)
 
     leaky_mass_1 = SingleServerPerform(
         arr=LeakyBucketMassOne(
             sigma_single=sigma_single, rho_single=rho_single, n=aggregation),
-        ser=constant_rate_server,
+        const_rate=constant_rate_server,
         perform_param=perform_param)
 
     leaky_mass_2 = SingleServerPerform(
         arr=LeakyBucketMassTwo(
             sigma_single=sigma_single, rho_single=rho_single, n=aggregation),
-        ser=constant_rate_server,
+        const_rate=constant_rate_server,
         perform_param=perform_param)
 
     exact_mass_2 = SingleServerPerform(
         arr=LeakyBucketMassTwoExact(
             sigma_single=sigma_single, rho_single=rho_single, n=aggregation),
-        ser=constant_rate_server,
+        const_rate=constant_rate_server,
         perform_param=perform_param)
 
     bound_list = [(0.05, 15.0)]

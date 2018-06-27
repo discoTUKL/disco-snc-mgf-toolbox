@@ -10,22 +10,22 @@ from nc_operations.performance_bounds_lya import (delay_prob_lya, output_lya,
                                                   output_lya_discretized)
 from nc_processes.arrival_distribution import (ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 
 
 class SingleServerPerform(SettingNew):
     """Single server topology class."""
 
-    def __init__(self, arr: ArrivalDistribution, ser: ServiceDistribution,
+    def __init__(self, arr: ArrivalDistribution, const_rate: ConstantRate,
                  perform_param: PerformParameter) -> None:
         """
 
         :param arr:           arrival process
-        :param ser:           service
+        :param const_rate:           service
         :param perform_param: performance parameter
         """
         self.arr = arr
-        self.ser = ser
+        self.ser = const_rate
         self.perform_param = perform_param
 
     def bound(self, theta: float) -> float:
@@ -75,13 +75,13 @@ if __name__ == '__main__':
     CONST_RATE16 = ConstantRate(rate=1.6)
     OUTPUT_4 = PerformParameter(perform_metric=PerformMetric.OUTPUT, value=4)
     EX_OUTPUT = SingleServerPerform(
-        arr=EXP_ARRIVAL1, ser=CONST_RATE16, perform_param=OUTPUT_4)
+        arr=EXP_ARRIVAL1, const_rate=CONST_RATE16, perform_param=OUTPUT_4)
     print(EX_OUTPUT.bound(0.5))
     print(EX_OUTPUT.new_bound([0.5, 1.2]))
 
     DELAY_PROB_4 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
     EX_DELAY_PROB = SingleServerPerform(
-        arr=EXP_ARRIVAL1, ser=CONST_RATE16, perform_param=DELAY_PROB_4)
+        arr=EXP_ARRIVAL1, const_rate=CONST_RATE16, perform_param=DELAY_PROB_4)
     print(EX_DELAY_PROB.bound(0.5))
     print(EX_DELAY_PROB.new_bound([0.5, 1.2]))

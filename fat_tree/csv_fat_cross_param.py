@@ -15,7 +15,7 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 
 ########################################################################
@@ -24,7 +24,7 @@ from optimization.opt_method import OptMethod
 
 
 def csv_fat_cross_param(arrival: ArrivalDistribution,
-                        service: ServiceDistribution,
+                        const_rate: ConstantRate,
                         number_servers: int,
                         perform_param: PerformParameter,
                         opt_method: OptMethod,
@@ -35,7 +35,7 @@ def csv_fat_cross_param(arrival: ArrivalDistribution,
 
     size_array = [
         total_iterations,
-        (arrival.number_parameters() + service.number_parameters()) *
+        (arrival.number_parameters() + const_rate.number_parameters()) *
         number_servers
     ]
     # [rows, columns]
@@ -101,7 +101,7 @@ def csv_fat_cross_param(arrival: ArrivalDistribution,
 
     res_dict = data_array_to_results(
         arrival=arrival,
-        service=service,
+        const_rate=const_rate,
         param_array=param_array,
         res_array=res_array,
         number_servers=number_servers,
@@ -146,7 +146,7 @@ if __name__ == '__main__':
         print(
             csv_fat_cross_param(
                 arrival=MMOO_ARRIVAL1,
-                service=CONST_RATE1,
+                const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         print(
             csv_fat_cross_param(
                 arrival=EXP_ARRIVAL1,
-                service=CONST_RATE1,
+                const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
@@ -167,7 +167,7 @@ if __name__ == '__main__':
         print(
             csv_fat_cross_param(
                 arrival=MMOO_ARRIVAL1,
-                service=CONST_RATE1,
+                const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
@@ -177,7 +177,7 @@ if __name__ == '__main__':
         print(
             csv_fat_cross_param(
                 arrival=EXP_ARRIVAL1,
-                service=CONST_RATE1,
+                const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,

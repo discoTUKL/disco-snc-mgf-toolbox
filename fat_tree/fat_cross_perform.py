@@ -10,14 +10,14 @@ from nc_operations.operations import AggregateList, Deconvolve, Leftover
 from nc_processes.arrival import Arrival
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
-from nc_processes.service_distribution import ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 
 
 class FatCrossPerform(SettingNew):
     """Fat tree cross topology with the Simple topology as a sub-problem."""
 
     def __init__(self, arr_list: List[ArrivalDistribution],
-                 ser_list: List[ServiceDistribution],
+                 ser_list: List[ConstantRate],
                  perform_param: PerformParameter) -> None:
         # The first element in these lists in dedicated to the foi
         if len(arr_list) != len(ser_list):

@@ -5,11 +5,11 @@ import numpy as np
 from library.helper_functions import find_opt_improve_row
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 
 
 def data_array_to_results(arrival: ArrivalDistribution,
-                          service: ServiceDistribution,
+                          const_rate: ConstantRate,
                           param_array: np.array,
                           res_array: np.array,
                           number_servers: int,
@@ -40,12 +40,12 @@ def data_array_to_results(arrival: ArrivalDistribution,
 
     for j in range(number_servers):
         if isinstance(arrival, ExponentialArrival) and isinstance(
-                service, ConstantRate):
+                const_rate, ConstantRate):
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["rate{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]
 
-        elif isinstance(arrival, MMOO) and isinstance(service, ConstantRate):
+        elif isinstance(arrival, MMOO) and isinstance(const_rate, ConstantRate):
             res_dict["mu{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]
@@ -57,7 +57,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
         else:
             raise NameError("Arrival parameter " + arrival.__class__.__name__ +
                             "or Service parameter" +
-                            service.__class__.__name__ + " is infeasible")
+                            const_rate.__class__.__name__ + " is infeasible")
 
     res_dict.update({
         "opt_standard_bound": opt_standard_bound,

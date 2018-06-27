@@ -10,14 +10,14 @@ from library.perform_param_list import PerformParamList
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 
 
 def fat_cross_df(arr_list: List[ArrivalDistribution],
-                 ser_list: List[ServiceDistribution], opt_method: OptMethod,
+                 ser_list: List[ConstantRate], opt_method: OptMethod,
                  perform_param_list: PerformParamList) -> pd.DataFrame:
     """Compute delay bound for T in T_list and write into dataframe.
 
@@ -78,7 +78,7 @@ def fat_cross_df(arr_list: List[ArrivalDistribution],
 
 def csv_fat_cross_perform(
         foi_arrival: ArrivalDistribution, cross_arrival: ArrivalDistribution,
-        foi_service: ServiceDistribution, cross_service: ServiceDistribution,
+        foi_service: ConstantRate, cross_service: ConstantRate,
         number_servers: int, perform_param_list: PerformParamList,
         opt_method: OptMethod) -> pd.DataFrame:
     """Write dataframe results into a csv file.
@@ -104,7 +104,7 @@ def csv_fat_cross_perform(
             perform_param_list.perform_metric.name)
 
     arr_list: List[ArrivalDistribution] = [foi_arrival]
-    ser_list: List[ServiceDistribution] = [foi_service]
+    ser_list: List[ConstantRate] = [foi_service]
 
     for _i in range(number_servers - 1):
         arr_list.append(cross_arrival)

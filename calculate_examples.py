@@ -8,7 +8,7 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate, ServiceDistribution
+from nc_processes.service_distribution import ConstantRate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from optimization.simul_annealing import SimulAnnealing
@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     SINGLE_SERVER = SingleServerPerform(
         arr=ExponentialArrival(lamb=1.0),
-        ser=ConstantRate(rate=10.0),
+        const_rate=ConstantRate(rate=10.0),
         perform_param=OUTPUT_TIME6)
 
     print(SINGLE_SERVER.bound(0.1))
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     SINGLE_SERVER2 = SingleServerPerform(
         arr=MMOO(mu=0.7, lamb=0.4, burst=1.2),
-        ser=ConstantRate(rate=1),
+        const_rate=ConstantRate(rate=1),
         perform_param=DELAY_PROB10)
 
     print(
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         ExponentialArrival(lamb=4)
     ]
 
-    SER_LIST: List[ServiceDistribution] = [
+    SER_LIST: List[ConstantRate] = [
         ConstantRate(rate=4), ConstantRate(rate=0.5)
     ]
 
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformMetric.DELAY_PROB, value=4)
 
-    SER_LIST2: List[ServiceDistribution] = [
+    SER_LIST2: List[ConstantRate] = [
         ConstantRate(rate=3), ConstantRate(rate=3)
     ]
 
