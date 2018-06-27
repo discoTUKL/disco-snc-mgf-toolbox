@@ -18,6 +18,5 @@ if __name__ == '__main__':
             perform_param=DELAY_TIME)
 
         print(
-            Optimize(setting=EXAMPLE,
-                     print_x=False).grid_search(
-                         bound_list=[(0.01, 1.1)], delta=0.01))
+            Optimize(setting=EXAMPLE, print_x=False).grid_search(
+                bound_list=[(0.01, 1.1)], delta=0.01))

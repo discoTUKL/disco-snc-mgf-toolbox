@@ -17,7 +17,7 @@ class SingleServerPerform(SettingNew):
     """Single server topology class."""
 
     def __init__(self, arr: ArrivalDistribution, const_rate: ConstantRate,
-                 perform_param: PerformParameter, dnc_bound=False) -> None:
+                 perform_param: PerformParameter) -> None:
         """
 
         :param arr:           arrival process
@@ -27,15 +27,13 @@ class SingleServerPerform(SettingNew):
         self.arr = arr
         self.ser = const_rate
         self.perform_param = perform_param
-        self.dnc_bound = dnc_bound
 
     def bound(self, theta: float) -> float:
         return evaluate_single_hop(
             foi=self.arr,
             s_net=self.ser,
             theta=theta,
-            perform_param=self.perform_param,
-            dnc_bound=self.dnc_bound)
+            perform_param=self.perform_param)
 
     def new_bound(self, param_list: List[float]) -> float:
         if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:

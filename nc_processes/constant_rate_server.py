@@ -24,5 +24,11 @@ class ConstantRate(Service):
     def to_string(self):
         return "rate=" + str(self.rate)
 
+    def to_string_long(self) -> str:
+        """
+        :return string
+        """
+        return self.__class__.__name__ + "_" + self.to_string()
+
     def number_parameters(self) -> int:
         return 1
