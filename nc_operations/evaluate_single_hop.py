@@ -3,9 +3,8 @@
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
 from nc_operations.performance_bounds import delay, delay_prob, output
-from nc_operations.performance_bounds_discretized import (delay_discretized,
-                                                          delay_prob_discretized,
-                                                          output_discretized)
+from nc_operations.performance_bounds_discretized import (
+    delay_discretized, delay_prob_discretized, output_discretized)
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
 

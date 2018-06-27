@@ -22,8 +22,9 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return:      sigma(theta)
         """
-        k_sig = -log(1 - exp(theta * (
-            self.arr.rho(theta) + self.ser.rho(theta)))) / theta
+        k_sig = -log(1 -
+                     exp(theta *
+                         (self.arr.rho(theta) + self.ser.rho(theta)))) / theta
 
         return self.arr.sigma(theta) + self.ser.sigma(theta) + k_sig
 

@@ -71,8 +71,7 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ConstantRate,
     return delay_bounds_df
 
 
-def csv_single_perform(arrival: ArrivalDistribution,
-                       service: ConstantRate,
+def csv_single_perform(arrival: ArrivalDistribution, service: ConstantRate,
                        perform_param_list: PerformParamList,
                        opt_method: OptMethod) -> pd.DataFrame:
     """Writes dataframe results into a csv file

@@ -53,9 +53,7 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
 
                     # bound, new_bound
                     res_array[i, -2], res_array[i, -1] = compute_improvement(
-                                setting=setting,
-                                opt_method=opt_method,
-                                number_l=1)
+                        setting=setting, opt_method=opt_method, number_l=1)
 
                     # This might be a very dangerous condition
                     if res_array[i, -2] >= 1:

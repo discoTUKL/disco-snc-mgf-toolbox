@@ -11,8 +11,8 @@ from library.perform_param_list import PerformParamList
 from nc_operations.nc_analysis import NCAnalysis
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.arrival_distribution import MMOO, ArrivalDistribution
-from nc_processes.regulated_arrivals import LeakyBucketMassOne
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.regulated_arrivals import LeakyBucketMassOne
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 

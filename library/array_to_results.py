@@ -39,13 +39,12 @@ def data_array_to_results(arrival: ArrivalDistribution,
     }
 
     for j in range(number_servers):
-        if isinstance(arrival, ExponentialArrival) and isinstance(
-                const_rate, ConstantRate):
+        if isinstance(arrival, ExponentialArrival):
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["rate{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]
 
-        elif isinstance(arrival, MMOO) and isinstance(const_rate, ConstantRate):
+        elif isinstance(arrival, MMOO):
             res_dict["mu{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]

@@ -23,10 +23,8 @@ from optimization.opt_method import OptMethod
 ########################################################################
 
 
-def csv_fat_cross_param(arrival: ArrivalDistribution,
-                        const_rate: ConstantRate,
-                        number_servers: int,
-                        perform_param: PerformParameter,
+def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
+                        number_servers: int, perform_param: PerformParameter,
                         opt_method: OptMethod,
                         mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice."""
@@ -161,7 +159,6 @@ if __name__ == '__main__':
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))
-
 
     def fun3():
         print(

@@ -83,14 +83,14 @@ def compute_improvement(setting: SettingNew,
         start_list = [theta_start]
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x).basin_hopping(
-                start_list=start_list)
+            setting=setting,
+            print_x=print_x).basin_hopping(start_list=start_list)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x).basin_hopping(
-                start_list=start_list_new)
+            setting_new=setting,
+            print_x=print_x).basin_hopping(start_list=start_list_new)
 
         # This part is there to overcome opt_method issues
         if new_bound > standard_bound:
@@ -110,8 +110,7 @@ def compute_improvement(setting: SettingNew,
 
         new_bound = OptimizeNew(
             setting_new=setting, print_x=print_x).simulated_annealing(
-                start_list=start_list_new,
-                simul_annealing=simul_anneal_param)
+                start_list=start_list_new, simul_annealing=simul_anneal_param)
 
         # This part is there to overcome opt_method issues
         if new_bound > standard_bound:
