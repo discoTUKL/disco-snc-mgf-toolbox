@@ -42,7 +42,7 @@ class RegulatedArrivals(ArrivalDistribution):
         """
 
         return "sigma=" + str(self.sigma_single) + "_rho=" + str(
-            self.rho) + "_n=" + str(self.n)
+            self.rho_single) + "_n=" + str(self.n)
 
     def number_parameters(self) -> int:
         """
@@ -54,8 +54,8 @@ class RegulatedArrivals(ArrivalDistribution):
 class TokenBucketConstant(RegulatedArrivals):
     """Primitive TokenBucket (quasi deterministic and independent of theta)"""
 
-    def __init__(self) -> None:
-        super().__init__(self.sigma_single, self.rho_single, self.n)
+    def __init__(self, sigma_single=0.0, rho_single=0.0, n=1) -> None:
+        super().__init__(sigma_single, rho_single, n)
 
     def sigma(self, theta=0.0) -> float:
         return self.n * self.sigma_single
@@ -79,8 +79,8 @@ class LeakyBucketMassTwo(RegulatedArrivals):
     """Leaky Bucket according to Massoulie after MGF transformation and bound
     on erf() by 1"""
 
-    def __init__(self) -> None:
-        super().__init__(self.sigma_single, self.rho_single, self.n)
+    def __init__(self, sigma_single=0.0, rho_single=0.0, n=1) -> None:
+        super().__init__(sigma_single, rho_single, n)
 
     def sigma(self, theta: float) -> float:
         if theta <= 0:
@@ -97,8 +97,8 @@ class LeakyBucketMassTwo(RegulatedArrivals):
 class LeakyBucketMassTwoExact(RegulatedArrivals):
     """Exact Leaky Bucket according to Massoulie after MGF transformation"""
 
-    def __init__(self) -> None:
-        super().__init__(self.sigma_single, self.rho_single, self.n)
+    def __init__(self, sigma_single=0.0, rho_single=0.0, n=1) -> None:
+        super().__init__(sigma_single, rho_single, n)
 
     def sigma(self, theta: float) -> float:
         if theta <= 0:
