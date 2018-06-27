@@ -114,7 +114,7 @@ def csv_tandem_perform(
         nc_analysis=nc_analysis)
 
     filename += "_" + str(number_servers) + "servers_" + foi_arrival.to_string(
-    ) + "_" + cross_arrival.to_string() + "_" + const_rate.to_string()
+    ) + "_" + const_rate.to_string()
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
