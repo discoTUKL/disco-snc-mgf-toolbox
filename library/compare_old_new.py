@@ -196,7 +196,7 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
 
 if __name__ == '__main__':
     from nc_processes.arrival_distribution import ExponentialArrival
-    from nc_processes.service_distribution import ConstantRate
+    from nc_processes.constant_rate_server import ConstantRate
     from single_server.single_server_perform import SingleServerPerform
     from fat_tree.fat_cross_perform import FatCrossPerform
     from library.perform_parameter import PerformParameter

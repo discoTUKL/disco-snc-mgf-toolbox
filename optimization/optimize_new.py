@@ -54,7 +54,7 @@ class OptimizeNew(Optimize):
 if __name__ == '__main__':
     from nc_operations.perform_metric import PerformMetric
     from nc_processes.arrival_distribution import MMOO
-    from nc_processes.service_distribution import ConstantRate
+    from nc_processes.constant_rate_server import ConstantRate
     from fat_tree.fat_cross_perform import FatCrossPerform
     from library.perform_parameter import PerformParameter
 

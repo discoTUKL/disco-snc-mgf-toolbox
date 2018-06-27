@@ -10,7 +10,7 @@ from nc_operations.performance_bounds_lya import (delay_prob_lya, output_lya,
                                                   output_lya_discretized)
 from nc_processes.arrival_distribution import (ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate
+from nc_processes.constant_rate_server import ConstantRate
 
 
 class SingleServerPerform(SettingNew):

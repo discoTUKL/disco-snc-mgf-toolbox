@@ -10,7 +10,7 @@ from nc_operations.operations import AggregateList, Deconvolve, Leftover
 from nc_processes.arrival import Arrival
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
-from nc_processes.service_distribution import ConstantRate
+from nc_processes.constant_rate_server import ConstantRate
 
 
 class FatCrossPerform(SettingNew):

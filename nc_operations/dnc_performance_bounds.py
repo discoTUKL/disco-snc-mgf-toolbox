@@ -4,7 +4,7 @@ from math import ceil
 
 from library.exceptions import ParameterOutOfBounds
 from nc_processes.regulated_arrivals import TokenBucketConstant
-from nc_processes.service_distribution import ConstantRate
+from nc_processes.constant_rate_server import ConstantRate
 
 
 def FIFODelay(token_bucket_constant: TokenBucketConstant,

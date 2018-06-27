@@ -3,7 +3,7 @@ from optimization.optimize import Optimize
 from library.perform_parameter import PerformParameter
 from nc_processes.arrival_distribution import ExponentialArrival
 from nc_operations.perform_metric import PerformMetric
-from nc_processes.service_distribution import ConstantRate
+from nc_processes.constant_rate_server import ConstantRate
 
 if __name__ == '__main__':
     PROB_VALUES = [0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01, 0]

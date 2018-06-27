@@ -10,7 +10,7 @@ from nc_processes.arrivals_alternative import regulated_alternative
 from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
                                              TokenBucketConstant)
 from nc_processes.service_alternative import constant_rate_alternative
-from nc_processes.service_distribution import ConstantRate
+from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
 

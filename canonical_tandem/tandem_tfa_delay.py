@@ -7,7 +7,7 @@ from nc_operations.operations import Deconvolve, Leftover
 from nc_operations.performance_bounds import delay
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
-from nc_processes.service_distribution import ConstantRate
+from nc_processes.constant_rate_server import ConstantRate
 
 
 class TandemTFADelay(Setting):

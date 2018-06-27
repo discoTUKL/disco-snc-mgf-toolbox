@@ -5,7 +5,7 @@ import numpy as np
 from library.helper_functions import find_opt_improve_row
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
-from nc_processes.service_distribution import ConstantRate
+from nc_processes.constant_rate_server import ConstantRate
 
 
 def data_array_to_results(arrival: ArrivalDistribution,

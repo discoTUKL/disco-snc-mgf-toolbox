@@ -10,7 +10,7 @@ from nc_operations.dnc_performance_bounds import FIFODelay
 from nc_operations.perform_metric import PerformMetric
 from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
                                              TokenBucketConstant)
-from nc_processes.service_distribution import ConstantRate
+from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
 
