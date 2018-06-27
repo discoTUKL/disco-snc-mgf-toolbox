@@ -18,7 +18,8 @@ class FatCrossPerform(SettingNew):
 
     def __init__(self, arr_list: List[ArrivalDistribution],
                  ser_list: List[ConstantRate],
-                 perform_param: PerformParameter) -> None:
+                 perform_param: PerformParameter,
+                 dnc_bound=False) -> None:
         # The first element in these lists in dedicated to the foi
         if len(arr_list) != len(ser_list):
             raise ValueError(
@@ -28,6 +29,7 @@ class FatCrossPerform(SettingNew):
         self.arr_list = arr_list
         self.ser_list = ser_list
         self.perform_param = perform_param
+        self.dnc_bound = dnc_bound
         self.number_servers = len(ser_list)
 
     def bound(self, theta: float) -> float:
@@ -44,7 +46,8 @@ class FatCrossPerform(SettingNew):
             foi=self.arr_list[0],
             s_net=s_net,
             theta=theta,
-            perform_param=self.perform_param)
+            perform_param=self.perform_param,
+            dnc_bound=self.dnc_bound)
 
     def new_bound(self, param_list: List[float]) -> float:
         if len(param_list) != len(self.arr_list):
