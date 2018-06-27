@@ -43,7 +43,7 @@ def del_prob_alter_opt(delay_value: int,
                        t: int,
                        n=1,
                        print_x=False) -> float:
-    def helper_fun(theta: float):
+    def helper_fun(theta: float) -> float:
         return delay_prob_leaky(
             theta=theta,
             delay_value=delay_value,

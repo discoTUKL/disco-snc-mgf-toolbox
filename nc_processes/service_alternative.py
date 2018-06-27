@@ -3,8 +3,7 @@
 from math import exp, inf
 
 
-def constant_rate_alternative(theta: float,
-                              delta_time: int,
+def constant_rate_alternative(theta: float, delta_time: int,
                               rate: float) -> float:
     if theta <= 0:
         return inf
