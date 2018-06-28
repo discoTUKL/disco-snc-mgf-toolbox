@@ -7,7 +7,7 @@ The new approach using Lyapunov's inequality for the output is also included.
 
 ## Prerequisites
 
-- Python 3.6.5
+- Python 3.6 or higher
 
 
 ## Introduction
