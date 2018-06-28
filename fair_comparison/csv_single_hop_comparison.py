@@ -79,7 +79,8 @@ def single_hop_comparison(aggregation: int, sigma_single: float,
         raise NameError("Optimization parameter {0} is infeasible".format(
             opt_method.name))
 
-    return dnc_fifo_single, const_opt, leaky_mass_1_opt, leaky_mass_2_opt, exact_mass_2_opt
+    return (dnc_fifo_single, const_opt, leaky_mass_1_opt, leaky_mass_2_opt,
+            exact_mass_2_opt)
 
 
 def compare_aggregation(aggregations: List[int], sigma_single: float,
@@ -112,9 +113,10 @@ def compare_aggregation(aggregations: List[int], sigma_single: float,
         },
         index=aggregations)
 
-    filename = "regulated_single_{0}_sigma_{1}_rho_{2}_utilization_{3}_{4}".format(
-        perform_param.to_name_value(), str(sigma_single), str(rho_single),
-        str("%.2f" % (rho_single / service_rate)), opt_method.name)
+    filename = (
+        "regulated_single_{0}_sigma_{1}_rho_{2}_utilization_{3}_{4}").format(
+            perform_param.to_name_value(), str(sigma_single), str(rho_single),
+            str("%.2f" % (rho_single / service_rate)), opt_method.name)
 
     results_df.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -152,10 +154,11 @@ def compare_probability(aggregation: int, sigma_single: float,
         },
         index=perform_list.values_list)
 
-    filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_{3}_utilization_{4}_{5}".format(
-        perform_list.to_name(), aggregation,
-        str(sigma_single), str(rho_single),
-        str("%.2f" % (rho_single / service_rate)), opt_method.name)
+    filename = (
+        "regulated_single_{0}_n_{1}_sigma_{2}_rho_{3}_utilization_{4}_{5}"
+    ).format(perform_list.to_name(), aggregation, str(sigma_single),
+             str(rho_single), str("%.2f" % (rho_single / service_rate)),
+             opt_method.name)
 
     results_df.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
