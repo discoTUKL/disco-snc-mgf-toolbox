@@ -31,7 +31,8 @@ def tandem_compare(arr_list: List[ArrivalDistribution],
             arr_list=arr_list, ser_list=ser_list, perform_param=perform_param)
         setting2 = TandemSFA(
             arr_list=arr_list2, ser_list=ser_list, perform_param=perform_param)
-    elif nc_analysis == NCAnalysis.TFA and perform_param.perform_metric == PerformEnum.DELAY:
+    elif (nc_analysis == NCAnalysis.TFA and
+          perform_param.perform_metric == PerformEnum.DELAY):
         setting = TandemTFADelay(
             arr_list=arr_list, ser_list=ser_list, prob_d=perform_param.value)
         setting2 = TandemTFADelay(

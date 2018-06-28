@@ -69,7 +69,7 @@ class Convolve(Service):
     def rho(self, theta: float) -> float:
         if isinstance(self.ser1, ConstantRate) and isinstance(
                 self.ser2, ConstantRate):
-            return max(self.ser1.rho(theta), self.ser2.rho(theta))
+            return min(self.ser1.rate, self.ser2.rate)
 
         if self.ser1.rho(theta) > 0 or self.ser2.rho(theta) > 0:
             raise ParameterOutOfBounds("Check rho's sign")

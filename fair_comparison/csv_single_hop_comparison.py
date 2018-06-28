@@ -7,7 +7,7 @@ import pandas as pd
 
 from library.perform_param_list import PerformParamList
 from library.perform_parameter import PerformParameter
-from nc_operations.dnc_performance_bounds import FIFODelay
+from nc_operations.dnc_performance_bounds import fifo_delay
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.regulated_arrivals import (
     LeakyBucketMassOne, LeakyBucketMassTwo, LeakyBucketMassTwoExact,
@@ -29,7 +29,7 @@ def single_hop_comparison(aggregation: int, sigma_single: float,
     tb_const = TokenBucketConstant(
         sigma_single=sigma_single, rho_single=rho_single, n=aggregation)
 
-    dnc_fifo_single: float = FIFODelay(
+    dnc_fifo_single: float = fifo_delay(
         token_bucket_constant=tb_const, constant_rate=constant_rate_server)
 
     const_single = SingleServerPerform(

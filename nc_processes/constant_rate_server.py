@@ -1,6 +1,5 @@
 """Implemented service classes for different distributions"""
 
-from library.exceptions import ParameterOutOfBounds
 from nc_processes.service import Service
 
 
@@ -14,10 +13,6 @@ class ConstantRate(Service):
         return 0.0
 
     def rho(self, theta=1.0) -> float:
-        if theta <= 0 and theta is not None:
-            raise ParameterOutOfBounds(
-                "theta = {0} must be > 0".format(theta))
-
         # The minus is important to insure the correct sign
         return -self.rate
 

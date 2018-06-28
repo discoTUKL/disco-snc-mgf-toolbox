@@ -6,7 +6,7 @@ from typing import List
 import pandas as pd
 
 from library.perform_parameter import PerformParameter
-from nc_operations.dnc_performance_bounds import FIFODelay
+from nc_operations.dnc_performance_bounds import fifo_delay
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
                                              TokenBucketConstant)
@@ -44,7 +44,7 @@ def single_hop_contour(sigma_single: float,
                 bound_list=bound_list, delta=delta)
 
     else:
-        competitor = FIFODelay(
+        competitor = fifo_delay(
             token_bucket_constant=tb_const, constant_rate=constant_rate_server)
 
     leaky_mass_1_opt = Optimize(
@@ -77,7 +77,7 @@ def single_hop_contour(sigma_single: float,
                     bound_list=bound_list, delta=delta)
 
         else:
-            competitor = FIFODelay(
+            competitor = fifo_delay(
                 token_bucket_constant=tb_const,
                 constant_rate=constant_rate_server)
 
