@@ -6,6 +6,7 @@ from typing import List
 from library.helper_functions import is_equal
 from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival import Arrival
+from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.service import Service
 
 
@@ -52,6 +53,10 @@ class Convolve(Service):
         self.ser2 = ser2
 
     def sigma(self, theta: float) -> float:
+        if isinstance(self.ser1, ConstantRate) and isinstance(
+                self.ser2, ConstantRate):
+            return 0.0
+
         if not is_equal(abs(self.ser1.rho(theta)), abs(self.ser2.rho(theta))):
             k_sig = -(1 / theta) * log(1 - exp(
                 -theta * abs(self.ser1.rho(theta) - self.ser2.rho(theta))))
@@ -62,6 +67,10 @@ class Convolve(Service):
             return self.ser1.sigma(theta) + self.ser2.sigma(theta)
 
     def rho(self, theta: float) -> float:
+        if isinstance(self.ser1, ConstantRate) and isinstance(
+                self.ser2, ConstantRate):
+            return max(self.ser1.rho(theta), self.ser2.rho(theta))
+
         if self.ser1.rho(theta) > 0 or self.ser2.rho(theta) > 0:
             raise ParameterOutOfBounds("Check rho's sign")
 
