@@ -1,6 +1,6 @@
 """Optimize theta and all Lyapunov l's"""
 
-import warnings
+from warnings import warn
 from math import exp, inf
 from typing import List
 
@@ -61,8 +61,7 @@ class Optimize(object):
         for i in range(len(bound_list)):
             if is_equal(grid_res[0][i], bound_list[i][0]) or is_equal(
                     grid_res[0][i], bound_list[i][1]):
-                warnings.warn("optimal x is on the boundary: " +
-                              str(grid_res[0][i]))
+                warn("optimal x is on the boundary: " + str(grid_res[0][i]))
 
         if self.print_x:
             print("grid search optimal x: ", grid_res[0].tolist())
@@ -287,8 +286,8 @@ class Optimize(object):
             if is_equal(param_grid_df.iloc[opt_row][i],
                         bound_list[i][0]) or is_equal(
                             param_grid_df.iloc[opt_row][i], bound_list[i][1]):
-                warnings.warn("GS old optimal x is on the boundary: " +
-                              str(param_grid_df.iloc[opt_row][i]))
+                warn("GS old optimal x is on the boundary: " +
+                     str(param_grid_df.iloc[opt_row][i]))
 
         if self.print_x:
             print("GS old optimal x: ", param_grid_df.iloc[opt_row].tolist())

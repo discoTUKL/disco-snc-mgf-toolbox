@@ -1,6 +1,7 @@
 """This file takes arrays and writes them into dictionaries"""
 
 import numpy as np
+from warnings import warn
 
 from library.helper_functions import find_opt_improve_row
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
@@ -19,6 +20,14 @@ def data_array_to_results(arrival: ArrivalDistribution,
     # TODO: actually, we want a kind of "common mean"
     mean_standard_bound = np.nanmean(res_array[:, 0])
     mean_new_bound = np.nanmean(res_array[:, 1])
+
+    count_nan_0 = np.count_nonzero(~np.isnan(res_array[:, 0]))
+    count_nan_1 = np.count_nonzero(~np.isnan(res_array[:, 1]))
+
+    if count_nan_0 != count_nan_1:
+        print(
+            warn("number of nan's does not match, {0} != {1}".format(
+                count_nan_0, count_nan_1)))
 
     row_max = find_opt_improve_row(res_array, metric)
     opt_standard_bound = res_array[row_max, 0]
@@ -112,7 +121,7 @@ def time_array_to_results(arrival: ArrivalDistribution, time_array,
     # time_standard = [-2], time_lyapunov = [-1]
     res_dict = {
         "Name": "Value",
-        "arrival_distribution": arrival.__class__.__name__,
+        "arrival_distribution": arrival.to_name(),
         "number_servers": number_servers,
         "standard_mean": standard_mean,
         "Lyapunov_mean": lyapunov_mean,
