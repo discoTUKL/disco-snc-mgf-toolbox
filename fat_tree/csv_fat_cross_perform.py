@@ -7,7 +7,7 @@ import pandas as pd
 
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_param_list import PerformParamList
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.constant_rate_server import ConstantRate
@@ -125,7 +125,7 @@ def csv_fat_cross_perform(
 
 if __name__ == '__main__':
     DELAY_PROB_LIST = PerformParamList(
-        perform_metric=PerformMetric.DELAY_PROB, values_list=range(4, 11))
+        perform_metric=PerformEnum.DELAY_PROB, values_list=range(4, 11))
 
     exp1 = ExponentialArrival(lamb=0.2)
     exp2 = ExponentialArrival(lamb=8.0)

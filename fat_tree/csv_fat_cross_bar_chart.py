@@ -9,7 +9,7 @@ import pandas as pd
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import (ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.constant_rate_server import ConstantRate
@@ -79,7 +79,7 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
 
 if __name__ == '__main__':
     DELAY_PROB4 = PerformParameter(
-        perform_metric=PerformMetric.DELAY_PROB, value=4)
+        perform_metric=PerformEnum.DELAY_PROB, value=4)
     print(
         csv_bar_chart(
             ar_list=[

@@ -33,10 +33,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
     else:
         raise NameError("Metric parameter {0} is infeasible".format(metric))
 
-    res_dict = {
-        "Name": "Value",
-        "arrival_distribution": arrival.__class__.__name__
-    }
+    res_dict = {"Name": "Value", "arrival_distribution": arrival.to_name()}
 
     for j in range(number_servers):
         if isinstance(arrival, ExponentialArrival):
@@ -54,9 +51,9 @@ def data_array_to_results(arrival: ArrivalDistribution,
                 row_max, 3 * number_servers + j]
 
         else:
-            raise NameError("Arrival parameter " + arrival.__class__.__name__ +
-                            "or Service parameter" +
-                            const_rate.__class__.__name__ + " is infeasible")
+            raise NameError("Arrival parameter " + arrival.to_name() +
+                            "or Service parameter" + const_rate.to_name() +
+                            " is infeasible")
 
     res_dict.update({
         "opt_standard_bound": opt_standard_bound,

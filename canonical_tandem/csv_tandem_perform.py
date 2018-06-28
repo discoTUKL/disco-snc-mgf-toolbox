@@ -10,7 +10,7 @@ from canonical_tandem.tandem_tfa_delay import TandemTFADelay
 from library.perform_parameter import PerformParameter
 from library.perform_param_list import PerformParamList
 from nc_operations.nc_analysis import NCAnalysis
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
@@ -39,7 +39,7 @@ def tandem_df(arr_list: List[ArrivalDistribution],
                 arr_list=arr_list2,
                 ser_list=ser_list,
                 perform_param=perform_param)
-        elif nc_analysis == NCAnalysis.TFA and perform_param_list.perform_metric == PerformMetric.DELAY:
+        elif nc_analysis == NCAnalysis.TFA and perform_param_list.perform_metric == PerformEnum.DELAY:
             setting = TandemTFADelay(
                 arr_list=arr_list,
                 ser_list=ser_list,
@@ -176,7 +176,7 @@ def csv_tandem_compare_perform(
 
 if __name__ == '__main__':
     DELAY_LIST = PerformParamList(
-        perform_metric=PerformMetric.DELAY,
+        perform_metric=PerformEnum.DELAY,
         values_list=[10**(-1), 10**(-2), 10**(-4), 10**(-8), 10**(-12)])
 
     NUMBER_AGGREGATIONS = 10

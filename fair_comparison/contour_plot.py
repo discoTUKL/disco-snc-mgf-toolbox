@@ -7,7 +7,7 @@ import pandas as pd
 
 from library.perform_parameter import PerformParameter
 from nc_operations.dnc_performance_bounds import FIFODelay
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
                                              TokenBucketConstant)
 from nc_processes.constant_rate_server import ConstantRate
@@ -134,8 +134,7 @@ def csv_contour(rho_single: float,
 
 
 if __name__ == '__main__':
-    DELAY6 = PerformParameter(
-        perform_metric=PerformMetric.DELAY, value=10**(-6))
+    DELAY6 = PerformParameter(perform_metric=PerformEnum.DELAY, value=10**(-6))
 
     NUMBER_AGGREGATIONS = [1, 5, 10, 15, 20, 25, 30, 35, 40, 50]
 

@@ -8,11 +8,10 @@ import pandas as pd
 from library.perform_param_list import PerformParamList
 from library.perform_parameter import PerformParameter
 from nc_operations.dnc_performance_bounds import FIFODelay
-from nc_operations.perform_metric import PerformMetric
-from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
-                                             LeakyBucketMassTwo,
-                                             LeakyBucketMassTwoExact,
-                                             TokenBucketConstant)
+from nc_operations.perform_enum import PerformEnum
+from nc_processes.regulated_arrivals import (
+    LeakyBucketMassOne, LeakyBucketMassTwo, LeakyBucketMassTwoExact,
+    TokenBucketConstant)
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -34,7 +33,9 @@ def single_hop_comparison(aggregation: int, sigma_single: float,
         token_bucket_constant=tb_const, constant_rate=constant_rate_server)
 
     const_single = SingleServerPerform(
-        arr=tb_const, const_rate=constant_rate_server, perform_param=perform_param)
+        arr=tb_const,
+        const_rate=constant_rate_server,
+        perform_param=perform_param)
 
     leaky_mass_1 = SingleServerPerform(
         arr=LeakyBucketMassOne(
@@ -152,9 +153,9 @@ def compare_probability(aggregation: int, sigma_single: float,
         index=perform_list.values_list)
 
     filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_{3}_utilization_{4}_{5}".format(
-        perform_list.to_name(), aggregation, str(sigma_single),
-        str(rho_single), str("%.2f" % (rho_single / service_rate)),
-        opt_method.name)
+        perform_list.to_name(), aggregation,
+        str(sigma_single), str(rho_single),
+        str("%.2f" % (rho_single / service_rate)), opt_method.name)
 
     results_df.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -202,8 +203,7 @@ def compare_sigma(aggregation: int, sigmas: List[float], rho_single: float,
 
 
 if __name__ == '__main__':
-    DELAY6 = PerformParameter(
-        perform_metric=PerformMetric.DELAY, value=10**(-6))
+    DELAY6 = PerformParameter(perform_metric=PerformEnum.DELAY, value=10**(-6))
 
     NUMBER_AGGREGATIONS = [1, 5, 10, 15, 20, 25, 30, 35, 40, 50]
 
@@ -222,7 +222,7 @@ if __name__ == '__main__':
                 opt_method=OptMethod.GRID_SEARCH))
 
     PERFORM_LIST = PerformParamList(
-        perform_metric=PerformMetric.DELAY,
+        perform_metric=PerformEnum.DELAY,
         values_list=[
             10**(-3), 10**(-6), 10**(-9), 10**(-12), 10**(-15), 10**(-18), 10
             **(-21), 10**(-24), 10**(-27), 10**(-30)

@@ -39,16 +39,10 @@ class ArrivalDistribution(Arrival):
 
     @abstractmethod
     def to_value(self) -> str:
-        """
-        :return string
-        """
         pass
 
     def to_name_value(self) -> str:
-        """
-        :return string
-        """
-        return self.to_name() + "_" + self.to_value()
+        return self.to_name() + self.to_value()
 
     @abstractmethod
     def number_parameters(self) -> int:

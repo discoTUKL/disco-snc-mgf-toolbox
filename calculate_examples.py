@@ -5,7 +5,7 @@ from typing import List
 
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_parameter import PerformParameter
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.constant_rate_server import ConstantRate
@@ -18,8 +18,7 @@ if __name__ == '__main__':
     # Single server output calculation
     print("Single Server Performance Bounds:\n")
 
-    OUTPUT_TIME6 = PerformParameter(
-        perform_metric=PerformMetric.OUTPUT, value=6)
+    OUTPUT_TIME6 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=6)
 
     SINGLE_SERVER = SingleServerPerform(
         arr=ExponentialArrival(lamb=1.0),
@@ -41,7 +40,7 @@ if __name__ == '__main__':
             start_list=[0.5, 1.0], delta=3, delta_min=0.01))
 
     DELAY_PROB10 = PerformParameter(
-        perform_metric=PerformMetric.DELAY_PROB, value=10)
+        perform_metric=PerformEnum.DELAY_PROB, value=10)
 
     SINGLE_SERVER2 = SingleServerPerform(
         arr=MMOO(mu=0.7, lamb=0.4, burst=1.2),
@@ -63,7 +62,7 @@ if __name__ == '__main__':
     print("Fat Cross Performance Bounds:\n")
 
     DELAY_PROB6 = PerformParameter(
-        perform_metric=PerformMetric.DELAY_PROB, value=6)
+        perform_metric=PerformEnum.DELAY_PROB, value=6)
 
     ARR_LIST: List[ArrivalDistribution] = [
         ExponentialArrival(lamb=1),
@@ -80,7 +79,7 @@ if __name__ == '__main__':
     print(EXAMPLE.new_bound(param_list=[0.3, 1.5]))
 
     DELAY_TIME = PerformParameter(
-        perform_metric=PerformMetric.DELAY, value=0.032)
+        perform_metric=PerformEnum.DELAY, value=0.032)
 
     EXAMPLE_REVERSE = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)
@@ -88,7 +87,7 @@ if __name__ == '__main__':
     print(EXAMPLE_REVERSE.bound(theta=0.3))
 
     DELAY_PROB10 = PerformParameter(
-        perform_metric=PerformMetric.DELAY_PROB, value=4)
+        perform_metric=PerformEnum.DELAY_PROB, value=4)
 
     SER_LIST2: List[ConstantRate] = [
         ConstantRate(rate=3), ConstantRate(rate=3)

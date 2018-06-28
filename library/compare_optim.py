@@ -136,15 +136,14 @@ def compare_optimization(setting: SettingNew,
 
 
 if __name__ == '__main__':
-    from nc_operations.perform_metric import PerformMetric
+    from nc_operations.perform_enum import PerformEnum
     from nc_processes.arrival_distribution import ExponentialArrival
     from nc_processes.constant_rate_server import ConstantRate
     from single_server.single_server_perform import SingleServerPerform
     from fat_tree.fat_cross_perform import FatCrossPerform
     from library.perform_parameter import PerformParameter
 
-    OUTPUT_TIME = PerformParameter(
-        perform_metric=PerformMetric.OUTPUT, value=4)
+    OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
     EXP_ARRIVAL = ExponentialArrival(lamb=4.4)
     CONST_RATE = ConstantRate(rate=0.24)
@@ -164,7 +163,7 @@ if __name__ == '__main__':
     #         number_l=1))
 
     DELAY_PROB = PerformParameter(
-        perform_metric=PerformMetric.DELAY_PROB, value=4)
+        perform_metric=PerformEnum.DELAY_PROB, value=4)
 
     EXP_ARRIVAL1 = ExponentialArrival(lamb=5.0)
     EXP_ARRIVAL2 = ExponentialArrival(lamb=4.0)

@@ -4,7 +4,7 @@ import csv
 import pandas as pd
 
 from library.perform_param_list import PerformParamList
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.constant_rate_server import ConstantRate
@@ -104,7 +104,7 @@ def csv_single_perform(arrival: ArrivalDistribution, service: ConstantRate,
 
 if __name__ == '__main__':
     OUTPUT_LIST = PerformParamList(
-        perform_metric=PerformMetric.OUTPUT, values_list=range(4, 15))
+        perform_metric=PerformEnum.OUTPUT, values_list=range(4, 15))
 
     exp1 = ExponentialArrival(lamb=1.0)
     mmoo1 = MMOO(mu=8.0, lamb=12.0, burst=3.0)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     const_rate2 = ConstantRate(rate=1.3)
 
     NEW_OUTPUT_LIST = PerformParamList(
-        perform_metric=PerformMetric.OUTPUT, values_list=range(4, 15))
+        perform_metric=PerformEnum.OUTPUT, values_list=range(4, 15))
 
     print(
         csv_single_perform(

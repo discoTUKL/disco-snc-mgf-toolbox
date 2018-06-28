@@ -5,7 +5,7 @@ from math import exp, inf
 import scipy.optimize
 
 from library.perform_parameter import PerformParameter
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrivals_alternative import regulated_alternative
 from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
                                              TokenBucketConstant)
@@ -108,7 +108,7 @@ def delay_prob_leaky_approx_opt(delay_value: int,
 if __name__ == '__main__':
     DELAY_VAL = 5
     DELAYPROB5 = PerformParameter(
-        perform_metric=PerformMetric.DELAY_PROB, value=DELAY_VAL)
+        perform_metric=PerformEnum.DELAY_PROB, value=DELAY_VAL)
 
     NUMBER_AGGREGATIONS = 5
 
@@ -128,7 +128,9 @@ if __name__ == '__main__':
         n=NUMBER_AGGREGATIONS)
 
     const_single = SingleServerPerform(
-        arr=tb_const, const_rate=constant_rate_server, perform_param=DELAYPROB5)
+        arr=tb_const,
+        const_rate=constant_rate_server,
+        perform_param=DELAYPROB5)
 
     leaky_mass_1 = SingleServerPerform(
         arr=LeakyBucketMassOne(

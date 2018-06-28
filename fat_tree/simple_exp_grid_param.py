@@ -8,7 +8,7 @@ from fat_tree.fat_cross_perform import FatCrossPerform
 from library.array_to_results import data_array_to_results
 from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import ExponentialArrival
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
@@ -34,7 +34,7 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
             for rate1 in rate1_range:
                 for rate2 in rate2_range:
                     delay_prob = PerformParameter(
-                        perform_metric=PerformMetric.DELAY_PROB, value=delay)
+                        perform_metric=PerformEnum.DELAY_PROB, value=delay)
 
                     setting = FatCrossPerform(
                         arr_list=[

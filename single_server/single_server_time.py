@@ -6,10 +6,10 @@ import numpy as np
 
 from library.array_to_results import time_array_to_results
 from library.compare_old_new import compute_overhead
-from library.mc_name import MCEnum
+from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.constant_rate_server import ConstantRate
@@ -59,7 +59,7 @@ def mc_time_single(arrival: ArrivalDistribution,
 
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(
-                arrival.__class__.__name__))
+                arrival.to_name()))
 
         # time_standard, time_lyapunov = compute_overhead()
         time_array[i, 0], time_array[i, 1] = compute_overhead(
@@ -76,8 +76,7 @@ def mc_time_single(arrival: ArrivalDistribution,
 
 
 if __name__ == '__main__':
-    OUTPUT_TIME = PerformParameter(
-        perform_metric=PerformMetric.OUTPUT, value=4)
+    OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
     EXP_ARRIVAL1 = ExponentialArrival()
     MMOO_ARRIVAL1 = MMOO()

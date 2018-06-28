@@ -3,7 +3,7 @@
 from enum import Enum
 
 
-class PerformMetric(Enum):
+class PerformEnum(Enum):
     """All possible performance metrics as enums"""
     DELAY = "Delay"
     DELAY_PROB = "DelayProb"

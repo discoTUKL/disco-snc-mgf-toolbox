@@ -52,14 +52,13 @@ class OptimizeNew(Optimize):
 
 
 if __name__ == '__main__':
-    from nc_operations.perform_metric import PerformMetric
+    from nc_operations.perform_enum import PerformEnum
     from nc_processes.arrival_distribution import MMOO
     from nc_processes.constant_rate_server import ConstantRate
     from fat_tree.fat_cross_perform import FatCrossPerform
     from library.perform_parameter import PerformParameter
 
-    DELAY_4 = PerformParameter(
-        perform_metric=PerformMetric.DELAY, value=0.0001)
+    DELAY_4 = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.0001)
 
     mmoo1 = MMOO(mu=1.0, lamb=2.2, burst=3.4)
     mmoo2 = MMOO(mu=3.6, lamb=1.6, burst=0.4)

@@ -5,7 +5,7 @@ from typing import List
 from library.perform_parameter import PerformParameter
 from library.setting_new import SettingNew
 from nc_operations.evaluate_single_hop import evaluate_single_hop
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds_lya import (delay_prob_lya, output_lya,
                                                   output_lya_discretized)
 from nc_processes.arrival_distribution import (ArrivalDistribution,
@@ -36,7 +36,7 @@ class SingleServerPerform(SettingNew):
             perform_param=self.perform_param)
 
     def new_bound(self, param_list: List[float]) -> float:
-        if self.perform_param.perform_metric == PerformMetric.DELAY_PROB:
+        if self.perform_param.perform_metric == PerformEnum.DELAY_PROB:
             if self.arr.is_discrete():
                 return delay_prob_lya(
                     arr=self.arr,
@@ -45,7 +45,7 @@ class SingleServerPerform(SettingNew):
                     delay=self.perform_param.value,
                     l_lya=param_list[1])
 
-        elif self.perform_param.perform_metric == PerformMetric.OUTPUT:
+        elif self.perform_param.perform_metric == PerformEnum.OUTPUT:
             if self.arr.is_discrete():
                 return output_lya(
                     arr=self.arr,
@@ -73,14 +73,14 @@ class SingleServerPerform(SettingNew):
 if __name__ == '__main__':
     EXP_ARRIVAL1 = ExponentialArrival(lamb=1.0)
     CONST_RATE16 = ConstantRate(rate=1.6)
-    OUTPUT_4 = PerformParameter(perform_metric=PerformMetric.OUTPUT, value=4)
+    OUTPUT_4 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
     EX_OUTPUT = SingleServerPerform(
         arr=EXP_ARRIVAL1, const_rate=CONST_RATE16, perform_param=OUTPUT_4)
     print(EX_OUTPUT.bound(0.5))
     print(EX_OUTPUT.new_bound([0.5, 1.2]))
 
     DELAY_PROB_4 = PerformParameter(
-        perform_metric=PerformMetric.DELAY_PROB, value=4)
+        perform_metric=PerformEnum.DELAY_PROB, value=4)
     EX_DELAY_PROB = SingleServerPerform(
         arr=EXP_ARRIVAL1, const_rate=CONST_RATE16, perform_param=DELAY_PROB_4)
     print(EX_DELAY_PROB.bound(0.5))

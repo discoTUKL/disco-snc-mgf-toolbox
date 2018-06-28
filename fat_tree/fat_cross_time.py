@@ -10,10 +10,10 @@ from tqdm import tqdm  # Progressbar in for loop
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.array_to_results import time_array_to_results
 from library.compare_old_new import compute_overhead
-from library.mc_name import MCEnum
+from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
-from nc_operations.perform_metric import PerformMetric
+from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.constant_rate_server import ConstantRate
@@ -70,7 +70,7 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
 
             else:
                 raise NameError("Arrival parameter {0} is infeasible".format(
-                    arrival.__class__.__name__))
+                    arrival.to_name()))
 
             service_list = [
                 ConstantRate(rate=param_array[
@@ -98,9 +98,8 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
                 time_ratio=time_ratio))
 
     with open(
-            "time_" + perform_param.perform_metric.to_name + "_" +
-            arrival.__class__.__name__ + "_" + opt_method.name + ".csv",
-            'w') as csv_file:
+            "time_" + perform_param.to_name() + "_" + arrival.to_name() + "_" +
+            opt_method.name + ".csv", 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in time_ratio.items():
             writer.writerow([key, value])
@@ -110,7 +109,7 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
 
 if __name__ == '__main__':
     DELAY_PROB = PerformParameter(
-        perform_metric=PerformMetric.DELAY_PROB, value=4)
+        perform_metric=PerformEnum.DELAY_PROB, value=4)
 
     EXP_ARRIVAL1 = ExponentialArrival()
     MMOO_ARRIVAL1 = MMOO()
