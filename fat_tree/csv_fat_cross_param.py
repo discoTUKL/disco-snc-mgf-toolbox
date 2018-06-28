@@ -110,7 +110,7 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
         "optimization": opt_method.name,
         "metric": metric,
         "iterations": total_iterations,
-        "MCDistribution": mc_dist.mc_enum.to_name,
+        "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string(),
         "number_servers": number_servers
     })

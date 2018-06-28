@@ -17,17 +17,21 @@ def data_array_to_results(arrival: ArrivalDistribution,
                           metric="relative") -> dict:
     """Writes the array values into a dictionary, MMOO"""
 
-    # TODO: actually, we want a kind of "common mean"
+    # res_array[:, 0] = np.delete(res_array[:, 0],
+    #                             np.argwhere(np.isnan(res_array[:, 1])))
+    # res_array[:, 1] = np.delete(res_array[:, 1],
+    #                             np.argwhere(np.isnan(res_array[:, 0])))
+
     mean_standard_bound = np.nanmean(res_array[:, 0])
     mean_new_bound = np.nanmean(res_array[:, 1])
 
-    count_nan_0 = np.count_nonzero(~np.isnan(res_array[:, 0]))
-    count_nan_1 = np.count_nonzero(~np.isnan(res_array[:, 1]))
+    count_nan_standard = np.count_nonzero(~np.isnan(res_array[:, 0]))
+    count_nan_new = np.count_nonzero(~np.isnan(res_array[:, 1]))
 
-    if count_nan_0 != count_nan_1:
+    if count_nan_standard != count_nan_new:
         print(
             warn("number of nan's does not match, {0} != {1}".format(
-                count_nan_0, count_nan_1)))
+                count_nan_standard, count_nan_new)))
 
     row_max = find_opt_improve_row(res_array, metric)
     opt_standard_bound = res_array[row_max, 0]
