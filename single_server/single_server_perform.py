@@ -1,11 +1,13 @@
 """Single server topology class"""
 
 from typing import List
+from warnings import warn
 
 from library.perform_parameter import PerformParameter
 from library.setting_new import SettingNew
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.perform_enum import PerformEnum
+from nc_operations.performance_bounds_discretized import delay_prob_discretized
 from nc_operations.performance_bounds_lya import (delay_prob_lya, output_lya,
                                                   output_lya_discretized)
 from nc_processes.arrival_distribution import (ArrivalDistribution,
@@ -44,6 +46,13 @@ class SingleServerPerform(SettingNew):
                     theta=param_list[0],
                     delay=self.perform_param.value,
                     l_lya=param_list[1])
+            else:
+                warn("old approach is applied")
+                return delay_prob_discretized(
+                    arr=self.arr,
+                    ser=self.ser,
+                    theta=param_list[0],
+                    delay=self.perform_param.value)
 
         elif self.perform_param.perform_metric == PerformEnum.OUTPUT:
             if self.arr.is_discrete():

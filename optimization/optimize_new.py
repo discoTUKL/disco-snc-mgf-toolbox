@@ -47,7 +47,6 @@ class OptimizeNew(Optimize):
                 res = self.setting_bound.bound(theta=param_list[0])
             except (ParameterOutOfBounds, OverflowError):
                 res = inf
-
         return res
 
 

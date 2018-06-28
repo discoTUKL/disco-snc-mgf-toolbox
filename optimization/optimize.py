@@ -61,10 +61,11 @@ class Optimize(object):
         for i in range(len(bound_list)):
             if is_equal(grid_res[0][i], bound_list[i][0]) or is_equal(
                     grid_res[0][i], bound_list[i][1]):
-                warn("optimal x is on the boundary: " + str(grid_res[0][i]))
+                warn("optimal x is on the boundary: {0}".format(
+                    str(grid_res[0][i])))
 
         if self.print_x:
-            print("grid search optimal x: ", grid_res[0].tolist())
+            print("grid search optimal x: {0}".format(grid_res[0].tolist()))
 
         return grid_res[1]
 
@@ -122,7 +123,7 @@ class Optimize(object):
                 delta *= 0.5
 
         if self.print_x:
-            print("pattern search optimal x: ", param_list)
+            print("pattern search optimal x: {0}".format(param_list))
 
         return optimum_new
 
@@ -145,7 +146,7 @@ class Optimize(object):
             })
 
         if self.print_x:
-            print("Nelder Mead optimal x: ", nm_res.x)
+            print("Nelder Mead optimal x: {0}".format(nm_res.x))
 
         return nm_res.fun
 
@@ -160,7 +161,7 @@ class Optimize(object):
             func=self.eval_except, x0=start_list)
 
         if self.print_x:
-            print("Basin Hopping optimal x: ", bh_res.x)
+            print("Basin Hopping optimal x: {0}".format(bh_res.x))
 
         return bh_res.fun
 
@@ -219,7 +220,7 @@ class Optimize(object):
             temperature *= simul_annealing.cooling_factor
 
         if self.print_x:
-            print("simulated annealing optimal x: ", param_best)
+            print("simulated annealing optimal x: {0}".format(param_best))
 
         return optimum_best
 
@@ -234,7 +235,7 @@ class Optimize(object):
             func=self.eval_except, bounds=bound_list)
 
         if self.print_x:
-            print("Differential Evolution optimal x: ", de_res.x)
+            print("Differential Evolution optimal x: {0}".format(de_res.x))
 
         return de_res.fun
 
@@ -244,7 +245,7 @@ class Optimize(object):
             fun=self.eval_except, x0=x0, method="BFGS")
 
         if self.print_x:
-            print("BFGS optimal x: ", bfgs_res.x)
+            print("BFGS optimal x: {0}".format(bfgs_res.x))
 
         return bfgs_res.fun
 
@@ -277,7 +278,6 @@ class Optimize(object):
         for row in range(number_values):
             candidate_opt = self.eval_except(
                 param_list=param_grid_df.values.tolist()[row])
-
             if candidate_opt < y_opt:
                 y_opt = candidate_opt
                 opt_row = row
@@ -286,11 +286,12 @@ class Optimize(object):
             if is_equal(param_grid_df.iloc[opt_row][i],
                         bound_list[i][0]) or is_equal(
                             param_grid_df.iloc[opt_row][i], bound_list[i][1]):
-                warn("GS old optimal x is on the boundary: " +
-                     str(param_grid_df.iloc[opt_row][i]))
+                warn("GS old optimal x is on the boundary: {0}".format(
+                    str(param_grid_df.iloc[opt_row][i])))
 
         if self.print_x:
-            print("GS old optimal x: ", param_grid_df.iloc[opt_row].tolist())
+            print("GS old optimal x: {0}".format(
+                param_grid_df.iloc[opt_row].tolist()))
 
         return y_opt
 
@@ -405,6 +406,6 @@ class Optimize(object):
                 y_value[worst_index] = y_p_reflection
 
         if self.print_x:
-            print("NM old optimal x: ", simplex[best_index])
+            print("NM old optimal x: {0}".format(simplex[best_index]))
 
         return y_value[best_index]
