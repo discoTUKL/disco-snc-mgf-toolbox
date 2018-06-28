@@ -7,6 +7,7 @@ import pandas as pd
 
 from canonical_tandem.tandem_sfa_perform import TandemSFA
 from canonical_tandem.tandem_tfa_delay import TandemTFADelay
+from library.perform_parameter import PerformParameter
 from library.perform_param_list import PerformParamList
 from nc_operations.nc_analysis import NCAnalysis
 from nc_operations.perform_metric import PerformMetric
@@ -71,7 +72,58 @@ def tandem_df(arr_list: List[ArrivalDistribution],
     return results_df
 
 
-def csv_tandem_perform(
+def csv_tandem_compare_servers(
+        foi_arrival: ArrivalDistribution, cross_arrival: ArrivalDistribution,
+        foi_arrival2: ArrivalDistribution, cross_arrival2: ArrivalDistribution,
+        const_rate: ConstantRate, list_servers: List[int],
+        perform_param: PerformParameter, opt_method: OptMethod,
+        nc_analysis: NCAnalysis) -> pd.DataFrame:
+    """Write dataframe results into a csv file.
+
+    Args:
+        foi_arrival: flow of interest's arrival distribution
+        foi_arrival2: competitor's flow of interest's arrival distribution
+        cross_arrival: distribution of cross arrivals
+        cross_arrival2: competitor's distribution of cross arrivals
+        const_rate: service of remaining servers
+        list_servers: list of number of servers in fat tree
+        perform_param: performance parameter values
+        opt_method: optimization method
+        nc_analysis: Network Calculus analysis type
+
+    Returns:
+        csv file
+
+    """
+    filename = "tandem_{0}".format(perform_param.to_name())
+
+    arr_list: List[ArrivalDistribution] = [foi_arrival]
+    arr_list2: List[ArrivalDistribution] = [foi_arrival2]
+    ser_list: List[ConstantRate] = []
+
+    for _i in range(number_servers):
+        arr_list.append(cross_arrival)
+        arr_list2.append(cross_arrival2)
+        ser_list.append(const_rate)
+
+    data_frame = tandem_df(
+        arr_list=arr_list,
+        arr_list2=arr_list2,
+        ser_list=ser_list,
+        opt_method=opt_method,
+        perform_param_list=perform_param_list,
+        nc_analysis=nc_analysis)
+
+    filename += "_" + str(number_servers) + "servers_" + foi_arrival.to_value(
+    ) + "_" + const_rate.to_value()
+
+    data_frame.to_csv(
+        filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
+
+    return data_frame
+
+
+def csv_tandem_compare_perform(
         foi_arrival: ArrivalDistribution, cross_arrival: ArrivalDistribution,
         foi_arrival2: ArrivalDistribution, cross_arrival2: ArrivalDistribution,
         const_rate: ConstantRate, number_servers: int,
@@ -94,7 +146,7 @@ def csv_tandem_perform(
         csv file
 
     """
-    filename = "tandem_{0}".format(perform_param_list.perform_metric.name)
+    filename = "tandem_{0}".format(perform_param_list.perform_metric.to_name)
 
     arr_list: List[ArrivalDistribution] = [foi_arrival]
     arr_list2: List[ArrivalDistribution] = [foi_arrival2]
@@ -113,8 +165,8 @@ def csv_tandem_perform(
         perform_param_list=perform_param_list,
         nc_analysis=nc_analysis)
 
-    filename += "_" + str(number_servers) + "servers_" + foi_arrival.to_string(
-    ) + "_" + const_rate.to_string()
+    filename += "_" + str(number_servers) + "servers_" + foi_arrival.to_value(
+    ) + "_" + const_rate.to_value()
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -149,7 +201,7 @@ if __name__ == '__main__':
         rho_single=RHO_SINGLE,
         n=NUMBER_AGGREGATIONS)
     print(
-        csv_tandem_perform(
+        csv_tandem_compare_perform(
             foi_arrival=ARRIVAL_FOI,
             cross_arrival=ARRIVAL_CROSS,
             foi_arrival2=ARRIVAL_FOI2,

@@ -120,11 +120,11 @@ def csv_contour(rho_single: float,
 
     if pure_snc:
         filename = "contour_{0}_rho_{1}_utilization_{2}_pure".format(
-            perform_param.to_string(), str(rho_single),
+            perform_param.to_name_value(), str(rho_single),
             str("%.2f" % utilization))
     else:
         filename = "contour_{0}_rho_{1}_utilization_{2}".format(
-            perform_param.to_string(), str(rho_single),
+            perform_param.to_name_value(), str(rho_single),
             str("%.2f" % utilization))
 
     results_df.to_csv(

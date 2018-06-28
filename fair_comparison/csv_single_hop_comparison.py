@@ -112,7 +112,7 @@ def compare_aggregation(aggregations: List[int], sigma_single: float,
         index=aggregations)
 
     filename = "regulated_single_{0}_sigma_{1}_rho_{2}_utilization_{3}_{4}".format(
-        perform_param.to_string(), str(sigma_single), str(rho_single),
+        perform_param.to_name_value(), str(sigma_single), str(rho_single),
         str("%.2f" % (rho_single / service_rate)), opt_method.name)
 
     results_df.to_csv(
@@ -152,7 +152,7 @@ def compare_probability(aggregation: int, sigma_single: float,
         index=perform_list.values_list)
 
     filename = "regulated_single_{0}_n_{1}_sigma_{2}_rho_{3}_utilization_{4}_{5}".format(
-        perform_list.perform_metric.name, aggregation, str(sigma_single),
+        perform_list.to_name(), aggregation, str(sigma_single),
         str(rho_single), str("%.2f" % (rho_single / service_rate)),
         opt_method.name)
 
@@ -192,7 +192,7 @@ def compare_sigma(aggregation: int, sigmas: List[float], rho_single: float,
         index=sigmas)
 
     filename = "regulated_single_{0}_n_{1}_rho_{2}_utilization_{3}_{4}".format(
-        perform_param.to_string(), str(aggregation), str(rho_single),
+        perform_param.to_name_value(), str(aggregation), str(rho_single),
         str("%.2f" % (rho_single / service_rate)), opt_method.name)
 
     results_df.to_csv(

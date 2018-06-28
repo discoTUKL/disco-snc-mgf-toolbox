@@ -6,7 +6,7 @@ import numpy as np
 
 from library.array_to_results import time_array_to_results
 from library.compare_old_new import compute_overhead
-from library.mc_name import MCName
+from library.mc_name import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
@@ -29,15 +29,15 @@ def mc_time_single(arrival: ArrivalDistribution,
     size_array = [total_iterations, arrival.number_parameters() + 1]
     # [rows, columns]
 
-    if mc_dist.mc_dist_name == MCName.UNIFORM:
+    if mc_dist.mc_enum == MCEnum.UNIFORM:
         param_array = np.random.uniform(
             low=0, high=mc_dist.param_list[0], size=size_array)
-    elif mc_dist.mc_dist_name == MCName.EXPONENTIAL:
+    elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
         param_array = np.random.exponential(
             scale=mc_dist.param_list[0], size=size_array)
     else:
         raise NameError("Distribution parameter {0} is infeasible".format(
-            mc_dist.mc_dist_name))
+            mc_dist.mc_enum))
 
     time_array = np.empty([total_iterations, 2])
 
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
-    MC_UNIF20 = MonteCarloDist(mc_dist_name=MCName.UNIFORM, param_list=[20.0])
+    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
 
     print(
         mc_time_single(

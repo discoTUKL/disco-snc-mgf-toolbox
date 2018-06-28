@@ -10,8 +10,11 @@ class PerformParameter(object):
         self.perform_metric = perform_metric
         self.value = value
 
-    def to_string(self) -> str:
-        return str(self.perform_metric.name) + "_" + str(self.value)
+    def to_name(self) -> str:
+        return str(self.perform_metric.name)
+
+    def to_name_value(self) -> str:
+        return self.to_name() + "_" + str(self.value)
 
     # TODO: get to know how to use @property
     # @property
@@ -23,9 +26,9 @@ class PerformParameter(object):
     #     self.perform_metric = new_perf_bound
     #
     # @property
-    # def value(self):
-    #     return self.value
+    # def to_value(self):
+    #     return self.to_value
     #
-    # @value.setter
-    # def value(self, new_value):
-    #     self.value = new_value
+    # @to_value.setter
+    # def to_value(self, new_value):
+    #     self.to_value = new_value

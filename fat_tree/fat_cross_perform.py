@@ -69,7 +69,7 @@ class FatCrossPerform(SettingNew):
 
     def to_string(self) -> str:
         for arr in self.arr_list:
-            print(arr.to_string())
+            print(arr.to_value())
         for ser in self.ser_list:
-            print(ser.to_string())
-        return self.__class__.__name__ + "_" + self.perform_param.to_string()
+            print(ser.to_value())
+        return self.__class__.__name__ + "_" + self.perform_param.to_name_value()

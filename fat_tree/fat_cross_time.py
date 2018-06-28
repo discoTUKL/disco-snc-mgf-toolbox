@@ -10,7 +10,7 @@ from tqdm import tqdm  # Progressbar in for loop
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.array_to_results import time_array_to_results
 from library.compare_old_new import compute_overhead
-from library.mc_name import MCName
+from library.mc_name import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
@@ -42,10 +42,10 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
         ]
         # [rows, columns]
 
-        if mc_dist.mc_dist_name == MCName.UNIFORM:
+        if mc_dist.mc_enum == MCEnum.UNIFORM:
             param_array = np.random.uniform(
                 low=0, high=mc_dist.param_list[0], size=size_array)
-        elif mc_dist.mc_dist_name == MCName.EXPONENTIAL:
+        elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
             param_array = np.random.exponential(
                 scale=mc_dist.param_list[0], size=size_array)
         else:
@@ -98,7 +98,7 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
                 time_ratio=time_ratio))
 
     with open(
-            "time_" + perform_param.perform_metric.name + "_" +
+            "time_" + perform_param.perform_metric.to_name + "_" +
             arrival.__class__.__name__ + "_" + opt_method.name + ".csv",
             'w') as csv_file:
         writer = csv.writer(csv_file)
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
-    MC_UNIF20 = MonteCarloDist(mc_dist_name=MCName.UNIFORM, param_list=[20.0])
+    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
 
     list_number_servers1 = [2, 4, 6, 8, 10, 12]
 

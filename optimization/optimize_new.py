@@ -27,7 +27,7 @@ class OptimizeNew(Optimize):
         Shortens the exception handling and case distinction in a small method.
 
         :param param_list: theta parameter and Lyapunov parameters l_i
-        :return:           function value
+        :return:           function to_value
         """
         # debug code:
 

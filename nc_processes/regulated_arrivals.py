@@ -36,7 +36,7 @@ class RegulatedArrivals(ArrivalDistribution):
         """
         return True
 
-    def to_string(self) -> str:
+    def to_value(self) -> str:
         """
         :return string
         """

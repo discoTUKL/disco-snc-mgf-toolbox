@@ -3,15 +3,18 @@ in one class"""
 
 from typing import List
 
-from library.mc_name import MCName
+from library.mc_name import MCEnum
 
 
 class MonteCarloDist(object):
     """Monte Carlo distribution class"""
 
-    def __init__(self, mc_dist_name: MCName, param_list: List[float]) -> None:
-        self.mc_dist_name = mc_dist_name
+    def __init__(self, mc_enum: MCEnum, param_list: List[float]) -> None:
+        self.mc_enum = mc_enum
         self.param_list = param_list
+
+    def to_name(self) -> str:
+        return self.mc_enum.name
 
     def param_to_string(self) -> str:
         res = ""

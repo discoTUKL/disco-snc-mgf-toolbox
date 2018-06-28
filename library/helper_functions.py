@@ -74,7 +74,7 @@ def find_opt_improve_row(ar: np.array, metric: str):
 def centroid_without_one_row(simplex: np.ndarray, index) -> np.ndarray:
     # type hint does not work with int and np.ndarray[int]
     # column mean of simplex without a given row
-    # (usually the one with the worst y-value)
+    # (usually the one with the worst y-to_value)
     return np.delete(simplex, index, 0).mean(axis=0)
 
 
@@ -94,7 +94,7 @@ def get_unit_vector(length: int, index: int) -> List[float]:
     """
 
     :param length: length of unit vector
-    :param index:  index of 1.0 value
+    :param index:  index of 1.0 to_value
     :return:       unit vector with 1.0 at index and 0.0 else
     """
     res = [0.0] * length

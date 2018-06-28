@@ -9,7 +9,7 @@ import numpy as np
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.array_to_results import data_array_to_results
 from library.compare_old_new import compute_improvement
-from library.mc_name import MCName
+from library.mc_name import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_metric import PerformMetric
@@ -38,15 +38,15 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
     ]
     # [rows, columns]
 
-    if mc_dist.mc_dist_name == MCName.UNIFORM:
+    if mc_dist.mc_enum == MCEnum.UNIFORM:
         param_array = np.random.uniform(
             low=0, high=mc_dist.param_list[0], size=size_array)
-    elif mc_dist.mc_dist_name == MCName.EXPONENTIAL:
+    elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
         param_array = np.random.exponential(
             scale=mc_dist.param_list[0], size=size_array)
     else:
         raise ValueError("Distribution parameter {0} is infeasible".format(
-            mc_dist.mc_dist_name))
+            mc_dist.mc_enum))
 
     res_array = np.empty([total_iterations, 2])
 
@@ -70,7 +70,7 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
 
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(
-                arrival.__class__.__name__))
+                arrival.to_name()))
 
         service_list = [
             ConstantRate(rate=param_array[
@@ -110,16 +110,15 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
         "optimization": opt_method.name,
         "metric": metric,
         "iterations": total_iterations,
-        "MCDistribution": mc_dist.mc_dist_name.name,
+        "MCDistribution": mc_dist.mc_enum.to_name,
         "MCParam": mc_dist.param_to_string(),
         "number_servers": number_servers
     })
 
     with open(
-            "sim_" + perform_param.perform_metric.name + "_" +
-            arrival.__class__.__name__ + "_results_MC" +
-            mc_dist.mc_dist_name.name + "_" + opt_method.name + "_" + metric +
-            ".csv", 'w') as csv_file:
+            "sim_" + perform_param.to_name() + "_" + arrival.to_name() +
+            "_results_MC" + mc_dist.to_name() + "_" + opt_method.name + "_" +
+            metric + ".csv", 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])
@@ -137,8 +136,8 @@ if __name__ == '__main__':
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
-    MC_UNIF20 = MonteCarloDist(mc_dist_name=MCName.UNIFORM, param_list=[20.0])
-    MC_EXP1 = MonteCarloDist(MCName.EXPONENTIAL, [1.0])
+    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
+    MC_EXP1 = MonteCarloDist(MCEnum.EXPONENTIAL, [1.0])
 
     def fun1():
         print(

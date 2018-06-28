@@ -86,7 +86,7 @@ def csv_single_perform(arrival: ArrivalDistribution, service: ConstantRate,
         csv file
     """
 
-    filename = "single_{0}".format(perform_param_list.perform_metric.name)
+    filename = "single_{0}".format(perform_param_list.to_name())
 
     data_frame = single_server_df(
         arr1=arrival,
@@ -94,7 +94,7 @@ def csv_single_perform(arrival: ArrivalDistribution, service: ConstantRate,
         opt_method=opt_method,
         perform_param_list=perform_param_list)
 
-    filename += "_" + arrival.to_string() + "_" + service.to_string()
+    filename += "_" + arrival.to_value() + "_" + service.to_value()
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)

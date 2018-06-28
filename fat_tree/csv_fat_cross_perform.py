@@ -24,7 +24,7 @@ def fat_cross_df(arr_list: List[ArrivalDistribution],
     Args:
         arr_list: Arrival object list
         ser_list: Service object list
-        opt_method: method name as string, PS or GS
+        opt_method: method to_name as string, PS or GS
         perform_param_list: list of performance parameter values
 
     Returns:
@@ -97,11 +97,9 @@ def csv_fat_cross_perform(
 
     """
     if number_servers == 2:
-        filename = "simple_setting_{0}".format(
-            perform_param_list.perform_metric.name)
+        filename = "simple_setting_{0}".format(perform_param_list.to_name())
     else:
-        filename = "fat_cross_{0}".format(
-            perform_param_list.perform_metric.name)
+        filename = "fat_cross_{0}".format(perform_param_list.to_name())
 
     arr_list: List[ArrivalDistribution] = [foi_arrival]
     ser_list: List[ConstantRate] = [foi_service]
@@ -116,8 +114,8 @@ def csv_fat_cross_perform(
         opt_method=opt_method,
         perform_param_list=perform_param_list)
 
-    filename += "_" + foi_arrival.to_string() + "_" + foi_service.to_string(
-    ) + "_" + cross_arrival.to_string() + "_" + cross_service.to_string()
+    filename += "_" + foi_arrival.to_value() + "_" + foi_service.to_value(
+    ) + "_" + cross_arrival.to_value() + "_" + cross_service.to_value()
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -135,7 +133,7 @@ if __name__ == '__main__':
     # const_rate2 = ConstantRate(rate=0.2)
     #
     # print(
-    #     csv_tandem_perform(
+    #     csv_fat_cross_perform(
     #         foi_arrival=exp1,
     #         cross_arrival=exp2,
     #         foi_service=const_rate1,
@@ -150,7 +148,7 @@ if __name__ == '__main__':
     # const_rate2 = ConstantRate(rate=0.4)
     #
     # print(
-    #     csv_tandem_perform(
+    #     csv_fat_cross_perform(
     #         foi_arrival=exp1,
     #         cross_arrival=exp2,
     #         foi_service=const_rate1,
@@ -165,7 +163,7 @@ if __name__ == '__main__':
     # const_rate2 = ConstantRate(rate=0.3)
 
     # print(
-    #     csv_tandem_perform(
+    #     csv_fat_cross_perform(
     #         foi_arrival=mmoo_foi,
     #         cross_arrival=mmoo_2,
     #         foi_service=foi_rate1,

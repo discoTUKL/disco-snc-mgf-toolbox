@@ -34,18 +34,21 @@ class ArrivalDistribution(Arrival):
         """
         pass
 
+    def to_name(self) -> str:
+        return self.__class__.__name__
+
     @abstractmethod
-    def to_string(self) -> str:
+    def to_value(self) -> str:
         """
         :return string
         """
         pass
 
-    def to_string_long(self) -> str:
+    def to_name_value(self) -> str:
         """
         :return string
         """
-        return self.__class__.__name__ + "_" + self.to_string()
+        return self.to_name() + "_" + self.to_value()
 
     @abstractmethod
     def number_parameters(self) -> int:
@@ -87,7 +90,7 @@ class ExponentialArrival(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return True
 
-    def to_string(self) -> str:
+    def to_value(self) -> str:
         return "_lambda=" + str(self.lamb) + "_n=" + str(self.n)
 
     def number_parameters(self) -> int:
@@ -118,7 +121,7 @@ class MMOO(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
-    def to_string(self) -> str:
+    def to_value(self) -> str:
         return "mu=" + str(self.mu) + "_lambda=" + str(
             self.lamb) + "_burst=" + str(self.burst) + "_n=" + str(self.n)
 

@@ -66,8 +66,8 @@ class SingleServerPerform(SettingNew):
                 self.perform_param.perform_metric))
 
     def to_string(self) -> str:
-        return self.__class__.__name__ + "_" + self.arr.to_string(
-        ) + "_" + self.ser.to_string() + self.perform_param.to_string()
+        return self.__class__.__name__ + "_" + self.arr.to_value(
+        ) + "_" + self.ser.to_value() + self.perform_param.to_name_value()
 
 
 if __name__ == '__main__':
