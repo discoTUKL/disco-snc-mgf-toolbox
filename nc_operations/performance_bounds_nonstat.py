@@ -33,7 +33,7 @@ def mgf_s(theta: float, delta_time: int):
         theta=theta, delta_time=delta_time, rate=RATE)
 
 
-def delay_prob_alternative(theta: float, delay_value: int, t: int) -> float:
+def delay_prob_nonstat(theta: float, delay_value: int, t: int) -> float:
     delay_prob = 0.0
 
     for _i in range(t + 1):
@@ -44,10 +44,9 @@ def delay_prob_alternative(theta: float, delay_value: int, t: int) -> float:
     return delay_prob
 
 
-def del_prob_alter_opt(delay_value: int, t: int, print_x=False) -> float:
+def del_prob_nonstat_opt(delay_value: int, t: int, print_x=False) -> float:
     def helper_fun(theta: float):
-        return delay_prob_alternative(
-            theta=theta, delay_value=delay_value, t=t)
+        return delay_prob_nonstat(theta=theta, delay_value=delay_value, t=t)
 
     grid_res = scipy.optimize.brute(
         func=helper_fun, ranges=(slice(0.05, 15.0, 0.05), ), full_output=True)
