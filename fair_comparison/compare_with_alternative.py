@@ -30,20 +30,22 @@ def delay_prob_leaky(theta: float,
     sigma_s = ser.sigma(theta=theta)
     rho_s = ser.rho(theta=theta)
 
-    for j in range(t):
+    # TODO: Look for more bugs
+
+    for _j in range(t):
         delay_prob += regulated_alternative(
             theta=theta,
-            delta_time=j,
+            delta_time=_j,
             sigma_single=sigma_single,
             rho_single=rho_single,
-            n=n) * exp(j * theta * rho_s)
+            n=n) * exp(_j * theta * rho_s)
 
-    delay_prob *= exp(theta * sigma_s + rho_s * delay_value)
+    delay_prob *= exp(theta * (sigma_s + rho_s * delay_value))
 
-    delay_prob += (exp(
+    delay_prob += exp(
         theta * (n * (sigma_single + rho_single * t) + sigma_s + rho_s *
-                 (t + delay_value)))) / (1 - exp(theta *
-                                                 (n * rho_single + rho_s)))
+                 (t + delay_value))) / (1 - exp(theta *
+                                                (n * rho_single + rho_s)))
 
     return delay_prob
 
@@ -124,7 +126,17 @@ if __name__ == '__main__':
         sigma_single=SIGMA_SINGLE,
         rho_single=RHO_SINGLE,
         ser=constant_rate_server,
-        t=0,
+        t=10,
         n=NUMBER_AGGREGATIONS,
         print_x=PRINT_X)
     print("leaky_bucket_alter_opt", leaky_bucket_alter_opt)
+
+    # print(
+    #     delay_prob_leaky(
+    #         theta=20.0,
+    #         delay_value=DELAY_VAL,
+    #         sigma_single=SIGMA_SINGLE,
+    #         rho_single=RHO_SINGLE,
+    #         ser=constant_rate_server,
+    #         t=1,
+    #         n=NUMBER_AGGREGATIONS))
