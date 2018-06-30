@@ -77,7 +77,7 @@ def del_prob_alter_opt(delay_value: int,
 
 
 if __name__ == '__main__':
-    DELAY_VAL = 5
+    DELAY_VAL = 15
     DELAYPROB5 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=DELAY_VAL)
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     RHO_SINGLE = 0.1
     SIGMA_SINGLE = 6.0
-    SERVICE_RATE = 6.0
+    SERVICE_RATE = 2.0
 
     BOUND_LIST = [(0.05, 15.0)]
     DELTA = 0.05
@@ -126,7 +126,7 @@ if __name__ == '__main__':
         sigma_single=SIGMA_SINGLE,
         rho_single=RHO_SINGLE,
         ser=constant_rate_server,
-        t=10,
+        t=1,
         n=NUMBER_AGGREGATIONS,
         print_x=PRINT_X)
     print("leaky_bucket_alter_opt", leaky_bucket_alter_opt)
