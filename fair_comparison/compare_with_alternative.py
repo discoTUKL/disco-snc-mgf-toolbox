@@ -1,6 +1,6 @@
 """Compare with alternative traffic description"""
 
-from math import exp
+from math import exp, inf
 
 import scipy.optimize
 
@@ -40,12 +40,16 @@ def delay_prob_leaky(theta: float,
             rho_single=rho_single,
             n=n) * exp(_j * theta * rho_s)
 
-    delay_prob *= exp(theta * (sigma_s + rho_s * delay_value))
+    try:
+        summand = exp(theta *
+                      (n * (sigma_single + rho_single * t) + rho_s * t)) / (
+                          1 - exp(theta * (n * rho_single + rho_s)))
+    except OverflowError:
+        summand = inf
 
-    delay_prob += exp(
-        theta * (n * (sigma_single + rho_single * t) + sigma_s + rho_s *
-                 (t + delay_value))) / (1 - exp(theta *
-                                                (n * rho_single + rho_s)))
+    delay_prob += summand
+
+    delay_prob *= exp(theta * (sigma_s + rho_s * delay_value))
 
     return delay_prob
 
