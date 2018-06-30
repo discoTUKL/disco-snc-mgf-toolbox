@@ -20,16 +20,17 @@ def output_lya(arr: Arrival,
 
     l_theta = l_lya * theta
 
-    if arr.rho(l_theta) >= -ser.rho(l_theta):
+    if arr.rho(theta=l_theta) >= -ser.rho(theta=l_theta):
         raise ParameterOutOfBounds(
             "The arrivals' RHO_SINGLE {0} has to be smaller than"
             "the service's RHO_SINGLE {1}".format(
                 arr.rho(theta), -ser.rho(theta)))
 
-    sigma_l_arr_ser = arr.sigma(l_theta) + ser.sigma(l_theta)
-    rho_l_arr_ser = arr.rho(l_theta) + ser.rho(l_theta)
+    sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
+    rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
-    numerator = exp(theta * (arr.rho(l_theta) * delta_time + sigma_l_arr_ser))
+    numerator = exp(
+        theta * (arr.rho(theta=l_theta) * delta_time + sigma_l_arr_ser))
     denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
 
     try:
@@ -52,18 +53,18 @@ def output_lya_t(arr: Arrival,
 
     l_theta = l_lya * theta
 
-    sigma_l_arr_ser = arr.sigma(l_theta) + ser.sigma(l_theta)
-    rho_l_arr_ser = arr.rho(l_theta) + ser.rho(l_theta)
+    sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
+    rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
-    if is_equal(arr.rho(l_theta), -ser.rho(l_theta)):
+    if is_equal(arr.rho(theta=l_theta), -ser.rho(theta=l_theta)):
         return exp(theta *
-                   (arr.rho(l_theta) *
+                   (arr.rho(theta=l_theta) *
                     (tt - ss) + sigma_l_arr_ser)) * (ss + 1)**(1 / l_lya)
 
-    elif arr.rho(l_theta) > -ser.rho(l_theta):
+    elif arr.rho(theta=l_theta) > -ser.rho(theta=l_theta):
         numerator = exp(
-            theta *
-            (arr.rho(l_theta) * tt + ser.rho(l_theta) * ss + sigma_l_arr_ser))
+            theta * (arr.rho(theta=l_theta) * tt + ser.rho(theta=l_theta) * ss
+                     + sigma_l_arr_ser))
         denominator = 1 - exp(-l_theta * rho_l_arr_ser)**(1 / l_lya)
 
         return numerator / denominator
@@ -85,16 +86,16 @@ def delay_prob_lya(arr: Arrival,
 
     l_theta = l_lya * theta
 
-    if arr.rho(l_theta) >= -ser.rho(l_theta):
+    if arr.rho(theta=l_theta) >= -ser.rho(theta=l_theta):
         raise ParameterOutOfBounds(
             "The arrivals' RHO_SINGLE {0} has to be smaller than"
             "the service's RHO_SINGLE {1}".format(
                 arr.rho(theta), -ser.rho(theta)))
 
-    sigma_l_arr_ser = arr.sigma(l_theta) + ser.sigma(l_theta)
-    rho_l_arr_ser = arr.rho(l_theta) + ser.rho(l_theta)
+    sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
+    rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
-    numerator = exp(theta * (ser.rho(l_theta) * delay + sigma_l_arr_ser))
+    numerator = exp(theta * (ser.rho(theta=l_theta) * delay + sigma_l_arr_ser))
     denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
 
     try:
@@ -117,16 +118,18 @@ def delay_prob_lya_t(arr: Arrival,
 
     l_theta = l_lya * theta
 
-    sigma_l_arr_ser = arr.sigma(l_theta) + ser.sigma(l_theta)
-    rho_l_arr_ser = arr.rho(l_theta) + ser.rho(l_theta)
+    sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
+    rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
-    if is_equal(arr.rho(l_theta), -ser.rho(l_theta)):
-        return exp(theta * (ser.rho(l_theta) * delay + sigma_l_arr_ser)) * (
-            tt + 1)**(1 / l_lya)
+    if is_equal(arr.rho(theta=l_theta), -ser.rho(theta=l_theta)):
+        return exp(theta *
+                   (ser.rho(theta=l_theta) * delay + sigma_l_arr_ser)) * (
+                       tt + 1)**(1 / l_lya)
 
-    elif arr.rho(l_theta) > -ser.rho(l_theta):
-        numerator = exp(theta * (arr.rho(l_theta) * tt + ser.rho(l_theta) *
-                                 (tt + delay) + sigma_l_arr_ser))
+    elif arr.rho(theta=l_theta) > -ser.rho(theta=l_theta):
+        numerator = exp(
+            theta * (arr.rho(theta=l_theta) * tt + ser.rho(theta=l_theta) *
+                     (tt + delay) + sigma_l_arr_ser))
         denominator = 1 - exp(-l_theta * rho_l_arr_ser)**(1 / l_lya)
 
         return numerator / denominator
@@ -148,17 +151,17 @@ def output_lya_discretized(arr: Arrival,
 
     l_theta = l_lya * theta
 
-    if arr.rho(l_theta) >= -ser.rho(l_theta):
+    if arr.rho(theta=l_theta) >= -ser.rho(theta=l_theta):
         raise ParameterOutOfBounds(
             "The arrivals' RHO_SINGLE {0} has to be smaller than"
             "the service's RHO_SINGLE {1}".format(
                 arr.rho(theta), -ser.rho(theta)))
 
-    sigma_l_arr_ser = arr.sigma(l_theta) + ser.sigma(l_theta)
-    rho_l_arr_ser = arr.rho(l_theta) + ser.rho(l_theta)
+    sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
+    rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
     numerator = exp(
-        theta * (arr.rho(l_theta) * (delta_time + 1) + sigma_l_arr_ser))
+        theta * (arr.rho(theta=l_theta) * (delta_time + 1) + sigma_l_arr_ser))
     denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
 
     try:

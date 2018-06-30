@@ -12,13 +12,14 @@ def backlog_prob(arr: Arrival, ser: Service, theta: float,
                  backlog_value: float) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     return exp(theta * (-backlog_value + sigma_arr_ser)) / (
         1 - exp(theta * rho_arr_ser))
@@ -28,13 +29,13 @@ def backlog_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
                    backlog_value: float) -> float:
     """Implements time dependent method"""
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    if is_equal(arr.rho(theta), -ser.rho(theta)):
+    if is_equal(arr.rho(theta=theta), -ser.rho(theta=theta)):
         return exp(theta * (-backlog_value + sigma_arr_ser)) * (tt + 1)
 
-    elif arr.rho(theta) > -ser.rho(theta):
+    elif arr.rho(theta=theta) > -ser.rho(theta=theta):
         return exp(theta *
                    (-backlog_value + rho_arr_ser * tt + sigma_arr_ser)) / (
                        1 - exp(-theta * rho_arr_ser))
@@ -47,13 +48,14 @@ def backlog_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
 def backlog(arr: Arrival, ser: Service, theta: float, prob_b: float) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     log_part = log(prob_b * (1 - exp(theta * rho_arr_ser)))
 
@@ -64,15 +66,15 @@ def backlog_t(arr: Arrival, ser: Service, theta: float, prob_b: float,
               tt: int) -> float:
     """Implements time dependent method"""
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    if is_equal(arr.rho(theta), -ser.rho(theta)):
+    if is_equal(arr.rho(theta=theta), -ser.rho(theta=theta)):
         log_part = log(prob_b / (tt + 1))
 
         return sigma_arr_ser - log_part / theta
 
-    elif arr.rho(theta) > -ser.rho(theta):
+    elif arr.rho(theta=theta) > -ser.rho(theta=theta):
         log_part = log(prob_b * (1 - exp(-theta * rho_arr_ser)))
 
         return rho_arr_ser * tt + sigma_arr_ser - log_part / theta
@@ -85,31 +87,34 @@ def delay_prob(arr: Arrival, ser: Service, theta: float,
                delay_value: int) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    return exp(theta * (sigma_arr_ser + ser.rho(theta) * delay_value)) / (
-        1 - exp(theta * rho_arr_ser))
+    return exp(theta *
+               (sigma_arr_ser + ser.rho(theta=theta) * delay_value)) / (
+                   1 - exp(theta * rho_arr_ser))
 
 
 def delay_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
                  delay_value: int) -> float:
     """Implements time dependent method"""
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    if is_equal(arr.rho(theta), -ser.rho(theta)):
-        return exp(theta *
-                   (ser.rho(theta) * delay_value + sigma_arr_ser)) * (tt + 1)
+    if is_equal(arr.rho(theta=theta), -ser.rho(theta=theta)):
+        return exp(
+            theta *
+            (ser.rho(theta=theta) * delay_value + sigma_arr_ser)) * (tt + 1)
 
-    elif arr.rho(theta) > -ser.rho(theta):
-        return exp(theta * (arr.rho(theta) * tt + ser.rho(theta) *
+    elif arr.rho(theta=theta) > -ser.rho(theta=theta):
+        return exp(theta * (arr.rho(theta=theta) * tt + ser.rho(theta=theta) *
                             (tt + delay_value) + sigma_arr_ser)) / (
                                 1 - exp(-theta * rho_arr_ser))
 
@@ -121,36 +126,37 @@ def delay_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
 def delay(arr: Arrival, ser: Service, theta: float, prob_d: float) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     log_part = log(prob_d * (1 - exp(theta * rho_arr_ser)))
 
-    return (log_part / theta - sigma_arr_ser) / ser.rho(theta)
+    return (log_part / theta - sigma_arr_ser) / ser.rho(theta=theta)
 
 
 def delay_t(arr: Arrival, ser: Service, theta: float, prob_d: float,
             tt: int) -> float:
     """Implements time dependent method"""
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    if arr.rho(theta) == -ser.rho(theta):
+    if arr.rho(theta=theta) == -ser.rho(theta=theta):
         log_part = log(prob_d / (tt + 1))
 
-        return (log_part / theta - sigma_arr_ser) / ser.rho(theta)
+        return (log_part / theta - sigma_arr_ser) / ser.rho(theta=theta)
 
-    elif arr.rho(theta) > -ser.rho(theta):
+    elif arr.rho(theta=theta) > -ser.rho(theta=theta):
         log_part = log(prob_d * (1 - exp(-theta * rho_arr_ser)))
 
         return log_part / theta - (
-            rho_arr_ser * tt + sigma_arr_ser) / ser.rho(theta)
+            rho_arr_ser * tt + sigma_arr_ser) / ser.rho(theta=theta)
 
     else:
         return delay(arr=arr, ser=ser, theta=theta, prob_d=prob_d)
@@ -159,15 +165,17 @@ def delay_t(arr: Arrival, ser: Service, theta: float, prob_d: float,
 def output(arr: Arrival, ser: Service, theta: float, delta_time: int) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    numerator = exp(theta * (arr.rho(theta) * delta_time + sigma_arr_ser))
+    numerator = exp(
+        theta * (arr.rho(theta=theta) * delta_time + sigma_arr_ser))
     denominator = 1 - exp(theta * rho_arr_ser)
 
     try:
@@ -181,16 +189,17 @@ def output_t(arr: Arrival, ser: Service, theta: float, tt: int,
              ss: int) -> float:
     """Implements time dependent method"""
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    if is_equal(arr.rho(theta), -ser.rho(theta)):
-        return exp(theta * (arr.rho(theta) *
+    if is_equal(arr.rho(theta=theta), -ser.rho(theta=theta)):
+        return exp(theta * (arr.rho(theta=theta) *
                             (tt - ss) + sigma_arr_ser)) * (ss + 1)
 
-    elif arr.rho(theta) > -ser.rho(theta):
-        return exp(theta * (arr.rho(theta) * tt + ser.rho(theta) * ss +
-                            sigma_arr_ser) / 1 - exp(-theta * rho_arr_ser))
+    elif arr.rho(theta=theta) > -ser.rho(theta=theta):
+        return exp(theta * (arr.rho(theta=theta) * tt +
+                            ser.rho(theta=theta) * ss + sigma_arr_ser) / 1 -
+                   exp(-theta * rho_arr_ser))
 
     else:
         return output(arr=arr, ser=ser, theta=theta, delta_time=tt - ss)

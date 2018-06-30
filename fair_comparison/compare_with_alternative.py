@@ -1,6 +1,6 @@
 """Compare with alternative traffic description"""
 
-from math import exp, inf
+from math import exp
 
 import scipy.optimize
 
@@ -19,17 +19,18 @@ def delay_prob_leaky(theta: float,
                      delay_value: int,
                      sigma_single: float,
                      rho_single: float,
-                     service: Service,
+                     ser: Service,
                      t: int,
                      n=1) -> float:
+    if t < 0:
+        raise ValueError("sum index t = {0} must be >= 0".format(t))
+
     delay_prob = 0.0
 
-    sigma_s = service.sigma(theta=theta)
-    rho_s = service.rho(theta=theta)
+    sigma_s = ser.sigma(theta=theta)
+    rho_s = ser.rho(theta=theta)
 
-    # TODO: check again
-
-    for j in range(t + 1):
+    for j in range(t):
         delay_prob += regulated_alternative(
             theta=theta,
             delta_time=j,
@@ -40,8 +41,9 @@ def delay_prob_leaky(theta: float,
     delay_prob *= exp(theta * sigma_s + rho_s * delay_value)
 
     delay_prob += (exp(
-        theta * (sigma_single + sigma_s + rho_single * (t + 1) + rho_s *
-                 (t + delay_value + 1)))) / (exp(theta * (rho_single + rho_s)))
+        theta * (n * (sigma_single + rho_single * t) + sigma_s + rho_s *
+                 (t + delay_value)))) / (1 - exp(theta *
+                                                 (n * rho_single + rho_s)))
 
     return delay_prob
 
@@ -49,7 +51,7 @@ def delay_prob_leaky(theta: float,
 def del_prob_alter_opt(delay_value: int,
                        sigma_single: float,
                        rho_single: float,
-                       service: Service,
+                       ser: Service,
                        t: int,
                        n=1,
                        print_x=False) -> float:
@@ -59,7 +61,7 @@ def del_prob_alter_opt(delay_value: int,
             delay_value=delay_value,
             sigma_single=sigma_single,
             rho_single=rho_single,
-            service=service,
+            ser=ser,
             t=t,
             n=n)
 
@@ -80,8 +82,8 @@ if __name__ == '__main__':
     NUMBER_AGGREGATIONS = 5
 
     RHO_SINGLE = 0.1
-    SERVICE_RATE = 6.0
     SIGMA_SINGLE = 6.0
+    SERVICE_RATE = 6.0
 
     BOUND_LIST = [(0.05, 15.0)]
     DELTA = 0.05
@@ -121,7 +123,7 @@ if __name__ == '__main__':
         delay_value=DELAY_VAL,
         sigma_single=SIGMA_SINGLE,
         rho_single=RHO_SINGLE,
-        service=constant_rate_server,
+        ser=constant_rate_server,
         t=0,
         n=NUMBER_AGGREGATIONS,
         print_x=PRINT_X)

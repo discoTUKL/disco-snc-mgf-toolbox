@@ -14,16 +14,18 @@ def backlog_prob_discretized(arr: Arrival,
                              tau=1.0) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    return exp(theta * (-backlog + arr.rho(theta) * tau + sigma_arr_ser)) / (
-        1 - exp(theta * tau * rho_arr_ser))
+    return exp(theta *
+               (-backlog + arr.rho(theta=theta) * tau + sigma_arr_ser)) / (
+                   1 - exp(theta * tau * rho_arr_ser))
 
 
 def backlog_discretized(arr: Arrival,
@@ -33,17 +35,18 @@ def backlog_discretized(arr: Arrival,
                         tau=1.0) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     log_part = log(prob_b * (1 - exp(theta * tau * rho_arr_ser)))
 
-    return tau * arr.rho(theta) + sigma_arr_ser - log_part / theta
+    return tau * arr.rho(theta=theta) + sigma_arr_ser - log_part / theta
 
 
 def delay_prob_discretized(arr: Arrival,
@@ -53,18 +56,18 @@ def delay_prob_discretized(arr: Arrival,
                            tau=1.0) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    return exp(
-        theta *
-        (arr.rho(theta) * tau + sigma_arr_ser + ser.rho(theta) * delay)) / (
-            1 - exp(theta * tau * rho_arr_ser))
+    return exp(theta * (arr.rho(theta=theta) * tau + sigma_arr_ser +
+                        ser.rho(theta=theta) * delay)) / (
+                            1 - exp(theta * tau * rho_arr_ser))
 
 
 def delay_discretized(arr: Arrival,
@@ -74,34 +77,36 @@ def delay_discretized(arr: Arrival,
                       tau=1.0) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     log_part = log(prob_d * (1 - exp(theta * tau * rho_arr_ser)))
 
-    return (log_part / theta -
-            (tau * arr.rho(theta) + sigma_arr_ser)) / ser.rho(theta)
+    return (log_part / theta - (tau * arr.rho(theta=theta) + sigma_arr_ser)
+            ) / ser.rho(theta=theta)
 
 
 def output_discretized(arr: Arrival, ser: Service, theta: float,
                        delta_time: int) -> float:
     """Implements stationary bound method"""
 
-    if arr.rho(theta) >= -ser.rho(theta):
+    if arr.rho(theta=theta) >= -ser.rho(theta=theta):
         raise ParameterOutOfBounds(
             "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(arr.rho(theta), -ser.rho(theta)))
+            "the service's rho {1}".format(
+                arr.rho(theta=theta), -ser.rho(theta=theta)))
 
-    sigma_arr_ser = arr.sigma(theta) + ser.sigma(theta)
-    rho_arr_ser = arr.rho(theta) + ser.rho(theta)
+    sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
+    rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     numerator = exp(
-        theta * (arr.rho(theta) * (delta_time + 1) + sigma_arr_ser))
+        theta * (arr.rho(theta=theta) * (delta_time + 1) + sigma_arr_ser))
     denominator = 1 - exp(theta * rho_arr_ser)
 
     try:

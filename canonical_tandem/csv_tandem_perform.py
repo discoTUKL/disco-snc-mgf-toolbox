@@ -47,7 +47,7 @@ def tandem_compare(arr_list: List[ArrivalDistribution],
         bound2 = Optimize(setting=setting2).grid_search(
             bound_list=[(0.05, 15.0)], delta=0.05)
     else:
-        raise ValueError(
+        raise NameError(
             "Optimization parameter {0} is infeasible".format(opt_method))
 
     return bound, bound2
