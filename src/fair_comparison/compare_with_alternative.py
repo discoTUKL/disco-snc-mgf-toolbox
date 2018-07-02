@@ -1,6 +1,6 @@
 """Compare with alternative traffic description"""
 
-from math import exp, inf
+from math import exp
 
 import scipy.optimize
 
@@ -25,33 +25,24 @@ def delay_prob_leaky(theta: float,
     if t < 0:
         raise ValueError("sum index t = {0} must be >= 0".format(t))
 
-    delay_prob = 0.0
-
     sigma_s = ser.sigma(theta=theta)
     rho_s = ser.rho(theta=theta)
+
+    sum_j = 0.0
 
     # TODO: Look for more bugs
 
     for _j in range(t):
-        delay_prob += regulated_alternative(
+        sum_j += regulated_alternative(
             theta=theta,
             delta_time=_j,
             sigma_single=sigma_single,
             rho_single=rho_single,
             n=n) * exp(_j * theta * rho_s)
 
-    try:
-        summand = exp(theta *
-                      (n * (sigma_single + rho_single * t) + rho_s * t)) / (
-                          1 - exp(theta * (n * rho_single + rho_s)))
-    except OverflowError:
-        summand = inf
-
-    delay_prob += summand
-
-    delay_prob *= exp(theta * (sigma_s + rho_s * delay_value))
-
-    return delay_prob
+    return exp(theta * (sigma_s + rho_s * delay_value)) * (
+            exp(theta * (n * (sigma_single + rho_single * t) + rho_s * t)) /
+            (1 - exp(theta * (n * rho_single + rho_s))) + sum_j)
 
 
 def del_prob_alter_opt(delay_value: int,
@@ -81,15 +72,15 @@ def del_prob_alter_opt(delay_value: int,
 
 
 if __name__ == '__main__':
-    DELAY_VAL = 15
+    DELAY_VAL = 5
     DELAYPROB5 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=DELAY_VAL)
 
     NUMBER_AGGREGATIONS = 5
 
     RHO_SINGLE = 0.1
-    SIGMA_SINGLE = 6.0
-    SERVICE_RATE = 2.0
+    SIGMA_SINGLE = 6.1
+    SERVICE_RATE = 6.0
 
     BOUND_LIST = [(0.05, 15.0)]
     DELTA = 0.05
@@ -134,13 +125,3 @@ if __name__ == '__main__':
         n=NUMBER_AGGREGATIONS,
         print_x=PRINT_X)
     print("leaky_bucket_alter_opt", leaky_bucket_alter_opt)
-
-    # print(
-    #     delay_prob_leaky(
-    #         theta=20.0,
-    #         delay_value=DELAY_VAL,
-    #         sigma_single=SIGMA_SINGLE,
-    #         rho_single=RHO_SINGLE,
-    #         ser=constant_rate_server,
-    #         t=1,
-    #         n=NUMBER_AGGREGATIONS))

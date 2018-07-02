@@ -30,8 +30,7 @@ def regulated_alternative(theta: float,
                           rho_single: float,
                           n=1) -> float:
     if theta <= 0:
-        return inf
-        # raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
     rho_delta = rho_single * delta_time
 
