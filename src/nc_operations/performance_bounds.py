@@ -1,6 +1,6 @@
 """Performance bounds"""
 
-from math import exp, inf, log
+from math import inf, log
 
 from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import is_equal, mgf
@@ -34,12 +34,11 @@ def backlog_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     if is_equal(arr.rho(theta=theta), -ser.rho(theta=theta)):
-        return exp(theta * (-backlog_value + sigma_arr_ser)) * (tt + 1)
+        return mgf(theta=theta, x=-backlog_value + sigma_arr_ser) * (tt + 1)
 
     elif arr.rho(theta=theta) > -ser.rho(theta=theta):
-        return exp(theta *
-                   (-backlog_value + rho_arr_ser * tt + sigma_arr_ser)) / (
-                       1 - exp(-theta * rho_arr_ser))
+        return mgf(theta=theta, x=-backlog_value + rho_arr_ser * tt + sigma_arr_ser) / (
+                       1 - mgf(theta=theta, x=-rho_arr_ser))
 
     else:
         return backlog_prob(
@@ -76,7 +75,7 @@ def backlog_t(arr: Arrival, ser: Service, theta: float, prob_b: float,
         return sigma_arr_ser - log_part / theta
 
     elif arr.rho(theta=theta) > -ser.rho(theta=theta):
-        log_part = log(prob_b * (1 - exp(-theta * rho_arr_ser)))
+        log_part = log(prob_b * (1 - mgf(theta=theta, x=-rho_arr_ser)))
 
         return rho_arr_ser * tt + sigma_arr_ser - log_part / theta
 
@@ -110,12 +109,16 @@ def delay_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     if is_equal(arr.rho(theta=theta), -ser.rho(theta=theta)):
-        return mgf(theta=theta, x=ser.rho(theta=theta) * delay_value + sigma_arr_ser) * (tt + 1)
+        return mgf(
+            theta=theta,
+            x=ser.rho(theta=theta) * delay_value + sigma_arr_ser) * (tt + 1)
 
     elif arr.rho(theta=theta) > -ser.rho(theta=theta):
-        return exp(theta * (arr.rho(theta=theta) * tt + ser.rho(theta=theta) *
-                            (tt + delay_value) + sigma_arr_ser)) / (
-                                1 - exp(-theta * rho_arr_ser))
+        return mgf(
+            theta=theta,
+            x=arr.rho(theta=theta) * tt + ser.rho(theta=theta) *
+            (tt + delay_value) + sigma_arr_ser) / (
+                1 - mgf(theta=theta, x=-rho_arr_ser))
 
     else:
         return delay_prob(
@@ -152,7 +155,7 @@ def delay_t(arr: Arrival, ser: Service, theta: float, prob_d: float,
         return (log_part / theta - sigma_arr_ser) / ser.rho(theta=theta)
 
     elif arr.rho(theta=theta) > -ser.rho(theta=theta):
-        log_part = log(prob_d * (1 - exp(-theta * rho_arr_ser)))
+        log_part = log(prob_d * (1 - mgf(theta=theta, x=-rho_arr_ser)))
 
         return log_part / theta - (
             rho_arr_ser * tt + sigma_arr_ser) / ser.rho(theta=theta)
@@ -192,13 +195,15 @@ def output_t(arr: Arrival, ser: Service, theta: float, tt: int,
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     if is_equal(arr.rho(theta=theta), -ser.rho(theta=theta)):
-        return exp(theta * (arr.rho(theta=theta) *
-                            (tt - ss) + sigma_arr_ser)) * (ss + 1)
+        return mgf(
+            theta=theta, x=arr.rho(theta=theta) *
+            (tt - ss) + sigma_arr_ser) * (ss + 1)
 
     elif arr.rho(theta=theta) > -ser.rho(theta=theta):
-        return exp(theta * (arr.rho(theta=theta) * tt +
-                            ser.rho(theta=theta) * ss + sigma_arr_ser) / 1 -
-                   exp(-theta * rho_arr_ser))
+        return mgf(
+            theta=theta,
+            x=arr.rho(theta=theta) * tt + ser.rho(theta=theta) * ss +
+            sigma_arr_ser) / (1 - mgf(theta=theta, x=-rho_arr_ser))
 
     else:
         return output(arr=arr, ser=ser, theta=theta, delta_time=tt - ss)

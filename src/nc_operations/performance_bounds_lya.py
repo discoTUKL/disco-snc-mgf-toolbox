@@ -1,6 +1,6 @@
 """Implements new Lyapunov Output Bound"""
 
-from math import exp, inf
+from math import inf
 
 from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import is_equal, mgf
@@ -99,7 +99,7 @@ def delay_prob_lya(arr: Arrival,
 
     numerator = mgf(
         theta=theta, x=ser.rho(theta=l_theta) * delay + sigma_l_arr_ser)
-    denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
+    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_lya)
 
     try:
         return numerator / denominator
@@ -125,16 +125,16 @@ def delay_prob_lya_t(arr: Arrival,
     rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
     if is_equal(arr.rho(theta=l_theta), -ser.rho(theta=l_theta)):
-        return exp(theta *
-                   (ser.rho(theta=l_theta) * delay + sigma_l_arr_ser)) * (
-                       tt + 1)**(1 / l_lya)
+        return mgf(
+            theta=theta, x=ser.rho(theta=l_theta) * delay +
+            sigma_l_arr_ser) * (tt + 1)**(1 / l_lya)
 
     elif arr.rho(theta=l_theta) > -ser.rho(theta=l_theta):
         numerator = mgf(
             theta=theta,
             x=arr.rho(theta=l_theta) * tt +
             ser.rho(theta=l_theta) * (tt + delay) + sigma_l_arr_ser)
-        denominator = 1 - exp(-l_theta * rho_l_arr_ser)**(1 / l_lya)
+        denominator = 1 - mgf(theta=l_theta, x=-rho_l_arr_ser)**(1 / l_lya)
 
         return numerator / denominator
 
