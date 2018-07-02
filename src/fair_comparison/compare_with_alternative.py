@@ -1,6 +1,6 @@
 """Compare with alternative traffic description"""
 
-from math import inf
+from math import inf, log
 
 import scipy.optimize
 
@@ -26,6 +26,9 @@ def delay_prob_leaky(theta: float,
     if t < 0:
         raise ValueError("sum index t = {0} must be >= 0".format(t))
 
+    sigma_a = n * sigma_single
+    rho_a = n * rho_single
+
     sigma_s = ser.sigma(theta=theta)
     rho_s = ser.rho(theta=theta)
 
@@ -47,9 +50,8 @@ def delay_prob_leaky(theta: float,
 
     return mgf(
         theta=theta, x=sigma_s + rho_s * delay_value) * (
-            mgf(theta=theta, x=n *
-                (sigma_single + rho_single * t) + rho_s * t) /
-            (1 - mgf(theta=theta, x=n * rho_single + rho_s)) + sum_j)
+            mgf(theta=theta, x=sigma_a + (rho_a + rho_s) * t) /
+            (1 - mgf(theta=theta, x=rho_a + rho_s)) + sum_j)
 
 
 def del_prob_alter_opt(delay_value: int,
@@ -73,7 +75,68 @@ def del_prob_alter_opt(delay_value: int,
             return inf
 
     grid_res = scipy.optimize.brute(
-        func=helper_fun, ranges=(slice(0.05, 15.0, 0.05), ), full_output=True)
+        func=helper_fun, ranges=(slice(0.05, 20.0, 0.05), ), full_output=True)
+
+    if print_x:
+        print("grid search optimal x: ", grid_res[0].tolist())
+
+    return grid_res[1]
+
+
+def delay_leaky(theta: float,
+                prob_d: float,
+                sigma_single: float,
+                rho_single: float,
+                ser: Service,
+                t: int,
+                n=1) -> float:
+    if t < 0:
+        raise ValueError("sum index t = {0} must be >= 0".format(t))
+
+    sigma_a = n * sigma_single
+    rho_a = n * rho_single
+
+    sigma_s = ser.sigma(theta=theta)
+    rho_s = ser.rho(theta=theta)
+
+    sum_j = 0.0
+
+    for _j in range(t):
+        sum_j += regulated_alternative(
+            theta=theta,
+            delta_time=_j,
+            sigma_single=sigma_single,
+            rho_single=rho_single,
+            n=n) * mgf(
+                theta=theta, x=_j * rho_s)
+
+    return -(log(mgf(theta=theta, x=sigma_s) / prob_d) + log(
+        mgf(theta=theta, x=sigma_a + (rho_a + rho_s) * t) /
+        (1 - mgf(theta=theta, x=rho_a + rho_s)) + sum_j)) / (theta * rho_s)
+
+
+def del_alter_opt(prob_d: float,
+                  sigma_single: float,
+                  rho_single: float,
+                  ser: Service,
+                  t: int,
+                  n=1,
+                  print_x=False) -> float:
+    def helper_fun(theta: float) -> float:
+        try:
+            return delay_leaky(
+                theta=theta,
+                prob_d=prob_d,
+                sigma_single=sigma_single,
+                rho_single=rho_single,
+                ser=ser,
+                t=t,
+                n=n)
+        except OverflowError:
+            return inf
+
+    grid_res = scipy.optimize.brute(
+        func=helper_fun, ranges=(slice(0.05, 20.0, 0.05), ), full_output=True)
 
     if print_x:
         print("grid search optimal x: ", grid_res[0].tolist())
@@ -89,10 +152,10 @@ if __name__ == '__main__':
     NUMBER_AGGREGATIONS = 5
 
     RHO_SINGLE = 0.1
-    SIGMA_SINGLE = 6.5
+    SIGMA_SINGLE = 7.0
     SERVICE_RATE = 6.0
 
-    BOUND_LIST = [(0.05, 15.0)]
+    BOUND_LIST = [(0.05, 20.0)]
     DELTA = 0.05
     PRINT_X = True
 

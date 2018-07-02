@@ -35,8 +35,11 @@ def regulated_alternative(theta: float,
 
     rho_delta = rho_single * delta_time
 
-    try:
-        return 1 + rho_delta / (sigma_single + rho_delta) * (
+    # try:
+    #     return 1 + rho_delta / (sigma_single + rho_delta) * (
+    #         mgf(theta=theta, x=n * (sigma_single + rho_delta)) - 1)
+    # except OverflowError:
+    #     return inf
+
+    return 1 + rho_delta / (sigma_single + rho_delta) * (
             mgf(theta=theta, x=n * (sigma_single + rho_delta)) - 1)
-    except OverflowError:
-        return inf
