@@ -55,9 +55,12 @@ if __name__ == '__main__':
         OptimizeNew(SINGLE_SERVER2, print_x=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1))
 
-    print(OptimizeNew(SINGLE_SERVER2, print_x=True).differential_evolution(
-        bound_list=[(0.1, 5.0), (0.9, 6.0)]
-    ))
+    print(
+        OptimizeNew(
+            SINGLE_SERVER2,
+            print_x=True).differential_evolution(bound_list=[(0.1,
+                                                              5.0), (0.9,
+                                                                     6.0)]))
 
     print("\n-------------------------------------------\n")
 
