@@ -1,6 +1,7 @@
 """Class for all service processes that cannot be described via (sigma, rho)"""
 
-from math import exp, inf
+from math import inf
+from library.helper_functions import mgf
 
 
 def constant_rate_alternative(theta: float, delta_time: int,
@@ -9,4 +10,4 @@ def constant_rate_alternative(theta: float, delta_time: int,
         return inf
         # raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
-    return exp(-theta * rate * delta_time)
+    return mgf(theta=theta, x=-rate * delta_time)

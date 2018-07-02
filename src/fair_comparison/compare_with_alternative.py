@@ -1,6 +1,6 @@
 """Compare with alternative traffic description"""
 
-from math import exp
+from math import exp, inf
 
 import scipy.optimize
 
@@ -39,10 +39,12 @@ def delay_prob_leaky(theta: float,
             sigma_single=sigma_single,
             rho_single=rho_single,
             n=n) * exp(_j * theta * rho_s)
+    # print(sum_j)
+    # sum_j = 1.0
 
     return exp(theta * (sigma_s + rho_s * delay_value)) * (
-            exp(theta * (n * (sigma_single + rho_single * t) + rho_s * t)) /
-            (1 - exp(theta * (n * rho_single + rho_s))) + sum_j)
+        exp(theta * (n * (sigma_single + rho_single * t) + rho_s * t)) /
+        (1 - exp(theta * (n * rho_single + rho_s))) + sum_j)
 
 
 def del_prob_alter_opt(delay_value: int,
@@ -53,14 +55,17 @@ def del_prob_alter_opt(delay_value: int,
                        n=1,
                        print_x=False) -> float:
     def helper_fun(theta: float) -> float:
-        return delay_prob_leaky(
-            theta=theta,
-            delay_value=delay_value,
-            sigma_single=sigma_single,
-            rho_single=rho_single,
-            ser=ser,
-            t=t,
-            n=n)
+        try:
+            return delay_prob_leaky(
+                theta=theta,
+                delay_value=delay_value,
+                sigma_single=sigma_single,
+                rho_single=rho_single,
+                ser=ser,
+                t=t,
+                n=n)
+        except OverflowError:
+            return inf
 
     grid_res = scipy.optimize.brute(
         func=helper_fun, ranges=(slice(0.05, 15.0, 0.05), ), full_output=True)
@@ -79,7 +84,7 @@ if __name__ == '__main__':
     NUMBER_AGGREGATIONS = 5
 
     RHO_SINGLE = 0.1
-    SIGMA_SINGLE = 6.1
+    SIGMA_SINGLE = 6.5
     SERVICE_RATE = 6.0
 
     BOUND_LIST = [(0.05, 15.0)]

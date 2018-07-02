@@ -3,7 +3,7 @@
 from math import exp, inf
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import is_equal
+from library.helper_functions import is_equal, mgf
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
@@ -29,9 +29,9 @@ def output_lya(arr: Arrival,
     sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
     rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
-    numerator = exp(
-        theta * (arr.rho(theta=l_theta) * delta_time + sigma_l_arr_ser))
-    denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
+    numerator = mgf(
+        theta=theta, x=arr.rho(theta=l_theta) * delta_time + sigma_l_arr_ser)
+    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_lya)
 
     try:
         return numerator / denominator
@@ -57,15 +57,17 @@ def output_lya_t(arr: Arrival,
     rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
     if is_equal(arr.rho(theta=l_theta), -ser.rho(theta=l_theta)):
-        return exp(theta *
-                   (arr.rho(theta=l_theta) *
-                    (tt - ss) + sigma_l_arr_ser)) * (ss + 1)**(1 / l_lya)
+        return mgf(
+            theta=theta,
+            x=arr.rho(theta=l_theta) *
+            (tt - ss) + sigma_l_arr_ser) * (ss + 1)**(1 / l_lya)
 
     elif arr.rho(theta=l_theta) > -ser.rho(theta=l_theta):
-        numerator = exp(
-            theta * (arr.rho(theta=l_theta) * tt + ser.rho(theta=l_theta) * ss
-                     + sigma_l_arr_ser))
-        denominator = 1 - exp(-l_theta * rho_l_arr_ser)**(1 / l_lya)
+        numerator = mgf(
+            theta=theta,
+            x=arr.rho(theta=l_theta) * tt + ser.rho(theta=l_theta) * ss +
+            sigma_l_arr_ser)
+        denominator = 1 - mgf(theta=l_theta, x=-rho_l_arr_ser)**(1 / l_lya)
 
         return numerator / denominator
 
@@ -95,7 +97,8 @@ def delay_prob_lya(arr: Arrival,
     sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
     rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
-    numerator = exp(theta * (ser.rho(theta=l_theta) * delay + sigma_l_arr_ser))
+    numerator = mgf(
+        theta=theta, x=ser.rho(theta=l_theta) * delay + sigma_l_arr_ser)
     denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
 
     try:
@@ -127,9 +130,10 @@ def delay_prob_lya_t(arr: Arrival,
                        tt + 1)**(1 / l_lya)
 
     elif arr.rho(theta=l_theta) > -ser.rho(theta=l_theta):
-        numerator = exp(
-            theta * (arr.rho(theta=l_theta) * tt + ser.rho(theta=l_theta) *
-                     (tt + delay) + sigma_l_arr_ser))
+        numerator = mgf(
+            theta=theta,
+            x=arr.rho(theta=l_theta) * tt +
+            ser.rho(theta=l_theta) * (tt + delay) + sigma_l_arr_ser)
         denominator = 1 - exp(-l_theta * rho_l_arr_ser)**(1 / l_lya)
 
         return numerator / denominator
@@ -160,9 +164,10 @@ def output_lya_discretized(arr: Arrival,
     sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
     rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
 
-    numerator = exp(
-        theta * (arr.rho(theta=l_theta) * (delta_time + 1) + sigma_l_arr_ser))
-    denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_lya)
+    numerator = mgf(
+        theta=theta,
+        x=arr.rho(theta=l_theta) * (delta_time + 1) + sigma_l_arr_ser)
+    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_lya)
 
     try:
         return numerator / denominator

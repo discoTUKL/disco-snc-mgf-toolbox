@@ -3,6 +3,7 @@
 import functools
 import warnings
 from itertools import product
+from math import exp
 from typing import List
 
 import numpy as np
@@ -11,7 +12,16 @@ import pandas as pd
 EPSILON = 1e-09
 
 
-def is_equal(float1, float2):
+def mgf(theta: float, x: float) -> float:
+    """
+    :param theta: theta parameter
+    :param x:  rest to be multiplied with theta
+    :return:   returns mgf (without expectation E[] of course)
+    """
+    return exp(theta * x)
+
+
+def is_equal(float1: float, float2: float) -> bool:
     """
     :param float1: real 1
     :param float2: real 2
@@ -38,7 +48,7 @@ def deprecated(func):
     return new_func
 
 
-def expand_grid(list_input: list):
+def expand_grid(list_input: list) -> pd.DataFrame:
     """
     implement R-expand.grid() function
     :param list_input: list of values to be expanded
@@ -60,7 +70,7 @@ def seq(start: float, stop: float, step: float) -> List[float]:
         return []
 
 
-def find_opt_improve_row(ar: np.array, metric: str):
+def find_opt_improve_row(ar: np.array, metric: str) -> np.ndarray:
     if metric == "relative":
         improvement_column = np.divide(ar[:, 0], ar[:, 1])
     elif metric == "absolute":
@@ -84,7 +94,7 @@ def average_towards_best_row(simplex: np.ndarray, best_index,
     index = 0
     for row in simplex:
         simplex[index] = simplex[best_index] + shrink_factor * (
-                row - simplex[best_index])
+            row - simplex[best_index])
         index += 1
 
     return simplex

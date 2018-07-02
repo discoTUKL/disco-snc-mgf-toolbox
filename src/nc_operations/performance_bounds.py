@@ -3,7 +3,7 @@
 from math import exp, inf, log
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import is_equal
+from library.helper_functions import is_equal, mgf
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
@@ -21,8 +21,9 @@ def backlog_prob(arr: Arrival, ser: Service, theta: float,
     sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    return exp(theta * (-backlog_value + sigma_arr_ser)) / (
-        1 - exp(theta * rho_arr_ser))
+    return mgf(
+        theta=theta, x=-backlog_value + sigma_arr_ser) / (
+            1 - mgf(theta=theta, x=rho_arr_ser))
 
 
 def backlog_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
@@ -57,7 +58,7 @@ def backlog(arr: Arrival, ser: Service, theta: float, prob_b: float) -> float:
     sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    log_part = log(prob_b * (1 - exp(theta * rho_arr_ser)))
+    log_part = log(prob_b * (1 - mgf(theta=theta, x=rho_arr_ser)))
 
     return sigma_arr_ser - log_part / theta
 
@@ -96,9 +97,9 @@ def delay_prob(arr: Arrival, ser: Service, theta: float,
     sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    return exp(theta *
-               (sigma_arr_ser + ser.rho(theta=theta) * delay_value)) / (
-                   1 - exp(theta * rho_arr_ser))
+    return mgf(
+        theta=theta, x=sigma_arr_ser + ser.rho(theta=theta) * delay_value) / (
+            1 - mgf(theta=theta, x=rho_arr_ser))
 
 
 def delay_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
@@ -135,7 +136,7 @@ def delay(arr: Arrival, ser: Service, theta: float, prob_d: float) -> float:
     sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    log_part = log(prob_d * (1 - exp(theta * rho_arr_ser)))
+    log_part = log(prob_d * (1 - mgf(theta=theta, x=rho_arr_ser)))
 
     return (log_part / theta - sigma_arr_ser) / ser.rho(theta=theta)
 
@@ -174,9 +175,9 @@ def output(arr: Arrival, ser: Service, theta: float, delta_time: int) -> float:
     sigma_arr_ser = arr.sigma(theta=theta) + ser.sigma(theta=theta)
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
-    numerator = exp(
-        theta * (arr.rho(theta=theta) * delta_time + sigma_arr_ser))
-    denominator = 1 - exp(theta * rho_arr_ser)
+    numerator = mgf(
+        theta=theta, x=arr.rho(theta=theta) * delta_time + sigma_arr_ser)
+    denominator = 1 - mgf(theta=theta, x=rho_arr_ser)
 
     try:
         return numerator / denominator

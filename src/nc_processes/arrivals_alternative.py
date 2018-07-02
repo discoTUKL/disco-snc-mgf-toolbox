@@ -3,6 +3,7 @@
 from math import exp, inf
 
 from library.exceptions import ParameterOutOfBounds
+from library.helper_functions import mgf
 
 
 def fbm(theta: float, delta_time: int, lamb: float, sigma: float,
@@ -36,6 +37,6 @@ def regulated_alternative(theta: float,
 
     try:
         return 1 + rho_delta / (sigma_single + rho_delta) * (
-            exp(n * theta * (sigma_single + rho_delta)) - 1)
+            mgf(theta=theta, x=n * (sigma_single + rho_delta)) - 1)
     except OverflowError:
         return inf
