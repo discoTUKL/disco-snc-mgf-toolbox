@@ -1,9 +1,10 @@
 """Compare with alternative traffic description"""
 
-from math import exp, inf
+from math import inf
 
 import scipy.optimize
 
+from library.helper_functions import mgf
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrivals_alternative import regulated_alternative
@@ -38,13 +39,17 @@ def delay_prob_leaky(theta: float,
             delta_time=_j,
             sigma_single=sigma_single,
             rho_single=rho_single,
-            n=n) * exp(_j * theta * rho_s)
+            n=n) * mgf(
+                theta=theta, x=_j * rho_s)
+
     # print(sum_j)
     # sum_j = 1.0
 
-    return exp(theta * (sigma_s + rho_s * delay_value)) * (
-        exp(theta * (n * (sigma_single + rho_single * t) + rho_s * t)) /
-        (1 - exp(theta * (n * rho_single + rho_s))) + sum_j)
+    return mgf(
+        theta=theta, x=sigma_s + rho_s * delay_value) * (
+            mgf(theta=theta, x=n *
+                (sigma_single + rho_single * t) + rho_s * t) /
+            (1 - mgf(theta=theta, x=n * rho_single + rho_s)) + sum_j)
 
 
 def del_prob_alter_opt(delay_value: int,
