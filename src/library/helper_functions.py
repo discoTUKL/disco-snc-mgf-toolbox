@@ -16,7 +16,7 @@ def mgf(theta: float, x: float) -> float:
     """
     :param theta: theta parameter
     :param x:  rest to be multiplied with theta
-    :return:   returns mgf (without expectation E[] of course)
+    :return:   returns mgf (without expectation E[], of course)
     """
     return exp(theta * x)
 

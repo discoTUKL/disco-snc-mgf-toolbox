@@ -3,7 +3,7 @@
 from math import exp, log
 from typing import List
 
-from library.helper_functions import is_equal
+from library.helper_functions import is_equal, mgf
 from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival import Arrival
 from nc_processes.constant_rate_server import ConstantRate
@@ -24,8 +24,7 @@ class Deconvolve(Arrival):
         :return:      sigma(theta)
         """
         k_sig = -log(1 -
-                     exp(theta *
-                         (self.arr.rho(theta) + self.ser.rho(theta)))) / theta
+                     mgf(theta=theta, x=self.arr.rho(theta) + self.ser.rho(theta))) / theta
 
         return self.arr.sigma(theta) + self.ser.sigma(theta) + k_sig
 
@@ -58,8 +57,7 @@ class Convolve(Service):
             return 0.0
 
         if not is_equal(abs(self.ser1.rho(theta)), abs(self.ser2.rho(theta))):
-            k_sig = -(1 / theta) * log(1 - exp(
-                -theta * abs(self.ser1.rho(theta) - self.ser2.rho(theta))))
+            k_sig = -(1 / theta) * log(1 - mgf(theta=theta, x=-abs(self.ser1.rho(theta) - self.ser2.rho(theta))))
 
             return self.ser1.sigma(theta) + self.ser2.sigma(theta) + k_sig
 

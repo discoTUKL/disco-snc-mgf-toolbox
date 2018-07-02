@@ -110,9 +110,7 @@ def delay_prob_t(arr: Arrival, ser: Service, theta: float, tt: int,
     rho_arr_ser = arr.rho(theta=theta) + ser.rho(theta=theta)
 
     if is_equal(arr.rho(theta=theta), -ser.rho(theta=theta)):
-        return exp(
-            theta *
-            (ser.rho(theta=theta) * delay_value + sigma_arr_ser)) * (tt + 1)
+        return mgf(theta=theta, x=ser.rho(theta=theta) * delay_value + sigma_arr_ser) * (tt + 1)
 
     elif arr.rho(theta=theta) > -ser.rho(theta=theta):
         return exp(theta * (arr.rho(theta=theta) * tt + ser.rho(theta=theta) *
