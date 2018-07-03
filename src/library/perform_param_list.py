@@ -8,7 +8,7 @@ class PerformParamList(object):
     """"Performance parameter list class"""
 
     def __init__(self, perform_metric: PerformEnum, values_list) -> None:
-        # IMPORTANT: Don't use 'type' list as it does not work with 'range'
+        # IMPORTANT: Don't use type "list" as it does not work with "range"
         self.perform_metric = perform_metric
         self.values_list = values_list
 

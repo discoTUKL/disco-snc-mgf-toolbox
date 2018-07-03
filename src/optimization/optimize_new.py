@@ -39,12 +39,12 @@ class OptimizeNew(Optimize):
 
         if self.new:
             try:
-                res = self.setting_bound.new_bound(param_list=param_list)
+                res = self.setting_bound.new_bound(param_l_list=param_list)
             except (ParameterOutOfBounds, OverflowError):
                 res = inf
         else:
             try:
-                res = self.setting_bound.bound(theta=param_list[0])
+                res = self.setting_bound.bound(param_list=param_list)
             except (ParameterOutOfBounds, OverflowError):
                 res = inf
         return res

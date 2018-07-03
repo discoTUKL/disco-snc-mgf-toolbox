@@ -26,7 +26,9 @@ class TandemTFADelay(Setting):
         self.prob_d = prob_d
         self.number_servers = len(ser_list)
 
-    def bound(self, theta: float) -> float:
+    def bound(self, param_list: List[float]) -> float:
+        theta = param_list[0]
+
         leftover_service_list: List[Service] = [
             Leftover(arr=self.arr_list[i + 1], ser=self.ser_list[i])
             for i in range(self.number_servers)

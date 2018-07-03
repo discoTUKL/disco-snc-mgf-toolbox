@@ -30,28 +30,30 @@ class SingleServerPerform(SettingNew):
         self.ser = const_rate
         self.perform_param = perform_param
 
-    def bound(self, theta: float) -> float:
+    def bound(self, param_list: List[float]) -> float:
+        theta = param_list[0]
+
         return evaluate_single_hop(
             foi=self.arr,
             s_net=self.ser,
             theta=theta,
             perform_param=self.perform_param)
 
-    def new_bound(self, param_list: List[float]) -> float:
+    def new_bound(self, param_l_list: List[float]) -> float:
         if self.perform_param.perform_metric == PerformEnum.DELAY_PROB:
             if self.arr.is_discrete():
                 return delay_prob_lya(
                     arr=self.arr,
                     ser=self.ser,
-                    theta=param_list[0],
+                    theta=param_l_list[0],
                     delay=self.perform_param.value,
-                    l_lya=param_list[1])
+                    l_lya=param_l_list[1])
             else:
                 warn("old approach is applied")
                 return delay_prob_discretized(
                     arr=self.arr,
                     ser=self.ser,
-                    theta=param_list[0],
+                    theta=param_l_list[0],
                     delay=self.perform_param.value)
 
         elif self.perform_param.perform_metric == PerformEnum.OUTPUT:
@@ -59,16 +61,16 @@ class SingleServerPerform(SettingNew):
                 return output_lya(
                     arr=self.arr,
                     ser=self.ser,
-                    theta=param_list[0],
+                    theta=param_l_list[0],
                     delta_time=self.perform_param.value,
-                    l_lya=param_list[1])
+                    l_lya=param_l_list[1])
             else:
                 return output_lya_discretized(
                     arr=self.arr,
                     ser=self.ser,
-                    theta=param_list[0],
+                    theta=param_l_list[0],
                     delta_time=self.perform_param.value,
-                    l_lya=param_list[1])
+                    l_lya=param_l_list[1])
 
         else:
             raise NameError("{0} is an infeasible performance metric".format(
@@ -85,12 +87,12 @@ if __name__ == '__main__':
     OUTPUT_4 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
     EX_OUTPUT = SingleServerPerform(
         arr=EXP_ARRIVAL1, const_rate=CONST_RATE16, perform_param=OUTPUT_4)
-    print(EX_OUTPUT.bound(0.5))
-    print(EX_OUTPUT.new_bound([0.5, 1.2]))
+    print(EX_OUTPUT.bound(param_list=[0.5]))
+    print(EX_OUTPUT.new_bound(param_l_list=[0.5, 1.2]))
 
     DELAY_PROB_4 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=4)
     EX_DELAY_PROB = SingleServerPerform(
         arr=EXP_ARRIVAL1, const_rate=CONST_RATE16, perform_param=DELAY_PROB_4)
-    print(EX_DELAY_PROB.bound(0.5))
-    print(EX_DELAY_PROB.new_bound([0.5, 1.2]))
+    print(EX_DELAY_PROB.bound(param_list=[0.5]))
+    print(EX_DELAY_PROB.new_bound(param_l_list=[0.5, 1.2]))

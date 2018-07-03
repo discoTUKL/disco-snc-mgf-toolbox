@@ -26,7 +26,7 @@ def tandem_compare(arr_list: List[ArrivalDistribution],
                    perform_param: PerformParameter,
                    nc_analysis: NCAnalysis) -> tuple:
 
-    if nc_analysis == NCAnalysis.SFA:
+    if nc_analysis == NCAnalysis.SFA or nc_analysis == NCAnalysis.PMOO:
         setting = TandemSFA(
             arr_list=arr_list, ser_list=ser_list, perform_param=perform_param)
         setting2 = TandemSFA(

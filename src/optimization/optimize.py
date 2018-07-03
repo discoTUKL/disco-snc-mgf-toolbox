@@ -35,7 +35,7 @@ class Optimize(object):
         # res = self.setting.bound(theta=param_list[0])
 
         try:
-            res = self.setting.bound(theta=param_list[0])
+            res = self.setting.bound(param_list=param_list)
         except (ParameterOutOfBounds, OverflowError):
             res = inf
 

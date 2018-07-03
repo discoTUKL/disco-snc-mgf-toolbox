@@ -1,6 +1,7 @@
 """This superclass represents our get_value abstract class"""
 
 from abc import ABC, abstractmethod
+from typing import List
 
 
 class Setting(ABC):
@@ -8,10 +9,10 @@ class Setting(ABC):
     the bounds"""
 
     @abstractmethod
-    def bound(self, theta: float) -> float:
+    def bound(self, param_list: List[float]) -> float:
         """
         standard bound
 
-        :param theta: mgf parameter
+        :param param_list: theta and Hoelder parameters
         """
         pass

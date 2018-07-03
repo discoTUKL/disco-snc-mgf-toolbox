@@ -1,4 +1,4 @@
-"""PMOO for canonical tree"""
+"""PMOO for sink tree"""
 
 from typing import List
 
@@ -28,7 +28,9 @@ class SinkTreePMOO(Setting):
         self.perform_param = perform_param
         self.number_servers = len(ser_list)
 
-    def bound(self, theta: float) -> float:
+    def bound(self, param_list: List[float]) -> float:
+        theta = param_list[0]
+
         s_net: Service = Leftover(
             arr=self.arr_list[self.number_servers + 1],
             ser=self.ser_list[self.number_servers])

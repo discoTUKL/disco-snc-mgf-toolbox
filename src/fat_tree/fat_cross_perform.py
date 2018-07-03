@@ -30,7 +30,9 @@ class FatCrossPerform(SettingNew):
         self.perform_param = perform_param
         self.number_servers = len(ser_list)
 
-    def bound(self, theta: float) -> float:
+    def bound(self, param_list: List[float]) -> float:
+        theta = param_list[0]
+
         output_list: List[Arrival] = [
             Deconvolve(arr=self.arr_list[i], ser=self.ser_list[i])
             for i in range(1, self.number_servers)
@@ -47,15 +49,16 @@ class FatCrossPerform(SettingNew):
             theta=theta,
             perform_param=self.perform_param)
 
-    def new_bound(self, param_list: List[float]) -> float:
-        if len(param_list) != len(self.arr_list):
+    def new_bound(self, param_l_list: List[float]) -> float:
+        # len(param_list) = theta (1) + output bounds (len(arr_list)-1)
+        if len(param_l_list) != len(self.arr_list):
             raise NameError("Check number of parameters")
 
         output_list: List[Arrival] = [
             DeconvolveLya(
                 arr=self.arr_list[i],
                 ser=self.ser_list[i],
-                l_lya=param_list[i]) for i in range(1, self.number_servers)
+                l_lya=param_l_list[i]) for i in range(1, self.number_servers)
         ]
         # we use i + 1, since i = 0 is the foi
 
@@ -66,7 +69,7 @@ class FatCrossPerform(SettingNew):
         return evaluate_single_hop(
             foi=self.arr_list[0],
             s_net=s_net,
-            theta=param_list[0],
+            theta=param_l_list[0],
             perform_param=self.perform_param)
 
     def to_string(self) -> str:

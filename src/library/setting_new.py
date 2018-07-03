@@ -10,19 +10,19 @@ class SettingNew(Setting):
     the bounds"""
 
     @abstractmethod
-    def bound(self, theta: float) -> float:
+    def bound(self, param_list: List[float]) -> float:
         """
         standard bound
 
-        :param theta: mgf parameter
+        :param param_list: theta and Hoelder parameters
         """
         pass
 
     @abstractmethod
-    def new_bound(self, param_list: List[float]) -> float:
+    def new_bound(self, param_l_list: List[float]) -> float:
         """
         new Lyapunov bound
 
-        :param param_list: theta and Lyapunov parameters
+        :param param_l_list: theta and Lyapunov parameters
         """
         pass
