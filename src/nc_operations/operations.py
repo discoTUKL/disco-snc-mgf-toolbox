@@ -156,18 +156,16 @@ class AggregateList(Arrival):
             self.p_list = p_list.append(get_p_n(p_list=p_list, indep=indep))
 
     def sigma(self, theta: float) -> float:
-        sigma_list: List[float] = [
-            self.arr_list[i].sigma(self.p_list[i] * theta)
-            for i in range(len(self.arr_list))
-        ]
+        res = 0.0
+        for i in range(len(self.arr_list)):
+            res += self.arr_list[i].sigma(self.p_list[i] * theta)
 
-        return sum(sigma_list)
+        return res
 
     def rho(self, theta: float) -> float:
         # There is no sign checker implemented yet
-        rho_list: List[float] = [
-            self.arr_list[i].rho(self.p_list[i] * theta)
-            for i in range(len(self.arr_list))
-        ]
+        res = 0.0
+        for i in range(len(self.arr_list)):
+            res += self.arr_list[i].rho(self.p_list[i] * theta)
 
-        return sum(rho_list)
+        return res

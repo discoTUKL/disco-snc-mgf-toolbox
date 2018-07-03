@@ -54,7 +54,7 @@ class SingleServerPerform(SettingNew):
                     arr=self.arr,
                     ser=self.ser,
                     theta=param_l_list[0],
-                    delay=self.perform_param.value)
+                    delay_value=self.perform_param.value)
 
         elif self.perform_param.perform_metric == PerformEnum.OUTPUT:
             if self.arr.is_discrete():

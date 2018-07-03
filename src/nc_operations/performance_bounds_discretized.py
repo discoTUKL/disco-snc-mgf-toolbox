@@ -11,15 +11,14 @@ from nc_processes.service import Service
 def backlog_prob_discretized(arr: Arrival,
                              ser: Service,
                              theta: float,
-                             backlog: float,
+                             backlog_value: float,
                              tau=1.0,
                              indep=True,
                              p=1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -33,8 +32,8 @@ def backlog_prob_discretized(arr: Arrival,
             "the service's rho {1}".format(rho_a_p, -rho_s_q))
 
     return mgf(
-        theta=theta, x=-backlog + rho_a_p * tau + sigma_a_p + sigma_s_q) / (
-            1 - mgf(theta=theta, x=tau * (rho_a_p + rho_s_q)))
+        theta=theta, x=-backlog_value + rho_a_p * tau + sigma_a_p +
+        sigma_s_q) / (1 - mgf(theta=theta, x=tau * (rho_a_p + rho_s_q)))
 
 
 def backlog_discretized(arr: Arrival,
@@ -47,8 +46,7 @@ def backlog_discretized(arr: Arrival,
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -70,15 +68,14 @@ def backlog_discretized(arr: Arrival,
 def delay_prob_discretized(arr: Arrival,
                            ser: Service,
                            theta: float,
-                           delay: int,
+                           delay_value: int,
                            tau=1.0,
                            indep=True,
                            p=1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -92,8 +89,9 @@ def delay_prob_discretized(arr: Arrival,
             "the service's rho {1}".format(rho_a_p, -rho_s_q))
 
     return mgf(
-        theta=theta, x=rho_a_p * tau + sigma_a_p + sigma_s_q +
-        rho_s_q * delay) / (1 - mgf(theta=theta, x=tau * (rho_a_p + rho_s_q)))
+        theta=theta,
+        x=rho_a_p * tau + sigma_a_p + sigma_s_q + rho_s_q * delay_value) / (
+            1 - mgf(theta=theta, x=tau * (rho_a_p + rho_s_q)))
 
 
 def delay_discretized(arr: Arrival,
@@ -106,8 +104,7 @@ def delay_discretized(arr: Arrival,
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -136,8 +133,7 @@ def output_discretized(arr: Arrival,
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)

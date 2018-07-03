@@ -2,9 +2,11 @@
 
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_operations.performance_bounds import delay, delay_prob, output
+from nc_operations.performance_bounds import (backlog, backlog_prob, delay,
+                                              delay_prob, output)
 from nc_operations.performance_bounds_discretized import (
-    delay_discretized, delay_prob_discretized, output_discretized)
+    backlog_discretized, backlog_prob_discretized, delay_discretized,
+    delay_prob_discretized, output_discretized)
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.service import Service
 
@@ -20,7 +22,43 @@ def evaluate_single_hop(foi: ArrivalDistribution,
     else:
         p = p
 
-    if perform_param.perform_metric == PerformEnum.DELAY_PROB:
+    if perform_param.perform_metric == PerformEnum.BACKLOG_PROB:
+        if foi.is_discrete():
+            return backlog_prob(
+                arr=foi,
+                ser=s_net,
+                theta=theta,
+                backlog_value=perform_param.value,
+                indep=indep,
+                p=p)
+        else:
+            return backlog_prob_discretized(
+                arr=foi,
+                ser=s_net,
+                theta=theta,
+                backlog_value=perform_param.value,
+                indep=indep,
+                p=p)
+
+    elif perform_param.perform_metric == PerformEnum.BACKLOG:
+        if foi.is_discrete():
+            return backlog(
+                arr=foi,
+                ser=s_net,
+                theta=theta,
+                prob_b=perform_param.value,
+                indep=indep,
+                p=p)
+        else:
+            return backlog_discretized(
+                arr=foi,
+                ser=s_net,
+                theta=theta,
+                prob_b=perform_param.value,
+                indep=indep,
+                p=p)
+
+    elif perform_param.perform_metric == PerformEnum.DELAY_PROB:
         if foi.is_discrete():
             return delay_prob(
                 arr=foi,
@@ -34,7 +72,7 @@ def evaluate_single_hop(foi: ArrivalDistribution,
                 arr=foi,
                 ser=s_net,
                 theta=theta,
-                delay=perform_param.value,
+                delay_value=perform_param.value,
                 indep=indep,
                 p=p)
 

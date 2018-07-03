@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     EXAMPLE = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB6)
-    print(EXAMPLE.bound(param_list=0.3))
+    print(EXAMPLE.bound(param_list=[0.3]))
     print(EXAMPLE.new_bound(param_l_list=[0.3, 1.5]))
 
     DELAY_TIME = PerformParameter(
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     EXAMPLE_REVERSE = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)
 
-    print(EXAMPLE_REVERSE.bound(param_list=0.3))
+    print(EXAMPLE_REVERSE.bound(param_list=[0.3]))
 
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=4)
@@ -102,7 +102,7 @@ if __name__ == '__main__':
     EXAMPLE2 = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST2, perform_param=DELAY_PROB10)
 
-    print(EXAMPLE2.bound(param_list=0.3))
+    print(EXAMPLE2.bound(param_list=[0.3]))
     print(EXAMPLE2.new_bound(param_l_list=[0.3, 3]))
 
     print(

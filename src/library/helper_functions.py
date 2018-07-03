@@ -24,6 +24,12 @@ def mgf(theta: float, x: float) -> float:
 
 
 def get_q(p: float, indep: bool) -> float:
+    """
+
+    :param p: Hoelder p
+    :param indep: if true, p=q=1, else q = p / (p - 1)
+    :return: q
+    """
     if indep:
         return 1.0
     else:
@@ -37,6 +43,12 @@ def get_q(p: float, indep: bool) -> float:
 
 
 def get_p_n(p_list: List[float], indep: bool) -> float:
+    """
+
+    :param p_list: first p_1, ..., p_n in generalized Hoelder inequality
+    :param indep: if true, all p_i = 1, else 1 / (sum p_i) = 1
+    :return: last p_n
+    """
     if indep:
         return 1.0
     else:

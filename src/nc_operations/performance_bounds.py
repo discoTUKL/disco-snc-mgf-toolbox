@@ -17,8 +17,7 @@ def backlog_prob(arr: Arrival,
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -46,8 +45,7 @@ def backlog_prob_t(arr: Arrival,
     """Implements time dependent method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -67,7 +65,12 @@ def backlog_prob_t(arr: Arrival,
 
     else:
         return backlog_prob(
-            arr=arr, ser=ser, theta=theta, backlog_value=backlog_value)
+            arr=arr,
+            ser=ser,
+            theta=theta,
+            backlog_value=backlog_value,
+            indep=indep,
+            p=p)
 
 
 def backlog(arr: Arrival,
@@ -79,8 +82,7 @@ def backlog(arr: Arrival,
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -108,8 +110,7 @@ def backlog_t(arr: Arrival,
     """Implements time dependent method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -128,7 +129,8 @@ def backlog_t(arr: Arrival,
         return rho_a_p + rho_s_q * tt + sigma_a_p + sigma_s_q - log_part / theta
 
     else:
-        return backlog(arr=arr, ser=ser, theta=theta, prob_b=prob_b)
+        return backlog(
+            arr=arr, ser=ser, theta=theta, prob_b=prob_b, indep=indep, p=p)
 
 
 def delay_prob(arr: Arrival,
@@ -140,8 +142,7 @@ def delay_prob(arr: Arrival,
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -169,8 +170,7 @@ def delay_prob_t(arr: Arrival,
     """Implements time dependent method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -191,7 +191,12 @@ def delay_prob_t(arr: Arrival,
 
     else:
         return delay_prob(
-            arr=arr, ser=ser, theta=theta, delay_value=delay_value)
+            arr=arr,
+            ser=ser,
+            theta=theta,
+            delay_value=delay_value,
+            indep=indep,
+            p=p)
 
 
 def delay(arr: Arrival,
@@ -203,8 +208,7 @@ def delay(arr: Arrival,
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -219,7 +223,7 @@ def delay(arr: Arrival,
 
     log_part = log(prob_d * (1 - mgf(theta=theta, x=rho_a_p + rho_s_q)))
 
-    return (log_part / theta - sigma_a_p + sigma_s_q) / rho_s_q
+    return (log_part / theta - (sigma_a_p + sigma_s_q)) / rho_s_q
 
 
 def delay_t(arr: Arrival,
@@ -232,8 +236,7 @@ def delay_t(arr: Arrival,
     """Implements time dependent method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -244,7 +247,7 @@ def delay_t(arr: Arrival,
     if rho_a_p == -rho_s_q:
         log_part = log(prob_d / (tt + 1))
 
-        return (log_part / theta - sigma_a_p + sigma_s_q) / rho_s_q
+        return (log_part / theta - (sigma_a_p + sigma_s_q)) / rho_s_q
 
     elif rho_a_p > -rho_s_q:
         log_part = log(prob_d * (1 - mgf(theta=theta, x=-(rho_a_p + rho_s_q))))
@@ -253,7 +256,8 @@ def delay_t(arr: Arrival,
             rho_a_p + rho_s_q * tt + sigma_a_p + sigma_s_q) / rho_s_q
 
     else:
-        return delay(arr=arr, ser=ser, theta=theta, prob_d=prob_d)
+        return delay(
+            arr=arr, ser=ser, theta=theta, prob_d=prob_d, indep=indep, p=p)
 
 
 def output(arr: Arrival,
@@ -265,8 +269,7 @@ def output(arr: Arrival,
     """Implements stationary bound method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -300,8 +303,7 @@ def output_t(arr: Arrival,
     """Implements time dependent method"""
     if indep:
         p = 1.0
-    else:
-        p = p
+
     q = get_q(p=p, indep=indep)
 
     rho_a_p = arr.rho(theta=p * theta)
@@ -320,4 +322,10 @@ def output_t(arr: Arrival,
             sigma_s_q) / (1 - mgf(theta=theta, x=-(rho_a_p + rho_s_q)))
 
     else:
-        return output(arr=arr, ser=ser, theta=theta, delta_time=tt - ss)
+        return output(
+            arr=arr,
+            ser=ser,
+            theta=theta,
+            delta_time=tt - ss,
+            indep=indep,
+            p=p)
