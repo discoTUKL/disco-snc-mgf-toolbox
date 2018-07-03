@@ -19,8 +19,6 @@ def evaluate_single_hop(foi: ArrivalDistribution,
                         p=1.0) -> float:
     if indep:
         p = 1.0
-    else:
-        p = p
 
     if perform_param.perform_metric == PerformEnum.BACKLOG_PROB:
         if foi.is_discrete():
