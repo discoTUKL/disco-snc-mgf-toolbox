@@ -101,23 +101,6 @@ class Leftover(Service):
         return self.arr.rho(theta) + self.ser.rho(theta)
 
 
-class Aggregate(Arrival):
-    """Single aggregation class"""
-
-    def __init__(self, arr1: Arrival, arr2: Arrival) -> None:
-        self.arr1 = arr1
-        self.arr2 = arr2
-
-    def sigma(self, theta: float) -> float:
-        return self.arr1.sigma(theta) + self.arr2.sigma(theta)
-
-    def rho(self, theta: float) -> float:
-        if self.arr1.rho(theta) < 0 or self.arr2.rho(theta) < 0:
-            raise ParameterOutOfBounds("Check rho's sign")
-
-        return self.arr1.rho(theta) + self.arr2.rho(theta)
-
-
 class AggregateList(Arrival):
     """Multiple (list) aggregation class."""
 
@@ -125,12 +108,12 @@ class AggregateList(Arrival):
         self.arr_list = arr_list
 
     def sigma(self, theta: float) -> float:
-        sigma_list = [x.sigma(theta) for x in self.arr_list]
+        sigma_list: List[float] = [arr.sigma(theta) for arr in self.arr_list]
 
         return sum(sigma_list)
 
     def rho(self, theta: float) -> float:
         # There is no sign checker implemented yet
-        rho_list = [x.rho(theta) for x in self.arr_list]
+        rho_list: List[float] = [arr.rho(theta) for arr in self.arr_list]
 
         return sum(rho_list)

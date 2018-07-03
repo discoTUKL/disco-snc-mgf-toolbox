@@ -1,4 +1,4 @@
-"""SFA for canonical tree"""
+"""PMOO for canonical tree"""
 
 from typing import List
 
@@ -12,7 +12,7 @@ from nc_processes.constant_rate_server import ConstantRate
 
 
 class SinkTreePMOO(Setting):
-    """Canonical tandem with SFA analysis"""
+    """Canonical tandem with PMOO analysis"""
 
     def __init__(self, arr_list: List[ArrivalDistribution],
                  ser_list: List[ConstantRate],
@@ -29,19 +29,16 @@ class SinkTreePMOO(Setting):
         self.number_servers = len(ser_list)
 
     def bound(self, theta: float) -> float:
-        s_net: Service = Leftover(arr=self.arr_list[self.number_servers + 1],
-                                  ser=self.ser_list[self.number_servers])
+        s_net: Service = Leftover(
+            arr=self.arr_list[self.number_servers + 1],
+            ser=self.ser_list[self.number_servers])
 
-        # leftover_service_list: List[Service] = [
-        #     Leftover(arr=self.arr_list[i + 1], ser=self.ser_list[i])
-        #     for i in range(self.number_servers)
-        # ]
-        # s_net: Service = leftover_service_list[0]
-        # for i in range(1, self.number_servers):
-        #     s_net = Convolve(s_net, leftover_service_list[i])
-        #
-        # return evaluate_single_hop(
-        #     foi=self.arr_list[0],
-        #     s_net=s_net,
-        #     theta=theta,
-        #     perform_param=self.perform_param)
+        for _i in range(self.number_servers, -1, -1):
+            s_net = Convolve(ser1=s_net, ser2=self.ser_list[_i])
+            s_net = Leftover(arr=self.arr_list[_i + 1], ser=s_net)
+
+        return evaluate_single_hop(
+            foi=self.arr_list[0],
+            s_net=s_net,
+            theta=theta,
+            perform_param=self.perform_param)
