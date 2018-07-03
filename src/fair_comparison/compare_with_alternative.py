@@ -146,8 +146,12 @@ def del_alter_opt(prob_d: float,
 
 if __name__ == '__main__':
     DELAY_VAL = 5
-    DELAYPROB5 = PerformParameter(
+    DELAY5 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=DELAY_VAL)
+
+    DELAY_PROB_VAL = 10**(-6)
+    DELAY_PROB6 = PerformParameter(
+        perform_metric=PerformEnum.DELAY, value=DELAY_PROB_VAL)
 
     NUMBER_AGGREGATIONS = 5
 
@@ -167,9 +171,7 @@ if __name__ == '__main__':
         n=NUMBER_AGGREGATIONS)
 
     const_single = SingleServerPerform(
-        arr=tb_const,
-        const_rate=constant_rate_server,
-        perform_param=DELAYPROB5)
+        arr=tb_const, const_rate=constant_rate_server, perform_param=DELAY5)
 
     leaky_mass_1 = SingleServerPerform(
         arr=LeakyBucketMassOne(
@@ -177,7 +179,7 @@ if __name__ == '__main__':
             rho_single=RHO_SINGLE,
             n=NUMBER_AGGREGATIONS),
         const_rate=constant_rate_server,
-        perform_param=DELAYPROB5)
+        perform_param=DELAY5)
 
     const_opt = Optimize(
         setting=const_single, print_x=PRINT_X).grid_search(
@@ -198,3 +200,38 @@ if __name__ == '__main__':
         n=NUMBER_AGGREGATIONS,
         print_x=PRINT_X)
     print("leaky_bucket_alter_opt", leaky_bucket_alter_opt)
+
+    print("----------------------------------------------")
+
+    const_single2 = SingleServerPerform(
+        arr=tb_const,
+        const_rate=constant_rate_server,
+        perform_param=DELAY_PROB6)
+
+    leaky_mass_1_2 = SingleServerPerform(
+        arr=LeakyBucketMassOne(
+            sigma_single=SIGMA_SINGLE,
+            rho_single=RHO_SINGLE,
+            n=NUMBER_AGGREGATIONS),
+        const_rate=constant_rate_server,
+        perform_param=DELAY_PROB6)
+
+    const_opt_2 = Optimize(
+        setting=const_single, print_x=PRINT_X).grid_search(
+            bound_list=BOUND_LIST, delta=DELTA)
+    print("const_opt_2", const_opt_2)
+
+    leaky_mass_1_opt_2 = Optimize(
+        setting=leaky_mass_1_2, print_x=PRINT_X).grid_search(
+            bound_list=BOUND_LIST, delta=DELTA)
+    print("leaky_mass_1_opt_2", leaky_mass_1_opt_2)
+
+    leaky_bucket_alter_opt_2 = del_alter_opt(
+        prob_d=DELAY_PROB_VAL,
+        sigma_single=SIGMA_SINGLE,
+        rho_single=RHO_SINGLE,
+        ser=constant_rate_server,
+        t=1,
+        n=NUMBER_AGGREGATIONS,
+        print_x=PRINT_X)
+    print("leaky_bucket_alter_opt_2", leaky_bucket_alter_opt_2)
