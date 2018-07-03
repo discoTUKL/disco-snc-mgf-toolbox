@@ -37,7 +37,8 @@ class FatCrossPerform(SettingNew):
         ]
         # we use i + 1, since i = 0 is the foi
 
-        aggregated_cross: Arrival = AggregateList(arr_list=output_list)
+        aggregated_cross: Arrival = AggregateList(
+            arr_list=output_list, p_list=[])
         s_net: Service = Leftover(arr=aggregated_cross, ser=self.ser_list[0])
 
         return evaluate_single_hop(
@@ -58,7 +59,8 @@ class FatCrossPerform(SettingNew):
         ]
         # we use i + 1, since i = 0 is the foi
 
-        aggregated_cross: Arrival = AggregateList(arr_list=output_list)
+        aggregated_cross: Arrival = AggregateList(
+            arr_list=output_list, p_list=[])
         s_net: Service = Leftover(arr=aggregated_cross, ser=self.ser_list[0])
 
         return evaluate_single_hop(

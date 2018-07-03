@@ -20,7 +20,7 @@ class TandemSFA(Setting):
         # The first element in the arrival list in dedicated to the foi
         if len(arr_list) != (len(ser_list) + 1):
             raise ValueError(
-                "number of arrivals {0} and servers {1} have to match".format(
+                "number of arrivals {0} and servers {1} + 1 have to match".format(
                     len(arr_list), len(ser_list)))
 
         self.arr_list = arr_list

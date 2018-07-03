@@ -9,6 +9,8 @@ from typing import List
 import numpy as np
 import pandas as pd
 
+from library.exceptions import ParameterOutOfBounds
+
 EPSILON = 1e-09
 
 
@@ -19,6 +21,30 @@ def mgf(theta: float, x: float) -> float:
     :return:   returns mgf (without expectation E[], of course)
     """
     return exp(theta * x)
+
+
+def get_q(p: float, indep: bool) -> float:
+    if indep:
+        return 1.0
+    else:
+        if p <= 1:
+            raise ParameterOutOfBounds("p={0} must be >1".format(p))
+
+        # 1/p + 1/q = 1
+        # 1/q = (p - 1) / p
+
+        return p / (p - 1)
+
+
+def get_p_n(p_list: List[float], indep: bool) -> float:
+    if indep:
+        return 1.0
+    else:
+        for p_i in p_list:
+            if p_i <= 1:
+                raise ParameterOutOfBounds("p={0} must be >1".format(p_i))
+
+        return 1 / (1 - sum(p_list))
 
 
 def is_equal(float1: float, float2: float) -> bool:

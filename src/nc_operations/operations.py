@@ -1,9 +1,9 @@
 """Implements all network operations in the sigma-rho calculus."""
 
-from math import exp, log
+from math import log
 from typing import List
 
-from library.helper_functions import is_equal, mgf
+from library.helper_functions import is_equal, get_p_n, get_q, mgf
 from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival import Arrival
 from nc_processes.constant_rate_server import ConstantRate
@@ -13,9 +13,15 @@ from nc_processes.service import Service
 class Deconvolve(Arrival):
     """Deconvolution class."""
 
-    def __init__(self, arr: Arrival, ser: Service) -> None:
+    def __init__(self, arr: Arrival, ser: Service, indep=True, p=1.0) -> None:
         self.arr = arr
         self.ser = ser
+
+        if indep:
+            self.p = 1.0
+        else:
+            self.p = p
+        self.q = get_q(p=p, indep=indep)
 
     def sigma(self, theta: float) -> float:
         """
@@ -23,10 +29,14 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return:      sigma(theta)
         """
-        k_sig = -log(1 -
-                     mgf(theta=theta, x=self.arr.rho(theta) + self.ser.rho(theta))) / theta
+        p_theta = self.p * theta
+        q_theta = self.q * theta
 
-        return self.arr.sigma(theta) + self.ser.sigma(theta) + k_sig
+        k_sig = -log(1 - mgf(
+            theta=theta, x=self.arr.rho(p_theta) + self.ser.rho(q_theta))
+                     ) / theta
+
+        return self.arr.sigma(p_theta) + self.ser.sigma(q_theta) + k_sig
 
     def rho(self, theta: float) -> float:
         """
@@ -34,86 +44,130 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return: rho(theta)
         """
-        if self.arr.rho(theta) < 0 or self.ser.rho(theta) > 0:
+        p_theta = self.p * theta
+        q_theta = self.q * theta
+
+        if self.arr.rho(p_theta) < 0 or self.ser.rho(q_theta) > 0:
             raise ParameterOutOfBounds("Check rho's sign")
 
-        if self.arr.rho(theta) >= -self.ser.rho(theta):
+        if self.arr.rho(p_theta) >= -self.ser.rho(q_theta):
             raise ParameterOutOfBounds(
                 "The arrivals' rho has to be smaller than the service's rho")
 
-        return self.arr.rho(theta)
+        return self.arr.rho(p_theta)
 
 
 class Convolve(Service):
     """Convolution class."""
 
-    def __init__(self, ser1: Service, ser2: Service) -> None:
+    def __init__(self, ser1: Service, ser2: Service, indep=True,
+                 p=1.0) -> None:
         self.ser1 = ser1
         self.ser2 = ser2
+        if indep:
+            self.p = 1.0
+        else:
+            self.p = p
+        self.q = get_q(p=p, indep=indep)
 
     def sigma(self, theta: float) -> float:
         if isinstance(self.ser1, ConstantRate) and isinstance(
                 self.ser2, ConstantRate):
             return 0.0
 
-        if not is_equal(abs(self.ser1.rho(theta)), abs(self.ser2.rho(theta))):
-            k_sig = -(1 / theta) * log(1 - mgf(theta=theta, x=-abs(self.ser1.rho(theta) - self.ser2.rho(theta))))
+        p_theta = self.p * theta
+        q_theta = self.q * theta
 
-            return self.ser1.sigma(theta) + self.ser2.sigma(theta) + k_sig
+        if not is_equal(
+                abs(self.ser1.rho(p_theta)), abs(self.ser2.rho(q_theta))):
+            k_sig = -(1 / theta) * log(1 - mgf(
+                theta=theta,
+                x=-abs(self.ser1.rho(p_theta) - self.ser2.rho(q_theta))))
+
+            return self.ser1.sigma(p_theta) + self.ser2.sigma(q_theta) + k_sig
 
         else:
-            return self.ser1.sigma(theta) + self.ser2.sigma(theta)
+            return self.ser1.sigma(p_theta) + self.ser2.sigma(q_theta)
 
     def rho(self, theta: float) -> float:
         if isinstance(self.ser1, ConstantRate) and isinstance(
                 self.ser2, ConstantRate):
             return min(self.ser1.rate, self.ser2.rate)
 
-        if self.ser1.rho(theta) > 0 or self.ser2.rho(theta) > 0:
+        p_theta = self.p * theta
+        q_theta = self.q * theta
+
+        if self.ser1.rho(p_theta) > 0 or self.ser2.rho(q_theta) > 0:
             raise ParameterOutOfBounds("Check rho's sign")
 
-        if not is_equal(abs(self.ser1.rho(theta)), abs(self.ser2.rho(theta))):
-            return max(self.ser1.rho(theta), self.ser2.rho(theta))
+        if not is_equal(
+                abs(self.ser1.rho(p_theta)), abs(self.ser2.rho(q_theta))):
+            return max(self.ser1.rho(p_theta), self.ser2.rho(q_theta))
 
         else:
-            return self.ser2.rho(theta) + (1 / theta)
+            return self.ser1.rho(p_theta) + (1 / theta)
 
 
 class Leftover(Service):
     """Subtract cross flow = nc_operations.Leftover class."""
 
-    def __init__(self, arr: Arrival, ser: Service) -> None:
+    def __init__(self, arr: Arrival, ser: Service, indep=True, p=1.0) -> None:
         self.arr = arr
         self.ser = ser
 
+        if indep:
+            self.p = 1.0
+        else:
+            self.p = p
+        self.q = get_q(p=p, indep=indep)
+
     def sigma(self, theta):
-        return self.arr.sigma(theta) + self.ser.sigma(theta)
+        p_theta = self.p * theta
+        q_theta = self.q * theta
+
+        return self.arr.sigma(p_theta) + self.ser.sigma(q_theta)
 
     def rho(self, theta):
-        if self.arr.rho(theta) < 0:
-            print(self.arr.rho(theta))
-            raise ParameterOutOfBounds("Arrivals' rho must be >= 0")
+        p_theta = self.p * theta
+        q_theta = self.q * theta
 
-        if self.ser.rho(theta) > 0:
-            print(self.ser.rho(theta))
-            raise ParameterOutOfBounds("Service's rho must be <= 0")
+        if self.arr.rho(p_theta) < 0 or self.ser.rho(q_theta) > 0:
+            raise ParameterOutOfBounds("Check rho's sign")
 
-        return self.arr.rho(theta) + self.ser.rho(theta)
+        return self.arr.rho(p_theta) + self.ser.rho(q_theta)
 
 
 class AggregateList(Arrival):
     """Multiple (list) aggregation class."""
 
-    def __init__(self, arr_list: List[Arrival]) -> None:
+    def __init__(self,
+                 arr_list: List[Arrival],
+                 p_list: List[float],
+                 indep=True) -> None:
         self.arr_list = arr_list
+        if indep:
+            self.p_list = [1.0] * len(self.arr_list)
+        else:
+            if len(p_list) != (len(self.arr_list) - 1):
+                raise ValueError(
+                    "number of p_list {0} arr_list {1} - 1 have to match".
+                    format(len(p_list), len(self.arr_list)))
+
+            self.p_list = p_list.append(get_p_n(p_list=p_list, indep=indep))
 
     def sigma(self, theta: float) -> float:
-        sigma_list: List[float] = [arr.sigma(theta) for arr in self.arr_list]
+        sigma_list: List[float] = [
+            self.arr_list[i].sigma(self.p_list[i] * theta)
+            for i in range(len(self.arr_list))
+        ]
 
         return sum(sigma_list)
 
     def rho(self, theta: float) -> float:
         # There is no sign checker implemented yet
-        rho_list: List[float] = [arr.rho(theta) for arr in self.arr_list]
+        rho_list: List[float] = [
+            self.arr_list[i].rho(self.p_list[i] * theta)
+            for i in range(len(self.arr_list))
+        ]
 
         return sum(rho_list)

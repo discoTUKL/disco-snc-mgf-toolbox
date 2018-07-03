@@ -24,8 +24,9 @@ class DeconvolveLya(Arrival):
         # here, theta can simply be replaced by l * theta
         l_theta = self.l_lya * theta
 
-        k_sig = -log(
-            1 - mgf(theta=l_theta, x=self.arr.rho(l_theta) + self.ser.rho(l_theta))) / l_theta
+        k_sig = -log(1 - mgf(
+            theta=l_theta, x=self.arr.rho(l_theta) + self.ser.rho(l_theta))
+                     ) / l_theta
 
         return self.arr.sigma(l_theta) + self.ser.sigma(l_theta) + k_sig
 
