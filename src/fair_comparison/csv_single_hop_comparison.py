@@ -208,7 +208,7 @@ def compare_sigma(aggregation: int, sigmas: List[float], rho_single: float,
 if __name__ == '__main__':
     DELAY6 = PerformParameter(perform_metric=PerformEnum.DELAY, value=10**(-6))
 
-    NUMBER_AGGREGATIONS = [1, 5, 10, 15, 20, 25, 30, 35, 40, 50]
+    NUMBER_AGGREGATIONS = [2, 5, 10, 15, 20, 25, 30, 35, 40, 50]
 
     RHO_SINGLE = 0.1
     SERVICE_RATE = 0.12

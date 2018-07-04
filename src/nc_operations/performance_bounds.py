@@ -30,9 +30,12 @@ def backlog_prob(arr: Arrival,
             "The arrivals' rho {0} has to be smaller than"
             "the service's rho {1}".format(rho_a_p, -rho_s_q))
 
-    return mgf(
-        theta=theta, x=-backlog_value + sigma_a_p + sigma_s_q) / (
-            1 - mgf(theta=theta, x=rho_a_p + rho_s_q))
+    try:
+        return mgf(
+            theta=theta, x=-backlog_value + sigma_a_p + sigma_s_q) / (
+                1 - mgf(theta=theta, x=rho_a_p + rho_s_q))
+    except ZeroDivisionError:
+        return inf
 
 
 def backlog_prob_t(arr: Arrival,
@@ -155,9 +158,12 @@ def delay_prob(arr: Arrival,
             "The arrivals' rho {0} has to be smaller than"
             "the service's rho {1}".format(rho_a_p, -rho_s_q))
 
-    return mgf(
-        theta=theta, x=sigma_a_p + sigma_s_q + rho_s_q * delay_value) / (
-            1 - mgf(theta=theta, x=rho_a_p + rho_s_q))
+    try:
+        return mgf(
+            theta=theta, x=sigma_a_p + sigma_s_q + rho_s_q * delay_value) / (
+                1 - mgf(theta=theta, x=rho_a_p + rho_s_q))
+    except ZeroDivisionError:
+        return inf
 
 
 def delay_prob_t(arr: Arrival,
@@ -282,12 +288,10 @@ def output(arr: Arrival,
             "The arrivals' rho {0} has to be smaller than"
             "the service's rho {1}".format(rho_a_p, -rho_s_q))
 
-    numerator = mgf(
-        theta=theta, x=rho_a_p * delta_time + sigma_a_p + sigma_s_q)
-    denominator = 1 - mgf(theta=theta, x=rho_a_p + rho_s_q)
-
     try:
-        return numerator / denominator
+        return mgf(
+            theta=theta, x=rho_a_p * delta_time + sigma_a_p + sigma_s_q) / (
+                1 - mgf(theta=theta, x=rho_a_p + rho_s_q))
 
     except ZeroDivisionError:
         return inf
