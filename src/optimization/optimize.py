@@ -55,6 +55,7 @@ class Optimize(object):
         for i in range(len(bound_list)):
             list_slices[i] = slice(bound_list[i][0], bound_list[i][1], delta)
 
+        np.seterr("raise")
         grid_res = scipy.optimize.brute(
             func=self.eval_except, ranges=tuple(list_slices), full_output=True)
 
@@ -136,6 +137,7 @@ class Optimize(object):
                             become very small)
         :return:            optimized bound
         """
+        np.seterr("raise")
         nm_res = scipy.optimize.minimize(
             self.eval_except,
             x0=np.zeros(shape=(1, simplex.shape[1])),
@@ -231,6 +233,7 @@ class Optimize(object):
         :param bound_list: list of tuples of lower and upper bounds
         :return:           optimized bound
         """
+        np.seterr("raise")
         de_res = scipy.optimize.differential_evolution(
             func=self.eval_except, bounds=bound_list)
 
@@ -241,6 +244,8 @@ class Optimize(object):
 
     def bfgs(self, start_list: list):
         x0 = np.array(start_list)
+
+        np.seterr("raise")
         bfgs_res = scipy.optimize.minimize(
             fun=self.eval_except, x0=x0, method="BFGS")
 

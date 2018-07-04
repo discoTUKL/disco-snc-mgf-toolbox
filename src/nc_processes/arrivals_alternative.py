@@ -1,6 +1,6 @@
 """Class for all arrival processes that cannot be described via (sigma, rho)"""
 
-from math import exp, inf
+from math import exp
 
 from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import mgf
@@ -18,11 +18,8 @@ def fbm(theta: float, delta_time: int, lamb: float, sigma: float,
         raise ParameterOutOfBounds(
             "Hurst = {0} must be in (0, 1)".format(hurst))
 
-    try:
-        return exp(lamb * theta * delta_time +
-                   (0.5 * (sigma * theta)**2) * delta_time**(2 * hurst))
-    except OverflowError:
-        return inf
+    return exp(lamb * theta * delta_time +
+               (0.5 * (sigma * theta) ** 2) * delta_time ** (2 * hurst))
 
 
 def regulated_alternative(theta: float,
@@ -34,12 +31,6 @@ def regulated_alternative(theta: float,
         raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
     rho_delta = rho_single * delta_time
-
-    # try:
-    #     return 1 + rho_delta / (sigma_single + rho_delta) * (
-    #         mgf(theta=theta, x=n * (sigma_single + rho_delta)) - 1)
-    # except OverflowError:
-    #     return inf
 
     return 1 + rho_delta / (sigma_single + rho_delta) * (
             mgf(theta=theta, x=n * (sigma_single + rho_delta)) - 1)

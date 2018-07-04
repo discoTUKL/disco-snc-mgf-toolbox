@@ -1,6 +1,6 @@
 """Compare with alternative traffic description"""
 
-from math import inf, log
+from math import inf, log, nan
 
 import scipy.optimize
 
@@ -14,6 +14,7 @@ from nc_processes.service import Service
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
+import numpy as np
 
 
 def delay_prob_leaky(theta: float,
@@ -37,21 +38,28 @@ def delay_prob_leaky(theta: float,
     # TODO: Look for more bugs
 
     for _j in range(t):
-        sum_j += regulated_alternative(
-            theta=theta,
-            delta_time=_j,
-            sigma_single=sigma_single,
-            rho_single=rho_single,
-            n=n) * mgf(
-                theta=theta, x=_j * rho_s)
+        try:
+            summand = regulated_alternative(
+                theta=theta,
+                delta_time=_j,
+                sigma_single=sigma_single,
+                rho_single=rho_single,
+                n=n) * mgf(
+                    theta=theta, x=_j * rho_s)
+        except (FloatingPointError, OverflowError):
+            summand = inf
 
+        sum_j += summand
     # print(sum_j)
     # sum_j = 1.0
 
-    return mgf(
-        theta=theta, x=sigma_s + rho_s * delay_value) * (
-            mgf(theta=theta, x=sigma_a + (rho_a + rho_s) * t) /
-            (1 - mgf(theta=theta, x=rho_a + rho_s)) + sum_j)
+    try:
+        return mgf(
+            theta=theta, x=sigma_s + rho_s * delay_value) * (
+                mgf(theta=theta, x=sigma_a + (rho_a + rho_s) * t) /
+                (1 - mgf(theta=theta, x=rho_a + rho_s)) + sum_j)
+    except FloatingPointError:
+        return nan
 
 
 def del_prob_alter_opt(delay_value: int,
@@ -61,6 +69,8 @@ def del_prob_alter_opt(delay_value: int,
                        t: int,
                        n=1,
                        print_x=False) -> float:
+    np.seterr("raise")
+
     def helper_fun(theta: float) -> float:
         try:
             return delay_prob_leaky(
@@ -71,7 +81,7 @@ def del_prob_alter_opt(delay_value: int,
                 ser=ser,
                 t=t,
                 n=n)
-        except OverflowError:
+        except FloatingPointError:
             return inf
 
     grid_res = scipy.optimize.brute(
@@ -196,7 +206,7 @@ if __name__ == '__main__':
         sigma_single=SIGMA_SINGLE,
         rho_single=RHO_SINGLE,
         ser=constant_rate_server,
-        t=1,
+        t=8,
         n=NUMBER_AGGREGATIONS,
         print_x=PRINT_X)
     print("leaky_bucket_alter_opt", leaky_bucket_alter_opt)
@@ -217,7 +227,7 @@ if __name__ == '__main__':
         perform_param=DELAY_PROB6)
 
     const_opt_2 = Optimize(
-        setting=const_single, print_x=PRINT_X).grid_search(
+        setting=const_single2, print_x=PRINT_X).grid_search(
             bound_list=BOUND_LIST, delta=DELTA)
     print("const_opt_2", const_opt_2)
 
