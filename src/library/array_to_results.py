@@ -39,7 +39,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
 
     if count_nan_standard > int(res_array.shape[0] / 10):
         warn("way to many nan's: {0} out of {1}!".format(
-            count_nan_standard, int(res_array.shape[0] / 10)))
+            count_nan_standard, int(res_array.shape[0])))
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival.to_name()}
 
