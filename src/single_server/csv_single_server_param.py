@@ -89,7 +89,7 @@ def csv_single_server_param(
         "optimization": opt_method.name,
         "metric": metric,
         "iterations": total_iterations,
-        "MCDistribution": mc_dist.mc_enum.to_name,
+        "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string()
     })
 
