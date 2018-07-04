@@ -113,7 +113,8 @@ def time_array_to_results(arrival: ArrivalDistribution, time_array,
     standard_mean = np.nanmean(time_array[:, 0])
     lyapunov_mean = np.nanmean(time_array[:, 1])
 
-    mean_ratio = lyapunov_mean / standard_mean
+    ratio = np.divide(time_array[:, 0], time_array[:, 1])
+    mean_ratio = np.nanmean(ratio)
 
     time_ratio.update({number_servers: mean_ratio})
 
