@@ -159,15 +159,15 @@ if __name__ == '__main__':
     DELAY5 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=DELAY_VAL)
 
-    DELAY_PROB_VAL = 10**(-6)
+    DELAY_PROB_VAL = 10**(-5)
     DELAY_PROB6 = PerformParameter(
         perform_metric=PerformEnum.DELAY, value=DELAY_PROB_VAL)
 
     NUMBER_AGGREGATIONS = 5
 
-    RHO_SINGLE = 0.1
+    RHO_SINGLE = 1.0
     SIGMA_SINGLE = 7.0
-    SERVICE_RATE = 6.0
+    SERVICE_RATE = 6.5
 
     BOUND_LIST = [(0.05, 20.0)]
     DELTA = 0.05
