@@ -62,15 +62,15 @@ def csv_single_server_param(
                 perform_param=perform_param)
 
         else:
-            raise NameError("Arrival parameter " + arrival.__class__.__name__ +
-                            " is infeasible")
+            raise NameError("Arrival parameter {0} is infeasible".format(
+                arrival.__class__.__name__))
 
             # standard_bound, new_bound = compute_improvement()
         res_array[i, 0], res_array[i, 1] = compute_improvement(
             setting=setting, opt_method=opt_method)
 
-        # This might be a very dangerous condition
-        if res_array[i, 1] == inf:
+        if (res_array[i, 1] == inf or res_array[i, 0] == nan
+                or res_array[i, 1] == nan):
             res_array[i, ] = nan
 
         if i % floor(total_iterations / 10) == 0:
@@ -94,9 +94,9 @@ def csv_single_server_param(
     })
 
     with open(
-            "single_" + perform_param.to_name() + "_" + arrival.to_name() +
-            "_results_MC" + mc_dist.to_name() + "_" + opt_method.name + "_" +
-            metric + ".csv", 'w') as csv_file:
+            "single_{0}_{1}_results_MC{2}_{3}_{4}.csv".format(
+                perform_param.to_name(), arrival.to_name(), mc_dist.to_name(),
+                opt_method.name, metric), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
-    MC_EXP1 = MonteCarloDist(MCEnum.EXPONENTIAL, [1.0])
+    MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
     def fun1():
         print(

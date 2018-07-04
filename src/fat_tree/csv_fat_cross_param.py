@@ -91,7 +91,8 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
             opt_method=opt_method,
             number_l=number_servers - 1)
 
-        if res_array[i, 1] >= 1:
+        if (res_array[i, 1] >= 1 or res_array[i, 0] == nan
+                or res_array[i, 1] == nan):
             res_array[i, ] = nan
 
         if i % floor(total_iterations / 10) == 0:
@@ -116,9 +117,9 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
     })
 
     with open(
-            "sim_" + perform_param.to_name() + "_" + arrival.to_name() +
-            "_results_MC" + mc_dist.to_name() + "_" + opt_method.name + "_" +
-            metric + ".csv", 'w') as csv_file:
+            "sim_{0}_{1}_results_MC{2}_{3}_{4}.csv".format(
+                perform_param.to_name(), arrival.to_name(), mc_dist.to_name(),
+                opt_method.name, metric), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])
@@ -137,7 +138,7 @@ if __name__ == '__main__':
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
-    MC_EXP1 = MonteCarloDist(MCEnum.EXPONENTIAL, [1.0])
+    MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
     def fun1():
         print(

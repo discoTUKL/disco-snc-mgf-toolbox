@@ -108,17 +108,6 @@ def seq(start: float, stop: float, step: float) -> List[float]:
         return []
 
 
-def find_opt_improve_row(ar: np.array, metric: str) -> np.ndarray:
-    if metric == "relative":
-        improvement_column = np.divide(ar[:, 0], ar[:, 1])
-    elif metric == "absolute":
-        improvement_column = np.subtract(ar[:, 0], ar[:, 1])
-    else:
-        raise NameError("Metric parameter {0} is infeasible".format(metric))
-
-    return np.nanargmax(improvement_column)
-
-
 def centroid_without_one_row(simplex: np.ndarray, index) -> np.ndarray:
     # type hint does not work with int and np.ndarray[int]
     # column mean of simplex without a given row
