@@ -69,8 +69,8 @@ def csv_single_server_param(
         res_array[i, 0], res_array[i, 1] = compute_improvement(
             setting=setting, opt_method=opt_method)
 
-        if (res_array[i, 1] == inf or res_array[i, 0] == nan
-                or res_array[i, 1] == nan):
+        if (res_array[i, 0] == inf or res_array[i, 1] == inf
+                or res_array[i, 0] == nan or res_array[i, 1] == nan):
             res_array[i, ] = nan
 
         if i % floor(total_iterations / 10) == 0:

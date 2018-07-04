@@ -91,8 +91,8 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
             opt_method=opt_method,
             number_l=number_servers - 1)
 
-        if (res_array[i, 1] >= 1 or res_array[i, 0] == nan
-                or res_array[i, 1] == nan):
+        if (res_array[i, 0] >= 1 or res_array[i, 1] >= 1
+                or res_array[i, 0] == nan or res_array[i, 1] == nan):
             res_array[i, ] = nan
 
         if i % floor(total_iterations / 10) == 0:
