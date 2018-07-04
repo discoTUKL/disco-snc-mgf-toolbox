@@ -59,9 +59,9 @@ def data_array_to_results(arrival: ArrivalDistribution,
                 row_max, 3 * number_servers + j]
 
         else:
-            raise NameError("Arrival parameter " + arrival.to_name() +
-                            "or Service parameter" + const_rate.to_name() +
-                            " is infeasible")
+            raise NameError(
+                "Arrival parameter {0}or Service parameter{1} is infeasible".
+                format(arrival.to_name(), const_rate.to_name()))
 
     res_dict.update({
         "opt_standard_bound": opt_standard_bound,
