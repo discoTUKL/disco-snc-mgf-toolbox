@@ -112,17 +112,27 @@ def delay_leaky(theta: float,
     sum_j = 0.0
 
     for _j in range(t):
-        sum_j += regulated_alternative(
-            theta=theta,
-            delta_time=_j,
-            sigma_single=sigma_single,
-            rho_single=rho_single,
-            n=n) * mgf(
-                theta=theta, x=_j * rho_s)
+        try:
+            summand = regulated_alternative(
+                theta=theta,
+                delta_time=_j,
+                sigma_single=sigma_single,
+                rho_single=rho_single,
+                n=n) * mgf(
+                    theta=theta, x=_j * rho_s)
 
-    return -(log(mgf(theta=theta, x=sigma_s) / prob_d) + log(
-        mgf(theta=theta, x=sigma_a + (rho_a + rho_s) * t) /
-        (1 - mgf(theta=theta, x=rho_a + rho_s)) + sum_j)) / (theta * rho_s)
+        except (FloatingPointError, OverflowError):
+            summand = inf
+
+        sum_j += summand
+
+    try:
+        return -(log(mgf(theta=theta, x=sigma_s) / prob_d) + log(
+            mgf(theta=theta, x=sigma_a + (rho_a + rho_s) * t) /
+            (1 - mgf(theta=theta, x=rho_a + rho_s)) + sum_j)) / (theta * rho_s)
+
+    except FloatingPointError:
+        return nan
 
 
 def del_alter_opt(prob_d: float,
@@ -142,7 +152,7 @@ def del_alter_opt(prob_d: float,
                 ser=ser,
                 t=t,
                 n=n)
-        except OverflowError:
+        except (FloatingPointError, OverflowError):
             return inf
 
     grid_res = scipy.optimize.brute(
@@ -201,15 +211,17 @@ if __name__ == '__main__':
             bound_list=BOUND_LIST, delta=DELTA)
     print("leaky_mass_1_opt", leaky_mass_1_opt)
 
-    leaky_bucket_alter_opt = del_prob_alter_opt(
-        delay_value=DELAY_VAL,
-        sigma_single=SIGMA_SINGLE,
-        rho_single=RHO_SINGLE,
-        ser=constant_rate_server,
-        t=8,
-        n=NUMBER_AGGREGATIONS,
-        print_x=PRINT_X)
-    print("leaky_bucket_alter_opt", leaky_bucket_alter_opt)
+    print("leaky_bucket_alter_opt")
+    for _i in range(10):
+        leaky_bucket_alter_opt = del_prob_alter_opt(
+            delay_value=DELAY_VAL,
+            sigma_single=SIGMA_SINGLE,
+            rho_single=RHO_SINGLE,
+            ser=constant_rate_server,
+            t=_i,
+            n=NUMBER_AGGREGATIONS,
+            print_x=False)
+        print("{0} {1}".format(_i, leaky_bucket_alter_opt))
 
     print("----------------------------------------------")
 
@@ -236,12 +248,14 @@ if __name__ == '__main__':
             bound_list=BOUND_LIST, delta=DELTA)
     print("leaky_mass_1_opt_2", leaky_mass_1_opt_2)
 
-    leaky_bucket_alter_opt_2 = del_alter_opt(
-        prob_d=DELAY_PROB_VAL,
-        sigma_single=SIGMA_SINGLE,
-        rho_single=RHO_SINGLE,
-        ser=constant_rate_server,
-        t=1,
-        n=NUMBER_AGGREGATIONS,
-        print_x=PRINT_X)
-    print("leaky_bucket_alter_opt_2", leaky_bucket_alter_opt_2)
+    print("leaky_bucket_alter_opt_2")
+    for _i in range(10):
+        leaky_bucket_alter_opt_2 = del_alter_opt(
+            prob_d=DELAY_PROB_VAL,
+            sigma_single=SIGMA_SINGLE,
+            rho_single=RHO_SINGLE,
+            ser=constant_rate_server,
+            t=_i,
+            n=NUMBER_AGGREGATIONS,
+            print_x=False)
+        print("{0} {1}".format(_i, leaky_bucket_alter_opt_2))
