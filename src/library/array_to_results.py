@@ -3,7 +3,6 @@
 import numpy as np
 from warnings import warn
 
-from library.helper_functions import find_opt_improve_row
 from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
                                                ExponentialArrival)
 from nc_processes.constant_rate_server import ConstantRate
@@ -17,34 +16,30 @@ def data_array_to_results(arrival: ArrivalDistribution,
                           metric="relative") -> dict:
     """Writes the array values into a dictionary, MMOO"""
 
-    # res_array[:, 0] = np.delete(res_array[:, 0],
-    #                             np.argwhere(np.isnan(res_array[:, 1])))
-    # res_array[:, 1] = np.delete(res_array[:, 1],
-    #                             np.argwhere(np.isnan(res_array[:, 0])))
-
-    mean_standard_bound = np.nanmean(res_array[:, 0])
-    mean_new_bound = np.nanmean(res_array[:, 1])
-
-    count_nan_standard = np.count_nonzero(~np.isnan(res_array[:, 0]))
-    count_nan_new = np.count_nonzero(~np.isnan(res_array[:, 1]))
-
-    if count_nan_standard != count_nan_new:
-        print(
-            warn("number of nan's does not match, {0} != {1}".format(
-                count_nan_standard, count_nan_new)))
-
-    row_max = find_opt_improve_row(res_array, metric)
-    opt_standard_bound = res_array[row_max, 0]
-    opt_new_bound = res_array[row_max, 1]
-
     if metric == "relative":
-        opt_improvement = opt_standard_bound / opt_new_bound
-        mean_improvement = mean_standard_bound / mean_new_bound
+        improvement_vec = np.divide(res_array[:, 0], res_array[:, 1])
     elif metric == "absolute":
-        opt_improvement = opt_standard_bound - opt_new_bound
-        mean_improvement = mean_standard_bound - mean_new_bound
+        improvement_vec = np.subtract(res_array[:, 0], res_array[:, 1])
     else:
         raise NameError("Metric parameter {0} is infeasible".format(metric))
+
+    row_max = np.nanargmax(improvement_vec)
+    opt_standard_bound = res_array[row_max, 0]
+    opt_new_bound = res_array[row_max, 1]
+    opt_improvement = np.nanmax(improvement_vec)
+    mean_improvement = np.nanmean(improvement_vec)
+
+    count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
+    count_nan_standard = count_nan[0]
+    count_nan_new = count_nan[1]
+
+    if count_nan_standard != count_nan_new:
+        warn("number of nan's does not match, {0} != {1}".format(
+            count_nan_standard, count_nan_new))
+
+    if count_nan_standard > int(res_array.shape[0] / 10):
+        warn("way to many nan's: {0} out of {1}!".format(
+            count_nan_standard, int(res_array.shape[0] / 10)))
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival.to_name()}
 
