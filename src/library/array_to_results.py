@@ -26,7 +26,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
     row_max = np.nanargmax(improvement_vec)
     opt_standard_bound = res_array[row_max, 0]
     opt_new_bound = res_array[row_max, 1]
-    opt_improvement = np.nanmax(improvement_vec)
+    opt_improvement = improvement_vec[row_max]
     mean_improvement = np.nanmean(improvement_vec)
 
     count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
