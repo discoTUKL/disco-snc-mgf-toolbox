@@ -14,7 +14,7 @@ def fbm(theta: float, delta_time: int, lamb: float, sigma: float,
     if sigma <= 0:
         raise ParameterOutOfBounds("sigma = {0} must be > 0".format(sigma))
 
-    if hurst >= 1 or hurst <= 0:
+    if hurst <= 0 or hurst >= 1:
         raise ParameterOutOfBounds(
             "Hurst = {0} must be in (0, 1)".format(hurst))
 
