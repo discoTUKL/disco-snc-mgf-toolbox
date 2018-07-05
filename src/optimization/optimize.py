@@ -33,7 +33,7 @@ class Optimize(object):
 
         try:
             return self.setting.bound(param_list=param_list)
-        except (ParameterOutOfBounds, OverflowError):
+        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
             return inf
 
     def grid_search(self, bound_list: List[tuple], delta) -> float:
@@ -51,10 +51,16 @@ class Optimize(object):
             list_slices[i] = slice(bound_list[i][0], bound_list[i][1], delta)
 
         np.seterr("raise")
+
+        # grid_res = scipy.optimize.brute(
+        #     func=self.eval_except, ranges=tuple(list_slices),
+        #     full_output=True)
+
         try:
             grid_res = scipy.optimize.brute(
                 func=self.eval_except, ranges=tuple(list_slices),
                 full_output=True)
+
         except FloatingPointError:
             return inf
 
