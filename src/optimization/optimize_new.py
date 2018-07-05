@@ -29,25 +29,17 @@ class OptimizeNew(Optimize):
         :param param_list: theta parameter and Lyapunov parameters l_i
         :return:           function to_value
         """
-        # debug code:
-
-        # if self.new:
-        #     res = self.setting.new_bound(param_list=param_list)
-        #
-        # else:
-        #     res = self.setting.bound(theta=param_list[0])
 
         if self.new:
             try:
-                res = self.setting_bound.new_bound(param_l_list=param_list)
+                return self.setting_bound.new_bound(param_l_list=param_list)
             except (ParameterOutOfBounds, OverflowError):
-                res = inf
+                return inf
         else:
             try:
-                res = self.setting_bound.bound(param_list=param_list)
+                return self.setting_bound.bound(param_list=param_list)
             except (ParameterOutOfBounds, OverflowError):
-                res = inf
-        return res
+                return inf
 
 
 if __name__ == '__main__':

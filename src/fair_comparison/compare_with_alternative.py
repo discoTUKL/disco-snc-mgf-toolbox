@@ -4,6 +4,7 @@ from math import inf, log, nan
 
 import scipy.optimize
 
+from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import mgf
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
@@ -32,6 +33,11 @@ def delay_prob_leaky(theta: float,
 
     sigma_s = ser.sigma(theta=theta)
     rho_s = ser.rho(theta=theta)
+
+    if rho_a >= -rho_s:
+        raise ParameterOutOfBounds(
+            "The arrivals' rho {0} has to be smaller than"
+            "the service's rho {1}".format(rho_a, -rho_s))
 
     sum_j = 0.0
 
@@ -109,6 +115,11 @@ def delay_leaky(theta: float,
     sigma_s = ser.sigma(theta=theta)
     rho_s = ser.rho(theta=theta)
 
+    if rho_a >= -rho_s:
+        raise ParameterOutOfBounds(
+            "The arrivals' rho {0} has to be smaller than"
+            "the service's rho {1}".format(rho_a, -rho_s))
+
     sum_j = 0.0
 
     for _j in range(t):
@@ -173,7 +184,7 @@ if __name__ == '__main__':
     DELAY_PROB6 = PerformParameter(
         perform_metric=PerformEnum.DELAY, value=DELAY_PROB_VAL)
 
-    NUMBER_AGGREGATIONS = 5
+    NUMBER_AGGREGATIONS = 7
 
     RHO_SINGLE = 1.0
     SIGMA_SINGLE = 7.0

@@ -30,16 +30,11 @@ class Optimize(object):
         :param param_list: theta parameter and Lyapunov parameters l_i
         :return:           function to_value
         """
-        # debug code:
-
-        # res = self.setting.bound(theta=param_list[0])
 
         try:
-            res = self.setting.bound(param_list=param_list)
+            return self.setting.bound(param_list=param_list)
         except (ParameterOutOfBounds, OverflowError):
-            res = inf
-
-        return res
+            return inf
 
     def grid_search(self, bound_list: List[tuple], delta) -> float:
         """
@@ -56,8 +51,12 @@ class Optimize(object):
             list_slices[i] = slice(bound_list[i][0], bound_list[i][1], delta)
 
         np.seterr("raise")
-        grid_res = scipy.optimize.brute(
-            func=self.eval_except, ranges=tuple(list_slices), full_output=True)
+        try:
+            grid_res = scipy.optimize.brute(
+                func=self.eval_except, ranges=tuple(list_slices),
+                full_output=True)
+        except FloatingPointError:
+            return inf
 
         for i in range(len(bound_list)):
             if is_equal(grid_res[0][i], bound_list[i][0]) or is_equal(
@@ -138,14 +137,18 @@ class Optimize(object):
         :return:            optimized bound
         """
         np.seterr("raise")
-        nm_res = scipy.optimize.minimize(
-            self.eval_except,
-            x0=np.zeros(shape=(1, simplex.shape[1])),
-            method='Nelder-Mead',
-            options={
-                'initial_simplex': simplex,
-                'fatol': sd_min
-            })
+        try:
+            nm_res = scipy.optimize.minimize(
+                self.eval_except,
+                x0=np.zeros(shape=(1, simplex.shape[1])),
+                method='Nelder-Mead',
+                options={
+                    'initial_simplex': simplex,
+                    'fatol': sd_min
+                })
+
+        except FloatingPointError:
+            return inf
 
         if self.print_x:
             print("Nelder Mead optimal x: {0}".format(nm_res.x))
@@ -159,8 +162,12 @@ class Optimize(object):
         :param start_list:  initial guess
         :return:            optimized bound
         """
-        bh_res = scipy.optimize.basinhopping(
-            func=self.eval_except, x0=start_list)
+        try:
+            bh_res = scipy.optimize.basinhopping(
+                func=self.eval_except, x0=start_list)
+
+        except FloatingPointError:
+            return inf
 
         if self.print_x:
             print("Basin Hopping optimal x: {0}".format(bh_res.x))
@@ -234,8 +241,13 @@ class Optimize(object):
         :return:           optimized bound
         """
         np.seterr("raise")
-        de_res = scipy.optimize.differential_evolution(
-            func=self.eval_except, bounds=bound_list)
+
+        try:
+            de_res = scipy.optimize.differential_evolution(
+                func=self.eval_except, bounds=bound_list)
+
+        except FloatingPointError:
+            return inf
 
         if self.print_x:
             print("Differential Evolution optimal x: {0}".format(de_res.x))
@@ -246,8 +258,13 @@ class Optimize(object):
         x0 = np.array(start_list)
 
         np.seterr("raise")
-        bfgs_res = scipy.optimize.minimize(
-            fun=self.eval_except, x0=x0, method="BFGS")
+
+        try:
+            bfgs_res = scipy.optimize.minimize(
+                fun=self.eval_except, x0=x0, method="BFGS")
+
+        except FloatingPointError:
+            return inf
 
         if self.print_x:
             print("BFGS optimal x: {0}".format(bfgs_res.x))
