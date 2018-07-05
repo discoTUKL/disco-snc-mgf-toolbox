@@ -2,6 +2,7 @@
 
 from math import inf, log, nan
 
+import numpy as np
 import scipy.optimize
 
 from library.exceptions import ParameterOutOfBounds
@@ -9,13 +10,12 @@ from library.helper_functions import mgf
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrivals_alternative import regulated_alternative
+from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
                                              TokenBucketConstant)
 from nc_processes.service import Service
-from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
-import numpy as np
 
 
 def delay_prob_leaky(theta: float,
@@ -88,7 +88,8 @@ def del_prob_alter_opt(delay_value: int,
         except (FloatingPointError, OverflowError):
             return inf
 
-    np.seterr("raise")
+    # np.seterr("raise")
+    np.seterr("warn")
 
     grid_res = scipy.optimize.brute(
         func=helper_fun, ranges=(slice(0.05, 20.0, 0.05),),
