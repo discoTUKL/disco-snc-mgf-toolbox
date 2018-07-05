@@ -75,23 +75,25 @@ def del_prob_alter_opt(delay_value: int,
                        t: int,
                        n=1,
                        print_x=False) -> float:
+    def helper_fun(theta: float) -> float:
+        return delay_prob_leaky(
+            theta=theta,
+            delay_value=delay_value,
+            sigma_single=sigma_single,
+            rho_single=rho_single,
+            ser=ser,
+            t=t,
+            n=n)
+
     np.seterr("raise")
 
-    def helper_fun(theta: float) -> float:
-        try:
-            return delay_prob_leaky(
-                theta=theta,
-                delay_value=delay_value,
-                sigma_single=sigma_single,
-                rho_single=rho_single,
-                ser=ser,
-                t=t,
-                n=n)
-        except FloatingPointError:
-            return inf
+    try:
+        grid_res = scipy.optimize.brute(
+            func=helper_fun, ranges=(slice(0.05, 20.0, 0.05),),
+            full_output=True)
 
-    grid_res = scipy.optimize.brute(
-        func=helper_fun, ranges=(slice(0.05, 20.0, 0.05), ), full_output=True)
+    except (FloatingPointError, OverflowError):
+        return inf
 
     if print_x:
         print("grid search optimal x: ", grid_res[0].tolist())
@@ -154,20 +156,24 @@ def del_alter_opt(prob_d: float,
                   n=1,
                   print_x=False) -> float:
     def helper_fun(theta: float) -> float:
-        try:
-            return delay_leaky(
-                theta=theta,
-                prob_d=prob_d,
-                sigma_single=sigma_single,
-                rho_single=rho_single,
-                ser=ser,
-                t=t,
-                n=n)
-        except (FloatingPointError, OverflowError):
-            return inf
+        return delay_leaky(
+            theta=theta,
+            prob_d=prob_d,
+            sigma_single=sigma_single,
+            rho_single=rho_single,
+            ser=ser,
+            t=t,
+            n=n)
 
-    grid_res = scipy.optimize.brute(
-        func=helper_fun, ranges=(slice(0.05, 20.0, 0.05), ), full_output=True)
+    np.seterr("raise")
+
+    try:
+        grid_res = scipy.optimize.brute(
+            func=helper_fun, ranges=(slice(0.05, 20.0, 0.05),),
+            full_output=True)
+
+    except (FloatingPointError, OverflowError):
+        return inf
 
     if print_x:
         print("grid search optimal x: ", grid_res[0].tolist())
@@ -184,7 +190,7 @@ if __name__ == '__main__':
     DELAY_PROB6 = PerformParameter(
         perform_metric=PerformEnum.DELAY, value=DELAY_PROB_VAL)
 
-    NUMBER_AGGREGATIONS = 7
+    NUMBER_AGGREGATIONS = 5
 
     RHO_SINGLE = 1.0
     SIGMA_SINGLE = 7.0
