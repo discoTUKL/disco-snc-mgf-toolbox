@@ -6,7 +6,7 @@ import numpy as np
 import scipy.optimize
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import mgf
+from library.helper_functions import mgf, seq
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrivals_alternative import regulated_alternative
@@ -91,14 +91,38 @@ def del_prob_alter_opt(delay_value: int,
     # np.seterr("raise")
     np.seterr("warn")
 
-    grid_res = scipy.optimize.brute(
-        func=helper_fun, ranges=(slice(0.05, 20.0, 0.05),),
-        full_output=True)
+    try:
+        grid_res = scipy.optimize.brute(
+            func=helper_fun, ranges=(slice(0.05, 20.0, 0.05),),
+            full_output=True)
+    except (FloatingPointError, OverflowError):
+        return inf
 
     if print_x:
         print("grid search optimal x: ", grid_res[0].tolist())
 
     return grid_res[1]
+    # ranges = seq(start=0.05, stop=20.0, step=0.05)
+    # y_opt = inf
+    # theta_opt = 0.0
+    #
+    # for val in ranges:
+    #     candidate_opt = delay_prob_leaky(
+    #         theta=val,
+    #         delay_value=delay_value,
+    #         sigma_single=sigma_single,
+    #         rho_single=rho_single,
+    #         ser=ser,
+    #         t=t,
+    #         n=n)
+    #     if candidate_opt < y_opt:
+    #         y_opt = candidate_opt
+    #         theta_opt = val
+    #
+    # if print_x:
+    #     print("grid search optimal x: ", theta_opt)
+    #
+    # return y_opt
 
 
 def delay_leaky(theta: float,
@@ -156,6 +180,7 @@ def del_alter_opt(prob_d: float,
                   n=1,
                   print_x=False) -> float:
     try:
+
         def helper_fun(theta: float) -> float:
             return delay_leaky(
                 theta=theta,
@@ -169,11 +194,13 @@ def del_alter_opt(prob_d: float,
     except (FloatingPointError, OverflowError):
         return inf
 
-    np.seterr("raise")
+    # np.seterr("raise")
+    np.seterr("warn")
 
     try:
         grid_res = scipy.optimize.brute(
-            func=helper_fun, ranges=(slice(0.05, 20.0, 0.05),),
+            func=helper_fun,
+            ranges=(slice(0.05, 20.0, 0.05), ),
             full_output=True)
 
     except (FloatingPointError, OverflowError):
@@ -194,10 +221,10 @@ if __name__ == '__main__':
     DELAY_PROB6 = PerformParameter(
         perform_metric=PerformEnum.DELAY, value=DELAY_PROB_VAL)
 
-    NUMBER_AGGREGATIONS = 5
+    NUMBER_AGGREGATIONS = 4
 
     RHO_SINGLE = 1.0
-    SIGMA_SINGLE = 7.0
+    SIGMA_SINGLE = 8.0
     SERVICE_RATE = 6.5
 
     BOUND_LIST = [(0.05, 20.0)]
