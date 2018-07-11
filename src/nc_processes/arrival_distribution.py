@@ -1,9 +1,10 @@
 """Implemented arrival classes for different distributions"""
 
 from abc import abstractmethod
-from math import log, sqrt
+from math import exp, log, sqrt
 
 from library.exceptions import ParameterOutOfBounds
+from library.helper_functions import is_equal
 from nc_processes.arrival import Arrival
 
 
@@ -121,3 +122,61 @@ class MMOO(ArrivalDistribution):
 
     def number_parameters(self) -> int:
         return 3
+
+
+class EBB(ArrivalDistribution):
+    """Exponentially Bounded Burstiness"""
+
+    def __init__(self, prefactor: float, decay: float, rho_single: float,
+                 n=1) -> None:
+        self.prefactor = prefactor
+        self.decay = decay
+        self.rho_single = rho_single
+        self.n = n
+
+    def sigma(self, theta: float) -> float:
+        if theta <= 0:
+            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
+        if is_equal(theta, self.decay):
+            raise ParameterOutOfBounds(
+                "theta {0} and decay {1} must be different".format(
+                    theta, self.decay))
+
+        theta_decay = theta / self.decay
+
+        return self.n * log(
+            (self.prefactor**theta_decay) / (1 - theta_decay)) / theta
+
+    def rho(self, theta=0.0) -> float:
+        return self.n * self.rho_single
+
+    def to_value(self) -> str:
+        return "M=" + str(self.prefactor) + "_b=" + str(
+            self.decay) + "_rho=" + str(self.rho_single) + "_n=" + str(self.n)
+
+    def number_parameters(self) -> int:
+        return 3
+
+
+def MD1(ArrivalDistribution):
+    """Poisson process"""
+
+    def __init__(self, lamb: float, n=1) -> None:
+        self.lamb = lamb
+        self.n = n
+
+    def sigma(self, theta=0.0) -> float:
+        return 0.0
+
+    def rho(self, theta: float) -> float:
+        if theta <= 0:
+            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
+        return self.n * self.lamb * (exp(theta) - 1) / theta
+
+    def to_value(self) -> str:
+        return "lambda=" + str(self.lamb) + "_n=" + str(self.n)
+
+    def number_parameters(self) -> int:
+        return 1
