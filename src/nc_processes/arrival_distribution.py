@@ -165,8 +165,9 @@ class EBB(ArrivalDistribution):
 class MD1(ArrivalDistribution):
     """Poisson process"""
 
-    def __init__(self, lamb: float, n=1) -> None:
+    def __init__(self, lamb: float, packet_size: float, n=1) -> None:
         self.lamb = lamb
+        self.packet_size = packet_size
         self.n = n
 
     def sigma(self, theta=0.0) -> float:
@@ -176,13 +177,14 @@ class MD1(ArrivalDistribution):
         if theta <= 0:
             raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
-        return self.n * self.lamb * (exp(theta) - 1) / theta
+        return self.n * self.lamb * (exp(theta * self.packet_size) - 1) / theta
 
     def is_discrete(self) -> bool:
         return False
 
     def to_value(self) -> str:
-        return "lambda=" + str(self.lamb) + "_n=" + str(self.n)
+        return "lambda=" + str(self.lamb) + "_b=" + str(
+            self.packet_size) + "_n=" + str(self.n)
 
     def number_parameters(self) -> int:
-        return 1
+        return 2
