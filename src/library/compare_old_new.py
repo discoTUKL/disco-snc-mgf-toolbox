@@ -199,13 +199,13 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
 if __name__ == '__main__':
     from fat_tree.fat_cross_perform import FatCrossPerform
     from library.perform_parameter import PerformParameter
-    from nc_processes.arrival_distribution import ExponentialArrival
+    from nc_processes.arrival_distribution import DM1
     from nc_processes.constant_rate_server import ConstantRate
     from single_server.single_server_perform import SingleServerPerform
 
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
-    EXP_ARRIVAL = ExponentialArrival(lamb=4.4)
+    EXP_ARRIVAL = DM1(lamb=4.4)
     CONST_RATE = ConstantRate(rate=0.24)
 
     SETTING1 = SingleServerPerform(
@@ -219,8 +219,8 @@ if __name__ == '__main__':
     DELAY_PROB = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=4)
 
-    EXP_ARRIVAL1 = ExponentialArrival(lamb=11.0)
-    EXP_ARRIVAL2 = ExponentialArrival(lamb=9.0)
+    EXP_ARRIVAL1 = DM1(lamb=11.0)
+    EXP_ARRIVAL2 = DM1(lamb=9.0)
 
     CONST_RATE1 = ConstantRate(rate=5.0)
     CONST_RATE2 = ConstantRate(rate=4.0)

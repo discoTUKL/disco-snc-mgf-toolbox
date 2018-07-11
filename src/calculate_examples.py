@@ -6,8 +6,7 @@ from typing import List
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
-                                               ExponentialArrival)
+from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
@@ -21,7 +20,7 @@ if __name__ == '__main__':
     OUTPUT_TIME6 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=6)
 
     SINGLE_SERVER = SingleServerPerform(
-        arr=ExponentialArrival(lamb=1.0),
+        arr=DM1(lamb=1.0),
         const_rate=ConstantRate(rate=10.0),
         perform_param=OUTPUT_TIME6)
 
@@ -70,10 +69,7 @@ if __name__ == '__main__':
     DELAY_PROB6 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=6)
 
-    ARR_LIST: List[ArrivalDistribution] = [
-        ExponentialArrival(lamb=1),
-        ExponentialArrival(lamb=4)
-    ]
+    ARR_LIST: List[ArrivalDistribution] = [DM1(lamb=1), DM1(lamb=4)]
 
     SER_LIST: List[ConstantRate] = [
         ConstantRate(rate=4), ConstantRate(rate=0.5)

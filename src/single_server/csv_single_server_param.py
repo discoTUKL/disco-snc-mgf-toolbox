@@ -12,8 +12,7 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
-                                               ExponentialArrival)
+from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
@@ -46,9 +45,9 @@ def csv_single_server_param(
     res_array = np.empty([total_iterations, 2])
 
     for i in range(total_iterations):
-        if isinstance(arrival, ExponentialArrival):
+        if isinstance(arrival, DM1):
             setting = SingleServerPerform(
-                arr=ExponentialArrival(lamb=param_array[i, 0]),
+                arr=DM1(lamb=param_array[i, 0]),
                 const_rate=ConstantRate(rate=param_array[i, 1]),
                 perform_param=perform_param)
 
@@ -118,7 +117,7 @@ def grid_param_single_exp(perform_param: PerformParameter,
     for lamb1 in lamb1_range:
         for rate1 in rate1_range:
             setting = SingleServerPerform(
-                arr=ExponentialArrival(lamb=lamb1),
+                arr=DM1(lamb=lamb1),
                 const_rate=ConstantRate(rate=rate1),
                 perform_param=perform_param)
             param_array[i, 0] = lamb1
@@ -133,7 +132,7 @@ def grid_param_single_exp(perform_param: PerformParameter,
             if i % floor(total_iterations / 10) == 0:
                 print("iteration {0} of {1}".format(i, total_iterations))
 
-    exp_arrival = ExponentialArrival(lamb=1)
+    exp_arrival = DM1(lamb=1)
     const_service = ConstantRate(rate=1)
 
     return data_array_to_results(
@@ -148,7 +147,7 @@ def grid_param_single_exp(perform_param: PerformParameter,
 if __name__ == '__main__':
     OUTPUT_TIME4 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
-    EXP_ARRIVAL = ExponentialArrival()
+    EXP_ARRIVAL = DM1()
     MMOO_ARRIVAL = MMOO()
     CONST_RATE = ConstantRate()
 

@@ -10,8 +10,7 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
-                                               ExponentialArrival)
+from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
@@ -42,9 +41,9 @@ def mc_time_single(arrival: ArrivalDistribution,
     time_array = np.empty([total_iterations, 2])
 
     for i in range(total_iterations):
-        if isinstance(arrival, ExponentialArrival):
+        if isinstance(arrival, DM1):
             setting = SingleServerPerform(
-                arr=ExponentialArrival(lamb=param_array[i, 0]),
+                arr=DM1(lamb=param_array[i, 0]),
                 const_rate=ConstantRate(rate=param_array[i, 1]),
                 perform_param=perform_param)
 
@@ -78,7 +77,7 @@ def mc_time_single(arrival: ArrivalDistribution,
 if __name__ == '__main__':
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
-    EXP_ARRIVAL1 = ExponentialArrival()
+    EXP_ARRIVAL1 = DM1()
     MMOO_ARRIVAL1 = MMOO()
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH

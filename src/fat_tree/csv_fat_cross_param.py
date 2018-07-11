@@ -13,8 +13,7 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
-                                               ExponentialArrival)
+from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 
@@ -53,10 +52,9 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
     # print(res_array)
 
     for i in range(total_iterations):
-        if isinstance(arrival, ExponentialArrival):
+        if isinstance(arrival, DM1):
             arrive_list = [
-                ExponentialArrival(lamb=param_array[i, j])
-                for j in range(number_servers)
+                DM1(lamb=param_array[i, j]) for j in range(number_servers)
             ]
 
         elif isinstance(arrival, MMOO):
@@ -131,7 +129,7 @@ if __name__ == '__main__':
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=10)
 
-    EXP_ARRIVAL1 = ExponentialArrival()
+    EXP_ARRIVAL1 = DM1()
     MMOO_ARRIVAL1 = MMOO()
     CONST_RATE1 = ConstantRate()
 

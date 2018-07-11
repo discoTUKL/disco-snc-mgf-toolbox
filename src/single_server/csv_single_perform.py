@@ -1,12 +1,12 @@
 """Compute output bound and write into csv file"""
 
 import csv
+
 import pandas as pd
 
 from library.perform_param_list import PerformParamList
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
-                                               ExponentialArrival)
+from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     OUTPUT_LIST = PerformParamList(
         perform_metric=PerformEnum.OUTPUT, values_list=range(4, 15))
 
-    exp1 = ExponentialArrival(lamb=1.0)
+    exp1 = DM1(lamb=1.0)
     mmoo1 = MMOO(mu=8.0, lamb=12.0, burst=3.0)
     const_rate1 = ConstantRate(rate=2.0)
     const_rate2 = ConstantRate(rate=1.3)

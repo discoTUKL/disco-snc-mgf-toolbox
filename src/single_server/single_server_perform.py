@@ -10,8 +10,7 @@ from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds_discretized import delay_prob_discretized
 from nc_operations.performance_bounds_lya import (delay_prob_lya, output_lya,
                                                   output_lya_discretized)
-from nc_processes.arrival_distribution import (ArrivalDistribution,
-                                               ExponentialArrival)
+from nc_processes.arrival_distribution import DM1, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 
 
@@ -82,7 +81,7 @@ class SingleServerPerform(SettingNew):
 
 
 if __name__ == '__main__':
-    EXP_ARRIVAL1 = ExponentialArrival(lamb=1.0)
+    EXP_ARRIVAL1 = DM1(lamb=1.0)
     CONST_RATE16 = ConstantRate(rate=1.6)
     OUTPUT_4 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
     EX_OUTPUT = SingleServerPerform(

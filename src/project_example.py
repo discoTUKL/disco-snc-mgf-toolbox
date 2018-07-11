@@ -3,7 +3,7 @@
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import ExponentialArrival
+from nc_processes.arrival_distribution import DM1
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 
@@ -15,7 +15,7 @@ if __name__ == '__main__':
             perform_metric=PerformEnum.DELAY, value=p)
 
         EXAMPLE = FatCrossPerform(
-            arr_list=[ExponentialArrival(lamb=1)],
+            arr_list=[DM1(lamb=1)],
             ser_list=[ConstantRate(rate=2)],
             perform_param=DELAY_TIME)
 

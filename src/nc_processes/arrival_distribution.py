@@ -53,8 +53,8 @@ class ArrivalDistribution(Arrival):
         pass
 
 
-class ExponentialArrival(ArrivalDistribution):
-    """Exponentially distributed arrivals (parameter lamb)."""
+class DM1(ArrivalDistribution):
+    """Exponentially distributed packet size."""
 
     def __init__(self, lamb=0.0, n=1) -> None:
         self.lamb = lamb
@@ -151,6 +151,9 @@ class EBB(ArrivalDistribution):
     def rho(self, theta=0.0) -> float:
         return self.n * self.rho_single
 
+    def is_discrete(self) -> bool:
+        return True
+
     def to_value(self) -> str:
         return "M=" + str(self.prefactor) + "_b=" + str(
             self.decay) + "_rho=" + str(self.rho_single) + "_n=" + str(self.n)
@@ -159,7 +162,7 @@ class EBB(ArrivalDistribution):
         return 3
 
 
-def MD1(ArrivalDistribution):
+class MD1(ArrivalDistribution):
     """Poisson process"""
 
     def __init__(self, lamb: float, n=1) -> None:
@@ -174,6 +177,9 @@ def MD1(ArrivalDistribution):
             raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
         return self.n * self.lamb * (exp(theta) - 1) / theta
+
+    def is_discrete(self) -> bool:
+        return False
 
     def to_value(self) -> str:
         return "lambda=" + str(self.lamb) + "_n=" + str(self.n)

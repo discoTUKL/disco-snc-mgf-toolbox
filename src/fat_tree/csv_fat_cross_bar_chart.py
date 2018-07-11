@@ -10,8 +10,7 @@ from fat_tree.fat_cross_perform import FatCrossPerform
 from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (ArrivalDistribution,
-                                               ExponentialArrival)
+from nc_processes.arrival_distribution import DM1, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 
@@ -83,15 +82,15 @@ if __name__ == '__main__':
     print(
         csv_bar_chart(
             ar_list=[
-                ExponentialArrival(lamb=0.5),
-                ExponentialArrival(lamb=8.0),
-                ExponentialArrival(lamb=8.0),
-                ExponentialArrival(lamb=8.0),
-                ExponentialArrival(lamb=8.0),
-                ExponentialArrival(lamb=8.0),
-                ExponentialArrival(lamb=8.0),
-                ExponentialArrival(lamb=8.0),
-                ExponentialArrival(lamb=8.0)
+                DM1(lamb=0.5),
+                DM1(lamb=8.0),
+                DM1(lamb=8.0),
+                DM1(lamb=8.0),
+                DM1(lamb=8.0),
+                DM1(lamb=8.0),
+                DM1(lamb=8.0),
+                DM1(lamb=8.0),
+                DM1(lamb=8.0)
             ],
             ser_list=[
                 ConstantRate(rate=4.5),

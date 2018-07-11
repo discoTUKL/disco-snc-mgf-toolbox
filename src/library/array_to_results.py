@@ -1,10 +1,10 @@
 """This file takes arrays and writes them into dictionaries"""
 
-import numpy as np
 from warnings import warn
 
-from nc_processes.arrival_distribution import (MMOO, ArrivalDistribution,
-                                               ExponentialArrival)
+import numpy as np
+
+from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 
 
@@ -44,7 +44,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
     res_dict = {"Name": "Value", "arrival_distribution": arrival.to_name()}
 
     for j in range(number_servers):
-        if isinstance(arrival, ExponentialArrival):
+        if isinstance(arrival, DM1):
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["rate{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]

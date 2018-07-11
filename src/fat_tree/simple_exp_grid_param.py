@@ -9,7 +9,7 @@ from library.array_to_results import data_array_to_results
 from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import ExponentialArrival
+from nc_processes.arrival_distribution import DM1
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 
@@ -37,10 +37,8 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
                         perform_metric=PerformEnum.DELAY_PROB, value=delay)
 
                     setting = FatCrossPerform(
-                        arr_list=[
-                            ExponentialArrival(lamb=lamb1),
-                            ExponentialArrival(lamb=lamb2)
-                        ],
+                        arr_list=[DM1(lamb=lamb1),
+                                  DM1(lamb=lamb2)],
                         ser_list=[
                             ConstantRate(rate=rate1),
                             ConstantRate(rate=rate2)
@@ -65,7 +63,7 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
 
                     i += 1
 
-    exp_arrival = ExponentialArrival(lamb=1)
+    exp_arrival = DM1(lamb=1)
     const_service = ConstantRate(rate=1)
 
     return data_array_to_results(
