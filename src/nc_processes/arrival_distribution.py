@@ -86,7 +86,7 @@ class DM1(ArrivalDistribution):
         return True
 
     def to_value(self) -> str:
-        return "_lambda=" + str(self.lamb) + "_n=" + str(self.n)
+        return "lambda=" + str(self.lamb) + "_n=" + str(self.n)
 
     def number_parameters(self) -> int:
         return 1
