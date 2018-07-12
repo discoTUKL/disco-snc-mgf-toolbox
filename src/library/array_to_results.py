@@ -80,29 +80,6 @@ def data_array_to_results(arrival: ArrivalDistribution,
     else:
         raise NameError("Metric parameter {0} is infeasible".format(metric))
 
-    # negative improvement cannot occur for grid_search_old
-    # row_min = np.nanargmin(res_array, axis=0)[-1]
-
-    # if res_array[row_min][-1] < 0:
-    #     worst_dict = {}
-    #     for j in range(number_servers):
-    #         worst_dict["mu{0}".format(j + 1)] = res_array[row_min, j]
-    #         worst_dict["lamb{0}".format(j + 1)] = res_array[
-    #             row_min, number_servers + j]
-    #         worst_dict["burst{0}".format(j + 1)] = res_array[
-    #             row_min, 2 * number_servers + j]
-    #         worst_dict["rate{0}".format(j + 1)] = res_array[
-    #             row_min, 3 * number_servers + j]
-    #
-    #     # bound = [-3], new_bound = [-2], opt_diff_new = [-1]
-    #     worst_dict.update({
-    #         "bound": res_array[row_min, -3],
-    #         "new_bound": res_array[row_min, -2],
-    #         "abs/rel": res_array[row_min, -1]
-    #     })
-    #
-    #     print(worst_dict)
-
     return res_dict
 
 
