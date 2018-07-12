@@ -16,6 +16,7 @@ from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import DM1, EBB, MD1, MMOO
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.regulated_arrivals import LeakyBucketMassOne
 from optimization.opt_method import OptMethod
 
 ########################################################################
@@ -75,12 +76,20 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, number_servers: int,
 
         elif arrival_enum == ArrivalEnum.EBB:
             arrive_list = [
-                EBB(
-                    prefactor=param_array[i, j],
+                EBB(prefactor=param_array[i, j],
                     decay=param_array[i, number_servers + j],
                     rho_single=param_array[i, 2 * number_servers + j])
                 for j in range(number_servers)
             ]
+
+        elif arrival_enum == ArrivalEnum.MassOne:
+            arrive_list = [
+                LeakyBucketMassOne(
+                    sigma_single=param_array[i, j],
+                    rho_single=param_array[i, number_servers + j],
+                    n=20) for j in range(number_servers)
+            ]
+            # TODO: note that n is fixed
 
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(

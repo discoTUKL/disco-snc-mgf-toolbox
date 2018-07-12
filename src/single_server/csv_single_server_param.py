@@ -67,6 +67,13 @@ def csv_single_server_param(
                 decay=param_array[i, 1],
                 rho_single=param_array[i, 2])
 
+        elif arrival_enum == ArrivalEnum.MassOne:
+            arrival = LeakyBucketMassOne(
+                sigma_single=param_array[i, 0],
+                rho_single=param_array[i, 1],
+                n=20)
+        # TODO: note that n is fixed
+
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(
                 arrival_enum.name))
