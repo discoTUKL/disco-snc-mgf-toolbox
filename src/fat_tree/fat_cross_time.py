@@ -14,7 +14,8 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
+from nc_processes.arrival_distribution import DM1, MMOO
+from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 
@@ -23,7 +24,7 @@ from optimization.opt_method import OptMethod
 ########################################################################
 
 
-def mc_time_fat_cross(arrival: ArrivalDistribution,
+def mc_time_fat_cross(arrival_enum: ArrivalEnum,
                       list_number_servers: List[int],
                       perform_param: PerformParameter, opt_method: OptMethod,
                       mc_dist: MonteCarloDist) -> dict:
@@ -37,7 +38,7 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
         # 1 Parameter for service
 
         size_array = [
-            total_iterations, (arrival.number_parameters() + 1) * num_serv
+            total_iterations, (arrival_enum.number_parameters() + 1) * num_serv
         ]
         # [rows, columns]
 
@@ -53,11 +54,11 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
         time_array = np.empty([total_iterations, 2])
 
         for i in range(total_iterations):
-            if isinstance(arrival, DM1):
+            if arrival_enum == ArrivalEnum.DM1:
                 arrive_list = [
                     DM1(lamb=param_array[i, j]) for j in range(num_serv)
                 ]
-            elif isinstance(arrival, MMOO):
+            elif arrival_enum == ArrivalEnum.MMOO:
                 arrive_list = [
                     MMOO(
                         mu=param_array[i, j],
@@ -68,11 +69,11 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
 
             else:
                 raise NameError("Arrival parameter {0} is infeasible".format(
-                    arrival.to_name()))
+                    arrival_enum.name))
 
             service_list = [
                 ConstantRate(rate=param_array[
-                    i, arrival.number_parameters() * num_serv + j])
+                    i, arrival_enum.number_parameters() * num_serv + j])
                 for j in range(num_serv)
             ]
 
@@ -90,14 +91,15 @@ def mc_time_fat_cross(arrival: ArrivalDistribution,
 
         print(
             time_array_to_results(
-                arrival=arrival,
+                arrival_enum=arrival_enum,
                 time_array=time_array,
                 number_servers=num_serv,
                 time_ratio=time_ratio))
 
     with open(
-            "time_" + perform_param.to_name() + "_" + arrival.to_name() + "_" +
-            opt_method.name + ".csv", 'w') as csv_file:
+            "time_{0}_{1}_{2}.csv".format(perform_param.to_name(),
+                                          arrival_enum.name, opt_method.name),
+            'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in time_ratio.items():
             writer.writerow([key, value])
@@ -120,7 +122,7 @@ if __name__ == '__main__':
 
     print(
         mc_time_fat_cross(
-            arrival=EXP_ARRIVAL1,
+            arrival_enum=ArrivalEnum.DM1,
             list_number_servers=list_number_servers1,
             perform_param=DELAY_PROB,
             opt_method=COMMON_OPTIMIZATION,
@@ -128,7 +130,7 @@ if __name__ == '__main__':
 
     print(
         mc_time_fat_cross(
-            arrival=MMOO_ARRIVAL1,
+            arrival_enum=ArrivalEnum.MMOO,
             list_number_servers=list_number_servers1,
             perform_param=DELAY_PROB,
             opt_method=COMMON_OPTIMIZATION,

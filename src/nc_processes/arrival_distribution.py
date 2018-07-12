@@ -35,26 +35,13 @@ class ArrivalDistribution(Arrival):
         """
         pass
 
-    def to_name(self) -> str:
-        return self.__class__.__name__
-
     @abstractmethod
     def to_value(self) -> str:
         pass
 
-    def to_name_value(self) -> str:
-        return self.to_name() + self.to_value()
-
-    @abstractmethod
-    def number_parameters(self) -> int:
-        """
-        :return number of parameters that describe the distribution
-        """
-        pass
-
 
 class MMOO(ArrivalDistribution):
-    """Markov Modulated On Off Traffic"""
+    """Markov Modulated On-Off Traffic"""
 
     def __init__(self, mu=0.0, lamb=0.0, burst=0.0, n=1) -> None:
         self.mu = mu
@@ -78,11 +65,8 @@ class MMOO(ArrivalDistribution):
         return False
 
     def to_value(self) -> str:
-        return "mu=" + str(self.mu) + "_lambda=" + str(
-            self.lamb) + "_burst=" + str(self.burst) + "_n=" + str(self.n)
-
-    def number_parameters(self) -> int:
-        return 3
+        return "mu={0}_lambda={1}_burst={2}_n={3}".format(str(self.mu), str(
+            self.lamb), str(self.burst), str(self.n))
 
 
 class EBB(ArrivalDistribution):
@@ -116,11 +100,8 @@ class EBB(ArrivalDistribution):
         return True
 
     def to_value(self) -> str:
-        return "M=" + str(self.prefactor) + "_b=" + str(
-            self.decay) + "_rho=" + str(self.rho_single) + "_n=" + str(self.n)
-
-    def number_parameters(self) -> int:
-        return 3
+        return "M={0}_b={1}_rho={2}_n={3}".format(str(self.prefactor), str(
+            self.decay), str(self.rho_single), str(self.n))
 
 
 class DM1(ArrivalDistribution):
@@ -156,10 +137,7 @@ class DM1(ArrivalDistribution):
         return True
 
     def to_value(self) -> str:
-        return "lambda=" + str(self.lamb) + "_n=" + str(self.n)
-
-    def number_parameters(self) -> int:
-        return 1
+        return "lambda={0}_n={1}".format(str(self.lamb), str(self.n))
 
 
 class MD1(ArrivalDistribution):
@@ -184,8 +162,5 @@ class MD1(ArrivalDistribution):
         return False
 
     def to_value(self) -> str:
-        return "lambda=" + str(self.lamb) + "_b=" + str(
-            self.packet_size) + "_n=" + str(self.n)
-
-    def number_parameters(self) -> int:
-        return 2
+        return "lambda={0}_b={1}_n={2}".format(str(self.lamb), str(
+            self.packet_size), str(self.n))

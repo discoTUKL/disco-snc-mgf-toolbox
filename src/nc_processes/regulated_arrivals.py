@@ -41,14 +41,8 @@ class RegulatedArrivals(ArrivalDistribution):
         :return string
         """
 
-        return "sigma=" + str(self.sigma_single) + "_rho=" + str(
-            self.rho_single) + "_n=" + str(self.n)
-
-    def number_parameters(self) -> int:
-        """
-        :return number of parameters that describe the distribution
-        """
-        return 2
+        return "sigma={0}_rho={1}_n={2}".format(str(self.sigma_single), str(
+            self.rho_single), str(self.n))
 
 
 class TokenBucketConstant(RegulatedArrivals):

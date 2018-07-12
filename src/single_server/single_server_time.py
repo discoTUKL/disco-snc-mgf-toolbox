@@ -10,13 +10,14 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
+from nc_processes.arrival_distribution import DM1, MMOO
+from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
 
-def mc_time_single(arrival: ArrivalDistribution,
+def mc_time_single(arrival_enum: ArrivalEnum,
                    perform_param: PerformParameter, opt_method: OptMethod,
                    mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
@@ -25,7 +26,7 @@ def mc_time_single(arrival: ArrivalDistribution,
     time_ratio = {"Number_of_servers": "Ratio"}
 
     # 1 Parameter for service
-    size_array = [total_iterations, arrival.number_parameters() + 1]
+    size_array = [total_iterations, arrival_enum.number_parameters() + 1]
     # [rows, columns]
 
     if mc_dist.mc_enum == MCEnum.UNIFORM:
@@ -41,13 +42,13 @@ def mc_time_single(arrival: ArrivalDistribution,
     time_array = np.empty([total_iterations, 2])
 
     for i in range(total_iterations):
-        if isinstance(arrival, DM1):
+        if arrival_enum == ArrivalEnum.DM1:
             setting = SingleServerPerform(
                 arr=DM1(lamb=param_array[i, 0]),
                 const_rate=ConstantRate(rate=param_array[i, 1]),
                 perform_param=perform_param)
 
-        elif isinstance(arrival, MMOO):
+        elif arrival_enum == ArrivalEnum.MMOO:
             setting = SingleServerPerform(
                 arr=MMOO(
                     mu=param_array[i, 0],
@@ -58,7 +59,7 @@ def mc_time_single(arrival: ArrivalDistribution,
 
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(
-                arrival.to_name()))
+                arrival_enum.name))
 
         # time_standard, time_lyapunov = compute_overhead()
         time_array[i, 0], time_array[i, 1] = compute_overhead(
@@ -68,7 +69,7 @@ def mc_time_single(arrival: ArrivalDistribution,
             print("iteration {0} of {1}".format(i, total_iterations))
 
     return time_array_to_results(
-        arrival=arrival,
+        arrival_enum=arrival_enum,
         time_array=time_array,
         number_servers=1,
         time_ratio=time_ratio)
@@ -86,14 +87,14 @@ if __name__ == '__main__':
 
     print(
         mc_time_single(
-            arrival=EXP_ARRIVAL1,
+            arrival_enum=ArrivalEnum.DM1,
             perform_param=OUTPUT_TIME,
             opt_method=COMMON_OPTIMIZATION,
             mc_dist=MC_UNIF20))
 
     print(
         mc_time_single(
-            arrival=MMOO_ARRIVAL1,
+            arrival_enum=ArrivalEnum.MMOO,
             perform_param=OUTPUT_TIME,
             opt_method=COMMON_OPTIMIZATION,
             mc_dist=MC_UNIF20))

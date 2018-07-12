@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class PerformEnum(Enum):
-    """All possible performance metrics as enums"""
+    """All possible performance metrics"""
     DELAY = "Delay"
     DELAY_PROB = "DelayProb"
     OUTPUT = "Output"

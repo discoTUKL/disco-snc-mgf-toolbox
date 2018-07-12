@@ -12,14 +12,15 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
+from nc_processes.arrival_distribution import DM1, MMOO
+from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
 
 def csv_single_server_param(
-        arrival: ArrivalDistribution, const_rate: ConstantRate,
+        arrival_enum: ArrivalEnum, const_rate: ConstantRate,
         perform_param: PerformParameter, opt_method: OptMethod,
         mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
@@ -28,7 +29,7 @@ def csv_single_server_param(
 
     size_array = [
         total_iterations,
-        arrival.number_parameters() + const_rate.number_parameters()
+        arrival_enum.number_parameters() + const_rate.number_parameters()
     ]
     # [rows, columns]
 
@@ -45,13 +46,13 @@ def csv_single_server_param(
     res_array = np.empty([total_iterations, 2])
 
     for i in range(total_iterations):
-        if isinstance(arrival, DM1):
+        if arrival_enum == ArrivalEnum.DM1:
             setting = SingleServerPerform(
                 arr=DM1(lamb=param_array[i, 0]),
                 const_rate=ConstantRate(rate=param_array[i, 1]),
                 perform_param=perform_param)
 
-        elif isinstance(arrival, MMOO):
+        elif arrival_enum == ArrivalEnum.MMOO:
             setting = SingleServerPerform(
                 arr=MMOO(
                     mu=param_array[i, 0],
@@ -62,7 +63,7 @@ def csv_single_server_param(
 
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(
-                arrival.__class__.__name__))
+                arrival_enum.name))
 
             # standard_bound, new_bound = compute_improvement()
         res_array[i, 0], res_array[i, 1] = compute_improvement(
@@ -76,7 +77,7 @@ def csv_single_server_param(
             print("iteration {0} of {1}".format(i, total_iterations))
 
     res_dict = data_array_to_results(
-        arrival=arrival,
+        arrival_enum=arrival_enum,
         const_rate=const_rate,
         metric=metric,
         param_array=param_array,
@@ -94,7 +95,7 @@ def csv_single_server_param(
 
     with open(
             "single_{0}_{1}_results_MC{2}_{3}_{4}.csv".format(
-                perform_param.to_name(), arrival.to_name(), mc_dist.to_name(),
+                perform_param.to_name(), arrival_enum.name, mc_dist.to_name(),
                 opt_method.name, metric), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
@@ -132,11 +133,10 @@ def grid_param_single_exp(perform_param: PerformParameter,
             if i % floor(total_iterations / 10) == 0:
                 print("iteration {0} of {1}".format(i, total_iterations))
 
-    exp_arrival = DM1(lamb=1)
     const_service = ConstantRate(rate=1)
 
     return data_array_to_results(
-        arrival=exp_arrival,
+        arrival_enum=ArrivalEnum.DM1,
         const_rate=const_service,
         metric=metric,
         param_array=param_array,
@@ -147,7 +147,7 @@ def grid_param_single_exp(perform_param: PerformParameter,
 if __name__ == '__main__':
     OUTPUT_TIME4 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
-    EXP_ARRIVAL = DM1()
+    DM1_QUEUE = DM1()
     MMOO_ARRIVAL = MMOO()
     CONST_RATE = ConstantRate()
 
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_server_param(
-                arrival=EXP_ARRIVAL,
+                arrival_enum=ArrivalEnum.DM1,
                 const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     def fun2():
         print(
             csv_single_server_param(
-                arrival=MMOO_ARRIVAL,
+                arrival_enum=ArrivalEnum.MMOO,
                 const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
@@ -177,7 +177,7 @@ if __name__ == '__main__':
     def fun3():
         print(
             csv_single_server_param(
-                arrival=EXP_ARRIVAL,
+                arrival_enum=ArrivalEnum.DM1,
                 const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
@@ -186,7 +186,7 @@ if __name__ == '__main__':
     def fun4():
         print(
             csv_single_server_param(
-                arrival=MMOO_ARRIVAL,
+                arrival_enum=ArrivalEnum.MMOO,
                 const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,

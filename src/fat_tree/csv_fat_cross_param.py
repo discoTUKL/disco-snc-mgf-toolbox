@@ -13,7 +13,8 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
+from nc_processes.arrival_distribution import DM1, MMOO
+from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 
@@ -22,7 +23,7 @@ from optimization.opt_method import OptMethod
 ########################################################################
 
 
-def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
+def csv_fat_cross_param(arrival_enum: ArrivalEnum, const_rate: ConstantRate,
                         number_servers: int, perform_param: PerformParameter,
                         opt_method: OptMethod,
                         mc_dist: MonteCarloDist) -> dict:
@@ -32,7 +33,7 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
 
     size_array = [
         total_iterations,
-        (arrival.number_parameters() + const_rate.number_parameters()) *
+        (arrival_enum.number_parameters() + const_rate.number_parameters()) *
         number_servers
     ]
     # [rows, columns]
@@ -52,12 +53,12 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
     # print(res_array)
 
     for i in range(total_iterations):
-        if isinstance(arrival, DM1):
+        if arrival_enum == ArrivalEnum.DM1:
             arrive_list = [
                 DM1(lamb=param_array[i, j]) for j in range(number_servers)
             ]
 
-        elif isinstance(arrival, MMOO):
+        elif arrival_enum == ArrivalEnum.MMOO:
             arrive_list = [
                 MMOO(
                     mu=param_array[i, j],
@@ -68,11 +69,11 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
 
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(
-                arrival.to_name()))
+                arrival_enum.name))
 
         service_list = [
             ConstantRate(rate=param_array[
-                i, arrival.number_parameters() * number_servers + j])
+                i, arrival_enum.number_parameters() * number_servers + j])
             for j in range(number_servers)
         ]
 
@@ -97,7 +98,7 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
             print("iteration {0} of {1}".format(i, total_iterations))
 
     res_dict = data_array_to_results(
-        arrival=arrival,
+        arrival_enum=arrival_enum,
         const_rate=const_rate,
         param_array=param_array,
         res_array=res_array,
@@ -116,7 +117,7 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
 
     with open(
             "sim_{0}_{1}_results_MC{2}_{3}_{4}.csv".format(
-                perform_param.to_name(), arrival.to_name(), mc_dist.to_name(),
+                perform_param.to_name(), arrival_enum.name, mc_dist.to_name(),
                 opt_method.name, metric), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
@@ -128,9 +129,6 @@ def csv_fat_cross_param(arrival: ArrivalDistribution, const_rate: ConstantRate,
 if __name__ == '__main__':
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=10)
-
-    EXP_ARRIVAL1 = DM1()
-    MMOO_ARRIVAL1 = MMOO()
     CONST_RATE1 = ConstantRate()
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
@@ -141,7 +139,7 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_fat_cross_param(
-                arrival=MMOO_ARRIVAL1,
+                arrival_enum=ArrivalEnum.MMOO,
                 const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
@@ -151,7 +149,7 @@ if __name__ == '__main__':
     def fun2():
         print(
             csv_fat_cross_param(
-                arrival=EXP_ARRIVAL1,
+                arrival_enum=ArrivalEnum.DM1,
                 const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
@@ -161,7 +159,7 @@ if __name__ == '__main__':
     def fun3():
         print(
             csv_fat_cross_param(
-                arrival=MMOO_ARRIVAL1,
+                arrival_enum=ArrivalEnum.MMOO,
                 const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
@@ -171,7 +169,7 @@ if __name__ == '__main__':
     def fun4():
         print(
             csv_fat_cross_param(
-                arrival=EXP_ARRIVAL1,
+                arrival_enum=ArrivalEnum.DM1,
                 const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,

@@ -4,11 +4,11 @@ from warnings import warn
 
 import numpy as np
 
-from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
+from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 
 
-def data_array_to_results(arrival: ArrivalDistribution,
+def data_array_to_results(arrival_enum: ArrivalEnum,
                           const_rate: ConstantRate,
                           param_array: np.array,
                           res_array: np.array,
@@ -41,15 +41,15 @@ def data_array_to_results(arrival: ArrivalDistribution,
         warn("way too many nan's: {0} out of {1}!".format(
             count_nan_standard, int(res_array.shape[0])))
 
-    res_dict = {"Name": "Value", "arrival_distribution": arrival.to_name()}
+    res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
 
     for j in range(number_servers):
-        if isinstance(arrival, DM1):
+        if arrival_enum == ArrivalEnum.DM1:
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["rate{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]
 
-        elif isinstance(arrival, MMOO):
+        elif arrival_enum == ArrivalEnum.MMOO:
             res_dict["mu{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]
@@ -60,13 +60,14 @@ def data_array_to_results(arrival: ArrivalDistribution,
 
         else:
             raise NameError(
-                "Arrival parameter {0}or Service parameter{1} is infeasible".
-                format(arrival.to_name(), const_rate.to_name()))
+                "Arrival parameter {0} or Service parameter{1} is infeasible".
+                format(arrival_enum.name, const_rate.to_name()))
 
     res_dict.update({
         "opt_standard_bound": opt_standard_bound,
         "opt_new_bound": opt_new_bound
     })
+
     if metric == "relative":
         res_dict.update({
             "optimum_improvement_factor": opt_improvement,
@@ -83,7 +84,7 @@ def data_array_to_results(arrival: ArrivalDistribution,
     return res_dict
 
 
-def time_array_to_results(arrival: ArrivalDistribution, time_array,
+def time_array_to_results(arrival_enum: ArrivalEnum, time_array,
                           number_servers: int, time_ratio: dict) -> dict:
     """Writes the array values into a dictionary"""
 
@@ -98,7 +99,7 @@ def time_array_to_results(arrival: ArrivalDistribution, time_array,
     # time_standard = [-2], time_lyapunov = [-1]
     res_dict = {
         "Name": "Value",
-        "arrival_distribution": arrival.to_name(),
+        "arrival_distribution": arrival_enum.name,
         "number_servers": number_servers,
         "standard_mean": standard_mean,
         "Lyapunov_mean": lyapunov_mean,
