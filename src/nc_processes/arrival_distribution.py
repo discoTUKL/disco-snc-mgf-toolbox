@@ -71,8 +71,8 @@ class MMOO(ArrivalDistribution):
 
         bb = self.mu + self.lamb - theta * self.burst
 
-        return self.n * (-bb + sqrt(
-            (bb**2) + 4 * self.mu * theta * self.burst)) / (2 * theta)
+        return (self.n / (2 * theta)) * (-bb + sqrt(
+            (bb**2) + 4 * self.mu * theta * self.burst))
 
     def is_discrete(self) -> bool:
         return False
@@ -106,8 +106,8 @@ class EBB(ArrivalDistribution):
 
         theta_decay = theta / self.decay
 
-        return self.n * log(
-            (self.prefactor**theta_decay) / (1 - theta_decay)) / theta
+        return (self.n / theta) * log(
+            (self.prefactor**theta_decay) / (1 - theta_decay))
 
     def rho(self, theta=0.0) -> float:
         return self.n * self.rho_single
@@ -177,7 +177,8 @@ class MD1(ArrivalDistribution):
         if theta <= 0:
             raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
-        return self.n * self.lamb * (exp(theta * self.packet_size) - 1) / theta
+        return (self.n / theta) * self.lamb * (
+            exp(theta * self.packet_size) - 1)
 
     def is_discrete(self) -> bool:
         return False
