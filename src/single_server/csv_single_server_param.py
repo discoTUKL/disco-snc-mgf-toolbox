@@ -12,9 +12,10 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, MMOO
+from nc_processes.arrival_distribution import DM1, EBB, MD1, MMOO
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.regulated_arrivals import LeakyBucketMassOne
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
@@ -46,25 +47,37 @@ def csv_single_server_param(
 
     for i in range(total_iterations):
         if arrival_enum == ArrivalEnum.DM1:
-            setting = SingleServerPerform(
-                arr=DM1(lamb=param_array[i, 0]),
-                const_rate=ConstantRate(rate=param_array[i, 1]),
-                perform_param=perform_param)
+            arrival = DM1(lamb=param_array[i, 0])
+
+        elif arrival_enum == ArrivalEnum.MD1:
+            arrival = MD1(
+                lamb=param_array[i, 0], packet_size=param_array[i, 1])
+        #     choose packet size = server rate
+        # TODO: check whether this is reasonable
 
         elif arrival_enum == ArrivalEnum.MMOO:
-            setting = SingleServerPerform(
-                arr=MMOO(
-                    mu=param_array[i, 0],
-                    lamb=param_array[i, 1],
-                    burst=param_array[i, 2]),
-                const_rate=ConstantRate(rate=param_array[i, 3]),
-                perform_param=perform_param)
+            arrival = MMOO(
+                mu=param_array[i, 0],
+                lamb=param_array[i, 1],
+                burst=param_array[i, 2])
+
+        elif arrival_enum == ArrivalEnum.EBB:
+            arrival = EBB(
+                prefactor=param_array[i, 0],
+                decay=param_array[i, 1],
+                rho_single=param_array[i, 2])
 
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(
                 arrival_enum.name))
 
-            # standard_bound, new_bound = compute_improvement()
+        setting = SingleServerPerform(
+            arr=arrival,
+            const_rate=ConstantRate(
+                rate=param_array[i, arrival_enum.number_parameters()]),
+            perform_param=perform_param)
+
+        # standard_bound, new_bound = compute_improvement()
         res_array[i, 0], res_array[i, 1] = compute_improvement(
             setting=setting, opt_method=opt_method)
 
@@ -130,8 +143,6 @@ def grid_param_single_exp(perform_param: PerformParameter,
             i += 1
             if i % floor(total_iterations / 10) == 0:
                 print("iteration {0} of {1}".format(i, total_iterations))
-
-    const_service = ConstantRate(rate=1)
 
     return data_array_to_results(
         arrival_enum=ArrivalEnum.DM1,

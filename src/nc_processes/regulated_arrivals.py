@@ -4,6 +4,7 @@ from abc import abstractmethod
 from math import erf, exp, inf, log, pi, sqrt
 
 from library.exceptions import ParameterOutOfBounds
+from library.deprecated import deprecated
 from nc_processes.arrival_distribution import ArrivalDistribution
 
 
@@ -69,6 +70,7 @@ class LeakyBucketMassOne(RegulatedArrivals):
             -theta * self.sigma_single))) / theta
 
 
+@deprecated
 class LeakyBucketMassTwo(RegulatedArrivals):
     """Leaky Bucket according to Massoulie after MGF transformation and bound
     on erf() by 1"""
@@ -88,6 +90,7 @@ class LeakyBucketMassTwo(RegulatedArrivals):
             return inf
 
 
+@deprecated
 class LeakyBucketMassTwoExact(RegulatedArrivals):
     """Exact Leaky Bucket according to Massoulie after MGF transformation"""
 

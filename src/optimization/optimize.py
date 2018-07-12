@@ -1,16 +1,17 @@
 """Optimize theta and all Lyapunov l's"""
 
-from warnings import warn
 from math import exp, inf
 from typing import List
+from warnings import warn
 
 import numpy as np
 import scipy.optimize
 
+from library.deprecated import deprecated
 from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import (average_towards_best_row,
-                                      centroid_without_one_row, deprecated,
-                                      expand_grid, is_equal, seq)
+                                      centroid_without_one_row, expand_grid,
+                                      is_equal, seq)
 from library.setting import Setting
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.simul_annealing import SimulAnnealing
@@ -58,7 +59,8 @@ class Optimize(object):
 
         try:
             grid_res = scipy.optimize.brute(
-                func=self.eval_except, ranges=tuple(list_slices),
+                func=self.eval_except,
+                ranges=tuple(list_slices),
                 full_output=True)
 
         except FloatingPointError:

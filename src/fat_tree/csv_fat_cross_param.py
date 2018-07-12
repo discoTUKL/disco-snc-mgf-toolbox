@@ -13,7 +13,7 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, MMOO
+from nc_processes.arrival_distribution import DM1, EBB, MD1, MMOO
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
@@ -57,12 +57,28 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, number_servers: int,
                 DM1(lamb=param_array[i, j]) for j in range(number_servers)
             ]
 
+        elif arrival_enum == ArrivalEnum.MD1:
+            arrive_list = [
+                MD1(lamb=param_array[i, j],
+                    packet_size=param_array[i, number_servers + j])
+                for j in range(number_servers)
+            ]
+
         elif arrival_enum == ArrivalEnum.MMOO:
             arrive_list = [
                 MMOO(
                     mu=param_array[i, j],
                     lamb=param_array[i, number_servers + j],
                     burst=param_array[i, 2 * number_servers + j])
+                for j in range(number_servers)
+            ]
+
+        elif arrival_enum == ArrivalEnum.EBB:
+            arrive_list = [
+                EBB(
+                    prefactor=param_array[i, j],
+                    decay=param_array[i, number_servers + j],
+                    rho_single=param_array[i, 2 * number_servers + j])
                 for j in range(number_servers)
             ]
 
@@ -113,9 +129,10 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, number_servers: int,
         "number_servers": number_servers
     })
 
-    with open(("sim_{0}_{1}_results_MC{2}_{3}_{4}.csv").format(
-            perform_param.to_name(), arrival_enum.name, mc_dist.to_name(),
-            opt_method.name, metric), 'w') as csv_file:
+    with open(
+            "sim_{0}_{1}_results_MC{2}_{3}_{4}.csv".format(
+                perform_param.to_name(), arrival_enum.name, mc_dist.to_name(),
+                opt_method.name, metric), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])

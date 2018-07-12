@@ -47,11 +47,25 @@ def data_array_to_results(arrival_enum: ArrivalEnum,
             res_dict["rate{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]
 
+        elif arrival_enum == ArrivalEnum.MD1:
+            res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
+            res_dict["rate{0}".format(j + 1)] = param_array[row_max,
+                                                            number_servers + j]
+
         elif arrival_enum == ArrivalEnum.MMOO:
             res_dict["mu{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]
             res_dict["burst{0}".format(j + 1)] = param_array[
+                row_max, 2 * number_servers + j]
+            res_dict["rate{0}".format(j + 1)] = param_array[
+                row_max, 3 * number_servers + j]
+
+        elif arrival_enum == ArrivalEnum.EBB:
+            res_dict["M{0}".format(j + 1)] = param_array[row_max, j]
+            res_dict["b{0}".format(j + 1)] = param_array[row_max,
+                                                            number_servers + j]
+            res_dict["rho{0}".format(j + 1)] = param_array[
                 row_max, 2 * number_servers + j]
             res_dict["rate{0}".format(j + 1)] = param_array[
                 row_max, 3 * number_servers + j]
