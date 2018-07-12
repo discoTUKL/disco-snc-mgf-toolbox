@@ -33,8 +33,8 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, const_rate: ConstantRate,
 
     size_array = [
         total_iterations,
-        (arrival_enum.number_parameters() + const_rate.number_parameters()) *
-        number_servers
+        (arrival_enum.number_parameters() + 1) * number_servers
+        # const_rate has 1 parameter
     ]
     # [rows, columns]
 

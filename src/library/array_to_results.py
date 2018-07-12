@@ -59,9 +59,8 @@ def data_array_to_results(arrival_enum: ArrivalEnum,
                 row_max, 3 * number_servers + j]
 
         else:
-            raise NameError(
-                "Arrival parameter {0} or Service parameter{1} is infeasible".
-                format(arrival_enum.name, const_rate.to_name()))
+            raise NameError("Arrival parameter {0} is infeasible".format(
+                arrival_enum.name))
 
     res_dict.update({
         "opt_standard_bound": opt_standard_bound,

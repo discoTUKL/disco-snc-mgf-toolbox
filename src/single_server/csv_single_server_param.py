@@ -29,7 +29,7 @@ def csv_single_server_param(
 
     size_array = [
         total_iterations,
-        arrival_enum.number_parameters() + const_rate.number_parameters()
+        arrival_enum.number_parameters() + 1  # const_rate has 1 parameter
     ]
     # [rows, columns]
 

@@ -16,17 +16,5 @@ class ConstantRate(Service):
         # The minus is important to insure the correct sign
         return -self.rate
 
-    def to_name(self) -> str:
-        return self.__class__.__name__
-
     def to_value(self):
-        return "rate=" + str(self.rate)
-
-    def to_name_value(self) -> str:
-        """
-        :return string
-        """
-        return self.to_name() + "_" + self.to_value()
-
-    def number_parameters(self) -> int:
-        return 1
+        return "rate={0}".format(str(self.rate))
