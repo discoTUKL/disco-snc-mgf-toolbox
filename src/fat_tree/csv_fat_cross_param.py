@@ -113,10 +113,9 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, number_servers: int,
         "number_servers": number_servers
     })
 
-    with open(
-            "sim_{0}_{1}_results_MC{2}_{3}_{4}.csv".format(
-                perform_param.to_name(), arrival_enum.name, mc_dist.to_name(),
-                opt_method.name, metric), 'w') as csv_file:
+    with open(("sim_{0}_{1}_results_MC{2}_{3}_{4}.csv").format(
+            perform_param.to_name(), arrival_enum.name, mc_dist.to_name(),
+            opt_method.name, metric), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])

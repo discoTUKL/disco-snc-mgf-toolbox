@@ -27,7 +27,7 @@ def compute_improvement(setting: SettingNew,
 
         standard_bound = Optimize(
             setting=setting, print_x=print_x).grid_search(
-            bound_list=bound_array, delta=0.1)
+                bound_list=bound_array, delta=0.1)
 
         bound_array_new = theta_bounds[:]
         for _i in range(1, number_l + 1):
@@ -35,7 +35,7 @@ def compute_improvement(setting: SettingNew,
 
         new_bound = OptimizeNew(
             setting_new=setting, print_x=print_x).grid_search(
-            bound_list=bound_array_new, delta=0.1)
+                bound_list=bound_array_new, delta=0.1)
 
     elif opt_method == OptMethod.PATTERN_SEARCH:
         theta_start = 0.5
@@ -44,13 +44,13 @@ def compute_improvement(setting: SettingNew,
 
         standard_bound = Optimize(
             setting=setting, print_x=print_x).pattern_search(
-            start_list=start_list, delta=3.0, delta_min=0.01)
+                start_list=start_list, delta=3.0, delta_min=0.01)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
             setting_new=setting, print_x=print_x).pattern_search(
-            start_list=start_list_new, delta=3.0, delta_min=0.01)
+                start_list=start_list_new, delta=3.0, delta_min=0.01)
 
         # This part is there to overcome opt_method issues
         if new_bound > standard_bound:
@@ -65,7 +65,7 @@ def compute_improvement(setting: SettingNew,
 
         standard_bound = Optimize(
             setting=setting, print_x=print_x).nelder_mead(
-            simplex=start_simplex, sd_min=10 ** (-2))
+                simplex=start_simplex, sd_min=10**(-2))
 
         start_list_new = [theta_start] + [1.0] * number_l
         start_simplex_new = InitialSimplex(parameters_to_optimize=number_l + 1
@@ -73,7 +73,7 @@ def compute_improvement(setting: SettingNew,
 
         new_bound = OptimizeNew(
             setting_new=setting, print_x=print_x).nelder_mead(
-            simplex=start_simplex_new, sd_min=10 ** (-2))
+                simplex=start_simplex_new, sd_min=10**(-2))
 
         # This part is there to overcome opt_method issues
         if new_bound > standard_bound:
@@ -106,14 +106,13 @@ def compute_improvement(setting: SettingNew,
 
         standard_bound = Optimize(
             setting=setting, print_x=print_x).simulated_annealing(
-            start_list=start_list, simul_annealing=simul_anneal_param)
+                start_list=start_list, simul_annealing=simul_anneal_param)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
             setting_new=setting, print_x=print_x).simulated_annealing(
-            start_list=start_list_new,
-            simul_annealing=simul_anneal_param)
+                start_list=start_list_new, simul_annealing=simul_anneal_param)
 
         # This part is there to overcome opt_method issues
         if new_bound > standard_bound:
