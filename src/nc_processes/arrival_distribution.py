@@ -65,8 +65,8 @@ class MMOO(ArrivalDistribution):
         return False
 
     def to_value(self) -> str:
-        return "mu={0}_lambda={1}_burst={2}_n={3}".format(str(self.mu), str(
-            self.lamb), str(self.burst), str(self.n))
+        return "mu={0}_lambda={1}_burst={2}_n={3}".format(
+            str(self.mu), str(self.lamb), str(self.burst), str(self.n))
 
 
 class EBB(ArrivalDistribution):
@@ -100,8 +100,9 @@ class EBB(ArrivalDistribution):
         return True
 
     def to_value(self) -> str:
-        return "M={0}_b={1}_rho={2}_n={3}".format(str(self.prefactor), str(
-            self.decay), str(self.rho_single), str(self.n))
+        return "M={0}_b={1}_rho={2}_n={3}".format(
+            str(self.prefactor), str(self.decay), str(self.rho_single),
+            str(self.n))
 
 
 class DM1(ArrivalDistribution):
@@ -162,5 +163,5 @@ class MD1(ArrivalDistribution):
         return False
 
     def to_value(self) -> str:
-        return "lambda={0}_b={1}_n={2}".format(str(self.lamb), str(
-            self.packet_size), str(self.n))
+        return "lambda={0}_b={1}_n={2}".format(
+            str(self.lamb), str(self.packet_size), str(self.n))
