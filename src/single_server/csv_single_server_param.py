@@ -20,9 +20,8 @@ from single_server.single_server_perform import SingleServerPerform
 
 
 def csv_single_server_param(
-        arrival_enum: ArrivalEnum, const_rate: ConstantRate,
-        perform_param: PerformParameter, opt_method: OptMethod,
-        mc_dist: MonteCarloDist) -> dict:
+        arrival_enum: ArrivalEnum, perform_param: PerformParameter,
+        opt_method: OptMethod, mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
     total_iterations = 10**4
     metric = "relative"
@@ -78,7 +77,6 @@ def csv_single_server_param(
 
     res_dict = data_array_to_results(
         arrival_enum=arrival_enum,
-        const_rate=const_rate,
         metric=metric,
         param_array=param_array,
         res_array=res_array,
@@ -137,7 +135,6 @@ def grid_param_single_exp(perform_param: PerformParameter,
 
     return data_array_to_results(
         arrival_enum=ArrivalEnum.DM1,
-        const_rate=const_service,
         metric=metric,
         param_array=param_array,
         res_array=param_array,
@@ -146,10 +143,6 @@ def grid_param_single_exp(perform_param: PerformParameter,
 
 if __name__ == '__main__':
     OUTPUT_TIME4 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
-
-    DM1_QUEUE = DM1()
-    MMOO_ARRIVAL = MMOO()
-    CONST_RATE = ConstantRate()
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
@@ -160,7 +153,6 @@ if __name__ == '__main__':
         print(
             csv_single_server_param(
                 arrival_enum=ArrivalEnum.DM1,
-                const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_UNIF20))
@@ -169,7 +161,6 @@ if __name__ == '__main__':
         print(
             csv_single_server_param(
                 arrival_enum=ArrivalEnum.MMOO,
-                const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_UNIF20))
@@ -178,7 +169,6 @@ if __name__ == '__main__':
         print(
             csv_single_server_param(
                 arrival_enum=ArrivalEnum.DM1,
-                const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))
@@ -187,7 +177,6 @@ if __name__ == '__main__':
         print(
             csv_single_server_param(
                 arrival_enum=ArrivalEnum.MMOO,
-                const_rate=CONST_RATE,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))

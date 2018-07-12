@@ -68,7 +68,6 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
 
     return data_array_to_results(
         arrival=exp_arrival,
-        const_rate=const_service,
         metric=metric,
         param_array=param_array,
         res_array=res_array,

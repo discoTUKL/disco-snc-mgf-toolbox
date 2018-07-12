@@ -6,13 +6,13 @@ from nc_processes.service import Service
 class ConstantRate(Service):
     """Constant rate service"""
 
-    def __init__(self, rate=0.0) -> None:
+    def __init__(self, rate: float) -> None:
         self.rate = rate
 
     def sigma(self, theta=0.0) -> float:
         return 0.0
 
-    def rho(self, theta=1.0) -> float:
+    def rho(self, theta: float) -> float:
         # The minus is important to insure the correct sign
         return -self.rate
 

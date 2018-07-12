@@ -5,11 +5,9 @@ from warnings import warn
 import numpy as np
 
 from nc_processes.arrival_enum import ArrivalEnum
-from nc_processes.constant_rate_server import ConstantRate
 
 
 def data_array_to_results(arrival_enum: ArrivalEnum,
-                          const_rate: ConstantRate,
                           param_array: np.array,
                           res_array: np.array,
                           number_servers: int,

@@ -23,9 +23,8 @@ from optimization.opt_method import OptMethod
 ########################################################################
 
 
-def csv_fat_cross_param(arrival_enum: ArrivalEnum, const_rate: ConstantRate,
-                        number_servers: int, perform_param: PerformParameter,
-                        opt_method: OptMethod,
+def csv_fat_cross_param(arrival_enum: ArrivalEnum, number_servers: int,
+                        perform_param: PerformParameter, opt_method: OptMethod,
                         mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice."""
     total_iterations = 10**4
@@ -99,7 +98,6 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, const_rate: ConstantRate,
 
     res_dict = data_array_to_results(
         arrival_enum=arrival_enum,
-        const_rate=const_rate,
         param_array=param_array,
         res_array=res_array,
         number_servers=number_servers,
@@ -129,7 +127,6 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, const_rate: ConstantRate,
 if __name__ == '__main__':
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=10)
-    CONST_RATE1 = ConstantRate()
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
@@ -140,7 +137,6 @@ if __name__ == '__main__':
         print(
             csv_fat_cross_param(
                 arrival_enum=ArrivalEnum.MMOO,
-                const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
@@ -150,7 +146,6 @@ if __name__ == '__main__':
         print(
             csv_fat_cross_param(
                 arrival_enum=ArrivalEnum.DM1,
-                const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
@@ -160,7 +155,6 @@ if __name__ == '__main__':
         print(
             csv_fat_cross_param(
                 arrival_enum=ArrivalEnum.MMOO,
-                const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
@@ -170,7 +164,6 @@ if __name__ == '__main__':
         print(
             csv_fat_cross_param(
                 arrival_enum=ArrivalEnum.DM1,
-                const_rate=CONST_RATE1,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
