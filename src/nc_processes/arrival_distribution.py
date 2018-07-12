@@ -43,7 +43,7 @@ class ArrivalDistribution(Arrival):
 class MMOO(ArrivalDistribution):
     """Markov Modulated On-Off Traffic"""
 
-    def __init__(self, mu=0.0, lamb=0.0, burst=0.0, n=1) -> None:
+    def __init__(self, mu: float, lamb: float, burst: float, n=1) -> None:
         self.mu = mu
         self.lamb = lamb
         self.burst = burst
@@ -108,7 +108,7 @@ class EBB(ArrivalDistribution):
 class DM1(ArrivalDistribution):
     """Exponentially distributed packet size."""
 
-    def __init__(self, lamb=0.0, n=1) -> None:
+    def __init__(self, lamb: float, n=1) -> None:
         self.lamb = lamb
         self.n = n
 

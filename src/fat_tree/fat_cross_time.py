@@ -111,9 +111,6 @@ if __name__ == '__main__':
     DELAY_PROB = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=4)
 
-    EXP_ARRIVAL1 = DM1()
-    MMOO_ARRIVAL1 = MMOO()
-
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
