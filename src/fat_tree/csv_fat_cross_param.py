@@ -5,6 +5,7 @@ from math import floor, nan
 from multiprocessing import Process
 
 import numpy as np
+from tqdm import tqdm
 
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.array_to_results import data_array_to_results
@@ -52,7 +53,7 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, number_servers: int,
 
     # print(res_array)
 
-    for i in range(total_iterations):
+    for i in tqdm(range(total_iterations)):
         if arrival_enum == ArrivalEnum.DM1:
             arrive_list = [
                 DM1(lamb=param_array[i, j]) for j in range(number_servers)
@@ -118,9 +119,6 @@ def csv_fat_cross_param(arrival_enum: ArrivalEnum, number_servers: int,
                 or res_array[i, 1] == nan):
             res_array[i, ] = nan
 
-        if i % floor(total_iterations / 10) == 0:
-            print("iteration {0} of {1}".format(i, total_iterations))
-
     res_dict = data_array_to_results(
         arrival_enum=arrival_enum,
         param_array=param_array,
@@ -158,10 +156,12 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
+    ARRIVAL_PROCESS = ArrivalEnum.MD1
+
     def fun1():
         print(
             csv_fat_cross_param(
-                arrival_enum=ArrivalEnum.MMOO,
+                arrival_enum=ARRIVAL_PROCESS,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
@@ -170,25 +170,7 @@ if __name__ == '__main__':
     def fun2():
         print(
             csv_fat_cross_param(
-                arrival_enum=ArrivalEnum.DM1,
-                number_servers=2,
-                perform_param=DELAY_PROB10,
-                opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_EXP1))
-
-    def fun3():
-        print(
-            csv_fat_cross_param(
-                arrival_enum=ArrivalEnum.MMOO,
-                number_servers=2,
-                perform_param=DELAY_PROB10,
-                opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_UNIF20))
-
-    def fun4():
-        print(
-            csv_fat_cross_param(
-                arrival_enum=ArrivalEnum.DM1,
+                arrival_enum=ARRIVAL_PROCESS,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
@@ -204,4 +186,4 @@ if __name__ == '__main__':
         for process_instance in proc:
             process_instance.join()
 
-    run_in_parallel(fun1, fun2, fun3, fun4)
+    run_in_parallel(fun1, fun2)

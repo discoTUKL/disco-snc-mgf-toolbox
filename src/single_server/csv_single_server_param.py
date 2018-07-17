@@ -5,6 +5,7 @@ from math import floor, inf, nan
 from multiprocessing import Process
 
 import numpy as np
+from tqdm import tqdm
 
 from library.array_to_results import data_array_to_results
 from library.compare_old_new import compute_improvement
@@ -45,7 +46,7 @@ def csv_single_server_param(
 
     res_array = np.empty([total_iterations, 2])
 
-    for i in range(total_iterations):
+    for i in tqdm(range(total_iterations)):
         if arrival_enum == ArrivalEnum.DM1:
             arrival = DM1(lamb=param_array[i, 0])
 
@@ -91,9 +92,6 @@ def csv_single_server_param(
         if (res_array[i, 0] == inf or res_array[i, 1] == inf
                 or res_array[i, 0] == nan or res_array[i, 1] == nan):
             res_array[i, ] = nan
-
-        if i % floor(total_iterations / 10) == 0:
-            print("iteration {0} of {1}".format(i, total_iterations))
 
     res_dict = data_array_to_results(
         arrival_enum=arrival_enum,
@@ -167,10 +165,12 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
+    ARRIVAL_PROCESS = ArrivalEnum.MD1
+
     def fun1():
         print(
             csv_single_server_param(
-                arrival_enum=ArrivalEnum.DM1,
+                arrival_enum=ARRIVAL_PROCESS,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_UNIF20))
@@ -178,23 +178,7 @@ if __name__ == '__main__':
     def fun2():
         print(
             csv_single_server_param(
-                arrival_enum=ArrivalEnum.MMOO,
-                perform_param=OUTPUT_TIME4,
-                opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_UNIF20))
-
-    def fun3():
-        print(
-            csv_single_server_param(
-                arrival_enum=ArrivalEnum.DM1,
-                perform_param=OUTPUT_TIME4,
-                opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_EXP1))
-
-    def fun4():
-        print(
-            csv_single_server_param(
-                arrival_enum=ArrivalEnum.MMOO,
+                arrival_enum=ARRIVAL_PROCESS,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))
@@ -208,7 +192,7 @@ if __name__ == '__main__':
         for process_instance in proc:
             process_instance.join()
 
-    run_in_parallel(fun1, fun2, fun3, fun4)
+    run_in_parallel(fun1, fun2)
 
     # print(
     #     grid_param_single_exp(
