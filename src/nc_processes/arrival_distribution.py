@@ -97,7 +97,7 @@ class EBB(ArrivalDistribution):
         return self.n * self.rho_single
 
     def is_discrete(self) -> bool:
-        return True
+        return False
 
     def to_value(self) -> str:
         return "M={0}_b={1}_rho={2}_n={3}".format(
