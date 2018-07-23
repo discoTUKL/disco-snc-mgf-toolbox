@@ -9,7 +9,7 @@ class ConstantRate(Service):
     def __init__(self, rate: float) -> None:
         self.rate = rate
 
-    def sigma(self, theta=0.0) -> float:
+    def sigma(self, theta: float = 0.0) -> float:
         return 0.0
 
     def rho(self, theta: float) -> float:

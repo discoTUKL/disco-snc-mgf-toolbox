@@ -43,7 +43,8 @@ class ArrivalDistribution(Arrival):
 class MMOO(ArrivalDistribution):
     """Markov Modulated On-Off Traffic"""
 
-    def __init__(self, mu: float, lamb: float, burst: float, n=1) -> None:
+    def __init__(self, mu: float, lamb: float, burst: float,
+                 n: int = 1) -> None:
         self.mu = mu
         self.lamb = lamb
         self.burst = burst
@@ -72,8 +73,11 @@ class MMOO(ArrivalDistribution):
 class EBB(ArrivalDistribution):
     """Exponentially Bounded Burstiness"""
 
-    def __init__(self, prefactor: float, decay: float, rho_single: float,
-                 n=1) -> None:
+    def __init__(self,
+                 prefactor: float,
+                 decay: float,
+                 rho_single: float,
+                 n: int = 1) -> None:
         self.prefactor = prefactor
         self.decay = decay
         self.rho_single = rho_single
@@ -108,7 +112,7 @@ class EBB(ArrivalDistribution):
 class DM1(ArrivalDistribution):
     """Exponentially distributed packet size."""
 
-    def __init__(self, lamb: float, n=1) -> None:
+    def __init__(self, lamb: float, n: int = 1) -> None:
         self.lamb = lamb
         self.n = n
 
@@ -144,7 +148,7 @@ class DM1(ArrivalDistribution):
 class MD1(ArrivalDistribution):
     """Poisson process"""
 
-    def __init__(self, lamb: float, packet_size: float, n=1) -> None:
+    def __init__(self, lamb: float, packet_size: float, n: int = 1) -> None:
         self.lamb = lamb
         self.packet_size = packet_size
         self.n = n

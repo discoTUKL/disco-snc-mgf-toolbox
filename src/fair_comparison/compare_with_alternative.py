@@ -24,7 +24,7 @@ def delay_prob_leaky(theta: float,
                      rho_single: float,
                      ser: Service,
                      t: int,
-                     n=1) -> float:
+                     n: int = 1) -> float:
     if t < 0:
         raise ValueError("sum index t = {0} must be >= 0".format(t))
 
@@ -73,8 +73,8 @@ def del_prob_alter_opt(delay_value: int,
                        rho_single: float,
                        ser: Service,
                        t: int,
-                       n=1,
-                       print_x=False) -> float:
+                       n: int = 1,
+                       print_x: bool = False) -> float:
     def helper_fun(theta: float) -> float:
         try:
             return delay_prob_leaky(
@@ -93,7 +93,8 @@ def del_prob_alter_opt(delay_value: int,
 
     try:
         grid_res = scipy.optimize.brute(
-            func=helper_fun, ranges=(slice(0.05, 20.0, 0.05),),
+            func=helper_fun,
+            ranges=(slice(0.05, 20.0, 0.05), ),
             full_output=True)
     except (FloatingPointError, OverflowError):
         return inf
@@ -131,7 +132,7 @@ def delay_leaky(theta: float,
                 rho_single: float,
                 ser: Service,
                 t: int,
-                n=1) -> float:
+                n: int = 1) -> float:
     if t < 0:
         raise ValueError("sum index t = {0} must be >= 0".format(t))
 
@@ -177,8 +178,8 @@ def del_alter_opt(prob_d: float,
                   rho_single: float,
                   ser: Service,
                   t: int,
-                  n=1,
-                  print_x=False) -> float:
+                  n: int = 1,
+                  print_x: bool = False) -> float:
     try:
 
         def helper_fun(theta: float) -> float:
@@ -231,33 +232,33 @@ if __name__ == '__main__':
     DELTA = 0.05
     PRINT_X = True
 
-    constant_rate_server = ConstantRate(SERVICE_RATE)
+    CR_SERVER = ConstantRate(SERVICE_RATE)
 
-    tb_const = TokenBucketConstant(
+    TB_CONST = TokenBucketConstant(
         sigma_single=SIGMA_SINGLE,
         rho_single=RHO_SINGLE,
         n=NUMBER_AGGREGATIONS)
 
-    const_single = SingleServerPerform(
-        arr=tb_const, const_rate=constant_rate_server, perform_param=DELAY5)
+    CONST_SINGLE = SingleServerPerform(
+        arr=TB_CONST, const_rate=CR_SERVER, perform_param=DELAY5)
 
-    leaky_mass_1 = SingleServerPerform(
+    LEAKY_MASS_1 = SingleServerPerform(
         arr=LeakyBucketMassOne(
             sigma_single=SIGMA_SINGLE,
             rho_single=RHO_SINGLE,
             n=NUMBER_AGGREGATIONS),
-        const_rate=constant_rate_server,
+        const_rate=CR_SERVER,
         perform_param=DELAY5)
 
-    const_opt = Optimize(
-        setting=const_single, print_x=PRINT_X).grid_search(
+    CONST_OPT = Optimize(
+        setting=CONST_SINGLE, print_x=PRINT_X).grid_search(
             bound_list=BOUND_LIST, delta=DELTA)
-    print("const_opt", const_opt)
+    print("const_opt", CONST_OPT)
 
-    leaky_mass_1_opt = Optimize(
-        setting=leaky_mass_1, print_x=PRINT_X).grid_search(
+    LEAKY_MASS_1_OPT = Optimize(
+        setting=LEAKY_MASS_1, print_x=PRINT_X).grid_search(
             bound_list=BOUND_LIST, delta=DELTA)
-    print("leaky_mass_1_opt", leaky_mass_1_opt)
+    print("leaky_mass_1_opt", LEAKY_MASS_1_OPT)
 
     print("leaky_bucket_alter_opt")
     for _i in range(10):
@@ -265,7 +266,7 @@ if __name__ == '__main__':
             delay_value=DELAY_VAL,
             sigma_single=SIGMA_SINGLE,
             rho_single=RHO_SINGLE,
-            ser=constant_rate_server,
+            ser=CR_SERVER,
             t=_i,
             n=NUMBER_AGGREGATIONS,
             print_x=False)
@@ -273,28 +274,26 @@ if __name__ == '__main__':
 
     print("----------------------------------------------")
 
-    const_single2 = SingleServerPerform(
-        arr=tb_const,
-        const_rate=constant_rate_server,
-        perform_param=DELAY_PROB6)
+    CONST_SINGLE2 = SingleServerPerform(
+        arr=TB_CONST, const_rate=CR_SERVER, perform_param=DELAY_PROB6)
 
-    leaky_mass_1_2 = SingleServerPerform(
+    LEAKY_MASS_1_2 = SingleServerPerform(
         arr=LeakyBucketMassOne(
             sigma_single=SIGMA_SINGLE,
             rho_single=RHO_SINGLE,
             n=NUMBER_AGGREGATIONS),
-        const_rate=constant_rate_server,
+        const_rate=CR_SERVER,
         perform_param=DELAY_PROB6)
 
-    const_opt_2 = Optimize(
-        setting=const_single2, print_x=PRINT_X).grid_search(
+    CONST_OPT_2 = Optimize(
+        setting=CONST_SINGLE2, print_x=PRINT_X).grid_search(
             bound_list=BOUND_LIST, delta=DELTA)
-    print("const_opt_2", const_opt_2)
+    print("const_opt_2", CONST_OPT_2)
 
-    leaky_mass_1_opt_2 = Optimize(
-        setting=leaky_mass_1_2, print_x=PRINT_X).grid_search(
+    LEAKY_MASS_1_OPT_2 = Optimize(
+        setting=LEAKY_MASS_1_2, print_x=PRINT_X).grid_search(
             bound_list=BOUND_LIST, delta=DELTA)
-    print("leaky_mass_1_opt_2", leaky_mass_1_opt_2)
+    print("leaky_mass_1_opt_2", LEAKY_MASS_1_OPT_2)
 
     print("leaky_bucket_alter_opt_2")
     for _i in range(10):
@@ -302,7 +301,7 @@ if __name__ == '__main__':
             prob_d=DELAY_PROB_VAL,
             sigma_single=SIGMA_SINGLE,
             rho_single=RHO_SINGLE,
-            ser=constant_rate_server,
+            ser=CR_SERVER,
             t=_i,
             n=NUMBER_AGGREGATIONS,
             print_x=False)

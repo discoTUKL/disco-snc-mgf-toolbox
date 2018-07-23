@@ -10,6 +10,7 @@ from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import DM1
+from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 
@@ -50,11 +51,12 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
                     param_array[i, 3] = rate2
 
                     # bound, new_bound
-                    res_array[i, -2], res_array[i, -1] = compute_improvement(
+                    res_array[i, 0], res_array[i, 1] = compute_improvement(
                         setting=setting, opt_method=opt_method, number_l=1)
 
                     # This might be a very dangerous condition
-                    if res_array[i, -2] >= 1:
+                    if (res_array[i, 1] >= 1 or res_array[i, 0] == nan
+                            or res_array[i, 1] == nan):
                         res_array[i, ] = nan
 
                     if i % floor(total_iterations / 10) == 0:
@@ -63,11 +65,8 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
 
                     i += 1
 
-    exp_arrival = DM1(lamb=1)
-    const_service = ConstantRate(rate=1)
-
     return data_array_to_results(
-        arrival=exp_arrival,
+        arrival_enum=ArrivalEnum.DM1,
         metric=metric,
         param_array=param_array,
         res_array=res_array,

@@ -12,9 +12,9 @@ def backlog_prob_discretized(arr: Arrival,
                              ser: Service,
                              theta: float,
                              backlog_value: float,
-                             tau=1.0,
-                             indep=True,
-                             p=1.0) -> float:
+                             tau: float = 1.0,
+                             indep: bool = True,
+                             p: float = 1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
@@ -69,9 +69,9 @@ def delay_prob_discretized(arr: Arrival,
                            ser: Service,
                            theta: float,
                            delay_value: int,
-                           tau=1.0,
-                           indep=True,
-                           p=1.0) -> float:
+                           tau: float = 1.0,
+                           indep: bool = True,
+                           p: float = 1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
@@ -102,9 +102,9 @@ def delay_discretized(arr: Arrival,
                       ser: Service,
                       theta: float,
                       prob_d: float,
-                      tau=1.0,
-                      indep=True,
-                      p=1.0) -> float:
+                      tau: float = 1.0,
+                      indep: bool = True,
+                      p: float = 1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
@@ -132,8 +132,8 @@ def output_discretized(arr: Arrival,
                        ser: Service,
                        theta: float,
                        delta_time: int,
-                       indep=True,
-                       p=1.0) -> float:
+                       indep: bool = True,
+                       p: float = 1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0

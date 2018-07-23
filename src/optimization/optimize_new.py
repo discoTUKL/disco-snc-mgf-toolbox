@@ -15,8 +15,10 @@ from optimization.optimize import Optimize
 class OptimizeNew(Optimize):
     """Optimize class"""
 
-    def __init__(self, setting_new: SettingNew, new=True,
-                 print_x=False) -> None:
+    def __init__(self,
+                 setting_new: SettingNew,
+                 new: bool = True,
+                 print_x: bool = False) -> None:
         super().__init__(setting_new, print_x)
         self.setting_bound = setting_new
         self.new = new
@@ -43,18 +45,18 @@ class OptimizeNew(Optimize):
 
 
 if __name__ == '__main__':
+    from fat_tree.fat_cross_perform import FatCrossPerform
+    from library.perform_parameter import PerformParameter
     from nc_operations.perform_enum import PerformEnum
     from nc_processes.arrival_distribution import MMOO
     from nc_processes.constant_rate_server import ConstantRate
-    from fat_tree.fat_cross_perform import FatCrossPerform
-    from library.perform_parameter import PerformParameter
 
     DELAY_4 = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.0001)
 
-    mmoo1 = MMOO(mu=1.0, lamb=2.2, burst=3.4)
-    mmoo2 = MMOO(mu=3.6, lamb=1.6, burst=0.4)
-    const_rate1 = ConstantRate(rate=2.0)
-    const_rate2 = ConstantRate(rate=0.3)
+    MMOO_1 = MMOO(mu=1.0, lamb=2.2, burst=3.4)
+    MMOO_2 = MMOO(mu=3.6, lamb=1.6, burst=0.4)
+    CONST_RATE_1 = ConstantRate(rate=2.0)
+    CONST_RATE_2 = ConstantRate(rate=0.3)
 
     SIMPLEX_START = np.array([[0.1], [0.3]])
     # SIMPLEX_START = np.array([[100], [200]])
@@ -62,11 +64,11 @@ if __name__ == '__main__':
     SIMPLEX_RAND = InitialSimplex(parameters_to_optimize=1).uniform_dist(
         max_theta=0.6, max_l=2.0)
 
-    nelder_mead_param_set = NelderMeadParameters()
+    NM_PARAM_SET = NelderMeadParameters()
 
     SETTING = FatCrossPerform(
-        arr_list=[mmoo1, mmoo2],
-        ser_list=[const_rate1, const_rate2],
+        arr_list=[MMOO_1, MMOO_2],
+        ser_list=[CONST_RATE_1, CONST_RATE_2],
         perform_param=DELAY_4)
 
     OPTI_OLD = Optimize(setting=SETTING, print_x=True)
@@ -77,7 +79,7 @@ if __name__ == '__main__':
         Optimize.nelder_mead_old(
             self=OPTI_OLD,
             simplex=SIMPLEX_RAND,
-            nelder_mead_param=nelder_mead_param_set))
+            nelder_mead_param=NM_PARAM_SET))
     print(OPTI_OLD.basin_hopping(start_list=[2.0]))
     print(OPTI_OLD.differential_evolution(bound_list=[(0.1, 4.0)]))
     print(OPTI_OLD.bfgs(start_list=[0.4]))
@@ -93,6 +95,5 @@ if __name__ == '__main__':
     print(OPTI_NEW.nelder_mead(simplex=SIMPLEX_START_NEW))
     print(
         OPTI_NEW.nelder_mead_old(
-            simplex=SIMPLEX_START_NEW,
-            nelder_mead_param=nelder_mead_param_set))
+            simplex=SIMPLEX_START_NEW, nelder_mead_param=NM_PARAM_SET))
     print(OPTI_NEW.bfgs(start_list=[0.4] + [1.0]))

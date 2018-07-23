@@ -19,7 +19,7 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
                   ser_list: List[ConstantRate],
                   perform_param: PerformParameter,
                   opt_method: OptMethod,
-                  metric="relative") -> pd.DataFrame:
+                  metric: str = "relative") -> pd.DataFrame:
     """Write the data for a special case in a csv."""
     size = len(ar_list)
 

@@ -13,7 +13,8 @@ from nc_processes.service import Service
 class Deconvolve(Arrival):
     """Deconvolution class."""
 
-    def __init__(self, arr: Arrival, ser: Service, indep=True, p=1.0) -> None:
+    def __init__(self, arr: Arrival, ser: Service, indep=True,
+                 p: float = 1.0) -> None:
         self.arr = arr
         self.ser = ser
 
@@ -60,8 +61,11 @@ class Deconvolve(Arrival):
 class Convolve(Service):
     """Convolution class."""
 
-    def __init__(self, ser1: Service, ser2: Service, indep=True,
-                 p=1.0) -> None:
+    def __init__(self,
+                 ser1: Service,
+                 ser2: Service,
+                 indep=True,
+                 p: float = 1.0) -> None:
         self.ser1 = ser1
         self.ser2 = ser2
         if indep:
@@ -111,7 +115,8 @@ class Convolve(Service):
 class Leftover(Service):
     """Subtract cross flow = nc_operations.Leftover class."""
 
-    def __init__(self, arr: Arrival, ser: Service, indep=True, p=1.0) -> None:
+    def __init__(self, arr: Arrival, ser: Service, indep=True,
+                 p: float = 1.0) -> None:
         self.arr = arr
         self.ser = ser
 
@@ -143,7 +148,7 @@ class AggregateList(Arrival):
     def __init__(self,
                  arr_list: List[Arrival],
                  p_list: List[float],
-                 indep=True) -> None:
+                 indep: bool = True) -> None:
         self.arr_list = arr_list
         if indep:
             self.p_list = [1.0] * len(self.arr_list)

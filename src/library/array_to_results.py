@@ -11,7 +11,7 @@ def data_array_to_results(arrival_enum: ArrivalEnum,
                           param_array: np.array,
                           res_array: np.array,
                           number_servers: int,
-                          metric="relative") -> dict:
+                          metric: str = "relative") -> dict:
     """Writes the array values into a dictionary, MMOO"""
 
     if metric == "relative":
@@ -64,7 +64,7 @@ def data_array_to_results(arrival_enum: ArrivalEnum,
         elif arrival_enum == ArrivalEnum.EBB:
             res_dict["M{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["b{0}".format(j + 1)] = param_array[row_max,
-                                                            number_servers + j]
+                                                         number_servers + j]
             res_dict["rho{0}".format(j + 1)] = param_array[
                 row_max, 2 * number_servers + j]
             res_dict["rate{0}".format(j + 1)] = param_array[

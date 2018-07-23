@@ -10,10 +10,10 @@ class SimulAnnealing(object):
     """Gather all simulated annealing attributes in one class."""
 
     def __init__(self,
-                 rep_max=20,
-                 temp_start=100.0,
-                 cooling_factor=0.95,
-                 search_radius=1.0) -> None:
+                 rep_max: int = 20,
+                 temp_start: float = 100.0,
+                 cooling_factor: float = 0.95,
+                 search_radius: float = 1.0) -> None:
         self.rep_max = rep_max
         self.temp_start = temp_start
         self.cooling_factor = cooling_factor

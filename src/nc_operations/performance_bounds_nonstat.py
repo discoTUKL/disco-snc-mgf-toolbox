@@ -11,7 +11,9 @@ N = 5
 RATE = 6.0
 
 
-def mgf_a(theta: float, delta_time: int, process="regulated_alternative"):
+def mgf_a(theta: float,
+          delta_time: int,
+          process: str = "regulated_alternative"):
     if process == "regulated_alternative":
         return regulated_alternative(
             theta=theta,
@@ -44,7 +46,8 @@ def delay_prob_nonstat(theta: float, delay_value: int, t: int) -> float:
     return delay_prob
 
 
-def del_prob_nonstat_opt(delay_value: int, t: int, print_x=False) -> float:
+def del_prob_nonstat_opt(delay_value: int, t: int,
+                         print_x: bool = False) -> float:
     def helper_fun(theta: float):
         return delay_prob_nonstat(theta=theta, delay_value=delay_value, t=t)
 

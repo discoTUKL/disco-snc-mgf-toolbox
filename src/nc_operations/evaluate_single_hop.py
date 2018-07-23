@@ -16,7 +16,7 @@ def evaluate_single_hop(foi: ArrivalDistribution,
                         theta: float,
                         perform_param: PerformParameter,
                         indep=True,
-                        p=1.0) -> float:
+                        p: float = 1.0) -> float:
     if indep:
         p = 1.0
 

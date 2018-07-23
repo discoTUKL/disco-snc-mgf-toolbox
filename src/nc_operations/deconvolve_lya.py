@@ -11,7 +11,7 @@ from nc_processes.service import Service
 class DeconvolveLya(Arrival):
     """New Lyapunov Deconvolution Class"""
 
-    def __init__(self, arr: Arrival, ser: Service, l_lya=1.0) -> None:
+    def __init__(self, arr: Arrival, ser: Service, l_lya: float = 1.0) -> None:
         self.arr = arr
         self.ser = ser
         self.l_lya = l_lya

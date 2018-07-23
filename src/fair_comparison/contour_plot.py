@@ -19,7 +19,7 @@ def single_hop_contour(sigma_single: float,
                        rho_single: float,
                        utilization: float,
                        perform_param: PerformParameter,
-                       pure_snc=False) -> int:
+                       pure_snc: bool = False) -> int:
     print_x = False
 
     bound_list = [(0.05, 15.0)]
@@ -102,7 +102,7 @@ def csv_contour(rho_single: float,
                 sigma_list: List[float],
                 utilization: float,
                 perform_param: PerformParameter,
-                pure_snc=False) -> pd.DataFrame:
+                pure_snc: False = False) -> pd.DataFrame:
     agg_list = [0] * len(sigma_list)
 
     for i, sigma in enumerate(sigma_list):

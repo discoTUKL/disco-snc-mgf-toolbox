@@ -11,7 +11,10 @@ from nc_processes.arrival_distribution import ArrivalDistribution
 class RegulatedArrivals(ArrivalDistribution):
     """Abstract class for all leaky-bucket classes"""
 
-    def __init__(self, sigma_single=0.0, rho_single=0.0, n=1) -> None:
+    def __init__(self,
+                 sigma_single: float = 0.0,
+                 rho_single: float = 0.0,
+                 n: int = 1) -> None:
         self.sigma_single = sigma_single
         self.rho_single = rho_single
         self.n = n
@@ -42,14 +45,15 @@ class RegulatedArrivals(ArrivalDistribution):
         :return string
         """
 
-        return "sigma={0}_rho={1}_n={2}".format(str(self.sigma_single), str(
-            self.rho_single), str(self.n))
+        return "sigma={0}_rho={1}_n={2}".format(
+            str(self.sigma_single), str(self.rho_single), str(self.n))
 
 
 class TokenBucketConstant(RegulatedArrivals):
     """Primitive TokenBucket (quasi deterministic and independent of theta)"""
 
-    def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
+    def __init__(self, sigma_single: float, rho_single: float,
+                 n: int = 1) -> None:
         super().__init__(sigma_single, rho_single, n)
 
     def sigma(self, theta=0.0) -> float:
@@ -59,7 +63,8 @@ class TokenBucketConstant(RegulatedArrivals):
 class LeakyBucketMassOne(RegulatedArrivals):
     """Leaky Bucket according to Massoulie using directly Lemma 2"""
 
-    def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
+    def __init__(self, sigma_single: float, rho_single: float,
+                 n: int = 1) -> None:
         super().__init__(sigma_single, rho_single, n)
 
     def sigma(self, theta: float) -> float:
@@ -75,7 +80,8 @@ class LeakyBucketMassTwo(RegulatedArrivals):
     """Leaky Bucket according to Massoulie after MGF transformation and bound
     on erf() by 1"""
 
-    def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
+    def __init__(self, sigma_single: float, rho_single: float,
+                 n: int = 1) -> None:
         super().__init__(sigma_single, rho_single, n)
 
     def sigma(self, theta: float) -> float:
@@ -94,7 +100,8 @@ class LeakyBucketMassTwo(RegulatedArrivals):
 class LeakyBucketMassTwoExact(RegulatedArrivals):
     """Exact Leaky Bucket according to Massoulie after MGF transformation"""
 
-    def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
+    def __init__(self, sigma_single: float, rho_single: float,
+                 n: int = 1) -> None:
         super().__init__(sigma_single, rho_single, n)
 
     def sigma(self, theta: float) -> float:

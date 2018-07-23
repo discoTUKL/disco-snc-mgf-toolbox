@@ -16,8 +16,8 @@ from optimization.simul_annealing import SimulAnnealing
 
 def compute_improvement(setting: SettingNew,
                         opt_method: OptMethod,
-                        number_l=1,
-                        print_x=False) -> tuple:
+                        number_l: int = 1,
+                        print_x: bool = False) -> tuple:
     """Compare standard_bound with the new Lyapunov bound."""
 
     if opt_method == OptMethod.GRID_SEARCH:
@@ -129,8 +129,9 @@ def compute_improvement(setting: SettingNew,
     return standard_bound, new_bound
 
 
-def compute_overhead(setting: SettingNew, opt_method: OptMethod,
-                     number_l=1) -> tuple:
+def compute_overhead(setting: SettingNew,
+                     opt_method: OptMethod,
+                     number_l: int = 1) -> tuple:
     """Compare computation times."""
 
     if opt_method == OptMethod.GRID_SEARCH:
