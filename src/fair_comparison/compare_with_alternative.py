@@ -6,7 +6,7 @@ import numpy as np
 import scipy.optimize
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import mgf, seq
+from library.helper_functions import mgf
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrivals_alternative import regulated_alternative
@@ -103,7 +103,7 @@ def del_prob_alter_opt(delay_value: int,
         print("grid search optimal x: ", grid_res[0].tolist())
 
     return grid_res[1]
-    # ranges = seq(start=0.05, stop=20.0, step=0.05)
+    # ranges = np.arange(start=0.05, stop=20.0 + 10**(-10), step=0.05).tolist()
     # y_opt = inf
     # theta_opt = 0.0
     #

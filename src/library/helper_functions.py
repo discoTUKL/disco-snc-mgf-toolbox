@@ -75,27 +75,14 @@ def expand_grid(list_input: list) -> pd.DataFrame:
     return pd.DataFrame([row for row in product(*list_input)])
 
 
-def seq(start: float, stop: float, step: float) -> List[float]:
-    """Implement the R-function in python."""
-
-    n = int(round((stop - start) / step))
-    #     The python round function rounds to next even
-    #     number if equally distant
-
-    if n > 1:
-        return [start + step * i for i in range(n + 1)]
-    else:
-        return []
-
-
-def centroid_without_one_row(simplex: np.ndarray, index) -> np.ndarray:
+def centroid_without_one_row(simplex: np.ndarray, index: int) -> np.ndarray:
     # type hint does not work with int and np.ndarray[int]
     # column mean of simplex without a given row
     # (usually the one with the worst y-to_value)
     return np.delete(simplex, index, 0).mean(axis=0)
 
 
-def average_towards_best_row(simplex: np.ndarray, best_index,
+def average_towards_best_row(simplex: np.ndarray, best_index: int,
                              shrink_factor: float) -> np.ndarray:
     # type hint does not work with int and np.ndarray[int]
     index = 0
@@ -121,12 +108,9 @@ def get_unit_vector(length: int, index: int) -> List[float]:
 
 
 if __name__ == '__main__':
-    # SIMPLEX_START_TEST = np.array([[0.1, 2.0], [1.0, 3.0], [2.0, 2.0]])
-    # print(SIMPLEX_START_TEST)
-    # print(centroid_without_one_row(simplex=SIMPLEX_START_TEST, index=0))
-    # print(
-    #     average_towards_best_row(
-    #         SIMPLEX_START_TEST, best_index=0, shrink_factor=0.5))
-    # print(find_opt_improve_row(SIMPLEX_START_TEST, 0, 1, "relative"))
-
-    print(seq(0.1, 0.4, 0.2))
+    SIMPLEX_START_TEST = np.array([[0.1, 2.0], [1.0, 3.0], [2.0, 2.0]])
+    print(SIMPLEX_START_TEST)
+    print(centroid_without_one_row(simplex=SIMPLEX_START_TEST, index=0))
+    print(
+        average_towards_best_row(
+            SIMPLEX_START_TEST, best_index=0, shrink_factor=0.5))

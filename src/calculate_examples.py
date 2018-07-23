@@ -47,6 +47,10 @@ if __name__ == '__main__':
         perform_param=DELAY_PROB10)
 
     print(
+        Optimize(SINGLE_SERVER2, print_x=True).grid_search_old(
+            bound_list=[(0.1, 5.0)], delta=0.1))
+
+    print(
         Optimize(SINGLE_SERVER2, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 

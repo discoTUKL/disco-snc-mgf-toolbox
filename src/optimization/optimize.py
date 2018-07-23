@@ -5,13 +5,13 @@ from typing import List
 from warnings import warn
 
 import numpy as np
+import pandas as pd
 import scipy.optimize
 
 from library.deprecated import deprecated
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import (average_towards_best_row,
-                                      centroid_without_one_row, expand_grid,
-                                      is_equal, seq)
+from library.helper_functions import (
+    average_towards_best_row, centroid_without_one_row, expand_grid, is_equal)
 from library.setting import Setting
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.simul_annealing import SimulAnnealing
@@ -292,14 +292,16 @@ class Optimize(object):
         # first = lower bound
         # second = upper bound
 
-        param_list = [[0.0] * 2] * len(bound_list)
+        param_list = [[]] * len(bound_list)
 
         for index, value in enumerate(bound_list):
-            param_list[index] = seq(start=value[0], stop=value[1], step=delta)
+            param_list[index] = np.arange(
+                start=value[0], stop=value[1] + 10**(-10),
+                step=delta).tolist()
 
         # each entry in the dictionary consists of lower and upper bounds
 
-        param_grid_df = expand_grid(list_input=param_list)
+        param_grid_df: pd.DataFrame = expand_grid(list_input=param_list)
 
         number_values = param_grid_df.shape[0]
 
@@ -368,7 +370,7 @@ class Optimize(object):
             index += 1
 
         # print("y_value: ", y_value)
-        best_index = np.nanargmin(y_value)
+        best_index: int = np.nanargmin(y_value)
         # print("best index: ", best_index)
 
         while np.std(y_value, ddof=1) > sd_min:
@@ -376,8 +378,8 @@ class Optimize(object):
             # print("y_value = ", y_value)
             # print("standard_deviation of y = ", np.std(y_value, ddof=1))
 
-            worst_index = np.argmax(y_value)
-            best_index = np.argmin(y_value)
+            worst_index: int = np.argmax(y_value)
+            best_index: int = np.argmin(y_value)
 
             # compute centroid without worst row
             centroid = centroid_without_one_row(
