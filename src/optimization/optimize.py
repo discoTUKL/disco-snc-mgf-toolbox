@@ -1,7 +1,7 @@
 """Optimize theta and all Lyapunov l's"""
 
 from math import exp, inf
-from typing import List
+from typing import List, Tuple
 from warnings import warn
 
 import numpy as np
@@ -37,7 +37,8 @@ class Optimize(object):
         except (FloatingPointError, OverflowError, ParameterOutOfBounds):
             return inf
 
-    def grid_search(self, bound_list: List[tuple], delta) -> float:
+    def grid_search(self, bound_list: List[Tuple[float, float]],
+                    delta: float) -> float:
         """
         Search optimal values along a grid in the parameter space.
 
@@ -281,7 +282,8 @@ class Optimize(object):
         return bfgs_res.fun
 
     @deprecated
-    def grid_search_old(self, bound_list: List[tuple], delta: float) -> float:
+    def grid_search_old(self, bound_list: List[Tuple[float, float]],
+                        delta: float) -> float:
         """
         Search optimal values along a grid in the parameter space.
 

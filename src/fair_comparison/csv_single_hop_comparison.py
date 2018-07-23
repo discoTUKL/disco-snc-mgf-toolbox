@@ -18,10 +18,10 @@ from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
 
 
-def single_hop_comparison(aggregation: int, sigma_single: float,
-                          rho_single: float, service_rate: float,
-                          perform_param: PerformParameter,
-                          opt_method: OptMethod) -> tuple:
+def single_hop_comparison(
+        aggregation: int, sigma_single: float, rho_single: float,
+        service_rate: float, perform_param: PerformParameter,
+        opt_method: OptMethod) -> (float, float, float, float, float):
 
     print_x = False
     constant_rate_server = ConstantRate(service_rate)
