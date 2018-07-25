@@ -21,7 +21,7 @@ from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
 
-def csv_single_server_param(
+def csv_single_param_power(
         arrival_enum: ArrivalEnum, perform_param: PerformParameter,
         opt_method: OptMethod, mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
@@ -120,7 +120,7 @@ def csv_single_server_param(
     return res_dict
 
 
-def grid_param_single_exp(perform_param: PerformParameter,
+def grid_param_single_dm1(perform_param: PerformParameter,
                           opt_method: OptMethod, metric: str, lamb1_range,
                           rate1_range) -> dict:
     """Choose parameters along a grid"""
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     def fun1():
         print(
-            csv_single_server_param(
+            csv_single_param_power(
                 arrival_enum=ARRIVAL_PROCESS,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
@@ -177,7 +177,7 @@ if __name__ == '__main__':
 
     def fun2():
         print(
-            csv_single_server_param(
+            csv_single_param_power(
                 arrival_enum=ARRIVAL_PROCESS,
                 perform_param=OUTPUT_TIME4,
                 opt_method=COMMON_OPTIMIZATION,
@@ -195,8 +195,8 @@ if __name__ == '__main__':
     run_in_parallel(fun1, fun2)
 
     # print(
-    #     grid_param_single_exp(
-    #         perform_param=OUTPUT_TIME,
+    #     grid_param_single_dm1(
+    #         perform_param=OUTPUT_TIME4,
     #         opt_method=OptMethod.GRID_SEARCH,
     #         lamb1_range=[0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 12],
     #         rate1_range=[0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 12]))

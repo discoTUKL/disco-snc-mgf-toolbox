@@ -16,6 +16,7 @@ from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.service_alternative import (expect_const_rate,
                                               long_term_const_rate)
 from optimization.optimize import Optimize
+from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
 
 
@@ -25,7 +26,7 @@ def output_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
         raise ValueError("sum index t = {0} must be >= s={1}".format(t, s))
 
     if a <= 1:
-        raise ValueError("base a={0} must be >0".format(a))
+        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
 
     if long_term_dm1(lamb=lamb) >= long_term_const_rate(rate=rate):
         raise ParameterOutOfBounds(
@@ -72,44 +73,51 @@ def output_lower_exp_dm1_opt(s: int,
     try:
         grid_res = scipy.optimize.brute(
             func=helper_fun,
-            ranges=(slice(0.05, 5.0, 0.05), slice(1.05, 3.0, 0.05)),
+            ranges=(slice(0.05, 10.0, 0.05), slice(1.05, 5.0, 0.05)),
             full_output=True)
     except (FloatingPointError, OverflowError):
         return inf
 
     if print_x:
-        print("grid search optimal x: ", grid_res[0].tolist())
+        print("grid search optimal parameter: theta={0}, a={1}".format(
+            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
 
     return grid_res[1]
 
 
 if __name__ == '__main__':
-    S = 2
-    T = 7
-    DELTA_TIME = T - S
+    S = 30
+    DELTA_TIME = 10
 
     OUTPUT5 = PerformParameter(
         perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
 
     LAMB = 1.0
-    SERVICE_RATE = 2.0
+    SERVICE_RATE = 1.1
 
-    BOUND_LIST = [(1.05, 5.0)]
+    BOUND_LIST = [(0.05, 10.0)]
+    BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
     DELTA = 0.05
-    PRINT_X = True
+    PRINT_X = False
 
     CR_SERVER = ConstantRate(SERVICE_RATE)
 
     EXP_ARRIVAL = DM1(lamb=LAMB)
 
-    DM1_STANDARD = SingleServerPerform(
+    DM1_SINGLE = SingleServerPerform(
         arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=OUTPUT5)
 
     DM1_STANDARD_OPT = Optimize(
-        setting=DM1_STANDARD, print_x=PRINT_X).grid_search(
+        setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
             bound_list=BOUND_LIST, delta=DELTA)
     print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
 
+    DM1_POWER_OPT = OptimizeNew(
+        setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
+        bound_list=BOUND_LIST_NEW, delta=DELTA
+    )
+    print("DM1 Power Opt: ", DM1_POWER_OPT)
+
     DM1_EXP_OPT = output_lower_exp_dm1_opt(
-        s=S, t=T, lamb=LAMB, rate=SERVICE_RATE, print_x=True)
+        s=S, t=S + DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
     print("DM1 Exp Opt: ", DM1_EXP_OPT)

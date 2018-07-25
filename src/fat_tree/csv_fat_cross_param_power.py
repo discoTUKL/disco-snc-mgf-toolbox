@@ -25,9 +25,9 @@ from optimization.opt_method import OptMethod
 ########################################################################
 
 
-def csv_fat_cross_param(arrival_enum: ArrivalEnum, number_servers: int,
-                        perform_param: PerformParameter, opt_method: OptMethod,
-                        mc_dist: MonteCarloDist) -> dict:
+def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
+                              perform_param: PerformParameter, opt_method: OptMethod,
+                              mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice."""
     total_iterations = 10**4
     metric = "relative"
@@ -160,7 +160,7 @@ if __name__ == '__main__':
 
     def fun1():
         print(
-            csv_fat_cross_param(
+            csv_fat_cross_param_power(
                 arrival_enum=ARRIVAL_PROCESS,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     def fun2():
         print(
-            csv_fat_cross_param(
+            csv_fat_cross_param_power(
                 arrival_enum=ARRIVAL_PROCESS,
                 number_servers=2,
                 perform_param=DELAY_PROB10,
