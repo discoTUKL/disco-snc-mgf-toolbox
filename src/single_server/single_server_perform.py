@@ -8,8 +8,8 @@ from library.setting_new import SettingNew
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds_discretized import delay_prob_discretized
-from nc_operations.performance_bounds_lya import (delay_prob_lya, output_lya,
-                                                  output_lya_discretized)
+from nc_operations.performance_bounds_power import (
+    delay_prob_power, output_power, output_power_discretized)
 from nc_processes.arrival_distribution import DM1, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 
@@ -41,12 +41,12 @@ class SingleServerPerform(SettingNew):
     def new_bound(self, param_l_list: List[float]) -> float:
         if self.perform_param.perform_metric == PerformEnum.DELAY_PROB:
             if self.arr.is_discrete():
-                return delay_prob_lya(
+                return delay_prob_power(
                     arr=self.arr,
                     ser=self.ser,
                     theta=param_l_list[0],
                     delay=self.perform_param.value,
-                    l_lya=param_l_list[1])
+                    l_power=param_l_list[1])
             else:
                 warn("old approach is applied")
                 return delay_prob_discretized(
@@ -57,19 +57,19 @@ class SingleServerPerform(SettingNew):
 
         elif self.perform_param.perform_metric == PerformEnum.OUTPUT:
             if self.arr.is_discrete():
-                return output_lya(
+                return output_power(
                     arr=self.arr,
                     ser=self.ser,
                     theta=param_l_list[0],
                     delta_time=self.perform_param.value,
-                    l_lya=param_l_list[1])
+                    l_power=param_l_list[1])
             else:
-                return output_lya_discretized(
+                return output_power_discretized(
                     arr=self.arr,
                     ser=self.ser,
                     theta=param_l_list[0],
                     delta_time=self.perform_param.value,
-                    l_lya=param_l_list[1])
+                    l_power=param_l_list[1])
 
         else:
             raise NameError("{0} is an infeasible performance metric".format(

@@ -8,17 +8,17 @@ from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
 
-def output_lya(arr: Arrival,
-               ser: Service,
-               theta: float,
-               delta_time: int,
-               l_lya: float = 1.0) -> float:
+def output_power(arr: Arrival,
+                 ser: Service,
+                 theta: float,
+                 delta_time: int,
+                 l_power: float = 1.0) -> float:
     """Implements stationary bound method"""
-    if l_lya < 1.0:
-        l_lya = 1.0
+    if l_power < 1.0:
+        l_power = 1.0
         # raise ParameterOutOfBounds("l must be >= 1")
 
-    l_theta = l_lya * theta
+    l_theta = l_power * theta
 
     if arr.rho(theta=l_theta) >= -ser.rho(theta=l_theta):
         raise ParameterOutOfBounds(
@@ -31,7 +31,7 @@ def output_lya(arr: Arrival,
 
     numerator = mgf(
         theta=theta, x=arr.rho(theta=l_theta) * delta_time + sigma_l_arr_ser)
-    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_lya)
+    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_power)
 
     try:
         return numerator / denominator
@@ -40,18 +40,18 @@ def output_lya(arr: Arrival,
         return inf
 
 
-def output_lya_t(arr: Arrival,
-                 ser: Service,
-                 theta: float,
-                 tt: int,
-                 ss: int,
-                 l_lya: float = 1.0) -> float:
+def output_power_t(arr: Arrival,
+                   ser: Service,
+                   theta: float,
+                   tt: int,
+                   ss: int,
+                   l_power: float = 1.0) -> float:
     """Implements time dependent method"""
-    if l_lya < 1.0:
-        l_lya = 1.0
+    if l_power < 1.0:
+        l_power = 1.0
         # raise ParameterOutOfBounds("l must be >= 1")
 
-    l_theta = l_lya * theta
+    l_theta = l_power * theta
 
     sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
     rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
@@ -60,33 +60,33 @@ def output_lya_t(arr: Arrival,
         return mgf(
             theta=theta,
             x=arr.rho(theta=l_theta) *
-            (tt - ss) + sigma_l_arr_ser) * (ss + 1)**(1 / l_lya)
+            (tt - ss) + sigma_l_arr_ser) * (ss + 1)**(1 / l_power)
 
     elif arr.rho(theta=l_theta) > -ser.rho(theta=l_theta):
         numerator = mgf(
             theta=theta,
             x=arr.rho(theta=l_theta) * tt + ser.rho(theta=l_theta) * ss +
             sigma_l_arr_ser)
-        denominator = 1 - mgf(theta=l_theta, x=-rho_l_arr_ser)**(1 / l_lya)
+        denominator = 1 - mgf(theta=l_theta, x=-rho_l_arr_ser)**(1 / l_power)
 
         return numerator / denominator
 
     else:
-        return output_lya(
-            arr=arr, ser=ser, theta=theta, delta_time=tt - ss, l_lya=l_lya)
+        return output_power(
+            arr=arr, ser=ser, theta=theta, delta_time=tt - ss, l_power=l_power)
 
 
-def delay_prob_lya(arr: Arrival,
-                   ser: Service,
-                   theta: float,
-                   delay: int,
-                   l_lya: float = 1.0) -> float:
+def delay_prob_power(arr: Arrival,
+                     ser: Service,
+                     theta: float,
+                     delay: int,
+                     l_power: float = 1.0) -> float:
     """Implements stationary bound method"""
-    if l_lya < 1.0:
-        l_lya = 1.0
+    if l_power < 1.0:
+        l_power = 1.0
         # raise ParameterOutOfBounds("l must be >= 1")
 
-    l_theta = l_lya * theta
+    l_theta = l_power * theta
 
     if arr.rho(theta=l_theta) >= -ser.rho(theta=l_theta):
         raise ParameterOutOfBounds(
@@ -99,7 +99,7 @@ def delay_prob_lya(arr: Arrival,
 
     numerator = mgf(
         theta=theta, x=ser.rho(theta=l_theta) * delay + sigma_l_arr_ser)
-    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_lya)
+    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_power)
 
     try:
         return numerator / denominator
@@ -108,18 +108,18 @@ def delay_prob_lya(arr: Arrival,
         return inf
 
 
-def delay_prob_lya_t(arr: Arrival,
-                     ser: Service,
-                     theta: float,
-                     delay: int,
-                     tt: int,
-                     l_lya: float = 1.0) -> float:
+def delay_prob_power_t(arr: Arrival,
+                       ser: Service,
+                       theta: float,
+                       delay: int,
+                       tt: int,
+                       l_power: float = 1.0) -> float:
     """Implements time dependent method"""
-    if l_lya < 1.0:
-        l_lya = 1.0
+    if l_power < 1.0:
+        l_power = 1.0
         # raise ParameterOutOfBounds("l must be >= 1")
 
-    l_theta = l_lya * theta
+    l_theta = l_power * theta
 
     sigma_l_arr_ser = arr.sigma(theta=l_theta) + ser.sigma(theta=l_theta)
     rho_l_arr_ser = arr.rho(theta=l_theta) + ser.rho(theta=l_theta)
@@ -127,33 +127,33 @@ def delay_prob_lya_t(arr: Arrival,
     if is_equal(arr.rho(theta=l_theta), -ser.rho(theta=l_theta)):
         return mgf(
             theta=theta, x=ser.rho(theta=l_theta) * delay +
-            sigma_l_arr_ser) * (tt + 1)**(1 / l_lya)
+            sigma_l_arr_ser) * (tt + 1)**(1 / l_power)
 
     elif arr.rho(theta=l_theta) > -ser.rho(theta=l_theta):
         numerator = mgf(
             theta=theta,
             x=arr.rho(theta=l_theta) * tt +
             ser.rho(theta=l_theta) * (tt + delay) + sigma_l_arr_ser)
-        denominator = 1 - mgf(theta=l_theta, x=-rho_l_arr_ser)**(1 / l_lya)
+        denominator = 1 - mgf(theta=l_theta, x=-rho_l_arr_ser)**(1 / l_power)
 
         return numerator / denominator
 
     else:
-        return delay_prob_lya(
-            arr=arr, ser=ser, theta=theta, delay=delay, l_lya=l_lya)
+        return delay_prob_power(
+            arr=arr, ser=ser, theta=theta, delay=delay, l_power=l_power)
 
 
-def output_lya_discretized(arr: Arrival,
-                           ser: Service,
-                           theta: float,
-                           delta_time: int,
-                           l_lya: float = 1.0) -> float:
+def output_power_discretized(arr: Arrival,
+                             ser: Service,
+                             theta: float,
+                             delta_time: int,
+                             l_power: float = 1.0) -> float:
     """Implements stationary bound method"""
-    if l_lya < 1.0:
-        l_lya = 1.0
+    if l_power < 1.0:
+        l_power = 1.0
         # raise ParameterOutOfBounds("l must be >= 1")
 
-    l_theta = l_lya * theta
+    l_theta = l_power * theta
 
     if arr.rho(theta=l_theta) >= -ser.rho(theta=l_theta):
         raise ParameterOutOfBounds(
@@ -167,7 +167,7 @@ def output_lya_discretized(arr: Arrival,
     numerator = mgf(
         theta=theta,
         x=arr.rho(theta=l_theta) * (delta_time + 1) + sigma_l_arr_ser)
-    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_lya)
+    denominator = (1 - mgf(theta=l_theta, x=rho_l_arr_ser))**(1 / l_power)
 
     try:
         return numerator / denominator

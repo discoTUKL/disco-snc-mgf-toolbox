@@ -4,7 +4,7 @@ from typing import List
 
 from library.perform_parameter import PerformParameter
 from library.setting_new import SettingNew
-from nc_operations.deconvolve_lya import DeconvolveLya
+from nc_operations.deconvolve_power import DeconvolvePower
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateList, Deconvolve, Leftover
 from nc_processes.arrival import Arrival
@@ -55,10 +55,11 @@ class FatCrossPerform(SettingNew):
             raise NameError("Check number of parameters")
 
         output_list: List[Arrival] = [
-            DeconvolveLya(
+            DeconvolvePower(
                 arr=self.arr_list[i],
                 ser=self.ser_list[i],
-                l_lya=param_l_list[i]) for i in range(1, self.number_servers)
+                l_power=param_l_list[i])
+            for i in range(1, self.number_servers)
         ]
         # we use i + 1, since i = 0 is the foi
 

@@ -8,21 +8,22 @@ from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
 
-class DeconvolveLya(Arrival):
+class DeconvolvePower(Arrival):
     """New Lyapunov Deconvolution Class"""
 
-    def __init__(self, arr: Arrival, ser: Service, l_lya: float = 1.0) -> None:
+    def __init__(self, arr: Arrival, ser: Service,
+                 l_power: float = 1.0) -> None:
         self.arr = arr
         self.ser = ser
-        self.l_lya = l_lya
+        self.l_power = l_power
 
-        if self.l_lya < 1.0:
-            self.l_lya = 1.0
+        if self.l_power < 1.0:
+            self.l_power = 1.0
             # raise ParameterOutOfBounds("l must be >= 1")
 
     def sigma(self, theta: float) -> float:
         # here, theta can simply be replaced by l * theta
-        l_theta = self.l_lya * theta
+        l_theta = self.l_power * theta
 
         k_sig = -log(1 - mgf(
             theta=l_theta, x=self.arr.rho(l_theta) + self.ser.rho(l_theta))
@@ -32,7 +33,7 @@ class DeconvolveLya(Arrival):
 
     def rho(self, theta: float) -> float:
         # here, theta can simply be replaced by l * theta
-        l_theta = self.l_lya * theta
+        l_theta = self.l_power * theta
 
         if self.arr.rho(l_theta) < 0 or self.ser.rho(l_theta) > 0:
             raise ParameterOutOfBounds("Check RHO_SINGLE's sign")
