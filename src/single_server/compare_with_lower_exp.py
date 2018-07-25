@@ -2,28 +2,28 @@
 
 import csv
 from math import exp, inf, log, nan
+from multiprocessing import Process
+from typing import List
 
 import numpy as np
 import scipy.optimize
+from tqdm import tqdm
 
-from typing import List
-
+from library.array_to_results import three_col_array_to_results
 from library.exceptions import ParameterOutOfBounds
+from library.mc_enum import MCEnum
+from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrivals_alternative import expect_dm1, long_term_dm1
 from nc_processes.arrival_distribution import DM1
+from nc_processes.arrival_enum import ArrivalEnum
+from nc_processes.arrivals_alternative import expect_dm1, long_term_dm1
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.service_alternative import (expect_const_rate,
                                               long_term_const_rate)
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
-from library.monte_carlo_dist import MonteCarloDist
-from library.mc_enum import MCEnum
-from nc_processes.arrival_enum import ArrivalEnum
-from tqdm import tqdm
-from library.array_to_results import three_col_array_to_results
 
 
 def output_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
@@ -166,37 +166,61 @@ def csv_single_param_power(start_time: int, delta_time: int,
 
 
 if __name__ == '__main__':
-    S = 30
-    DELTA_TIME = 10
+    # S = 30
+    # DELTA_TIME = 10
+    #
+    # OUTPUT5 = PerformParameter(
+    #     perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
+    #
+    # LAMB = 1.0
+    # SERVICE_RATE = 1.1
+    #
+    # BOUND_LIST = [(0.05, 10.0)]
+    # BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
+    # DELTA = 0.05
+    # PRINT_X = False
+    #
+    # CR_SERVER = ConstantRate(SERVICE_RATE)
+    #
+    # EXP_ARRIVAL = DM1(lamb=LAMB)
+    #
+    # DM1_SINGLE = SingleServerPerform(
+    #     arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=OUTPUT5)
+    #
+    # DM1_STANDARD_OPT = Optimize(
+    #     setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
+    #         bound_list=BOUND_LIST, delta=DELTA)
+    # print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
+    #
+    # DM1_POWER_OPT = OptimizeNew(
+    #     setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
+    #         bound_list=BOUND_LIST_NEW, delta=DELTA)
+    # print("DM1 Power Opt: ", DM1_POWER_OPT)
+    #
+    # DM1_EXP_OPT = output_lower_exp_dm1_opt(
+    #     s=S, t=S + DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
+    # print("DM1 Exp Opt: ", DM1_EXP_OPT)
 
-    OUTPUT5 = PerformParameter(
-        perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
+    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
+    MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
-    LAMB = 1.0
-    SERVICE_RATE = 1.1
+    def fun1():
+        print(
+            csv_single_param_power(
+                start_time=30, delta_time=5, mc_dist=MC_UNIF20))
 
-    BOUND_LIST = [(0.05, 10.0)]
-    BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
-    DELTA = 0.05
-    PRINT_X = False
+    def fun2():
+        print(
+            csv_single_param_power(
+                start_time=30, delta_time=5, mc_dist=MC_EXP1))
 
-    CR_SERVER = ConstantRate(SERVICE_RATE)
+    def run_in_parallel(*funcs):
+        proc = []
+        for func in funcs:
+            process_instance = Process(target=func)
+            process_instance.start()
+            proc.append(process_instance)
+        for process_instance in proc:
+            process_instance.join()
 
-    EXP_ARRIVAL = DM1(lamb=LAMB)
-
-    DM1_SINGLE = SingleServerPerform(
-        arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=OUTPUT5)
-
-    DM1_STANDARD_OPT = Optimize(
-        setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
-            bound_list=BOUND_LIST, delta=DELTA)
-    print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
-
-    DM1_POWER_OPT = OptimizeNew(
-        setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
-            bound_list=BOUND_LIST_NEW, delta=DELTA)
-    print("DM1 Power Opt: ", DM1_POWER_OPT)
-
-    DM1_EXP_OPT = output_lower_exp_dm1_opt(
-        s=S, t=S + DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
-    print("DM1 Exp Opt: ", DM1_EXP_OPT)
+    run_in_parallel(fun1, fun2)
