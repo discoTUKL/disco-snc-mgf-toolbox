@@ -109,21 +109,26 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     if metric == "relative":
         improvement_vec_1 = np.divide(res_array[:, 0], res_array[:, 1])
         improvement_vec_2 = np.divide(res_array[:, 0], res_array[:, 2])
+        improvement_vec_news = np.divide(res_array[:, 1], res_array[:, 2])
     elif metric == "absolute":
         improvement_vec_1 = np.subtract(res_array[:, 0], res_array[:, 1])
         improvement_vec_2 = np.subtract(res_array[:, 0], res_array[:, 2])
+        improvement_vec_news = np.subtract(res_array[:, 1], res_array[:, 2])
     else:
         raise NameError("Metric parameter {0} is infeasible".format(metric))
 
-    improvement_array = np.concatenate(
-        (improvement_vec_1, improvement_vec_2), axis=1)
-
-    row_exp_max = np.nanargmax(improvement_array[:, 2])
+    row_exp_max = np.nanargmax(improvement_vec_news)
     opt_standard_bound = res_array[row_exp_max, 0]
     opt_power_bound = res_array[row_exp_max, 1]
-    opt_exp_bound = improvement_array[row_exp_max, 2]
-    mean_power_improvement = np.nanmean(improvement_array[:, 0])
-    mean_exp_improvement = np.nanmean(improvement_array[:, 1])
+    opt_exp_bound = res_array[row_exp_max, 2]
+
+    # opt_power_improvement = improvement_vec_1[row_exp_max]
+    # opt_exp_improvement = improvement_vec_2[row_exp_max]
+    opt_new_improvement = improvement_vec_news[row_exp_max]
+
+    mean_power_improvement = np.nanmean(improvement_vec_1)
+    mean_exp_improvement = np.nanmean(improvement_vec_2)
+    mean_new_improvement = np.nanmean(improvement_vec_news)
 
     count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
     count_nan_standard = count_nan[0]
@@ -141,8 +146,12 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
         "opt_standard_bound": opt_standard_bound,
         "opt_power_bound": opt_power_bound,
         "opt_exp_bound": opt_exp_bound,
+        # "opt_power_improvement": opt_power_improvement,
+        # "opt_exp_improvement": opt_exp_improvement,
+        "opt_new_improvement": opt_new_improvement,
         "mean_power_improvement": mean_power_improvement,
-        "mean_exp_improvement": mean_exp_improvement
+        "mean_exp_improvement": mean_exp_improvement,
+        "mean_new_improvement": mean_new_improvement
     })
 
     return res_dict
