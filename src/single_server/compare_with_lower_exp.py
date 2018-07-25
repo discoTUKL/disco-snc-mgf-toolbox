@@ -1,6 +1,7 @@
 """Compare with alternative traffic description"""
 
-from math import exp, inf, log
+import csv
+from math import exp, inf, log, nan
 
 import numpy as np
 import scipy.optimize
@@ -18,6 +19,11 @@ from nc_processes.service_alternative import (expect_const_rate,
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
+from library.monte_carlo_dist import MonteCarloDist
+from library.mc_enum import MCEnum
+from nc_processes.arrival_enum import ArrivalEnum
+from tqdm import tqdm
+from library.array_to_results import three_col_array_to_results
 
 
 def output_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
@@ -85,6 +91,80 @@ def output_lower_exp_dm1_opt(s: int,
     return grid_res[1]
 
 
+def csv_single_param_power(start_time: int, delta_time: int,
+                           mc_dist: MonteCarloDist) -> dict:
+    total_iterations = 10**2
+    metric = "relative"
+
+    delta = 0.05
+
+    size_array = [total_iterations, 2]
+    # [rows, columns]
+
+    if mc_dist.mc_enum == MCEnum.UNIFORM:
+        param_array = np.random.uniform(
+            low=0, high=mc_dist.param_list[0], size=size_array)
+    elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
+        param_array = np.random.exponential(
+            scale=mc_dist.param_list[0], size=size_array)
+    else:
+        raise ValueError("Distribution parameter {0} is infeasible".format(
+            mc_dist.mc_enum))
+
+    res_array = np.empty([total_iterations, 3])
+
+    for i in tqdm(range(total_iterations)):
+        setting = SingleServerPerform(
+            arr=DM1(lamb=param_array[i, 0]),
+            const_rate=ConstantRate(rate=param_array[i, 1]),
+            perform_param=PerformParameter(
+                perform_metric=PerformEnum.OUTPUT, value=delta_time))
+
+        theta_bounds = [(0.1, 4.0)]
+        bound_array = theta_bounds[:]
+
+        res_array[i, 0] = Optimize(setting=setting).grid_search(
+            bound_list=bound_array, delta=delta)
+
+        bound_array_power = theta_bounds[:]
+        bound_array_power.append((0.9, 4.0))
+
+        res_array[i, 1] = OptimizeNew(setting_new=setting).grid_search(
+            bound_list=bound_array_power, delta=delta)
+
+        res_array[i, 2] = output_lower_exp_dm1_opt(
+            s=start_time,
+            t=start_time + delta_time,
+            lamb=param_array[i, 0],
+            rate=param_array[i, 1])
+
+        if (res_array[i, 0] == inf or res_array[i, 1] == inf
+                or res_array[i, 2] == inf or res_array[i, 0] == nan
+                or res_array[i, 1] == nan or res_array[i, 2] == nan):
+            res_array[i, ] = nan
+
+    res_dict = three_col_array_to_results(
+        arrival_enum=ArrivalEnum.DM1, metric=metric, res_array=res_array)
+
+    res_dict.update({
+        "delta_time": delta_time,
+        "optimization": "grid_search",
+        "metric": "relative",
+        "iterations": total_iterations,
+        "MCDistribution": mc_dist.to_name(),
+        "MCParam": mc_dist.param_to_string()
+    })
+
+    with open(
+            "single_output_DM1_results_MC{0}_power_exp.csv".format(
+                mc_dist.to_name()), 'w') as csv_file:
+        writer = csv.writer(csv_file)
+        for key, value in res_dict.items():
+            writer.writerow([key, value])
+
+    return res_dict
+
+
 if __name__ == '__main__':
     S = 30
     DELTA_TIME = 10
@@ -114,8 +194,7 @@ if __name__ == '__main__':
 
     DM1_POWER_OPT = OptimizeNew(
         setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
-        bound_list=BOUND_LIST_NEW, delta=DELTA
-    )
+            bound_list=BOUND_LIST_NEW, delta=DELTA)
     print("DM1 Power Opt: ", DM1_POWER_OPT)
 
     DM1_EXP_OPT = output_lower_exp_dm1_opt(

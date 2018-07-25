@@ -7,12 +7,15 @@ import numpy as np
 from nc_processes.arrival_enum import ArrivalEnum
 
 
-def data_array_to_results(arrival_enum: ArrivalEnum,
-                          param_array: np.array,
-                          res_array: np.array,
-                          number_servers: int,
-                          metric: str = "relative") -> dict:
-    """Writes the array values into a dictionary, MMOO"""
+def two_col_array_to_results(arrival_enum: ArrivalEnum,
+                             param_array: np.array,
+                             res_array: np.array,
+                             number_servers: int,
+                             metric: str = "relative") -> dict:
+    """Writes the array values into a dictionary"""
+    if res_array.shape[1] != 2:
+        raise NameError("Array must have 2 columns, not {0}".format(
+            res_array.shape[1]))
 
     if metric == "relative":
         improvement_vec = np.divide(res_array[:, 0], res_array[:, 1])
@@ -91,6 +94,56 @@ def data_array_to_results(arrival_enum: ArrivalEnum,
         })
     else:
         raise NameError("Metric parameter {0} is infeasible".format(metric))
+
+    return res_dict
+
+
+def three_col_array_to_results(arrival_enum: ArrivalEnum,
+                               res_array: np.array,
+                               metric: str = "relative") -> dict:
+    """Writes the array values into a dictionary, MMOO"""
+    if res_array.shape[1] != 3:
+        raise NameError("Array must have 3 columns, not {0}".format(
+            res_array.shape[1]))
+
+    if metric == "relative":
+        improvement_vec_1 = np.divide(res_array[:, 0], res_array[:, 1])
+        improvement_vec_2 = np.divide(res_array[:, 0], res_array[:, 2])
+    elif metric == "absolute":
+        improvement_vec_1 = np.subtract(res_array[:, 0], res_array[:, 1])
+        improvement_vec_2 = np.subtract(res_array[:, 0], res_array[:, 2])
+    else:
+        raise NameError("Metric parameter {0} is infeasible".format(metric))
+
+    improvement_array = np.concatenate(
+        (improvement_vec_1, improvement_vec_2), axis=1)
+
+    row_exp_max = np.nanargmax(improvement_array[:, 2])
+    opt_standard_bound = res_array[row_exp_max, 0]
+    opt_power_bound = res_array[row_exp_max, 1]
+    opt_exp_bound = improvement_array[row_exp_max, 2]
+    mean_power_improvement = np.nanmean(improvement_array[:, 0])
+    mean_exp_improvement = np.nanmean(improvement_array[:, 1])
+
+    count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
+    count_nan_standard = count_nan[0]
+    count_nan_power = count_nan[1]
+    count_nan_exp = count_nan[2]
+
+    print("total_iterations", res_array.shape[0])
+    print("count_nan_standard", count_nan_standard)
+    print("count_nan_power", count_nan_power)
+    print("count_nan_exp", count_nan_exp)
+
+    res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
+
+    res_dict.update({
+        "opt_standard_bound": opt_standard_bound,
+        "opt_power_bound": opt_power_bound,
+        "opt_exp_bound": opt_exp_bound,
+        "mean_power_improvement": mean_power_improvement,
+        "mean_exp_improvement": mean_exp_improvement
+    })
 
     return res_dict
 

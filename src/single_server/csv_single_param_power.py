@@ -7,7 +7,7 @@ from multiprocessing import Process
 import numpy as np
 from tqdm import tqdm
 
-from library.array_to_results import data_array_to_results
+from library.array_to_results import two_col_array_to_results
 from library.compare_old_new import compute_improvement
 from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
@@ -93,7 +93,7 @@ def csv_single_param_power(
                 or res_array[i, 0] == nan or res_array[i, 1] == nan):
             res_array[i, ] = nan
 
-    res_dict = data_array_to_results(
+    res_dict = two_col_array_to_results(
         arrival_enum=arrival_enum,
         metric=metric,
         param_array=param_array,
@@ -149,7 +149,7 @@ def grid_param_single_dm1(perform_param: PerformParameter,
             if i % floor(total_iterations / 10) == 0:
                 print("iteration {0} of {1}".format(i, total_iterations))
 
-    return data_array_to_results(
+    return two_col_array_to_results(
         arrival_enum=ArrivalEnum.DM1,
         metric=metric,
         param_array=param_array,

@@ -5,7 +5,7 @@ from math import floor, nan
 import numpy as np
 
 from fat_tree.fat_cross_perform import FatCrossPerform
-from library.array_to_results import data_array_to_results
+from library.array_to_results import two_col_array_to_results
 from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
@@ -65,7 +65,7 @@ def grid_param_simple_exp(delay: int, opt_method: OptMethod, metric: str,
 
                     i += 1
 
-    return data_array_to_results(
+    return two_col_array_to_results(
         arrival_enum=ArrivalEnum.DM1,
         metric=metric,
         param_array=param_array,

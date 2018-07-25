@@ -8,7 +8,7 @@ import numpy as np
 from tqdm import tqdm
 
 from fat_tree.fat_cross_perform import FatCrossPerform
-from library.array_to_results import data_array_to_results
+from library.array_to_results import two_col_array_to_results
 from library.compare_old_new import compute_improvement
 from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
@@ -120,7 +120,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
                 or res_array[i, 1] == nan):
             res_array[i, ] = nan
 
-    res_dict = data_array_to_results(
+    res_dict = two_col_array_to_results(
         arrival_enum=arrival_enum,
         param_array=param_array,
         res_array=res_array,
