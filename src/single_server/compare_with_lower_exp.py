@@ -93,7 +93,7 @@ def output_lower_exp_dm1_opt(s: int,
 
 def csv_single_param_power(start_time: int, delta_time: int,
                            mc_dist: MonteCarloDist) -> dict:
-    total_iterations = 10**2
+    total_iterations = 10**3
     metric = "relative"
 
     delta = 0.05
@@ -167,7 +167,7 @@ def csv_single_param_power(start_time: int, delta_time: int,
 
 if __name__ == '__main__':
     # S = 30
-    # DELTA_TIME = 10
+    # DELTA_TIME = 5
     #
     # OUTPUT5 = PerformParameter(
     #     perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     # BOUND_LIST = [(0.05, 10.0)]
     # BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
     # DELTA = 0.05
-    # PRINT_X = False
+    # PRINT_X = True
     #
     # CR_SERVER = ConstantRate(SERVICE_RATE)
     #

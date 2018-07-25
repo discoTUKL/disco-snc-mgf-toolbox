@@ -131,14 +131,11 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     mean_new_improvement = np.nanmean(improvement_vec_news)
 
     count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
-    count_nan_standard = count_nan[0]
-    count_nan_power = count_nan[1]
     count_nan_exp = count_nan[2]
 
-    print("total_iterations", res_array.shape[0])
-    print("count_nan_standard", count_nan_standard)
-    print("count_nan_power", count_nan_power)
-    print("count_nan_exp", count_nan_exp)
+    if count_nan_exp > int(res_array.shape[0] / 10):
+        warn("way too many nan's: {0} out of {1}!".format(
+            count_nan_exp, int(res_array.shape[0])))
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
 
