@@ -26,7 +26,8 @@ from optimization.opt_method import OptMethod
 
 
 def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
-                              perform_param: PerformParameter, opt_method: OptMethod,
+                              perform_param: PerformParameter,
+                              opt_method: OptMethod,
                               mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice."""
     total_iterations = 10**4
