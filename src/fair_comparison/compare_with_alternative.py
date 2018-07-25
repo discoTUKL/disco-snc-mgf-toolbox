@@ -9,7 +9,7 @@ from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import mgf
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrivals_alternative import regulated_alternative
+from nc_processes.arrivals_alternative import mgf_regulated_arrive
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
                                              TokenBucketConstant)
@@ -45,7 +45,7 @@ def delay_prob_leaky(theta: float,
 
     for _j in range(t):
         try:
-            summand = regulated_alternative(
+            summand = mgf_regulated_arrive(
                 theta=theta,
                 delta_time=_j,
                 sigma_single=sigma_single,
@@ -151,7 +151,7 @@ def delay_leaky(theta: float,
 
     for _j in range(t):
         try:
-            summand = regulated_alternative(
+            summand = mgf_regulated_arrive(
                 theta=theta,
                 delta_time=_j,
                 sigma_single=sigma_single,

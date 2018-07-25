@@ -6,8 +6,8 @@ from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import mgf
 
 
-def fbm(theta: float, delta_time: int, lamb: float, sigma: float,
-        hurst: float) -> float:
+def mgf_fbm(theta: float, delta_time: int, lamb: float, sigma: float,
+            hurst: float) -> float:
     if theta <= 0:
         raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
@@ -22,11 +22,11 @@ def fbm(theta: float, delta_time: int, lamb: float, sigma: float,
                (0.5 * (sigma * theta)**2) * delta_time**(2 * hurst))
 
 
-def regulated_alternative(theta: float,
-                          delta_time: int,
-                          sigma_single: float,
-                          rho_single: float,
-                          n: int = 1) -> float:
+def mgf_regulated_arrive(theta: float,
+                         delta_time: int,
+                         sigma_single: float,
+                         rho_single: float,
+                         n: int = 1) -> float:
     if theta <= 0:
         raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
@@ -34,3 +34,14 @@ def regulated_alternative(theta: float,
 
     return 1 + rho_delta / (sigma_single + rho_delta) * (
         mgf(theta=theta, x=n * (sigma_single + rho_delta)) - 1)
+
+
+def expect_dm1(theta: float, delta_time: int, lamb: float) -> float:
+    if theta <= 0:
+        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
+    return theta * delta_time / lamb
+
+
+def long_term_dm1(lamb: float) -> float:
+    return 1 / lamb
