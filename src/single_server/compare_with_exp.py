@@ -336,56 +336,63 @@ if __name__ == '__main__':
 
     DELAY10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
-    #
-    # LAMB = 1.0
-    # SERVICE_RATE = 1.1
-    #
-    # BOUND_LIST = [(0.05, 10.0)]
-    # BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
-    # DELTA = 0.05
-    # PRINT_X = True
-    #
-    # CR_SERVER = ConstantRate(SERVICE_RATE)
-    #
-    # EXP_ARRIVAL = DM1(lamb=LAMB)
-    #
-    # DM1_SINGLE = SingleServerPerform(
-    #     arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=OUTPUT5)
-    #
-    # DM1_STANDARD_OPT = Optimize(
-    #     setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
-    #         bound_list=BOUND_LIST, delta=DELTA)
-    # print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
-    #
-    # DM1_POWER_OPT = OptimizeNew(
-    #     setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
-    #         bound_list=BOUND_LIST_NEW, delta=DELTA)
-    # print("DM1 Power Opt: ", DM1_POWER_OPT)
-    #
-    # DM1_EXP_OPT = output_lower_exp_dm1_opt(
-    #     s=S, t=S + DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
-    # print("DM1 Exp Opt: ", DM1_EXP_OPT)
 
-    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
-    MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
+    LAMB = 1.0
+    SERVICE_RATE = 1.1
 
-    def fun1():
-        print(
-            csv_single_param_power(
-                start_time=30, perform_param=OUTPUT5, mc_dist=MC_UNIF20))
+    BOUND_LIST = [(0.05, 10.0)]
+    BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
+    DELTA = 0.05
+    PRINT_X = False
 
-    def fun2():
-        print(
-            csv_single_param_power(
-                start_time=30, perform_param=OUTPUT5, mc_dist=MC_EXP1))
+    CR_SERVER = ConstantRate(SERVICE_RATE)
 
-    def run_in_parallel(*funcs):
-        proc = []
-        for func in funcs:
-            process_instance = Process(target=func)
-            process_instance.start()
-            proc.append(process_instance)
-        for process_instance in proc:
-            process_instance.join()
+    EXP_ARRIVAL = DM1(lamb=LAMB)
 
-    run_in_parallel(fun1, fun2)
+    DM1_SINGLE = SingleServerPerform(
+        arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=OUTPUT5)
+
+    DM1_STANDARD_OPT = Optimize(
+        setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
+            bound_list=BOUND_LIST, delta=DELTA)
+    print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
+
+    DM1_POWER_OPT = OptimizeNew(
+        setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
+            bound_list=BOUND_LIST_NEW, delta=DELTA)
+    print("DM1 Power Opt: ", DM1_POWER_OPT)
+
+    DM1_EXP_LOWER_OPT = output_lower_exp_dm1_opt(
+        s=S, t=S + DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
+    print("DM1 Exp Lower Opt: ", DM1_EXP_LOWER_OPT)
+
+    DM1_EXP_TAYLOR_OPT = output_taylor_exp_dm1_opt(
+        s=S, t=S + DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
+    print("DM1 Exp Taylor Opt: ", DM1_EXP_TAYLOR_OPT)
+
+    # TODO: Find a reason for the negative difference!
+    print("diff: ", DM1_EXP_TAYLOR_OPT - DM1_EXP_LOWER_OPT)
+
+    # MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
+    # MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
+    #
+    # def fun1():
+    #     print(
+    #         csv_single_param_power(
+    #             start_time=30, perform_param=OUTPUT5, mc_dist=MC_UNIF20))
+    #
+    # def fun2():
+    #     print(
+    #         csv_single_param_power(
+    #             start_time=30, perform_param=OUTPUT5, mc_dist=MC_EXP1))
+    #
+    # def run_in_parallel(*funcs):
+    #     proc = []
+    #     for func in funcs:
+    #         process_instance = Process(target=func)
+    #         process_instance.start()
+    #         proc.append(process_instance)
+    #     for process_instance in proc:
+    #         process_instance.join()
+    #
+    # run_in_parallel(fun1, fun2)
