@@ -38,3 +38,7 @@ def mgf_regulated_arrive(theta: float,
 
 def expect_dm1(delta_time: int, lamb: float) -> float:
     return delta_time / lamb
+
+
+def var_dm1(delta_time: int, lamb: float) -> float:
+    return delta_time / (lamb ** 2)

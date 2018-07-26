@@ -1,6 +1,7 @@
 """This file takes arrays and writes them into dictionaries"""
 
 from warnings import warn
+import sys
 
 import numpy as np
 
@@ -41,6 +42,10 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     if count_nan_standard > int(res_array.shape[0] / 10):
         warn("way too many nan's: {0} out of {1}!".format(
             count_nan_standard, int(res_array.shape[0])))
+
+        if count_nan_standard > int(res_array.shape[0] * 0.7):
+            warn("result in useless")
+            sys.exit(1)
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
 
@@ -134,8 +139,12 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     count_nan_exp = count_nan[2]
 
     if count_nan_exp > int(res_array.shape[0] / 10):
-        warn("way too many nan's: {0} out of {1}!".format(
+        warn("way too many nan's: {0} nan out of {1}!".format(
             count_nan_exp, int(res_array.shape[0])))
+
+        if count_nan_exp > int(res_array.shape[0] * 0.7):
+            warn("result in useless")
+            sys.exit(1)
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
 

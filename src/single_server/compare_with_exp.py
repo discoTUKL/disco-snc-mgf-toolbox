@@ -17,12 +17,25 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import DM1
 from nc_processes.arrival_enum import ArrivalEnum
-from nc_processes.arrivals_alternative import expect_dm1
+from nc_processes.arrivals_alternative import expect_dm1, var_dm1
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.service_alternative import expect_const_rate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
+
+
+def f_exp(theta: float, i: int, s: int, t: int, lamb: float, rate: float,
+          a: float) -> float:
+    return a**(exp(theta * expect_dm1(delta_time=t - i, lamb=lamb) -
+                   expect_const_rate(delta_time=s - i, rate=rate)))
+
+
+def f_double_prime(theta: float, i: int, s: int, t: int, lamb: float,
+                   rate: float, a: float) -> float:
+    help_1 = exp(
+        theta * (expect_dm1(delta_time=t - i, lamb=lamb) - rate * (s - i)))
+    return (theta**2) * log(a) * help_1 * (a**help_1) * (log(a) * help_1 + 1)
 
 
 def output_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
@@ -45,10 +58,8 @@ def output_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
 
     for _i in range(s + 1):
         try:
-            exponent = theta * expect_dm1(
-                delta_time=t - _i, lamb=lamb) - expect_const_rate(
-                    delta_time=s - _i, rate=rate)
-            summand = a**exp(exponent)
+            summand = f_exp(
+                theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate, a=a)
         except (FloatingPointError, OverflowError):
             summand = inf
 
@@ -92,6 +103,40 @@ def output_lower_exp_dm1_opt(s: int,
     return grid_res[1]
 
 
+def output_taylor_exp_dm1(theta: float, s: int, t: int, lamb: float,
+                          rate: float, a: float) -> float:
+    if t < s:
+        raise ValueError("sum index t = {0} must be >= s={1}".format(t, s))
+
+    if theta <= 0:
+        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
+    if a <= 1:
+        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
+
+    if 1 / lamb >= rate:
+        raise ParameterOutOfBounds(
+            ("The arrivals' long term rate has to be smaller than"
+             "the service's long term rate {1}").format(1 / lamb, rate))
+
+    sum_j = 0.0
+
+    for _i in range(s + 1):
+        try:
+            summand = f_exp(
+                theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate,
+                a=a) + 0.5 * f_double_prime(
+                    theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate,
+                    a=a) * var_dm1(
+                        delta_time=t - _i, lamb=lamb)
+        except (FloatingPointError, OverflowError):
+            summand = inf
+
+        sum_j += summand
+
+    return log(sum_j) / log(a)
+
+
 def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
                              rate: float, a: float) -> float:
     if theta <= 0:
@@ -109,10 +154,8 @@ def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
 
     for _i in range(t + 1):
         try:
-            exponent = theta * expect_dm1(
-                delta_time=t - _i, lamb=lamb) - expect_const_rate(
-                    delta_time=t + delay - _i, rate=rate)
-            summand = a**exp(exponent)
+            summand = f_exp(
+                theta=theta, i=_i, s=t + delay, t=t, lamb=lamb, rate=rate, a=a)
         except (FloatingPointError, OverflowError):
             summand = inf
 
@@ -158,7 +201,7 @@ def delay_prob_lower_exp_dm1_opt(t: int,
 
 def csv_single_param_power(start_time: int, perform_param: PerformParameter,
                            mc_dist: MonteCarloDist) -> dict:
-    total_iterations = 10**3
+    total_iterations = 10**2
     metric = "relative"
 
     delta = 0.05
@@ -203,10 +246,26 @@ def csv_single_param_power(start_time: int, perform_param: PerformParameter,
                 lamb=param_array[i, 0],
                 rate=param_array[i, 1])
 
+        elif perform_param.perform_metric == PerformEnum.DELAY_PROB:
+            res_array[i, 2] = delay_prob_lower_exp_dm1_opt(
+                t=start_time,
+                delay=perform_param.value,
+                lamb=param_array[i, 0],
+                rate=param_array[i, 1])
+
+            if res_array[i, 1] >= 1.0:
+                res_array[i, ] = nan
+
+        else:
+            raise NameError("{0} is an infeasible performance metric".format(
+                perform_param.perform_metric))
+
         if (res_array[i, 0] == inf or res_array[i, 1] == inf
                 or res_array[i, 2] == inf or res_array[i, 0] == nan
                 or res_array[i, 1] == nan or res_array[i, 2] == nan):
             res_array[i, ] = nan
+
+    # print("exponential results", res_array[:, 2])
 
     res_dict = three_col_array_to_results(
         arrival_enum=ArrivalEnum.DM1, metric=metric, res_array=res_array)
@@ -236,6 +295,9 @@ if __name__ == '__main__':
 
     OUTPUT5 = PerformParameter(
         perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
+
+    DELAY10 = PerformParameter(
+        perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
     #
     # LAMB = 1.0
     # SERVICE_RATE = 1.1
@@ -272,12 +334,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_power(
-                start_time=30, perform_param=OUTPUT5, mc_dist=MC_UNIF20))
+                start_time=30, perform_param=DELAY10, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
             csv_single_param_power(
-                start_time=30, perform_param=OUTPUT5, mc_dist=MC_EXP1))
+                start_time=30, perform_param=DELAY10, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []
