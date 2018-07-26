@@ -137,6 +137,41 @@ def output_taylor_exp_dm1(theta: float, s: int, t: int, lamb: float,
     return log(sum_j) / log(a)
 
 
+def output_taylor_exp_dm1_opt(s: int,
+                              t: int,
+                              lamb: float,
+                              rate: float,
+                              print_x: bool = False) -> float:
+    def helper_fun(param_list: List[float]) -> float:
+        try:
+            return output_taylor_exp_dm1(
+                theta=param_list[0],
+                s=s,
+                t=t,
+                lamb=lamb,
+                rate=rate,
+                a=param_list[1])
+        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
+            return inf
+
+    # np.seterr("raise")
+    np.seterr("warn")
+
+    try:
+        grid_res = scipy.optimize.brute(
+            func=helper_fun,
+            ranges=(slice(0.05, 10.0, 0.05), slice(1.05, 5.0, 0.05)),
+            full_output=True)
+    except (FloatingPointError, OverflowError):
+        return inf
+
+    if print_x:
+        print("grid search optimal parameter: theta={0}, a={1}".format(
+            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
+
+    return grid_res[1]
+
+
 def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
                              rate: float, a: float) -> float:
     if theta <= 0:
@@ -334,12 +369,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_power(
-                start_time=30, perform_param=DELAY10, mc_dist=MC_UNIF20))
+                start_time=30, perform_param=OUTPUT5, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
             csv_single_param_power(
-                start_time=30, perform_param=DELAY10, mc_dist=MC_EXP1))
+                start_time=30, perform_param=OUTPUT5, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []
