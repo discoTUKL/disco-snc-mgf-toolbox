@@ -234,6 +234,9 @@ def delay_prob_lower_exp_dm1_opt(t: int,
     return grid_res[1]
 
 
+# TODO: Taylor for delay!
+
+
 def csv_single_param_power(start_time: int, perform_param: PerformParameter,
                            mc_dist: MonteCarloDist) -> dict:
     total_iterations = 10**2
