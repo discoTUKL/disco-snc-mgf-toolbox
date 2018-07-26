@@ -6,7 +6,7 @@ from nc_operations.perform_enum import PerformEnum
 class PerformParameter(object):
     """Performance parameter class"""
 
-    def __init__(self, perform_metric: PerformEnum, value) -> None:
+    def __init__(self, perform_metric: PerformEnum, value: float) -> None:
         self.perform_metric = perform_metric
         self.value = value
 
@@ -14,7 +14,7 @@ class PerformParameter(object):
         return str(self.perform_metric.name)
 
     def to_name_value(self) -> str:
-        return self.to_name() + "_" + str(self.value)
+        return "{0}_{1}".format(self.to_name(), str(self.value))
 
     # TODO: get to know how to use @property
     # @property

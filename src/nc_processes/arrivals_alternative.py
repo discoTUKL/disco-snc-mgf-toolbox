@@ -36,12 +36,5 @@ def mgf_regulated_arrive(theta: float,
         mgf(theta=theta, x=n * (sigma_single + rho_delta)) - 1)
 
 
-def expect_dm1(theta: float, delta_time: int, lamb: float) -> float:
-    if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
-
-    return theta * delta_time / lamb
-
-
-def long_term_dm1(lamb: float) -> float:
-    return 1 / lamb
+def expect_dm1(delta_time: int, lamb: float) -> float:
+    return delta_time / lamb

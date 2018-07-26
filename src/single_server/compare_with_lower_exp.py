@@ -17,10 +17,9 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import DM1
 from nc_processes.arrival_enum import ArrivalEnum
-from nc_processes.arrivals_alternative import expect_dm1, long_term_dm1
+from nc_processes.arrivals_alternative import expect_dm1
 from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.service_alternative import (expect_const_rate,
-                                              long_term_const_rate)
+from nc_processes.service_alternative import expect_const_rate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
@@ -31,22 +30,24 @@ def output_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
     if t < s:
         raise ValueError("sum index t = {0} must be >= s={1}".format(t, s))
 
+    if theta <= 0:
+        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
     if a <= 1:
         raise ParameterOutOfBounds("base a={0} must be >0".format(a))
 
-    if long_term_dm1(lamb=lamb) >= long_term_const_rate(rate=rate):
+    if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
             ("The arrivals' long term rate has to be smaller than"
-             "the service's long term rate {1}").format(
-                 long_term_dm1(lamb=lamb), long_term_const_rate(rate=rate)))
+             "the service's long term rate {1}").format(1 / lamb, rate))
 
     sum_j = 0.0
 
     for _i in range(s + 1):
         try:
-            exponent = expect_dm1(
-                theta=theta, delta_time=t - _i, lamb=lamb) - expect_const_rate(
-                    theta=theta, delta_time=s - _i, rate=rate)
+            exponent = theta * expect_dm1(
+                delta_time=t - _i, lamb=lamb) - expect_const_rate(
+                    delta_time=s - _i, rate=rate)
             summand = a**exp(exponent)
         except (FloatingPointError, OverflowError):
             summand = inf
@@ -91,7 +92,71 @@ def output_lower_exp_dm1_opt(s: int,
     return grid_res[1]
 
 
-def csv_single_param_power(start_time: int, delta_time: int,
+def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
+                             rate: float, a: float) -> float:
+    if theta <= 0:
+        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
+    if a <= 1:
+        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
+
+    if 1 / lamb >= rate:
+        raise ParameterOutOfBounds(
+            ("The arrivals' long term rate has to be smaller than"
+             "the service's long term rate {1}").format(1 / lamb, rate))
+
+    sum_j = 0.0
+
+    for _i in range(t + 1):
+        try:
+            exponent = theta * expect_dm1(
+                delta_time=t - _i, lamb=lamb) - expect_const_rate(
+                    delta_time=t + delay - _i, rate=rate)
+            summand = a**exp(exponent)
+        except (FloatingPointError, OverflowError):
+            summand = inf
+
+        sum_j += summand
+
+    return log(sum_j) / log(a)
+
+
+def delay_prob_lower_exp_dm1_opt(t: int,
+                                 delay: int,
+                                 lamb: float,
+                                 rate: float,
+                                 print_x: bool = False) -> float:
+    def helper_fun(param_list: List[float]) -> float:
+        try:
+            return delay_prob_lower_exp_dm1(
+                theta=param_list[0],
+                t=t,
+                delay=delay,
+                lamb=lamb,
+                rate=rate,
+                a=param_list[1])
+        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
+            return inf
+
+    # np.seterr("raise")
+    np.seterr("warn")
+
+    try:
+        grid_res = scipy.optimize.brute(
+            func=helper_fun,
+            ranges=(slice(0.05, 10.0, 0.05), slice(1.05, 5.0, 0.05)),
+            full_output=True)
+    except (FloatingPointError, OverflowError):
+        return inf
+
+    if print_x:
+        print("grid search optimal parameter: theta={0}, a={1}".format(
+            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
+
+    return grid_res[1]
+
+
+def csv_single_param_power(start_time: int, perform_param: PerformParameter,
                            mc_dist: MonteCarloDist) -> dict:
     total_iterations = 10**3
     metric = "relative"
@@ -117,8 +182,7 @@ def csv_single_param_power(start_time: int, delta_time: int,
         setting = SingleServerPerform(
             arr=DM1(lamb=param_array[i, 0]),
             const_rate=ConstantRate(rate=param_array[i, 1]),
-            perform_param=PerformParameter(
-                perform_metric=PerformEnum.OUTPUT, value=delta_time))
+            perform_param=perform_param)
 
         theta_bounds = [(0.1, 4.0)]
         bound_array = theta_bounds[:]
@@ -132,11 +196,12 @@ def csv_single_param_power(start_time: int, delta_time: int,
         res_array[i, 1] = OptimizeNew(setting_new=setting).grid_search(
             bound_list=bound_array_power, delta=delta)
 
-        res_array[i, 2] = output_lower_exp_dm1_opt(
-            s=start_time,
-            t=start_time + delta_time,
-            lamb=param_array[i, 0],
-            rate=param_array[i, 1])
+        if perform_param.perform_metric == PerformEnum.OUTPUT:
+            res_array[i, 2] = output_lower_exp_dm1_opt(
+                s=start_time,
+                t=start_time + perform_param.value,
+                lamb=param_array[i, 0],
+                rate=param_array[i, 1])
 
         if (res_array[i, 0] == inf or res_array[i, 1] == inf
                 or res_array[i, 2] == inf or res_array[i, 0] == nan
@@ -147,7 +212,7 @@ def csv_single_param_power(start_time: int, delta_time: int,
         arrival_enum=ArrivalEnum.DM1, metric=metric, res_array=res_array)
 
     res_dict.update({
-        "delta_time": delta_time,
+        "delta_time": perform_param.value,
         "optimization": "grid_search",
         "metric": "relative",
         "iterations": total_iterations,
@@ -156,8 +221,8 @@ def csv_single_param_power(start_time: int, delta_time: int,
     })
 
     with open(
-            "single_output_DM1_results_MC{0}_power_exp.csv".format(
-                mc_dist.to_name()), 'w') as csv_file:
+            "single_{0}_DM1_results_MC{1}_power_exp.csv".format(
+                perform_param.to_name(), mc_dist.to_name()), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])
@@ -166,11 +231,11 @@ def csv_single_param_power(start_time: int, delta_time: int,
 
 
 if __name__ == '__main__':
-    # S = 30
-    # DELTA_TIME = 5
-    #
-    # OUTPUT5 = PerformParameter(
-    #     perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
+    S = 30
+    DELTA_TIME = 5
+
+    OUTPUT5 = PerformParameter(
+        perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
     #
     # LAMB = 1.0
     # SERVICE_RATE = 1.1
@@ -207,12 +272,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_power(
-                start_time=30, delta_time=5, mc_dist=MC_UNIF20))
+                start_time=30, perform_param=OUTPUT5, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
             csv_single_param_power(
-                start_time=30, delta_time=5, mc_dist=MC_EXP1))
+                start_time=30, perform_param=OUTPUT5, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []
