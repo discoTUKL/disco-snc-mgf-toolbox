@@ -43,16 +43,16 @@ def output_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
     if t < s:
         raise ValueError("sum index t = {0} must be >= s={1}".format(t, s))
 
-    if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
-
-    if a <= 1:
-        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
-
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
             ("The arrivals' long term rate has to be smaller than"
              "the service's long term rate {1}").format(1 / lamb, rate))
+
+    if theta <= 0:
+        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
+    if a <= 1:
+        raise ParameterOutOfBounds("base a = {0} must be >0".format(a))
 
     sum_j = 0.0
 
@@ -106,18 +106,20 @@ def output_lower_exp_dm1_opt(s: int,
 def output_taylor_exp_dm1(theta: float, s: int, t: int, lamb: float,
                           rate: float, a: float) -> float:
     if t < s:
-        raise ValueError("sum index t = {0} must be >= s={1}".format(t, s))
+        raise ValueError(
+            "sum index t = {0} must be greater than or equal to  s = {1}".
+            format(t, s))
+
+    if 1 / lamb >= rate:
+        raise ParameterOutOfBounds(
+            ("The arrivals' long term rate {0} has to be smaller than"
+             "the service's long term rate {1}").format(1 / lamb, rate))
 
     if theta <= 0:
         raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
     if a <= 1:
         raise ParameterOutOfBounds("base a={0} must be >0".format(a))
-
-    if 1 / lamb >= rate:
-        raise ParameterOutOfBounds(
-            ("The arrivals' long term rate has to be smaller than"
-             "the service's long term rate {1}").format(1 / lamb, rate))
 
     sum_j = 0.0
 
@@ -174,16 +176,16 @@ def output_taylor_exp_dm1_opt(s: int,
 
 def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
                              rate: float, a: float) -> float:
+    if 1 / lamb >= rate:
+        raise ParameterOutOfBounds(
+            ("The arrivals' long term rate {0} has to be smaller than"
+             "the service's long term rate {1}").format(1 / lamb, rate))
+
     if theta <= 0:
         raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
     if a <= 1:
         raise ParameterOutOfBounds("base a={0} must be >0".format(a))
-
-    if 1 / lamb >= rate:
-        raise ParameterOutOfBounds(
-            ("The arrivals' long term rate has to be smaller than"
-             "the service's long term rate {1}").format(1 / lamb, rate))
 
     sum_j = 0.0
 
@@ -222,7 +224,7 @@ def delay_prob_lower_exp_dm1_opt(t: int,
     try:
         grid_res = scipy.optimize.brute(
             func=helper_fun,
-            ranges=(slice(0.05, 10.0, 0.05), slice(1.05, 5.0, 0.05)),
+            ranges=(slice(0.05, 4.0, 0.05), slice(1.05, 10.0, 0.05)),
             full_output=True)
     except (FloatingPointError, OverflowError):
         return inf
@@ -234,12 +236,75 @@ def delay_prob_lower_exp_dm1_opt(t: int,
     return grid_res[1]
 
 
-# TODO: Taylor for delay!
+def delay_prob_taylor_exp_dm1(theta: float, t: int, delay: int, lamb: float,
+                              rate: float, a: float) -> float:
+    if 1 / lamb >= rate:
+        raise ParameterOutOfBounds(
+            ("The arrivals' long term rate {0} has to be smaller than"
+             "the service's long term rate {1}").format(1 / lamb, rate))
+
+    if theta <= 0:
+        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
+    if a <= 1:
+        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
+
+    sum_j = 0.0
+
+    for _i in range(t + 1):
+        try:
+            summand = f_exp(
+                theta=theta, i=_i, s=t + delay, t=t, lamb=lamb, rate=rate, a=a
+            ) + 0.5 * f_double_prime(
+                theta=theta, i=_i, s=t + delay, t=t, lamb=lamb, rate=rate,
+                a=a) * var_dm1(
+                    delta_time=t - _i, lamb=lamb)
+        except (FloatingPointError, OverflowError):
+            summand = inf
+
+        sum_j += summand
+
+    return log(sum_j) / log(a)
+
+
+def delay_prob_taylor_exp_dm1_opt(t: int,
+                                  delay: int,
+                                  lamb: float,
+                                  rate: float,
+                                  print_x: bool = False) -> float:
+    def helper_fun(param_list: List[float]) -> float:
+        try:
+            return delay_prob_taylor_exp_dm1(
+                theta=param_list[0],
+                t=t,
+                delay=delay,
+                lamb=lamb,
+                rate=rate,
+                a=param_list[1])
+        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
+            return inf
+
+    # np.seterr(all="raise")
+    np.seterr(all="warn")
+
+    try:
+        grid_res = scipy.optimize.brute(
+            func=helper_fun,
+            ranges=(slice(0.05, 4.0, 0.05), slice(1.05, 10.0, 0.05)),
+            full_output=True)
+    except (FloatingPointError, OverflowError):
+        return inf
+
+    if print_x:
+        print("grid search optimal parameter: theta={0}, a={1}".format(
+            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
+
+    return grid_res[1]
 
 
 def csv_single_param_power(start_time: int, perform_param: PerformParameter,
                            mc_dist: MonteCarloDist) -> dict:
-    total_iterations = 10**2
+    total_iterations = 10**3
     metric = "relative"
 
     delta = 0.05
@@ -254,7 +319,7 @@ def csv_single_param_power(start_time: int, perform_param: PerformParameter,
         param_array = np.random.exponential(
             scale=mc_dist.param_list[0], size=size_array)
     else:
-        raise ValueError("Distribution parameter {0} is infeasible".format(
+        raise NameError("Distribution parameter {0} is infeasible".format(
             mc_dist.mc_enum))
 
     res_array = np.empty([total_iterations, 3])
@@ -285,7 +350,7 @@ def csv_single_param_power(start_time: int, perform_param: PerformParameter,
                 rate=param_array[i, 1])
 
         elif perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            res_array[i, 2] = delay_prob_lower_exp_dm1_opt(
+            res_array[i, 2] = delay_prob_taylor_exp_dm1_opt(
                 t=start_time,
                 delay=perform_param.value,
                 lamb=param_array[i, 0],
@@ -328,71 +393,70 @@ def csv_single_param_power(start_time: int, perform_param: PerformParameter,
 
 
 if __name__ == '__main__':
-    S = 30
-    DELTA_TIME = 5
+    START = 30
+    DELTA_TIME = 10
 
-    OUTPUT5 = PerformParameter(
-        perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
+    # OUTPUT5 = PerformParameter(
+    #     perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
 
     DELAY10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
 
-    LAMB = 1.0
-    SERVICE_RATE = 1.1
-
-    BOUND_LIST = [(0.05, 10.0)]
-    BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
-    DELTA = 0.05
-    PRINT_X = False
-
-    CR_SERVER = ConstantRate(SERVICE_RATE)
-
-    EXP_ARRIVAL = DM1(lamb=LAMB)
-
-    DM1_SINGLE = SingleServerPerform(
-        arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=OUTPUT5)
-
-    DM1_STANDARD_OPT = Optimize(
-        setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
-            bound_list=BOUND_LIST, delta=DELTA)
-    print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
-
-    DM1_POWER_OPT = OptimizeNew(
-        setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
-            bound_list=BOUND_LIST_NEW, delta=DELTA)
-    print("DM1 Power Opt: ", DM1_POWER_OPT)
-
-    DM1_EXP_LOWER_OPT = output_lower_exp_dm1_opt(
-        s=S, t=S + DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
-    print("DM1 Exp Lower Opt: ", DM1_EXP_LOWER_OPT)
-
-    DM1_EXP_TAYLOR_OPT = output_taylor_exp_dm1_opt(
-        s=S, t=S + DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
-    print("DM1 Exp Taylor Opt: ", DM1_EXP_TAYLOR_OPT)
-
-    # TODO: Find a reason for the negative difference!
-    print("diff: ", DM1_EXP_TAYLOR_OPT - DM1_EXP_LOWER_OPT)
-
-    # MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
-    # MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
+    # LAMB = 1.0
+    # SERVICE_RATE = 1.2
     #
-    # def fun1():
-    #     print(
-    #         csv_single_param_power(
-    #             start_time=30, perform_param=OUTPUT5, mc_dist=MC_UNIF20))
+    # BOUND_LIST = [(0.05, 10.0)]
+    # BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
+    # DELTA = 0.05
+    # PRINT_X = False
     #
-    # def fun2():
-    #     print(
-    #         csv_single_param_power(
-    #             start_time=30, perform_param=OUTPUT5, mc_dist=MC_EXP1))
+    # CR_SERVER = ConstantRate(SERVICE_RATE)
     #
-    # def run_in_parallel(*funcs):
-    #     proc = []
-    #     for func in funcs:
-    #         process_instance = Process(target=func)
-    #         process_instance.start()
-    #         proc.append(process_instance)
-    #     for process_instance in proc:
-    #         process_instance.join()
+    # EXP_ARRIVAL = DM1(lamb=LAMB)
     #
-    # run_in_parallel(fun1, fun2)
+    # DM1_SINGLE = SingleServerPerform(
+    #     arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=DELAY10)
+    #
+    # DM1_STANDARD_OPT = Optimize(
+    #     setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
+    #         bound_list=BOUND_LIST, delta=DELTA)
+    # print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
+    #
+    # DM1_POWER_OPT = OptimizeNew(
+    #     setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
+    #         bound_list=BOUND_LIST_NEW, delta=DELTA)
+    # print("DM1 Power Opt: ", DM1_POWER_OPT)
+    #
+    # DM1_EXP_LOWER_OPT = delay_prob_lower_exp_dm1_opt(
+    #     t=S, delay=DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
+    # print("DM1 Exp Lower Opt: ", DM1_EXP_LOWER_OPT)
+    #
+    # DM1_EXP_TAYLOR_OPT = delay_prob_taylor_exp_dm1_opt(
+    #     t=S, delay=DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
+    # print("DM1 Exp Taylor Opt: ", DM1_EXP_TAYLOR_OPT)
+    #
+    # print("difference: ", DM1_EXP_TAYLOR_OPT - DM1_EXP_LOWER_OPT)
+
+    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
+    MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
+
+    def fun1():
+        print(
+            csv_single_param_power(
+                start_time=START, perform_param=DELAY10, mc_dist=MC_UNIF20))
+
+    def fun2():
+        print(
+            csv_single_param_power(
+                start_time=START, perform_param=DELAY10, mc_dist=MC_EXP1))
+
+    def run_in_parallel(*funcs):
+        proc = []
+        for func in funcs:
+            process_instance = Process(target=func)
+            process_instance.start()
+            proc.append(process_instance)
+        for process_instance in proc:
+            process_instance.join()
+
+    run_in_parallel(fun1, fun2)

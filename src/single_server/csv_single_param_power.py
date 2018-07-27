@@ -41,7 +41,7 @@ def csv_single_param_power(
         param_array = np.random.exponential(
             scale=mc_dist.param_list[0], size=size_array)
     else:
-        raise ValueError("Distribution parameter {0} is infeasible".format(
+        raise NameError("Distribution parameter {0} is infeasible".format(
             mc_dist.mc_enum))
 
     res_array = np.empty([total_iterations, 2])
