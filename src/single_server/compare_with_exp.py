@@ -363,9 +363,9 @@ def csv_single_param_power(start_time: int, perform_param: PerformParameter,
             raise NameError("{0} is an infeasible performance metric".format(
                 perform_param.perform_metric))
 
-        if (res_array[i, 0] == inf or res_array[i, 1] == inf
-                or res_array[i, 2] == inf or res_array[i, 0] == nan
-                or res_array[i, 1] == nan or res_array[i, 2] == nan):
+        if (np.nanmin(res_array[i, :]) == inf or res_array[i, 0] == nan
+                or res_array[i, 1] == nan or res_array[i, 2] == nan
+                or np.nanmin(res_array[i, :]) >= 1.0):
             res_array[i, ] = nan
 
     # print("exponential results", res_array[:, 2])
@@ -437,7 +437,7 @@ if __name__ == '__main__':
     #
     # print("difference: ", DM1_EXP_TAYLOR_OPT - DM1_EXP_LOWER_OPT)
 
-    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
+    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[10.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
     def fun1():
