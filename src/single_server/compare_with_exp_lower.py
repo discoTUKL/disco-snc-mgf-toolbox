@@ -103,77 +103,6 @@ def output_lower_exp_dm1_opt(s: int,
     return grid_res[1]
 
 
-def output_taylor_exp_dm1(theta: float, s: int, t: int, lamb: float,
-                          rate: float, a: float) -> float:
-    if t < s:
-        raise ValueError(
-            "sum index t = {0} must be greater than or equal to  s = {1}".
-            format(t, s))
-
-    if 1 / lamb >= rate:
-        raise ParameterOutOfBounds(
-            ("The arrivals' long term rate {0} has to be smaller than"
-             "the service's long term rate {1}").format(1 / lamb, rate))
-
-    if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
-
-    if a <= 1:
-        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
-
-    sum_j = 0.0
-
-    for _i in range(s + 1):
-        try:
-            summand = f_exp(
-                theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate,
-                a=a) + 0.5 * f_double_prime(
-                    theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate,
-                    a=a) * var_dm1(
-                        delta_time=t - _i, lamb=lamb)
-        except (FloatingPointError, OverflowError):
-            summand = inf
-
-        sum_j += summand
-
-    return log(sum_j) / log(a)
-
-
-def output_taylor_exp_dm1_opt(s: int,
-                              t: int,
-                              lamb: float,
-                              rate: float,
-                              print_x: bool = False) -> float:
-    def helper_fun(param_list: List[float]) -> float:
-        try:
-            return output_taylor_exp_dm1(
-                theta=param_list[0],
-                s=s,
-                t=t,
-                lamb=lamb,
-                rate=rate,
-                a=param_list[1])
-        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
-            return inf
-
-    # np.seterr("raise")
-    np.seterr("warn")
-
-    try:
-        grid_res = scipy.optimize.brute(
-            func=helper_fun,
-            ranges=(slice(0.05, 10.0, 0.05), slice(1.05, 5.0, 0.05)),
-            full_output=True)
-    except (FloatingPointError, OverflowError):
-        return inf
-
-    if print_x:
-        print("grid search optimal parameter: theta={0}, a={1}".format(
-            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
-
-    return grid_res[1]
-
-
 def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
                              rate: float, a: float) -> float:
     if 1 / lamb >= rate:
@@ -236,74 +165,9 @@ def delay_prob_lower_exp_dm1_opt(t: int,
     return grid_res[1]
 
 
-def delay_prob_taylor_exp_dm1(theta: float, t: int, delay: int, lamb: float,
-                              rate: float, a: float) -> float:
-    if 1 / lamb >= rate:
-        raise ParameterOutOfBounds(
-            ("The arrivals' long term rate {0} has to be smaller than"
-             "the service's long term rate {1}").format(1 / lamb, rate))
-
-    if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
-
-    if a <= 1:
-        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
-
-    sum_j = 0.0
-
-    for _i in range(t + 1):
-        try:
-            summand = f_exp(
-                theta=theta, i=_i, s=t + delay, t=t, lamb=lamb, rate=rate, a=a
-            ) + 0.5 * f_double_prime(
-                theta=theta, i=_i, s=t + delay, t=t, lamb=lamb, rate=rate,
-                a=a) * var_dm1(
-                    delta_time=t - _i, lamb=lamb)
-        except (FloatingPointError, OverflowError):
-            summand = inf
-
-        sum_j += summand
-
-    return log(sum_j) / log(a)
-
-
-def delay_prob_taylor_exp_dm1_opt(t: int,
-                                  delay: int,
-                                  lamb: float,
-                                  rate: float,
-                                  print_x: bool = False) -> float:
-    def helper_fun(param_list: List[float]) -> float:
-        try:
-            return delay_prob_taylor_exp_dm1(
-                theta=param_list[0],
-                t=t,
-                delay=delay,
-                lamb=lamb,
-                rate=rate,
-                a=param_list[1])
-        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
-            return inf
-
-    # np.seterr(all="raise")
-    np.seterr(all="warn")
-
-    try:
-        grid_res = scipy.optimize.brute(
-            func=helper_fun,
-            ranges=(slice(0.05, 4.0, 0.05), slice(1.05, 10.0, 0.05)),
-            full_output=True)
-    except (FloatingPointError, OverflowError):
-        return inf
-
-    if print_x:
-        print("grid search optimal parameter: theta={0}, a={1}".format(
-            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
-
-    return grid_res[1]
-
-
-def csv_single_param_power(start_time: int, perform_param: PerformParameter,
-                           mc_dist: MonteCarloDist) -> dict:
+def csv_single_param_exp_lower(start_time: int,
+                               perform_param: PerformParameter,
+                               mc_dist: MonteCarloDist) -> dict:
     total_iterations = 10**3
     metric = "relative"
 
@@ -350,7 +214,7 @@ def csv_single_param_power(start_time: int, perform_param: PerformParameter,
                 rate=param_array[i, 1])
 
         elif perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            res_array[i, 2] = delay_prob_taylor_exp_dm1_opt(
+            res_array[i, 2] = delay_prob_lower_exp_dm1_opt(
                 t=start_time,
                 delay=perform_param.value,
                 lamb=param_array[i, 0],
@@ -442,12 +306,12 @@ if __name__ == '__main__':
 
     def fun1():
         print(
-            csv_single_param_power(
+            csv_single_param_exp_lower(
                 start_time=START, perform_param=DELAY10, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
-            csv_single_param_power(
+            csv_single_param_exp_lower(
                 start_time=START, perform_param=DELAY10, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
