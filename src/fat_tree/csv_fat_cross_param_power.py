@@ -131,7 +131,6 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
         "T": perform_param.value,
         "optimization": opt_method.name,
         "metric": metric,
-        "iterations": total_iterations,
         "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string(),
         "number_servers": number_servers

@@ -104,7 +104,6 @@ def csv_single_param_power(
         "delta_time": perform_param.value,
         "optimization": opt_method.name,
         "metric": metric,
-        "iterations": total_iterations,
         "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string()
     })

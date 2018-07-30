@@ -251,7 +251,6 @@ def csv_single_param_exp_taylor(start_time: int,
         "delta_time": perform_param.value,
         "optimization": "grid_search",
         "metric": "relative",
-        "iterations": total_iterations,
         "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string()
     })

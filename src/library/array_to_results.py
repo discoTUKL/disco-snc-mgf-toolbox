@@ -18,6 +18,8 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
         raise NameError("Array must have 2 columns, not {0}".format(
             res_array.shape[1]))
 
+    number_rows = res_array.shape[0]
+
     if metric == "relative":
         improvement_vec = np.divide(res_array[:, 0], res_array[:, 1])
     elif metric == "absolute":
@@ -30,6 +32,8 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     opt_new_bound = res_array[row_max, 1]
     opt_improvement = improvement_vec[row_max]
     mean_improvement = np.nanmean(improvement_vec)
+
+    number_improved = np.sum(np.greater(res_array[:, 0], res_array[:, 1]))
 
     count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
     count_nan_standard = count_nan[0]
@@ -84,21 +88,13 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
 
     res_dict.update({
         "opt_standard_bound": opt_standard_bound,
-        "opt_new_bound": opt_new_bound
+        "opt_new_bound": opt_new_bound,
+        "optimum_improvement": opt_improvement,
+        "mean_improvement": mean_improvement,
+        "number improved": number_improved,
+        "iterations": number_rows,
+        "share improved": number_improved / number_rows
     })
-
-    if metric == "relative":
-        res_dict.update({
-            "optimum_improvement_factor": opt_improvement,
-            "mean_improvement_factor": mean_improvement
-        })
-    elif metric == "absolute":
-        res_dict.update({
-            "optimum_absolute_improvement": opt_improvement,
-            "mean_absolute_improvement": mean_improvement
-        })
-    else:
-        raise NameError("Metric parameter {0} is infeasible".format(metric))
 
     return res_dict
 
@@ -110,6 +106,8 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     if res_array.shape[1] != 3:
         raise NameError("Array must have 3 columns, not {0}".format(
             res_array.shape[1]))
+
+    number_rows = res_array.shape[0]
 
     if metric == "relative":
         improvement_vec_1 = np.divide(res_array[:, 0], res_array[:, 1])
@@ -135,6 +133,8 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     mean_exp_improvement = np.nanmean(improvement_vec_2)
     mean_new_improvement = np.nanmean(improvement_vec_news)
 
+    number_improved = np.sum(np.greater(res_array[:, 1], res_array[:, 2]))
+
     count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
     count_nan_exp = count_nan[2]
 
@@ -157,7 +157,10 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
         "opt_new_improvement": opt_new_improvement,
         "mean_power_improvement": mean_power_improvement,
         "mean_exp_improvement": mean_exp_improvement,
-        "mean_new_improvement": mean_new_improvement
+        "mean_new_improvement": mean_new_improvement,
+        "number improved": number_improved,
+        "iterations": number_rows,
+        "share improved": number_improved / number_rows
     })
 
     return res_dict
