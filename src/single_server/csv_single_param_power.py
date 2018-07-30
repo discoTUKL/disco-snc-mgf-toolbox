@@ -1,7 +1,7 @@
 """Compute optimal and average improvement for different parameters"""
 
 import csv
-from math import floor, inf, nan
+from math import inf, nan
 from multiprocessing import Process
 
 import numpy as np
@@ -26,6 +26,7 @@ def csv_single_param_power(
         opt_method: OptMethod, mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
     total_iterations = 10**4
+    valid_iterations = total_iterations
     metric = "relative"
 
     size_array = [
@@ -92,13 +93,15 @@ def csv_single_param_power(
         if (res_array[i, 0] == inf or res_array[i, 1] == inf
                 or res_array[i, 0] == nan or res_array[i, 1] == nan):
             res_array[i, ] = nan
+            valid_iterations -= 1
 
     res_dict = two_col_array_to_results(
         arrival_enum=arrival_enum,
         metric=metric,
         param_array=param_array,
         res_array=res_array,
-        number_servers=1)
+        number_servers=1,
+        valid_iterations=valid_iterations)
 
     res_dict.update({
         "delta_time": perform_param.value,
@@ -125,12 +128,13 @@ def grid_param_single_dm1(perform_param: PerformParameter,
     """Choose parameters along a grid"""
 
     total_iterations = len(lamb1_range) * len(rate1_range)
+    valid_iterations = total_iterations
 
     param_array = np.empty([total_iterations, 2])
     res_array = np.empty([total_iterations, 2])
 
     i = 0
-    for lamb1 in lamb1_range:
+    for lamb1 in tqdm(lamb1_range):
         for rate1 in rate1_range:
             setting = SingleServerPerform(
                 arr=DM1(lamb=lamb1),
@@ -143,17 +147,17 @@ def grid_param_single_dm1(perform_param: PerformParameter,
                 setting=setting, opt_method=opt_method, number_l=1)
             if res_array[i, 1] == inf:
                 res_array[i, ] = nan
+                valid_iterations -= 1
 
             i += 1
-            if i % floor(total_iterations / 10) == 0:
-                print("iteration {0} of {1}".format(i, total_iterations))
 
     return two_col_array_to_results(
         arrival_enum=ArrivalEnum.DM1,
         metric=metric,
         param_array=param_array,
         res_array=param_array,
-        number_servers=1)
+        number_servers=1,
+        valid_iterations=valid_iterations)
 
 
 if __name__ == '__main__':
@@ -164,7 +168,7 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
-    ARRIVAL_PROCESS = ArrivalEnum.MD1
+    ARRIVAL_PROCESS = ArrivalEnum.DM1
 
     def fun1():
         print(

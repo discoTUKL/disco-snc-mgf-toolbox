@@ -1,7 +1,7 @@
 """Compute optimal and average improvement for different parameters."""
 
 import csv
-from math import floor, nan
+from math import nan
 from multiprocessing import Process
 
 import numpy as np
@@ -31,6 +31,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
                               mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice."""
     total_iterations = 10**4
+    valid_iterations = total_iterations
     metric = "relative"
 
     size_array = [
@@ -119,12 +120,14 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
         if (res_array[i, 1] >= 1 or res_array[i, 0] == nan
                 or res_array[i, 1] == nan):
             res_array[i, ] = nan
+            valid_iterations -= 1
 
     res_dict = two_col_array_to_results(
         arrival_enum=arrival_enum,
         param_array=param_array,
         res_array=res_array,
         number_servers=number_servers,
+        valid_iterations=valid_iterations,
         metric=metric)
 
     res_dict.update({
@@ -156,7 +159,7 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
-    ARRIVAL_PROCESS = ArrivalEnum.MD1
+    ARRIVAL_PROCESS = ArrivalEnum.DM1
 
     def fun1():
         print(

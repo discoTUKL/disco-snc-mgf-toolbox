@@ -1,7 +1,7 @@
 """This file takes arrays and writes them into dictionaries"""
 
-from warnings import warn
 import sys
+from warnings import warn
 
 import numpy as np
 
@@ -12,13 +12,12 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
                              param_array: np.array,
                              res_array: np.array,
                              number_servers: int,
+                             valid_iterations: int,
                              metric: str = "relative") -> dict:
     """Writes the array values into a dictionary"""
     if res_array.shape[1] != 2:
         raise NameError("Array must have 2 columns, not {0}".format(
             res_array.shape[1]))
-
-    number_rows = res_array.shape[0]
 
     if metric == "relative":
         improvement_vec = np.divide(res_array[:, 0], res_array[:, 1])
@@ -33,7 +32,8 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     opt_improvement = improvement_vec[row_max]
     mean_improvement = np.nanmean(improvement_vec)
 
-    number_improved = np.sum(np.greater(res_array[:, 0], res_array[:, 1]))
+    # number_improved = np.sum(np.greater(res_array[:, 0], res_array[:, 1]))
+    number_improved = np.sum(res_array[:, 0] > res_array[:, 1])
 
     count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
     count_nan_standard = count_nan[0]
@@ -92,8 +92,8 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
         "optimum_improvement": opt_improvement,
         "mean_improvement": mean_improvement,
         "number improved": number_improved,
-        "iterations": number_rows,
-        "share improved": number_improved / number_rows
+        "valid iterations": valid_iterations,
+        "share improved": number_improved / valid_iterations
     })
 
     return res_dict
@@ -101,13 +101,12 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
 
 def three_col_array_to_results(arrival_enum: ArrivalEnum,
                                res_array: np.array,
+                               valid_iterations: int,
                                metric: str = "relative") -> dict:
     """Writes the array values into a dictionary, MMOO"""
     if res_array.shape[1] != 3:
         raise NameError("Array must have 3 columns, not {0}".format(
             res_array.shape[1]))
-
-    number_rows = res_array.shape[0]
 
     if metric == "relative":
         improvement_vec_1 = np.divide(res_array[:, 0], res_array[:, 1])
@@ -133,7 +132,8 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     mean_exp_improvement = np.nanmean(improvement_vec_2)
     mean_new_improvement = np.nanmean(improvement_vec_news)
 
-    number_improved = np.sum(np.greater(res_array[:, 1], res_array[:, 2]))
+    # number_improved = np.sum(np.greater(res_array[:, 1], res_array[:, 2]))
+    number_improved = np.sum(res_array[:, 1] > res_array[:, 2])
 
     count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
     count_nan_exp = count_nan[2]
@@ -159,8 +159,8 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
         "mean_exp_improvement": mean_exp_improvement,
         "mean_new_improvement": mean_new_improvement,
         "number improved": number_improved,
-        "iterations": number_rows,
-        "share improved": number_improved / number_rows
+        "valid iterations": valid_iterations,
+        "share improved": number_improved / valid_iterations
     })
 
     return res_dict

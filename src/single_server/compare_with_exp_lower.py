@@ -169,6 +169,7 @@ def csv_single_param_exp_lower(start_time: int,
                                perform_param: PerformParameter,
                                mc_dist: MonteCarloDist) -> dict:
     total_iterations = 10**3
+    valid_iterations = total_iterations
     metric = "relative"
 
     delta = 0.05
@@ -222,6 +223,7 @@ def csv_single_param_exp_lower(start_time: int,
 
             if res_array[i, 1] >= 1.0:
                 res_array[i, ] = nan
+                valid_iterations -= 1
 
         else:
             raise NameError("{0} is an infeasible performance metric".format(
@@ -235,7 +237,10 @@ def csv_single_param_exp_lower(start_time: int,
     # print("exponential results", res_array[:, 2])
 
     res_dict = three_col_array_to_results(
-        arrival_enum=ArrivalEnum.DM1, metric=metric, res_array=res_array)
+        arrival_enum=ArrivalEnum.DM1,
+        res_array=res_array,
+        valid_iterations=valid_iterations,
+        metric=metric)
 
     res_dict.update({
         "delta_time": perform_param.value,
