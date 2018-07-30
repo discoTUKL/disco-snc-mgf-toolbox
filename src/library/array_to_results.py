@@ -47,7 +47,7 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
         warn("way too many nan's: {0} out of {1}!".format(
             count_nan_standard, int(res_array.shape[0])))
 
-        if count_nan_standard > int(res_array.shape[0] * 0.7):
+        if valid_iterations < 100:
             warn("result in useless")
             sys.exit(1)
 
@@ -142,7 +142,7 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
         warn("way too many nan's: {0} nan out of {1}!".format(
             count_nan_exp, int(res_array.shape[0])))
 
-        if count_nan_exp > int(res_array.shape[0] * 0.7):
+        if valid_iterations < 100:
             warn("result in useless")
             sys.exit(1)
 

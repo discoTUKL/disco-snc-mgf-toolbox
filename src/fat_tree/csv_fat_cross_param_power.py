@@ -11,6 +11,7 @@ from fat_tree.fat_cross_perform import FatCrossPerform
 from library.array_to_results import two_col_array_to_results
 from library.compare_old_new import compute_improvement
 from library.mc_enum import MCEnum
+from library.mc_enum_to_list import mc_enum_to_dist
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
@@ -41,15 +42,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
     ]
     # [rows, columns]
 
-    if mc_dist.mc_enum == MCEnum.UNIFORM:
-        param_array = np.random.uniform(
-            low=0, high=mc_dist.param_list[0], size=size_array)
-    elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
-        param_array = np.random.exponential(
-            scale=mc_dist.param_list[0], size=size_array)
-    else:
-        raise NameError("Distribution parameter {0} is infeasible".format(
-            mc_dist.mc_enum))
+    param_array = mc_enum_to_dist(mc_dist=mc_dist, size=size_array)
 
     res_array = np.empty([total_iterations, 2])
 
@@ -159,7 +152,7 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
-    ARRIVAL_PROCESS = ArrivalEnum.DM1
+    ARRIVAL_PROCESS = ArrivalEnum.MMOO
 
     def fun1():
         print(
