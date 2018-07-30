@@ -20,9 +20,13 @@ from optimization.simul_annealing import SimulAnnealing
 class Optimize(object):
     """Optimize class"""
 
-    def __init__(self, setting: Setting, print_x=False) -> None:
+    def __init__(self,
+                 setting: Setting,
+                 print_x: bool = False,
+                 show_warn: bool = False) -> None:
         self.setting = setting
         self.print_x = print_x
+        self.show_warn = show_warn
 
     def eval_except(self, param_list: List[float]) -> float:
         """
@@ -67,11 +71,12 @@ class Optimize(object):
         except FloatingPointError:
             return inf
 
-        for i in range(len(bound_list)):
-            if is_equal(grid_res[0][i], bound_list[i][0]) or is_equal(
-                    grid_res[0][i], bound_list[i][1]):
-                warn("optimal x is on the boundary: {0}".format(
-                    str(grid_res[0][i])))
+        if self.show_warn:
+            for i in range(len(bound_list)):
+                if (is_equal(grid_res[0][i], bound_list[i][0])
+                        or is_equal(grid_res[0][i], bound_list[i][1])):
+                    warn("optimal x is on the boundary: {0}".format(
+                        str(grid_res[0][i])))
 
         if self.print_x:
             print("grid search optimal x: {0}".format(grid_res[0].tolist()))
@@ -317,12 +322,13 @@ class Optimize(object):
                 y_opt = candidate_opt
                 opt_row = row
 
-        for i in range(len(bound_list)):
-            if is_equal(param_grid_df.iloc[opt_row][i],
-                        bound_list[i][0]) or is_equal(
-                            param_grid_df.iloc[opt_row][i], bound_list[i][1]):
-                warn("GS old optimal x is on the boundary: {0}".format(
-                    str(param_grid_df.iloc[opt_row][i])))
+        if self.show_warn:
+            for i in range(len(bound_list)):
+                if (is_equal(param_grid_df.iloc[opt_row][i], bound_list[i][0])
+                        or is_equal(param_grid_df.iloc[opt_row][i],
+                                    bound_list[i][1])):
+                    warn("GS old optimal x is on the boundary: {0}".format(
+                        str(param_grid_df.iloc[opt_row][i])))
 
         if self.print_x:
             print("GS old optimal x: {0}".format(

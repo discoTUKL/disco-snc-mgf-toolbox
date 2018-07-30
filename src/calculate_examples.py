@@ -29,14 +29,15 @@ if __name__ == '__main__':
     print(SINGLE_SERVER.new_bound(param_l_list=[0.1, 2.7]))
 
     print(
-        Optimize(SINGLE_SERVER, print_x=True).grid_search(
+        Optimize(SINGLE_SERVER, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
     print(
-        OptimizeNew(SINGLE_SERVER, print_x=True).grid_search(
+        OptimizeNew(SINGLE_SERVER, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))
     print(
-        OptimizeNew(SINGLE_SERVER, print_x=True).pattern_search(
-            start_list=[0.5, 1.0], delta=3, delta_min=0.01))
+        OptimizeNew(SINGLE_SERVER, print_x=True,
+                    show_warn=True).pattern_search(
+                        start_list=[0.5, 1.0], delta=3, delta_min=0.01))
 
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=10)
@@ -47,23 +48,23 @@ if __name__ == '__main__':
         perform_param=DELAY_PROB10)
 
     print(
-        Optimize(SINGLE_SERVER2, print_x=True).grid_search_old(
+        Optimize(SINGLE_SERVER2, print_x=True, show_warn=True).grid_search_old(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
     print(
-        Optimize(SINGLE_SERVER2, print_x=True).grid_search(
+        Optimize(SINGLE_SERVER2, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
     print(
-        OptimizeNew(SINGLE_SERVER2, print_x=True).grid_search(
+        OptimizeNew(SINGLE_SERVER2, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1))
 
     print(
         OptimizeNew(
-            SINGLE_SERVER2,
-            print_x=True).differential_evolution(bound_list=[(0.1,
-                                                              5.0), (0.9,
-                                                                     6.0)]))
+            SINGLE_SERVER2, print_x=True,
+            show_warn=True).differential_evolution(bound_list=[(0.1,
+                                                                5.0), (0.9,
+                                                                       6.0)]))
 
     print("\n-------------------------------------------\n")
 
@@ -106,18 +107,18 @@ if __name__ == '__main__':
     print(EXAMPLE2.new_bound(param_l_list=[0.3, 3]))
 
     print(
-        Optimize(EXAMPLE, print_x=True).grid_search_old(
+        Optimize(EXAMPLE, print_x=True, show_warn=True).grid_search_old(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
     print(
-        OptimizeNew(EXAMPLE, print_x=True).grid_search(
+        OptimizeNew(EXAMPLE, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0), (0.9, 5)], delta=0.1))
 
     print(
-        Optimize(EXAMPLE, print_x=True).grid_search(
+        Optimize(EXAMPLE, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
-    OPTIMIZE_NEW = OptimizeNew(EXAMPLE, print_x=True)
+    OPTIMIZE_NEW = OptimizeNew(EXAMPLE, print_x=True, show_warn=True)
 
     print(
         OPTIMIZE_NEW.pattern_search(
