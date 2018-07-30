@@ -252,7 +252,7 @@ def csv_single_param_exp_lower(start_time: int,
     })
 
     with open(
-            "single_{0}_DM1_results_MC{1}_power_exp.csv".format(
+            "single_{0}_DM1_results_MC{1}_power_exp_lower.csv".format(
                 perform_param.to_name(), mc_dist.to_name()), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
