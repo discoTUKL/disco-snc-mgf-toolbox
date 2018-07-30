@@ -10,7 +10,7 @@ from tqdm import tqdm
 from library.array_to_results import two_col_array_to_results
 from library.compare_old_new import compute_improvement
 from library.mc_enum import MCEnum
-from library.mc_enum_to_list import mc_enum_to_dist
+from library.mc_enum_to_dist import mc_enum_to_dist
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
