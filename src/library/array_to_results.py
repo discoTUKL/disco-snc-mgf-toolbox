@@ -48,7 +48,7 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
             count_nan_standard, int(res_array.shape[0])))
 
         if valid_iterations < 100:
-            warn("result in useless")
+            warn("result is useless")
             sys.exit(1)
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
@@ -87,10 +87,10 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
                 arrival_enum.name))
 
     res_dict.update({
-        "opt_standard_bound": opt_standard_bound,
-        "opt_new_bound": opt_new_bound,
-        "optimum_improvement": opt_improvement,
-        "mean_improvement": mean_improvement,
+        "opt standard bound": opt_standard_bound,
+        "opt new bound": opt_new_bound,
+        "optimum improvement": opt_improvement,
+        "mean improvement": mean_improvement,
         "number improved": number_improved,
         "valid iterations": valid_iterations,
         "share improved": number_improved / valid_iterations
