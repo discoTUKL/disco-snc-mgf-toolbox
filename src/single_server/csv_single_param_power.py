@@ -97,6 +97,7 @@ def csv_single_param_power(
         valid_iterations=valid_iterations)
 
     res_dict.update({
+        "iterations": total_iterations,
         "delta_time": perform_param.value,
         "optimization": opt_method.name,
         "metric": metric,

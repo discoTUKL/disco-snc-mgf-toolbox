@@ -19,6 +19,8 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
         raise NameError("Array must have 2 columns, not {0}".format(
             res_array.shape[1]))
 
+    iterations = int(res_array.shape[0])
+
     if metric == "relative":
         improvement_vec = np.divide(res_array[:, 0], res_array[:, 1])
     elif metric == "absolute":
@@ -35,7 +37,7 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     # number_improved = np.sum(np.greater(res_array[:, 0], res_array[:, 1]))
     number_improved = np.sum(res_array[:, 0] > res_array[:, 1])
 
-    count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
+    count_nan = np.count_nonzero(np.isnan(res_array), axis=0)
     count_nan_standard = count_nan[0]
     count_nan_new = count_nan[1]
 
@@ -43,9 +45,9 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
         warn("number of nan's does not match, {0} != {1}".format(
             count_nan_standard, count_nan_new))
 
-    if count_nan_standard > int(res_array.shape[0] / 10):
+    if valid_iterations < iterations * 0.75:
         warn("way too many nan's: {0} out of {1}!".format(
-            count_nan_standard, int(res_array.shape[0])))
+            iterations - valid_iterations, iterations))
 
         if valid_iterations < 100:
             warn("result is useless")
@@ -108,6 +110,8 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
         raise NameError("Array must have 3 columns, not {0}".format(
             res_array.shape[1]))
 
+    iterations = int(res_array.shape[0])
+
     if metric == "relative":
         improvement_vec_1 = np.divide(res_array[:, 0], res_array[:, 1])
         improvement_vec_2 = np.divide(res_array[:, 0], res_array[:, 2])
@@ -135,12 +139,9 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     # number_improved = np.sum(np.greater(res_array[:, 1], res_array[:, 2]))
     number_improved = np.sum(res_array[:, 1] > res_array[:, 2])
 
-    count_nan = np.count_nonzero(~np.isnan(res_array), axis=0)
-    count_nan_exp = count_nan[2]
-
-    if count_nan_exp > int(res_array.shape[0] / 10):
+    if valid_iterations < iterations * 0.75:
         warn("way too many nan's: {0} nan out of {1}!".format(
-            count_nan_exp, int(res_array.shape[0])))
+            iterations - valid_iterations, iterations))
 
         if valid_iterations < 100:
             warn("result in useless")

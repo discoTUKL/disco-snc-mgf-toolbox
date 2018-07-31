@@ -233,6 +233,7 @@ def csv_single_param_exp_lower(start_time: int,
                 or res_array[i, 1] == nan or res_array[i, 2] == nan
                 or np.nanmin(res_array[i, :]) >= 1.0):
             res_array[i, ] = nan
+            valid_iterations -= 1
 
     # print("exponential results", res_array[:, 2])
 
@@ -243,10 +244,10 @@ def csv_single_param_exp_lower(start_time: int,
         metric=metric)
 
     res_dict.update({
+        "iterations": total_iterations,
         "delta_time": perform_param.value,
         "optimization": "grid_search",
         "metric": "relative",
-        "iterations": total_iterations,
         "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string()
     })

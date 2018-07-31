@@ -124,6 +124,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
         metric=metric)
 
     res_dict.update({
+        "iterations": total_iterations,
         "T": perform_param.value,
         "optimization": opt_method.name,
         "metric": metric,
