@@ -228,8 +228,9 @@ def csv_single_param_exp_lower(start_time: int,
             raise NameError("{0} is an infeasible performance metric".format(
                 perform_param.perform_metric))
 
-        if (np.nanmin(res_array[i, :]) == inf or res_array[i, 0] == nan
-                or res_array[i, 1] == nan or res_array[i, 2] == nan):
+        if (res_array[i, 1] == inf or res_array[i, 2] == inf
+                or res_array[i, 0] == nan or res_array[i, 1] == nan
+                or res_array[i, 2] == nan):
             res_array[i, ] = nan
             valid_iterations -= 1
 
