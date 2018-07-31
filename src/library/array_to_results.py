@@ -45,7 +45,7 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
         warn("number of nan's does not match, {0} != {1}".format(
             count_nan_standard, count_nan_new))
 
-    if valid_iterations < iterations * 0.75:
+    if valid_iterations < iterations * 0.25:
         warn("way too many nan's: {0} out of {1}!".format(
             iterations - valid_iterations, iterations))
 
@@ -139,7 +139,7 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     # number_improved = np.sum(np.greater(res_array[:, 1], res_array[:, 2]))
     number_improved = np.sum(res_array[:, 1] > res_array[:, 2])
 
-    if valid_iterations < iterations * 0.75:
+    if valid_iterations < iterations * 0.25:
         warn("way too many nan's: {0} nan out of {1}!".format(
             iterations - valid_iterations, iterations))
 

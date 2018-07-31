@@ -162,7 +162,7 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
-    ARRIVAL_PROCESS = ArrivalEnum.MMOO
+    ARRIVAL_PROCESS = ArrivalEnum.DM1
 
     def fun1():
         print(
