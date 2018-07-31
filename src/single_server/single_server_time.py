@@ -7,6 +7,7 @@ import numpy as np
 from library.array_to_results import time_array_to_results
 from library.compare_old_new import compute_overhead
 from library.mc_enum import MCEnum
+from library.mc_enum_to_dist import mc_enum_to_dist
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
@@ -17,9 +18,8 @@ from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
 
 
-def mc_time_single(arrival_enum: ArrivalEnum,
-                   perform_param: PerformParameter, opt_method: OptMethod,
-                   mc_dist: MonteCarloDist) -> dict:
+def mc_time_single(arrival_enum: ArrivalEnum, perform_param: PerformParameter,
+                   opt_method: OptMethod, mc_dist: MonteCarloDist) -> dict:
     """Chooses parameters by Monte Carlo type random choice"""
     total_iterations = 10**4
 
@@ -29,15 +29,7 @@ def mc_time_single(arrival_enum: ArrivalEnum,
     size_array = [total_iterations, arrival_enum.number_parameters() + 1]
     # [rows, columns]
 
-    if mc_dist.mc_enum == MCEnum.UNIFORM:
-        param_array = np.random.uniform(
-            low=0, high=mc_dist.param_list[0], size=size_array)
-    elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
-        param_array = np.random.exponential(
-            scale=mc_dist.param_list[0], size=size_array)
-    else:
-        raise NameError("Distribution parameter {0} is infeasible".format(
-            mc_dist.mc_enum))
+    param_array = mc_enum_to_dist(mc_dist=mc_dist, size=size_array)
 
     time_array = np.empty([total_iterations, 2])
 
