@@ -231,17 +231,15 @@ def csv_single_param_exp_taylor(start_time: int,
                 lamb=param_array[i, 0],
                 rate=param_array[i, 1])
 
-            if res_array[i, 1] >= 1.0:
+            if np.nanmin(res_array[i, :]) >= 1.0:
                 res_array[i, ] = nan
-                valid_iterations -= 1
 
         else:
             raise NameError("{0} is an infeasible performance metric".format(
                 perform_param.perform_metric))
 
         if (np.nanmin(res_array[i, :]) == inf or res_array[i, 0] == nan
-                or res_array[i, 1] == nan or res_array[i, 2] == nan
-                or np.nanmin(res_array[i, :]) >= 1.0):
+                or res_array[i, 1] == nan or res_array[i, 2] == nan):
             res_array[i, ] = nan
             valid_iterations -= 1
 
@@ -276,8 +274,8 @@ if __name__ == '__main__':
     START = 30
     DELTA_TIME = 10
 
-    # OUTPUT5 = PerformParameter(
-    #     perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
+    OUTPUT5 = PerformParameter(
+        perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
 
     DELAY10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
@@ -307,15 +305,9 @@ if __name__ == '__main__':
     #         bound_list=BOUND_LIST_NEW, delta=DELTA)
     # print("DM1 Power Opt: ", DM1_POWER_OPT)
     #
-    # DM1_EXP_LOWER_OPT = delay_prob_lower_exp_dm1_opt(
-    #     t=S, delay=DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
-    # print("DM1 Exp Lower Opt: ", DM1_EXP_LOWER_OPT)
-    #
     # DM1_EXP_TAYLOR_OPT = delay_prob_taylor_exp_dm1_opt(
     #     t=S, delay=DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
     # print("DM1 Exp Taylor Opt: ", DM1_EXP_TAYLOR_OPT)
-    #
-    # print("difference: ", DM1_EXP_TAYLOR_OPT - DM1_EXP_LOWER_OPT)
 
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[10.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
@@ -323,12 +315,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_exp_taylor(
-                start_time=START, perform_param=DELAY10, mc_dist=MC_UNIF20))
+                start_time=START, perform_param=OUTPUT5, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
             csv_single_param_exp_taylor(
-                start_time=START, perform_param=DELAY10, mc_dist=MC_EXP1))
+                start_time=START, perform_param=OUTPUT5, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []
