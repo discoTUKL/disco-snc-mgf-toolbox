@@ -17,7 +17,8 @@ from optimization.simul_annealing import SimulAnnealing
 def compute_improvement(setting: SettingNew,
                         opt_method: OptMethod,
                         number_l: int = 1,
-                        print_x: bool = False) -> tuple:
+                        print_x: bool = False,
+                        show_warn: bool = False) -> tuple:
     """Compare standard_bound with the new Lyapunov bound."""
 
     if opt_method == OptMethod.GRID_SEARCH:
@@ -26,7 +27,7 @@ def compute_improvement(setting: SettingNew,
         bound_array = theta_bounds[:]
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x).grid_search(
+            setting=setting, print_x=print_x, show_warn=show_warn).grid_search(
                 bound_list=bound_array, delta=0.1)
 
         bound_array_new = theta_bounds[:]
@@ -34,7 +35,8 @@ def compute_improvement(setting: SettingNew,
             bound_array_new.append((0.9, 4.0))
 
         new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x).grid_search(
+            setting_new=setting, print_x=print_x,
+            show_warn=show_warn).grid_search(
                 bound_list=bound_array_new, delta=0.1)
 
     elif opt_method == OptMethod.PATTERN_SEARCH:
@@ -43,13 +45,15 @@ def compute_improvement(setting: SettingNew,
         start_list = [theta_start]
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x).pattern_search(
+            setting=setting, print_x=print_x,
+            show_warn=show_warn).pattern_search(
                 start_list=start_list, delta=3.0, delta_min=0.01)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x).pattern_search(
+            setting_new=setting, print_x=print_x,
+            show_warn=show_warn).pattern_search(
                 start_list=start_list_new, delta=3.0, delta_min=0.01)
 
         # This part is there to overcome opt_method issues
@@ -64,7 +68,7 @@ def compute_improvement(setting: SettingNew,
             start_list=start_list)
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x).nelder_mead(
+            setting=setting, print_x=print_x, show_warn=show_warn).nelder_mead(
                 simplex=start_simplex, sd_min=10**(-2))
 
         start_list_new = [theta_start] + [1.0] * number_l
@@ -72,7 +76,8 @@ def compute_improvement(setting: SettingNew,
                                            ).gao_han(start_list=start_list_new)
 
         new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x).nelder_mead(
+            setting_new=setting, print_x=print_x,
+            show_warn=show_warn).nelder_mead(
                 simplex=start_simplex_new, sd_min=10**(-2))
 
         # This part is there to overcome opt_method issues
@@ -85,14 +90,14 @@ def compute_improvement(setting: SettingNew,
         start_list = [theta_start]
 
         standard_bound = Optimize(
-            setting=setting,
-            print_x=print_x).basin_hopping(start_list=start_list)
+            setting=setting, print_x=print_x,
+            show_warn=show_warn).basin_hopping(start_list=start_list)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
-            setting_new=setting,
-            print_x=print_x).basin_hopping(start_list=start_list_new)
+            setting_new=setting, print_x=print_x,
+            show_warn=show_warn).basin_hopping(start_list=start_list_new)
 
         # This part is there to overcome opt_method issues
         if new_bound > standard_bound:
@@ -105,13 +110,15 @@ def compute_improvement(setting: SettingNew,
         start_list = [theta_start]
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x).simulated_annealing(
+            setting=setting, print_x=print_x,
+            show_warn=show_warn).simulated_annealing(
                 start_list=start_list, simul_annealing=simul_anneal_param)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
         new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x).simulated_annealing(
+            setting_new=setting, print_x=print_x,
+            show_warn=show_warn).simulated_annealing(
                 start_list=start_list_new, simul_annealing=simul_anneal_param)
 
         # This part is there to overcome opt_method issues

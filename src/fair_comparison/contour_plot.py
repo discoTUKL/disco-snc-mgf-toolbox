@@ -21,6 +21,7 @@ def single_hop_contour(sigma_single: float,
                        perform_param: PerformParameter,
                        pure_snc: bool = False) -> int:
     print_x = False
+    show_warn = False
 
     bound_list = [(0.05, 15.0)]
     delta = 0.05
@@ -40,7 +41,8 @@ def single_hop_contour(sigma_single: float,
                 arr=tb_const,
                 const_rate=constant_rate_server,
                 perform_param=perform_param),
-            print_x=print_x).grid_search(
+            print_x=print_x,
+            show_warn=show_warn).grid_search(
                 bound_list=bound_list, delta=delta)
 
     else:
@@ -55,7 +57,8 @@ def single_hop_contour(sigma_single: float,
                 n=aggregation),
             const_rate=constant_rate_server,
             perform_param=perform_param),
-        print_x=print_x).grid_search(
+        print_x=print_x,
+        show_warn=show_warn).grid_search(
             bound_list=bound_list, delta=delta)
 
     while competitor < leaky_mass_1_opt:
@@ -73,7 +76,8 @@ def single_hop_contour(sigma_single: float,
                     arr=tb_const,
                     const_rate=constant_rate_server,
                     perform_param=perform_param),
-                print_x=print_x).grid_search(
+                print_x=print_x,
+                show_warn=show_warn).grid_search(
                     bound_list=bound_list, delta=delta)
 
         else:
@@ -89,7 +93,8 @@ def single_hop_contour(sigma_single: float,
                     n=aggregation),
                 const_rate=constant_rate_server,
                 perform_param=perform_param),
-            print_x=print_x).grid_search(
+            print_x=print_x,
+            show_warn=show_warn).grid_search(
                 bound_list=bound_list, delta=delta)
 
     # print("(dnc_fifo_single, const_opt, leaky_mass_1_opt)")

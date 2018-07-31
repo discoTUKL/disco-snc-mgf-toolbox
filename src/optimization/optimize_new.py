@@ -18,11 +18,13 @@ class OptimizeNew(Optimize):
     def __init__(self,
                  setting_new: SettingNew,
                  new: bool = True,
-                 print_x: bool = False) -> None:
-        super().__init__(setting_new, print_x)
+                 print_x: bool = False,
+                 show_warn: bool = False) -> None:
+        super().__init__(setting_new, print_x, show_warn)
         self.setting_bound = setting_new
         self.new = new
         self.print_x = print_x
+        self.show_warn = show_warn
 
     def eval_except(self, param_list: List[float]) -> float:
         """
