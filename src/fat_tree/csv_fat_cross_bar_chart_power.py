@@ -1,6 +1,7 @@
 """Creates data for barplot to observe scaling for more servers."""
 
 import csv
+import sys
 from typing import List
 
 import numpy as np
@@ -37,6 +38,10 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
 
         standard_bound, new_bound = compute_improvement(
             setting=large_setting, opt_method=opt_method, number_l=i)
+
+        if new_bound >= 1:
+            print("new bound = {0} is >= 1".format(new_bound))
+            sys.exit(1)
 
         if metric == "relative":
             # improvement factor
@@ -89,12 +94,10 @@ if __name__ == '__main__':
                 DM1(lamb=8.0),
                 DM1(lamb=8.0),
                 DM1(lamb=8.0),
-                DM1(lamb=8.0),
                 DM1(lamb=8.0)
             ],
             ser_list=[
                 ConstantRate(rate=4.5),
-                ConstantRate(rate=2.0),
                 ConstantRate(rate=2.0),
                 ConstantRate(rate=2.0),
                 ConstantRate(rate=2.0),
