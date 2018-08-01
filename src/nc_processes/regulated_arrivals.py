@@ -40,13 +40,17 @@ class RegulatedArrivals(ArrivalDistribution):
         """
         return True
 
-    def to_value(self) -> str:
+    def to_value(self, number: int = 1, show_n: bool = True) -> str:
         """
         :return string
         """
-
-        return "sigma={0}_rho={1}_n={2}".format(
-            str(self.sigma_single), str(self.rho_single), str(self.n))
+        if show_n:
+            return "sigma{0}={1}_rho{0}={2}_n{0}={3}".format(
+                str(number), str(self.sigma_single), str(self.rho_single),
+                str(self.n))
+        else:
+            return "sigma={0}_rho={1}".format(
+                str(self.sigma_single), str(self.rho_single))
 
 
 class TokenBucketConstant(RegulatedArrivals):

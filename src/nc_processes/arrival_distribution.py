@@ -36,7 +36,7 @@ class ArrivalDistribution(Arrival):
         pass
 
     @abstractmethod
-    def to_value(self) -> str:
+    def to_value(self, number: int = 1, show_n: bool = False) -> str:
         pass
 
 
@@ -65,9 +65,14 @@ class MMOO(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
-    def to_value(self) -> str:
-        return "mu={0}_lambda={1}_burst={2}_n={3}".format(
-            str(self.mu), str(self.lamb), str(self.burst), str(self.n))
+    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+        if show_n:
+            return "mu{0}={1}_lambda{0}={2}_burst{0}={3}_n{0}={4}".format(
+                str(number), str(self.mu), str(self.lamb), str(self.burst),
+                str(self.n))
+        else:
+            return "mu{0}={1}_lambda{0}={2}_burst{0}={3}".format(
+                str(number), str(self.mu), str(self.lamb), str(self.burst))
 
 
 class EBB(ArrivalDistribution):
@@ -103,10 +108,15 @@ class EBB(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
-    def to_value(self) -> str:
-        return "M={0}_b={1}_rho={2}_n={3}".format(
-            str(self.prefactor), str(self.decay), str(self.rho_single),
-            str(self.n))
+    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+        if show_n:
+            return "M{0}={1}_b{0}={2}_rho{0}={3}_n{0}={4}".format(
+                str(number), str(self.prefactor), str(self.decay),
+                str(self.rho_single), str(self.n))
+        else:
+            return "M{0}={1}_b{0}={2}_rho{0}={3}".format(
+                str(number), str(self.prefactor), str(self.decay),
+                str(self.rho_single))
 
 
 class DM1(ArrivalDistribution):
@@ -141,8 +151,12 @@ class DM1(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return True
 
-    def to_value(self) -> str:
-        return "lambda={0}_n={1}".format(str(self.lamb), str(self.n))
+    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+        if show_n:
+            return "lambda{0}={1}_n{0}={2}".format(
+                str(number), str(self.lamb), str(self.n))
+        else:
+            return "lambda{0}={1}".format(str(number), str(self.lamb))
 
 
 class MD1(ArrivalDistribution):
@@ -166,6 +180,11 @@ class MD1(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
-    def to_value(self) -> str:
-        return "lambda={0}_b={1}_n={2}".format(
-            str(self.lamb), str(self.packet_size), str(self.n))
+    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+        if show_n:
+            return "lambda{0}={1}_b{0}={2}_n{0}={3}".format(
+                str(number), str(self.lamb), str(self.packet_size),
+                str(self.n))
+        else:
+            return "lambda{0}={1}_b{0}={2}".format(
+                str(number), str(self.lamb), str(self.packet_size))

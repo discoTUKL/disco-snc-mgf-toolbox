@@ -113,8 +113,10 @@ def csv_fat_cross_perform(
         opt_method=opt_method,
         perform_param_list=perform_param_list)
 
-    filename += "_" + foi_arrival.to_value() + "_" + foi_service.to_value(
-    ) + "_" + cross_arrival.to_value() + "_" + cross_service.to_value()
+    filename += "_" + foi_arrival.to_value(
+        number=1, show_n=False
+    ) + "_" + foi_service.to_value(number=1) + "_" + cross_arrival.to_value(
+        number=2, show_n=False) + "_" + cross_service.to_value(number=2)
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -126,62 +128,62 @@ if __name__ == '__main__':
     DELAY_PROB_LIST = PerformParamList(
         perform_metric=PerformEnum.DELAY_PROB, values_list=range(4, 11))
 
-    exp1 = DM1(lamb=0.2)
-    exp2 = DM1(lamb=8.0)
-    # const_rate1 = ConstantRate(rate=8.0)
-    # const_rate2 = ConstantRate(rate=0.2)
-    #
-    # print(
-    #     csv_fat_cross_perform(
-    #         foi_arrival=exp1,
-    #         cross_arrival=exp2,
-    #         foi_service=const_rate1,
-    #         cross_service=const_rate2,
-    #         number_servers=2,
-    #         perform_param_list=DELAY_PROB_LIST,
-    #         opt_method=OptMethod.GRID_SEARCH))
-
-    # exp1 = ExponentialArrival(lamb=0.4)
-    # exp2 = ExponentialArrival(lamb=3.5)
-    # const_rate1 = ConstantRate(rate=4.5)
-    # const_rate2 = ConstantRate(rate=0.4)
-    #
-    # print(
-    #     csv_fat_cross_perform(
-    #         foi_arrival=exp1,
-    #         cross_arrival=exp2,
-    #         foi_service=const_rate1,
-    #         cross_service=const_rate2,
-    #         number_servers=2,
-    #         perform_param_list=DELAY_PROB_LIST,
-    #         opt_method=OptMethod.GRID_SEARCH))
-
-    # mmoo_foi = MMOO(mu=1.2, lamb=2.1, burst=3.5)
-    # mmoo_2 = MMOO(mu=3.7, lamb=1.5, burst=0.4)
-    # foi_rate1 = ConstantRate(rate=2.0)
-    # const_rate2 = ConstantRate(rate=0.3)
-
-    # print(
-    #     csv_fat_cross_perform(
-    #         foi_arrival=mmoo_foi,
-    #         cross_arrival=mmoo_2,
-    #         foi_service=foi_rate1,
-    #         cross_service=const_rate2,
-    #         number_servers=2,
-    #         perform_param_list=DELAY_PROB_LIST,
-    #         opt_method=OptMethod.GRID_SEARCH))
-
-    mmoo_foi = MMOO(mu=1.0, lamb=2.2, burst=3.4)
-    mmoo_2 = MMOO(mu=3.6, lamb=1.6, burst=0.4)
-    foi_rate1 = ConstantRate(rate=2.0)
-    const_rate2 = ConstantRate(rate=0.3)
+    EXP_FOI1 = DM1(lamb=0.2)
+    EXP_CROSS1 = DM1(lamb=8.0)
+    RATE_FOI1 = ConstantRate(rate=8.0)
+    RATE_CROSS1 = ConstantRate(rate=0.2)
 
     print(
         csv_fat_cross_perform(
-            foi_arrival=mmoo_foi,
-            cross_arrival=mmoo_2,
-            foi_service=foi_rate1,
-            cross_service=const_rate2,
+            foi_arrival=EXP_FOI1,
+            cross_arrival=EXP_CROSS1,
+            foi_service=RATE_FOI1,
+            cross_service=RATE_CROSS1,
+            number_servers=2,
+            perform_param_list=DELAY_PROB_LIST,
+            opt_method=OptMethod.GRID_SEARCH))
+
+    EXP_FOI2 = DM1(lamb=0.4)
+    EXP_CROSS2 = DM1(lamb=3.5)
+    RATE_FOI2 = ConstantRate(rate=4.5)
+    RATE_CROSS2 = ConstantRate(rate=0.4)
+
+    print(
+        csv_fat_cross_perform(
+            foi_arrival=EXP_FOI2,
+            cross_arrival=EXP_CROSS2,
+            foi_service=RATE_FOI2,
+            cross_service=RATE_CROSS2,
+            number_servers=2,
+            perform_param_list=DELAY_PROB_LIST,
+            opt_method=OptMethod.GRID_SEARCH))
+
+    MMOO_FOI1 = MMOO(mu=1.2, lamb=2.1, burst=3.5)
+    MMOO_CROSS1 = MMOO(mu=3.7, lamb=1.5, burst=0.4)
+    RATE_FOI3 = ConstantRate(rate=2.0)
+    RATE_CROSS3 = ConstantRate(rate=0.3)
+
+    print(
+        csv_fat_cross_perform(
+            foi_arrival=MMOO_FOI1,
+            cross_arrival=MMOO_CROSS1,
+            foi_service=RATE_FOI3,
+            cross_service=RATE_CROSS3,
+            number_servers=2,
+            perform_param_list=DELAY_PROB_LIST,
+            opt_method=OptMethod.GRID_SEARCH))
+
+    MMOO_FOI2 = MMOO(mu=1.0, lamb=2.2, burst=3.4)
+    MMOO_CROSS2 = MMOO(mu=3.6, lamb=1.6, burst=0.4)
+    RATE_FOI4 = ConstantRate(rate=2.0)
+    RATE_CROSS4 = ConstantRate(rate=0.3)
+
+    print(
+        csv_fat_cross_perform(
+            foi_arrival=MMOO_FOI2,
+            cross_arrival=MMOO_CROSS2,
+            foi_service=RATE_FOI4,
+            cross_service=RATE_CROSS4,
             number_servers=2,
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))

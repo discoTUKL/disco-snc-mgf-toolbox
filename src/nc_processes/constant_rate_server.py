@@ -16,5 +16,5 @@ class ConstantRate(Service):
         # The minus is important to insure the correct sign
         return -self.rate
 
-    def to_value(self):
-        return "rate={0}".format(str(self.rate))
+    def to_value(self, number: int = 1):
+        return "rate{0}={1}".format(str(number), str(self.rate))
