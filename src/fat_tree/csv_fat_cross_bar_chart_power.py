@@ -3,6 +3,7 @@
 import csv
 import sys
 from typing import List
+from warnings import warn
 
 import numpy as np
 import pandas as pd
@@ -40,7 +41,7 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
             setting=large_setting, opt_method=opt_method, number_l=i)
 
         if new_bound >= 1:
-            print("new bound = {0} is >= 1".format(new_bound))
+            warn("new bound = {0} is >= 1".format(new_bound))
             sys.exit(1)
 
         if metric == "relative":
