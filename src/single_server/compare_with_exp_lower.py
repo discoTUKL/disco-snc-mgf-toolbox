@@ -221,7 +221,7 @@ def csv_single_param_exp_lower(start_time: int,
                 lamb=param_array[i, 0],
                 rate=param_array[i, 1])
 
-            if np.nanmin(res_array[i, :]) >= 1.0:
+            if res_array[i, 0] >= 1.0:
                 res_array[i, ] = nan
 
         else:
@@ -263,13 +263,12 @@ def csv_single_param_exp_lower(start_time: int,
 
 if __name__ == '__main__':
     START = 30
-    DELTA_TIME = 10
 
-    OUTPUT5 = PerformParameter(
-        perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
+    OUTPUT4 = PerformParameter(
+        perform_metric=PerformEnum.OUTPUT, value=4)
 
     DELAY10 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
+        perform_metric=PerformEnum.DELAY_PROB, value=10)
 
     # LAMB = 1.0
     # SERVICE_RATE = 1.2
@@ -306,12 +305,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_exp_lower(
-                start_time=START, perform_param=DELAY10, mc_dist=MC_UNIF20))
+                start_time=START, perform_param=OUTPUT4, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
             csv_single_param_exp_lower(
-                start_time=START, perform_param=DELAY10, mc_dist=MC_EXP1))
+                start_time=START, perform_param=OUTPUT4, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []
