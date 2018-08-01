@@ -262,7 +262,7 @@ def csv_single_param_exp_taylor(start_time: int,
     })
 
     with open(
-            "single_{0}_DM1_results_MC{1}_power_exp_taylor.csv".format(
+            "taylor_single_{0}_DM1_results_MC{1}_power_exp.csv".format(
                 perform_param.to_name(), mc_dist.to_name()), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():
@@ -316,12 +316,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_exp_taylor(
-                start_time=START, perform_param=OUTPUT5, mc_dist=MC_UNIF20))
+                start_time=START, perform_param=DELAY10, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
             csv_single_param_exp_taylor(
-                start_time=START, perform_param=OUTPUT5, mc_dist=MC_EXP1))
+                start_time=START, perform_param=DELAY10, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []
