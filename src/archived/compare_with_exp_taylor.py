@@ -38,77 +38,6 @@ def f_double_prime(theta: float, i: int, s: int, t: int, lamb: float,
     return (theta**2) * log(a) * help_1 * (a**help_1) * (log(a) * help_1 + 1)
 
 
-def output_taylor_exp_dm1(theta: float, s: int, t: int, lamb: float,
-                          rate: float, a: float) -> float:
-    if t < s:
-        raise ValueError(
-            "sum index t = {0} must be greater than or equal to  s = {1}".
-            format(t, s))
-
-    if 1 / lamb >= rate:
-        raise ParameterOutOfBounds(
-            ("The arrivals' long term rate {0} has to be smaller than"
-             "the service's long term rate {1}").format(1 / lamb, rate))
-
-    if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
-
-    if a <= 1:
-        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
-
-    sum_j = 0.0
-
-    for _i in range(s + 1):
-        try:
-            summand = f_exp(
-                theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate,
-                a=a) + 0.5 * f_double_prime(
-                    theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate,
-                    a=a) * var_dm1(
-                        delta_time=t - _i, lamb=lamb)
-        except (FloatingPointError, OverflowError):
-            summand = inf
-
-        sum_j += summand
-
-    return log(sum_j) / log(a)
-
-
-def output_taylor_exp_dm1_opt(s: int,
-                              t: int,
-                              lamb: float,
-                              rate: float,
-                              print_x: bool = False) -> float:
-    def helper_fun(param_list: List[float]) -> float:
-        try:
-            return output_taylor_exp_dm1(
-                theta=param_list[0],
-                s=s,
-                t=t,
-                lamb=lamb,
-                rate=rate,
-                a=param_list[1])
-        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
-            return inf
-
-    # np.seterr("raise")
-    np.seterr("warn")
-
-    try:
-        grid_res = scipy.optimize.brute(
-            func=helper_fun,
-            ranges=(slice(0.05, 10.0, 0.05), slice(1.05, 5.0, 0.05)),
-            full_output=True)
-    except (FloatingPointError, OverflowError):
-        return inf
-
-    if print_x:
-        print("grid search optimal parameter: theta={0}, a={1}".format(
-            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
-
-    return grid_res[1]
-
-
 def delay_prob_taylor_exp_dm1(theta: float, t: int, delay: int, lamb: float,
                               rate: float, a: float) -> float:
     if 1 / lamb >= rate:
@@ -217,30 +146,15 @@ def csv_single_param_exp_taylor(start_time: int,
         res_array[i, 1] = OptimizeNew(setting_new=setting).grid_search(
             bound_list=bound_array_power, delta=delta)
 
-        if perform_param.perform_metric == PerformEnum.OUTPUT:
-            res_array[i, 2] = output_taylor_exp_dm1_opt(
-                s=start_time,
-                t=start_time + perform_param.value,
-                lamb=param_array[i, 0],
-                rate=param_array[i, 1])
-
-        elif perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            res_array[i, 2] = delay_prob_taylor_exp_dm1_opt(
-                t=start_time,
-                delay=perform_param.value,
-                lamb=param_array[i, 0],
-                rate=param_array[i, 1])
-
-            if res_array[i, 0] >= 1.0:
-                res_array[i, ] = nan
-
-        else:
-            raise NameError("{0} is an infeasible performance metric".format(
-                perform_param.perform_metric))
+        res_array[i, 2] = delay_prob_taylor_exp_dm1_opt(
+            t=start_time,
+            delay=perform_param.value,
+            lamb=param_array[i, 0],
+            rate=param_array[i, 1])
 
         if (res_array[i, 1] == inf or res_array[i, 2] == inf
                 or res_array[i, 0] == nan or res_array[i, 1] == nan
-                or res_array[i, 2] == nan):
+                or res_array[i, 2] == nan or res_array[i, 0] >= 1.0):
             res_array[i, ] = nan
             valid_iterations -= 1
 
@@ -274,11 +188,10 @@ def csv_single_param_exp_taylor(start_time: int,
 if __name__ == '__main__':
     START = 30
 
-    OUTPUT4 = PerformParameter(
-        perform_metric=PerformEnum.OUTPUT, value=4)
+    DELTA_TIME = 10
 
     DELAY10 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=10)
+        perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
 
     # LAMB = 1.0
     # SERVICE_RATE = 1.2
@@ -306,7 +219,11 @@ if __name__ == '__main__':
     # print("DM1 Power Opt: ", DM1_POWER_OPT)
     #
     # DM1_EXP_TAYLOR_OPT = delay_prob_taylor_exp_dm1_opt(
-    #     t=S, delay=DELTA_TIME, lamb=LAMB, rate=SERVICE_RATE, print_x=PRINT_X)
+    #     t=START,
+    #     delay=DELTA_TIME,
+    #     lamb=LAMB,
+    #     rate=SERVICE_RATE,
+    #     print_x=PRINT_X)
     # print("DM1 Exp Taylor Opt: ", DM1_EXP_TAYLOR_OPT)
 
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[10.0])
@@ -315,12 +232,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_exp_taylor(
-                start_time=START, perform_param=OUTPUT4, mc_dist=MC_UNIF20))
+                start_time=START, perform_param=DELAY10, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
             csv_single_param_exp_taylor(
-                start_time=START, perform_param=OUTPUT4, mc_dist=MC_EXP1))
+                start_time=START, perform_param=DELAY10, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []

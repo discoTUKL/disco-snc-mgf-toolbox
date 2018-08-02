@@ -155,7 +155,7 @@ def grid_param_single_dm1(perform_param: PerformParameter,
 
 
 if __name__ == '__main__':
-    OUTPUT_TIME4 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
+    DELAY10 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB, value=10)
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
@@ -168,7 +168,7 @@ if __name__ == '__main__':
         print(
             csv_single_param_power(
                 arrival_enum=ARRIVAL_PROCESS,
-                perform_param=OUTPUT_TIME4,
+                perform_param=DELAY10,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_UNIF20))
 
@@ -176,7 +176,7 @@ if __name__ == '__main__':
         print(
             csv_single_param_power(
                 arrival_enum=ARRIVAL_PROCESS,
-                perform_param=OUTPUT_TIME4,
+                perform_param=DELAY10,
                 opt_method=COMMON_OPTIMIZATION,
                 mc_dist=MC_EXP1))
 
@@ -193,7 +193,7 @@ if __name__ == '__main__':
 
     # print(
     #     grid_param_single_dm1(
-    #         perform_param=OUTPUT_TIME4,
+    #         perform_param=DELAY10,
     #         opt_method=OptMethod.GRID_SEARCH,
     #         lamb1_range=[0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 12],
     #         rate1_range=[0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 12]))
