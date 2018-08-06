@@ -38,8 +38,8 @@ def f_double_prime(theta: float, i: int, s: int, t: int, lamb: float,
     return (theta**2) * log(a) * help_1 * (a**help_1) * (log(a) * help_1 + 1)
 
 
-def output_lower_exp_dm1(theta: float, s: int, delta_time: int,
-                         lamb: float, rate: float, a: float) -> float:
+def output_lower_exp_dm1(theta: float, s: int, delta_time: int, lamb: float,
+                         rate: float, a: float) -> float:
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
             ("The arrivals' long term rate {0} has to be smaller than"
@@ -218,7 +218,7 @@ def csv_single_param_exp_lower(start_time: int,
                 rate=param_array[i, 1])
 
             if res_array[i, 0] >= 1.0:
-                res_array[i,] = nan
+                res_array[i, ] = nan
 
         elif perform_param.perform_metric == PerformEnum.OUTPUT:
             res_array[i, 2] = output_lower_exp_dm1_opt(
