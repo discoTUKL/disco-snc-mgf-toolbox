@@ -38,6 +38,74 @@ def f_double_prime(theta: float, i: int, s: int, t: int, lamb: float,
     return (theta**2) * log(a) * help_1 * (a**help_1) * (log(a) * help_1 + 1)
 
 
+def output_lower_exp_dm1(theta: float, start: int, delta_time: int,
+                         lamb: float, rate: float, a: float) -> float:
+    if 1 / lamb >= rate:
+        raise ParameterOutOfBounds(
+            ("The arrivals' long term rate {0} has to be smaller than"
+             "the service's long term rate {1}").format(1 / lamb, rate))
+
+    if theta <= 0:
+        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+
+    if a <= 1:
+        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
+
+    sum_j = 0.0
+
+    for _i in range(start + 1):
+        try:
+            summand = f_exp(
+                theta=theta,
+                i=_i,
+                s=start,
+                t=start + delta_time,
+                lamb=lamb,
+                rate=rate,
+                a=a)
+        except (FloatingPointError, OverflowError):
+            summand = inf
+
+        sum_j += summand
+
+    return log(sum_j) / log(a)
+
+
+def output_lower_exp_dm1_opt(start: int,
+                             delta_time: int,
+                             lamb: float,
+                             rate: float,
+                             print_x: bool = False) -> float:
+    def helper_fun(param_list: List[float]) -> float:
+        try:
+            return output_lower_exp_dm1(
+                theta=param_list[0],
+                start=start,
+                delta_time=delta_time,
+                lamb=lamb,
+                rate=rate,
+                a=param_list[1])
+        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
+            return inf
+
+    # np.seterr("raise")
+    np.seterr("warn")
+
+    try:
+        grid_res = scipy.optimize.brute(
+            func=helper_fun,
+            ranges=(slice(0.05, 4.0, 0.05), slice(1.05, 10.0, 0.05)),
+            full_output=True)
+    except (FloatingPointError, OverflowError):
+        return inf
+
+    if print_x:
+        print("grid search optimal parameter: theta={0}, a={1}".format(
+            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
+
+    return grid_res[1]
+
+
 def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
                              rate: float, a: float) -> float:
     if 1 / lamb >= rate:
@@ -142,11 +210,23 @@ def csv_single_param_exp_lower(start_time: int,
         res_array[i, 1] = OptimizeNew(setting_new=setting).grid_search(
             bound_list=bound_array_power, delta=delta)
 
-        res_array[i, 2] = delay_prob_lower_exp_dm1_opt(
-            t=start_time,
-            delay=perform_param.value,
-            lamb=param_array[i, 0],
-            rate=param_array[i, 1])
+        if perform_param.perform_metric == PerformEnum.DELAY_PROB:
+            res_array[i, 2] = delay_prob_lower_exp_dm1_opt(
+                t=start_time,
+                delay=perform_param.value,
+                lamb=param_array[i, 0],
+                rate=param_array[i, 1])
+
+        elif perform_param.perform_metric == PerformEnum.OUTPUT:
+            res_array[i, 2] = output_lower_exp_dm1_opt(
+                start=start_time,
+                delta_time=perform_param.value,
+                lamb=param_array[i, 0],
+                rate=param_array[i, 1])
+
+        else:
+            raise NameError("{0} is an infeasible performance metric".format(
+                perform_param.perform_metric))
 
         if (res_array[i, 1] == inf or res_array[i, 2] == inf
                 or res_array[i, 0] == nan or res_array[i, 1] == nan
@@ -184,43 +264,46 @@ def csv_single_param_exp_lower(start_time: int,
 if __name__ == '__main__':
     START = 30
 
-    DELTA_TIME = 10
+    # DELTA_TIME = 10
+    # DELAY10 = PerformParameter(
+    #     perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
 
-    DELAY10 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
+    DELTA_TIME = 4
+    OUTPUT4 = PerformParameter(
+        perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
 
-    LAMB = 1.0
-    SERVICE_RATE = 1.2
-
-    BOUND_LIST = [(0.05, 10.0)]
-    BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
-    DELTA = 0.05
-    PRINT_X = False
-
-    CR_SERVER = ConstantRate(SERVICE_RATE)
-
-    EXP_ARRIVAL = DM1(lamb=LAMB)
-
-    DM1_SINGLE = SingleServerPerform(
-        arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=DELAY10)
-
-    DM1_STANDARD_OPT = Optimize(
-        setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
-            bound_list=BOUND_LIST, delta=DELTA)
-    print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
-
-    DM1_POWER_OPT = OptimizeNew(
-        setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
-            bound_list=BOUND_LIST_NEW, delta=DELTA)
-    print("DM1 Power Opt: ", DM1_POWER_OPT)
-
-    DM1_EXP_LOWER_OPT = delay_prob_lower_exp_dm1_opt(
-        t=START,
-        delay=DELTA_TIME,
-        lamb=LAMB,
-        rate=SERVICE_RATE,
-        print_x=PRINT_X)
-    print("DM1 Exp Lower Opt: ", DM1_EXP_LOWER_OPT)
+    # LAMB = 1.0
+    # SERVICE_RATE = 1.2
+    #
+    # BOUND_LIST = [(0.05, 10.0)]
+    # BOUND_LIST_NEW = [(0.05, 10.0), (1.05, 20.0)]
+    # DELTA = 0.05
+    # PRINT_X = False
+    #
+    # CR_SERVER = ConstantRate(SERVICE_RATE)
+    #
+    # EXP_ARRIVAL = DM1(lamb=LAMB)
+    #
+    # DM1_SINGLE = SingleServerPerform(
+    #     arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=OUTPUT4)
+    #
+    # DM1_STANDARD_OPT = Optimize(
+    #     setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
+    #         bound_list=BOUND_LIST, delta=DELTA)
+    # print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
+    #
+    # DM1_POWER_OPT = OptimizeNew(
+    #     setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
+    #         bound_list=BOUND_LIST_NEW, delta=DELTA)
+    # print("DM1 Power Opt: ", DM1_POWER_OPT)
+    #
+    # DM1_EXP_LOWER_OPT = delay_prob_lower_exp_dm1_opt(
+    #     t=START,
+    #     delay=DELTA_TIME,
+    #     lamb=LAMB,
+    #     rate=SERVICE_RATE,
+    #     print_x=PRINT_X)
+    # print("DM1 Exp Lower Opt: ", DM1_EXP_LOWER_OPT)
 
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[10.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
@@ -228,12 +311,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_exp_lower(
-                start_time=START, perform_param=DELAY10, mc_dist=MC_UNIF20))
+                start_time=START, perform_param=OUTPUT4, mc_dist=MC_UNIF20))
 
     def fun2():
         print(
             csv_single_param_exp_lower(
-                start_time=START, perform_param=DELAY10, mc_dist=MC_EXP1))
+                start_time=START, perform_param=OUTPUT4, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []
