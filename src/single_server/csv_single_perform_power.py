@@ -94,7 +94,7 @@ def csv_single_perform(arrival: ArrivalDistribution, service: ConstantRate,
         opt_method=opt_method,
         perform_param_list=perform_param_list)
 
-    filename += "_" + arrival.to_value(
+    filename += "_" + arrival.to_name() + "_" + arrival.to_value(
         number=1, show_n=False) + "_" + service.to_value(number=1)
 
     data_frame.to_csv(
@@ -107,9 +107,6 @@ if __name__ == '__main__':
     OUTPUT_LIST = PerformParamList(
         perform_metric=PerformEnum.OUTPUT, values_list=range(4, 15))
 
-    NEW_OUTPUT_LIST = PerformParamList(
-        perform_metric=PerformEnum.OUTPUT, values_list=range(4, 15))
-
     EXP1 = DM1(lamb=3.8, n=1)
     CONST_RATE1 = ConstantRate(rate=3.0)
 
@@ -117,35 +114,15 @@ if __name__ == '__main__':
         csv_single_perform(
             arrival=EXP1,
             service=CONST_RATE1,
-            perform_param_list=NEW_OUTPUT_LIST,
-            opt_method=OptMethod.GRID_SEARCH))
-
-    EXP2 = DM1(lamb=0.5, n=1)
-    CONST_RATE2 = ConstantRate(rate=10.0)
-
-    print(
-        csv_single_perform(
-            arrival=EXP2,
-            service=CONST_RATE2,
-            perform_param_list=NEW_OUTPUT_LIST,
+            perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
     MMOO1 = MMOO(mu=8.0, lamb=12.0, burst=3.0, n=1)
-    CONST_RATE3 = ConstantRate(rate=1.5)
+    CONST_RATE2 = ConstantRate(rate=1.5)
 
     print(
         csv_single_perform(
             arrival=MMOO1,
-            service=CONST_RATE3,
-            perform_param_list=NEW_OUTPUT_LIST,
-            opt_method=OptMethod.GRID_SEARCH))
-
-    MMOO2 = MMOO(mu=4.0, lamb=12.0, burst=3.0, n=1)
-    CONST_RATE4 = ConstantRate(rate=1.5)
-
-    print(
-        csv_single_perform(
-            arrival=MMOO2,
-            service=CONST_RATE4,
-            perform_param_list=NEW_OUTPUT_LIST,
+            service=CONST_RATE2,
+            perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))

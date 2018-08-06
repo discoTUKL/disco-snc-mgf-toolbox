@@ -8,7 +8,8 @@ import pandas as pd
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_param_list import PerformParamList
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
+from nc_processes.arrival_distribution import (DM1, MD1, MMOO,
+                                               ArrivalDistribution)
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -113,7 +114,7 @@ def csv_fat_cross_perform(
         opt_method=opt_method,
         perform_param_list=perform_param_list)
 
-    filename += "_" + foi_arrival.to_value(
+    filename += "_" + foi_arrival.to_name() + "_" + foi_arrival.to_value(
         number=1, show_n=False
     ) + "_" + foi_service.to_value(number=1) + "_" + cross_arrival.to_value(
         number=2, show_n=False) + "_" + cross_service.to_value(number=2)
@@ -128,30 +129,30 @@ if __name__ == '__main__':
     DELAY_PROB_LIST = PerformParamList(
         perform_metric=PerformEnum.DELAY_PROB, values_list=range(4, 11))
 
-    EXP_FOI1 = DM1(lamb=0.2)
-    EXP_CROSS1 = DM1(lamb=8.0)
+    DM1_FOI1 = DM1(lamb=0.2)
+    DM1_CROSS1 = DM1(lamb=8.0)
     RATE_FOI1 = ConstantRate(rate=8.0)
     RATE_CROSS1 = ConstantRate(rate=0.2)
 
     print(
         csv_fat_cross_perform(
-            foi_arrival=EXP_FOI1,
-            cross_arrival=EXP_CROSS1,
+            foi_arrival=DM1_FOI1,
+            cross_arrival=DM1_CROSS1,
             foi_service=RATE_FOI1,
             cross_service=RATE_CROSS1,
             number_servers=2,
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    EXP_FOI2 = DM1(lamb=0.4)
-    EXP_CROSS2 = DM1(lamb=3.5)
+    DM1_FOI2 = DM1(lamb=0.4)
+    DM1_CROSS2 = DM1(lamb=3.5)
     RATE_FOI2 = ConstantRate(rate=4.5)
     RATE_CROSS2 = ConstantRate(rate=0.4)
 
     print(
         csv_fat_cross_perform(
-            foi_arrival=EXP_FOI2,
-            cross_arrival=EXP_CROSS2,
+            foi_arrival=DM1_FOI2,
+            cross_arrival=DM1_CROSS2,
             foi_service=RATE_FOI2,
             cross_service=RATE_CROSS2,
             number_servers=2,
@@ -184,6 +185,36 @@ if __name__ == '__main__':
             cross_arrival=MMOO_CROSS2,
             foi_service=RATE_FOI4,
             cross_service=RATE_CROSS4,
+            number_servers=2,
+            perform_param_list=DELAY_PROB_LIST,
+            opt_method=OptMethod.GRID_SEARCH))
+
+    MD1_FOI1 = MD1(lamb=0.7, packet_size=2.0)
+    MD1_CROSS1 = MD1(lamb=0.7, packet_size=2.0)
+    RATE_FOI5 = ConstantRate(rate=2.0)
+    RATE_CROSS5 = ConstantRate(rate=2.0)
+
+    print(
+        csv_fat_cross_perform(
+            foi_arrival=MD1_FOI1,
+            cross_arrival=MD1_CROSS1,
+            foi_service=RATE_FOI5,
+            cross_service=RATE_CROSS5,
+            number_servers=2,
+            perform_param_list=DELAY_PROB_LIST,
+            opt_method=OptMethod.GRID_SEARCH))
+
+    MD1_FOI2 = MD1(lamb=0.2, packet_size=3.8)
+    MD1_CROSS2 = MD1(lamb=1.0, packet_size=0.02)
+    RATE_FOI6 = ConstantRate(rate=3.8)
+    RATE_CROSS6 = ConstantRate(rate=0.02)
+
+    print(
+        csv_fat_cross_perform(
+            foi_arrival=MD1_FOI2,
+            cross_arrival=MD1_CROSS2,
+            foi_service=RATE_FOI6,
+            cross_service=RATE_CROSS6,
             number_servers=2,
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))

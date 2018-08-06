@@ -35,6 +35,9 @@ class ArrivalDistribution(Arrival):
         """
         pass
 
+    def to_name(self) -> str:
+        return self.__class__.__name__
+
     @abstractmethod
     def to_value(self, number: int = 1, show_n: bool = False) -> str:
         pass
@@ -182,9 +185,9 @@ class MD1(ArrivalDistribution):
 
     def to_value(self, number: int = 1, show_n: bool = False) -> str:
         if show_n:
-            return "lambda{0}={1}_b{0}={2}_n{0}={3}".format(
+            return "lambda{0}={1}_size{0}={2}_n{0}={3}".format(
                 str(number), str(self.lamb), str(self.packet_size),
                 str(self.n))
         else:
-            return "lambda{0}={1}_b{0}={2}".format(
+            return "lambda{0}={1}_size{0}={2}".format(
                 str(number), str(self.lamb), str(self.packet_size))
