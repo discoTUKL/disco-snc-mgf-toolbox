@@ -38,7 +38,7 @@ def f_double_prime(theta: float, i: int, s: int, t: int, lamb: float,
     return (theta**2) * log(a) * help_1 * (a**help_1) * (log(a) * help_1 + 1)
 
 
-def output_lower_exp_dm1(theta: float, start: int, delta_time: int,
+def output_lower_exp_dm1(theta: float, s: int, delta_time: int,
                          lamb: float, rate: float, a: float) -> float:
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
@@ -53,13 +53,13 @@ def output_lower_exp_dm1(theta: float, start: int, delta_time: int,
 
     sum_j = 0.0
 
-    for _i in range(start + 1):
+    for _i in range(s + 1):
         try:
             summand = f_exp(
                 theta=theta,
                 i=_i,
-                s=start,
-                t=start + delta_time,
+                s=s,
+                t=s + delta_time,
                 lamb=lamb,
                 rate=rate,
                 a=a)
@@ -71,7 +71,7 @@ def output_lower_exp_dm1(theta: float, start: int, delta_time: int,
     return log(sum_j) / log(a)
 
 
-def output_lower_exp_dm1_opt(start: int,
+def output_lower_exp_dm1_opt(s: int,
                              delta_time: int,
                              lamb: float,
                              rate: float,
@@ -80,7 +80,7 @@ def output_lower_exp_dm1_opt(start: int,
         try:
             return output_lower_exp_dm1(
                 theta=param_list[0],
-                start=start,
+                s=s,
                 delta_time=delta_time,
                 lamb=lamb,
                 rate=rate,
@@ -217,9 +217,12 @@ def csv_single_param_exp_lower(start_time: int,
                 lamb=param_array[i, 0],
                 rate=param_array[i, 1])
 
+            if res_array[i, 0] >= 1.0:
+                res_array[i,] = nan
+
         elif perform_param.perform_metric == PerformEnum.OUTPUT:
             res_array[i, 2] = output_lower_exp_dm1_opt(
-                start=start_time,
+                s=start_time,
                 delta_time=perform_param.value,
                 lamb=param_array[i, 0],
                 rate=param_array[i, 1])
@@ -230,7 +233,7 @@ def csv_single_param_exp_lower(start_time: int,
 
         if (res_array[i, 1] == inf or res_array[i, 2] == inf
                 or res_array[i, 0] == nan or res_array[i, 1] == nan
-                or res_array[i, 2] == nan or res_array[i, 0] >= 1.0):
+                or res_array[i, 2] == nan):
             res_array[i, ] = nan
             valid_iterations -= 1
 
@@ -305,13 +308,14 @@ if __name__ == '__main__':
     #     print_x=PRINT_X)
     # print("DM1 Exp Lower Opt: ", DM1_EXP_LOWER_OPT)
 
-    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[10.0])
+    # MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
+    MC_UNIF10 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[10.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
     def fun1():
         print(
             csv_single_param_exp_lower(
-                start_time=START, perform_param=OUTPUT4, mc_dist=MC_UNIF20))
+                start_time=START, perform_param=OUTPUT4, mc_dist=MC_UNIF10))
 
     def fun2():
         print(
