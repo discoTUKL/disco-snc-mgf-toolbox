@@ -18,7 +18,8 @@ from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import DM1, EBB, MD1, MMOO
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.regulated_arrivals import LeakyBucketMassOne
+from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
+                                             TokenBucketConstant)
 from optimization.opt_method import OptMethod
 
 ########################################################################
@@ -87,6 +88,14 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
             ]
             # TODO: note that n is fixed
 
+        elif arrival_enum == ArrivalEnum.TBConst:
+            arrive_list = [
+                TokenBucketConstant(
+                    sigma_single=param_array[i, j],
+                    rho_single=param_array[i, number_servers + j],
+                    n=1) for j in range(number_servers)
+            ]
+
         else:
             raise NameError("Arrival parameter {0} is infeasible".format(
                 arrival_enum.name))
@@ -150,10 +159,11 @@ if __name__ == '__main__':
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
 
-    MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
+    # MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
+    MC_UNIF5 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[5.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
-    ARRIVAL_PROCESS = ArrivalEnum.DM1
+    ARRIVAL_PROCESS = ArrivalEnum.MD1
 
     def fun1():
         print(
@@ -171,7 +181,7 @@ if __name__ == '__main__':
                 number_servers=2,
                 perform_param=DELAY_PROB10,
                 opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_UNIF20))
+                mc_dist=MC_UNIF5))
 
     def run_in_parallel(*funcs):
         """Run auxiliary functions in parallel."""
