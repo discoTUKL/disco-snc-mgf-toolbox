@@ -48,7 +48,7 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ConstantRate,
                 bound_list=[(0.1, 4.0)], delta=0.1)
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).grid_search(
-                    bound_list=[(0.1, 4.0), (0.9, 8.0)], delta=0.1)
+                    bound_list=[(0.1, 4.0), (0.9, 8.0)], delta=0.05)
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
             bound[_i] = Optimize(setting=setting).pattern_search(

@@ -44,7 +44,7 @@ def fat_cross_df(arr_list: List[ArrivalDistribution],
                 bound_list=[(0.1, 5.0)], delta=0.1)
             new_bound[_i] = OptimizeNew(
                 setting_new=setting, new=True).grid_search(
-                    bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1)
+                    bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.05)
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
             bound[_i] = Optimize(setting=setting).pattern_search(
@@ -189,10 +189,12 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MD1_FOI1 = MD1(lamb=0.7, packet_size=2.0)
-    MD1_CROSS1 = MD1(lamb=0.7, packet_size=2.0)
-    RATE_FOI5 = ConstantRate(rate=2.0)
-    RATE_CROSS5 = ConstantRate(rate=2.0)
+    PACKET_SIZE1 = 1.0
+    PACKET_SIZE2 = 0.1
+    MD1_FOI1 = MD1(lamb=0.5, packet_size=PACKET_SIZE1)
+    MD1_CROSS1 = MD1(lamb=0.5, packet_size=PACKET_SIZE2)
+    RATE_FOI5 = ConstantRate(rate=PACKET_SIZE1)
+    RATE_CROSS5 = ConstantRate(rate=PACKET_SIZE2)
 
     print(
         csv_fat_cross_perform(
@@ -204,10 +206,12 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MD1_FOI2 = MD1(lamb=0.2, packet_size=3.8)
-    MD1_CROSS2 = MD1(lamb=1.0, packet_size=0.02)
-    RATE_FOI6 = ConstantRate(rate=3.8)
-    RATE_CROSS6 = ConstantRate(rate=0.02)
+    PACKET_SIZE3 = 3.8
+    PACKET_SIZE4 = 0.05
+    MD1_FOI2 = MD1(lamb=0.05, packet_size=PACKET_SIZE3)
+    MD1_CROSS2 = MD1(lamb=0.4, packet_size=PACKET_SIZE4)
+    RATE_FOI6 = ConstantRate(rate=PACKET_SIZE1)
+    RATE_CROSS6 = ConstantRate(rate=PACKET_SIZE2)
 
     print(
         csv_fat_cross_perform(
