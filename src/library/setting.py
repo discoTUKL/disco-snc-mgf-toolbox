@@ -16,3 +16,6 @@ class Setting(ABC):
         :param param_list: theta and Hoelder parameters
         """
         pass
+
+    def to_name(self) -> str:
+        return self.__class__.to_name()
