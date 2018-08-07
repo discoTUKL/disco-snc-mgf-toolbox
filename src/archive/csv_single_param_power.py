@@ -159,6 +159,8 @@ def grid_param_single_dm1(perform_param: PerformParameter,
 
 
 if __name__ == '__main__':
+    # OUTPUT4 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
+
     DELAY10 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB, value=10)
 
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
@@ -166,7 +168,7 @@ if __name__ == '__main__':
     MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
-    ARRIVAL_PROCESS = ArrivalEnum.DM1
+    ARRIVAL_PROCESS = ArrivalEnum.MD1
 
     def fun1():
         print(

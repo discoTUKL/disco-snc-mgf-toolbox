@@ -6,7 +6,8 @@ import pandas as pd
 
 from library.perform_param_list import PerformParamList
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, MMOO, ArrivalDistribution
+from nc_processes.arrival_distribution import (DM1, MD1, MMOO,
+                                               ArrivalDistribution)
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -107,22 +108,33 @@ if __name__ == '__main__':
     OUTPUT_LIST = PerformParamList(
         perform_metric=PerformEnum.OUTPUT, values_list=range(4, 15))
 
-    EXP1 = DM1(lamb=3.8, n=1)
+    DM1_FOI = DM1(lamb=3.8, n=1)
     CONST_RATE1 = ConstantRate(rate=3.0)
 
     print(
         csv_single_perform(
-            arrival=EXP1,
+            arrival=DM1_FOI,
             service=CONST_RATE1,
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MMOO1 = MMOO(mu=8.0, lamb=12.0, burst=3.0, n=1)
+    MMOO_FOI = MMOO(mu=8.0, lamb=12.0, burst=3.0, n=1)
     CONST_RATE2 = ConstantRate(rate=1.5)
 
     print(
         csv_single_perform(
-            arrival=MMOO1,
+            arrival=MMOO_FOI,
             service=CONST_RATE2,
+            perform_param_list=OUTPUT_LIST,
+            opt_method=OptMethod.GRID_SEARCH))
+
+    PACKET_SIZE1 = 1.0
+    MD1_FOI = MD1(lamb=0.5, packet_size=PACKET_SIZE1)
+    CONST_RATE3 = ConstantRate(rate=PACKET_SIZE1)
+
+    print(
+        csv_single_perform(
+            arrival=MD1_FOI,
+            service=CONST_RATE3,
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
