@@ -40,7 +40,7 @@ def csv_single_param_power(
 
     res_array = np.empty([total_iterations, 2])
 
-    for i in tqdm(range(total_iterations)):
+    for i in tqdm(range(total_iterations), total=total_iterations):
         if arrival_enum == ArrivalEnum.DM1:
             arrival = DM1(lamb=param_array[i, 0])
 

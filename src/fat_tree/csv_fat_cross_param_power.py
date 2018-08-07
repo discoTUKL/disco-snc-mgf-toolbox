@@ -49,7 +49,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
 
     # print(res_array)
 
-    for i in tqdm(range(total_iterations)):
+    for i in tqdm(range(total_iterations), total=total_iterations):
         if arrival_enum == ArrivalEnum.DM1:
             arrive_list = [
                 DM1(lamb=param_array[i, j]) for j in range(number_servers)
