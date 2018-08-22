@@ -267,13 +267,13 @@ def csv_single_param_exp_lower(start_time: int,
 if __name__ == '__main__':
     START = 30
 
-    # DELTA_TIME = 10
-    # DELAY10 = PerformParameter(
-    #     perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
+    DELTA_TIME = 10
+    DELAY10 = PerformParameter(
+        perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
 
-    DELTA_TIME = 4
-    OUTPUT4 = PerformParameter(
-        perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
+    # DELTA_TIME = 4
+    # OUTPUT4 = PerformParameter(
+    #     perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
 
     # LAMB = 1.0
     # SERVICE_RATE = 1.2
@@ -315,12 +315,12 @@ if __name__ == '__main__':
     def fun1():
         print(
             csv_single_param_exp_lower(
-                start_time=START, perform_param=OUTPUT4, mc_dist=MC_UNIF10))
+                start_time=START, perform_param=DELAY10, mc_dist=MC_UNIF10))
 
     def fun2():
         print(
             csv_single_param_exp_lower(
-                start_time=START, perform_param=OUTPUT4, mc_dist=MC_EXP1))
+                start_time=START, perform_param=DELAY10, mc_dist=MC_EXP1))
 
     def run_in_parallel(*funcs):
         proc = []
