@@ -84,7 +84,7 @@ def csv_single_param_power(
             setting=setting, opt_method=opt_method)
 
         if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            if res_array[i, 1] >= 1.0:
+            if res_array[i, 1] > 1.0:
                 res_array[i, ] = nan
 
         if (res_array[i, 0] == inf or res_array[i, 1] == inf

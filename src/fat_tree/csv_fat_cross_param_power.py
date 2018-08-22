@@ -120,7 +120,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
             number_l=number_servers - 1)
 
         if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            if res_array[i, 1] >= 1.0:
+            if res_array[i, 1] > 1.0:
                 res_array[i, ] = nan
 
         if res_array[i, 0] == nan or res_array[i, 1] == nan:

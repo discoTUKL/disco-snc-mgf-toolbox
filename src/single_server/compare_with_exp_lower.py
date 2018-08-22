@@ -217,7 +217,7 @@ def csv_single_param_exp_lower(start_time: int,
                 lamb=param_array[i, 0],
                 rate=param_array[i, 1])
 
-            if res_array[i, 0] >= 1.0:
+            if res_array[i, 0] > 1.0:
                 res_array[i, ] = nan
 
         elif perform_param.perform_metric == PerformEnum.OUTPUT:
