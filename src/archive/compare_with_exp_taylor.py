@@ -27,8 +27,8 @@ from single_server.single_server_perform import SingleServerPerform
 
 def f_exp(theta: float, i: int, s: int, t: int, lamb: float, rate: float,
           a: float) -> float:
-    return a**(exp(theta * expect_dm1(delta_time=t - i, lamb=lamb) -
-                   expect_const_rate(delta_time=s - i, rate=rate)))
+    return a**(exp(theta * (expect_dm1(delta_time=t - i, lamb=lamb) -
+                            expect_const_rate(delta_time=s - i, rate=rate))))
 
 
 def f_double_prime(theta: float, i: int, s: int, t: int, lamb: float,
