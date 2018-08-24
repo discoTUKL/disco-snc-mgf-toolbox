@@ -1,7 +1,6 @@
 """Creates data for barplot to observe scaling for more servers."""
 
 import csv
-import sys
 from typing import List
 from warnings import warn
 
@@ -42,7 +41,6 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
 
         if new_bound >= 1:
             warn("new bound = {0} is >= 1".format(new_bound))
-            sys.exit(1)
 
         if metric == "relative":
             # improvement factor

@@ -24,20 +24,18 @@ def compute_improvement(setting: SettingNew,
     if opt_method == OptMethod.GRID_SEARCH:
         theta_bounds = [(0.1, 4.0)]
 
-        bound_array = theta_bounds[:]
-
         standard_bound = Optimize(
             setting=setting, print_x=print_x, show_warn=show_warn).grid_search(
-                bound_list=bound_array, delta=0.1)
+                bound_list=theta_bounds, delta=0.1)
 
-        bound_array_new = theta_bounds[:]
+        bound_array = theta_bounds[:]
         for _i in range(1, number_l + 1):
-            bound_array_new.append((0.9, 4.0))
+            bound_array.append((0.9, 4.0))
 
         new_bound = OptimizeNew(
             setting_new=setting, print_x=print_x,
             show_warn=show_warn).grid_search(
-                bound_list=bound_array_new, delta=0.1)
+                bound_list=bound_array, delta=0.1)
 
     elif opt_method == OptMethod.PATTERN_SEARCH:
         theta_start = 0.5
@@ -125,9 +123,28 @@ def compute_improvement(setting: SettingNew,
         if new_bound > standard_bound:
             new_bound = standard_bound
 
+    elif opt_method == OptMethod.DIFFERENTIAL_EVOLUTION:
+        theta_bounds = [(0.1, 8.0)]
+
+        standard_bound = Optimize(
+            setting=setting,
+            print_x=print_x).differential_evolution(bound_list=theta_bounds)
+
+        bound_array = theta_bounds[:]
+        for _i in range(1, number_l + 1):
+            bound_array.append((0.9, 8.0))
+
+        new_bound = OptimizeNew(
+            setting_new=setting,
+            print_x=print_x).differential_evolution(bound_list=bound_array)
+
     else:
         raise NameError("Optimization parameter {0} is infeasible".format(
             opt_method.name))
+
+    # This part is there to overcome opt_method issues
+    if new_bound > standard_bound:
+        new_bound = standard_bound
 
     if standard_bound == 0 or new_bound == 0:
         standard_bound = nan
