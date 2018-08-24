@@ -12,7 +12,7 @@ def output_power(arr: Arrival,
                  ser: Service,
                  theta: float,
                  delta_time: int,
-                 l_power: float = 1.0) -> float:
+                 l_power=1.0) -> float:
     """Implements stationary bound method"""
     if l_power < 1.0:
         l_power = 1.0
@@ -45,7 +45,7 @@ def output_power_t(arr: Arrival,
                    theta: float,
                    tt: int,
                    ss: int,
-                   l_power: float = 1.0) -> float:
+                   l_power=1.0) -> float:
     """Implements time dependent method"""
     if l_power < 1.0:
         l_power = 1.0
@@ -80,7 +80,7 @@ def delay_prob_power(arr: Arrival,
                      ser: Service,
                      theta: float,
                      delay: int,
-                     l_power: float = 1.0) -> float:
+                     l_power=1.0) -> float:
     """Implements stationary bound method"""
     if l_power < 1.0:
         l_power = 1.0
@@ -113,7 +113,7 @@ def delay_prob_power_t(arr: Arrival,
                        theta: float,
                        delay: int,
                        tt: int,
-                       l_power: float = 1.0) -> float:
+                       l_power=1.0) -> float:
     """Implements time dependent method"""
     if l_power < 1.0:
         l_power = 1.0
@@ -147,7 +147,7 @@ def output_power_discretized(arr: Arrival,
                              ser: Service,
                              theta: float,
                              delta_time: int,
-                             l_power: float = 1.0) -> float:
+                             l_power=1.0) -> float:
     """Implements stationary bound method"""
     if l_power < 1.0:
         l_power = 1.0

@@ -73,7 +73,7 @@ def delay_prob_taylor_exp_dm1_opt(t: int,
                                   delay: int,
                                   lamb: float,
                                   rate: float,
-                                  print_x: bool = False) -> float:
+                                  print_x=False) -> float:
     def helper_fun(param_list: List[float]) -> float:
         try:
             return delay_prob_taylor_exp_dm1(

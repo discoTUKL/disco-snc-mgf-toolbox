@@ -9,12 +9,12 @@ class ConstantRate(Service):
     def __init__(self, rate: float) -> None:
         self.rate = rate
 
-    def sigma(self, theta: float = 0.0) -> float:
+    def sigma(self, theta=0.0) -> float:
         return 0.0
 
     def rho(self, theta: float) -> float:
         # The minus is important to insure the correct sign
         return -self.rate
 
-    def to_value(self, number: int = 1):
+    def to_value(self, number=1):
         return "rate{0}={1}".format(str(number), str(self.rate))

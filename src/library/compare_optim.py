@@ -13,7 +13,7 @@ from optimization.simul_annealing import SimulAnnealing
 
 def compare_optimization(setting: SettingNew,
                          opt_methods: List[OptMethod],
-                         number_l: int = 1) -> List[float]:
+                         number_l=1) -> List[float]:
     """Measures time for different optimizations"""
     new = True
     print_x = False

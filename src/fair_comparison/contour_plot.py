@@ -19,7 +19,7 @@ def single_hop_contour(sigma_single: float,
                        rho_single: float,
                        utilization: float,
                        perform_param: PerformParameter,
-                       pure_snc: bool = False) -> int:
+                       pure_snc=False) -> int:
     print_x = False
     show_warn = False
 

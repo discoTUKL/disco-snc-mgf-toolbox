@@ -14,8 +14,7 @@ class InitialSimplex(object):
         self.number_rows = parameters_to_optimize + 1
         self.number_columns = parameters_to_optimize
 
-    def uniform_dist(self, max_theta: float = 3.0,
-                     max_l: float = 4.0) -> np.ndarray:
+    def uniform_dist(self, max_theta=3.0, max_l=4.0) -> np.ndarray:
         res = np.random.uniform(low=0.0, high=max_theta, size=self.number_rows)
         res = np.reshape(res, (-1, self.number_rows)).transpose()
 
@@ -30,8 +29,7 @@ class InitialSimplex(object):
 
         return res
 
-    def gao_han(self, start_list: List[float],
-                tau: float = 0.05) -> np.ndarray:
+    def gao_han(self, start_list: List[float], tau=0.05) -> np.ndarray:
         res = np.empty([self.number_rows, self.number_columns])
         res[0] = np.array(start_list)
 

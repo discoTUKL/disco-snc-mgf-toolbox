@@ -17,9 +17,9 @@ class OptimizeNew(Optimize):
 
     def __init__(self,
                  setting_new: SettingNew,
-                 new: bool = True,
-                 print_x: bool = False,
-                 show_warn: bool = False) -> None:
+                 new=True,
+                 print_x=False,
+                 show_warn=False) -> None:
         super().__init__(setting_new, print_x, show_warn)
         self.setting_bound = setting_new
         self.new = new

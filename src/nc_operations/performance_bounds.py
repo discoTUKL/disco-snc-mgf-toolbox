@@ -13,7 +13,7 @@ def backlog_prob(arr: Arrival,
                  theta: float,
                  backlog_value: float,
                  indep=True,
-                 p: float = 1.0) -> float:
+                 p=1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
@@ -44,7 +44,7 @@ def backlog_prob_t(arr: Arrival,
                    tt: int,
                    backlog_value: float,
                    indep=True,
-                   p: float = 1.0) -> float:
+                   p=1.0) -> float:
     """Implements time dependent method"""
     if indep:
         p = 1.0
@@ -81,7 +81,7 @@ def backlog(arr: Arrival,
             theta: float,
             prob_b: float,
             indep=True,
-            p: float = 1.0) -> float:
+            p=1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
@@ -109,7 +109,7 @@ def backlog_t(arr: Arrival,
               prob_b: float,
               tt: int,
               indep=True,
-              p: float = 1.0) -> float:
+              p=1.0) -> float:
     """Implements time dependent method"""
     if indep:
         p = 1.0
@@ -141,7 +141,7 @@ def delay_prob(arr: Arrival,
                theta: float,
                delay_value: int,
                indep=True,
-               p: float = 1.0) -> float:
+               p=1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
@@ -172,7 +172,7 @@ def delay_prob_t(arr: Arrival,
                  tt: int,
                  delay_value: int,
                  indep=True,
-                 p: float = 1.0) -> float:
+                 p=1.0) -> float:
     """Implements time dependent method"""
     if indep:
         p = 1.0
@@ -209,8 +209,8 @@ def delay(arr: Arrival,
           ser: Service,
           theta: float,
           prob_d: float,
-          indep: bool = True,
-          p: float = 1.0) -> float:
+          indep=True,
+          p=1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
@@ -237,8 +237,8 @@ def delay_t(arr: Arrival,
             theta: float,
             prob_d: float,
             tt: int,
-            indep: bool = True,
-            p: float = 1.0) -> float:
+            indep=True,
+            p=1.0) -> float:
     """Implements time dependent method"""
     if indep:
         p = 1.0
@@ -270,8 +270,8 @@ def output(arr: Arrival,
            ser: Service,
            theta: float,
            delta_time: int,
-           indep: bool = True,
-           p: float = 1.0) -> float:
+           indep=True,
+           p=1.0) -> float:
     """Implements stationary bound method"""
     if indep:
         p = 1.0
@@ -302,8 +302,8 @@ def output_t(arr: Arrival,
              theta: float,
              tt: int,
              ss: int,
-             indep: bool = True,
-             p: float = 1.0) -> float:
+             indep=True,
+             p=1.0) -> float:
     """Implements time dependent method"""
     if indep:
         p = 1.0

@@ -24,7 +24,7 @@ def delay_prob_leaky(theta: float,
                      rho_single: float,
                      ser: Service,
                      t: int,
-                     n: int = 1) -> float:
+                     n=1) -> float:
     if t < 0:
         raise ValueError("sum index t = {0} must be >= 0".format(t))
 
@@ -73,8 +73,8 @@ def del_prob_alter_opt(delay_value: int,
                        rho_single: float,
                        ser: Service,
                        t: int,
-                       n: int = 1,
-                       print_x: bool = False) -> float:
+                       n=1,
+                       print_x=False) -> float:
     def helper_fun(theta: float) -> float:
         try:
             return delay_prob_leaky(
@@ -132,7 +132,7 @@ def delay_leaky(theta: float,
                 rho_single: float,
                 ser: Service,
                 t: int,
-                n: int = 1) -> float:
+                n=1) -> float:
     if t < 0:
         raise ValueError("sum index t = {0} must be >= 0".format(t))
 
@@ -178,8 +178,8 @@ def del_alter_opt(prob_d: float,
                   rho_single: float,
                   ser: Service,
                   t: int,
-                  n: int = 1,
-                  print_x: bool = False) -> float:
+                  n=1,
+                  print_x=False) -> float:
     try:
 
         def helper_fun(theta: float) -> float:

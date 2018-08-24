@@ -26,7 +26,7 @@ def mgf_regulated_arrive(theta: float,
                          delta_time: int,
                          sigma_single: float,
                          rho_single: float,
-                         n: int = 1) -> float:
+                         n=1) -> float:
     if theta <= 0:
         raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
@@ -41,4 +41,4 @@ def expect_dm1(delta_time: int, lamb: float) -> float:
 
 
 def var_dm1(delta_time: int, lamb: float) -> float:
-    return delta_time / (lamb ** 2)
+    return delta_time / (lamb**2)

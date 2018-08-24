@@ -20,10 +20,8 @@ from optimization.simul_annealing import SimulAnnealing
 class Optimize(object):
     """Optimize class"""
 
-    def __init__(self,
-                 setting: Setting,
-                 print_x: bool = False,
-                 show_warn: bool = False) -> None:
+    def __init__(self, setting: Setting, print_x=False,
+                 show_warn=False) -> None:
         self.setting = setting
         self.print_x = print_x
         self.show_warn = show_warn
@@ -85,8 +83,8 @@ class Optimize(object):
 
     def pattern_search(self,
                        start_list: List[float],
-                       delta: float = 3.0,
-                       delta_min: float = 0.01) -> float:
+                       delta=3.0,
+                       delta_min=0.01) -> float:
         """
         Optimization in Hooke and Jeeves.
 
@@ -141,8 +139,7 @@ class Optimize(object):
 
         return optimum_new
 
-    def nelder_mead(self, simplex: np.ndarray, sd_min: float = 10
-                    **(-2)) -> float:
+    def nelder_mead(self, simplex: np.ndarray, sd_min=10**(-2)) -> float:
         """
         Nelder-Mead optimization from the sciPy package.
 
@@ -340,7 +337,7 @@ class Optimize(object):
     def nelder_mead_old(self,
                         simplex: np.ndarray,
                         nelder_mead_param: NelderMeadParameters,
-                        sd_min: float = 10**(-2)):
+                        sd_min=10**(-2)):
         """
         Nelder-Mead Optimization.
 

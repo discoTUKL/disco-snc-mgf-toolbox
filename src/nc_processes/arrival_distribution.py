@@ -39,15 +39,14 @@ class ArrivalDistribution(Arrival):
         return self.__class__.__name__
 
     @abstractmethod
-    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+    def to_value(self, number=1, show_n=False) -> str:
         pass
 
 
 class MMOO(ArrivalDistribution):
     """Markov Modulated On-Off Traffic"""
 
-    def __init__(self, mu: float, lamb: float, burst: float,
-                 n: int = 1) -> None:
+    def __init__(self, mu: float, lamb: float, burst: float, n=1) -> None:
         self.mu = mu
         self.lamb = lamb
         self.burst = burst
@@ -68,7 +67,7 @@ class MMOO(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
-    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+    def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "mu{0}={1}_lambda{0}={2}_burst{0}={3}_n{0}={4}".format(
                 str(number), str(self.mu), str(self.lamb), str(self.burst),
@@ -81,11 +80,8 @@ class MMOO(ArrivalDistribution):
 class EBB(ArrivalDistribution):
     """Exponentially Bounded Burstiness"""
 
-    def __init__(self,
-                 prefactor: float,
-                 decay: float,
-                 rho_single: float,
-                 n: int = 1) -> None:
+    def __init__(self, prefactor: float, decay: float, rho_single: float,
+                 n=1) -> None:
         self.prefactor = prefactor
         self.decay = decay
         self.rho_single = rho_single
@@ -111,7 +107,7 @@ class EBB(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
-    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+    def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "M{0}={1}_b{0}={2}_rho{0}={3}_n{0}={4}".format(
                 str(number), str(self.prefactor), str(self.decay),
@@ -125,7 +121,7 @@ class EBB(ArrivalDistribution):
 class DM1(ArrivalDistribution):
     """Exponentially distributed packet size."""
 
-    def __init__(self, lamb: float, n: int = 1) -> None:
+    def __init__(self, lamb: float, n=1) -> None:
         self.lamb = lamb
         self.n = n
 
@@ -154,7 +150,7 @@ class DM1(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return True
 
-    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+    def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "lambda{0}={1}_n{0}={2}".format(
                 str(number), str(self.lamb), str(self.n))
@@ -165,7 +161,7 @@ class DM1(ArrivalDistribution):
 class MD1(ArrivalDistribution):
     """Poisson process"""
 
-    def __init__(self, lamb: float, packet_size: float, n: int = 1) -> None:
+    def __init__(self, lamb: float, packet_size: float, n=1) -> None:
         self.lamb = lamb
         self.packet_size = packet_size
         self.n = n
@@ -183,7 +179,7 @@ class MD1(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
-    def to_value(self, number: int = 1, show_n: bool = False) -> str:
+    def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "lambda{0}={1}_size{0}={2}_n{0}={3}".format(
                 str(number), str(self.lamb), str(self.packet_size),
