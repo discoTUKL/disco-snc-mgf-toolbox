@@ -181,18 +181,18 @@ def delay_prob_sample_exp_dm1(theta: float, t: int, delay: int, lamb: float,
     if a <= 1:
         raise ParameterOutOfBounds("base a={0} must be >0".format(a))
 
-    res = np.zeros(shape=sample_size)
+    res = 0.0
 
     for j in range(sample_size):
         sum_i = 0.0
         for i in range(t + 1):
             sum_i += a**(exp(
                 theta * f_sample(i=i, s=t + delay, t=t, lamb=lamb, rate=rate)))
-        res[j] = sum_i
+        res += sum_i
 
-    mean_res: float = np.mean(res)
+    res /= sample_size
 
-    return mean_res
+    return res
 
 
 def delay_prob_sample_exp_dm1_opt(t: int,
@@ -297,7 +297,8 @@ def csv_single_param_exp_lower(start_time: int,
 
             if res_array[i, 0] > 1.0:
                 res_array[i, ] = nan
-                res_array_sample[i, ] = nan
+                if sample:
+                    res_array_sample[i, ] = nan
 
         elif perform_param.perform_metric == PerformEnum.OUTPUT:
             res_array[i, 2] = output_lower_exp_dm1_opt(
