@@ -4,7 +4,6 @@ from abc import abstractmethod
 from math import exp, log, sqrt
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import is_equal
 from nc_processes.arrival import Arrival
 
 
@@ -80,9 +79,9 @@ class MMOO(ArrivalDistribution):
 class EBB(ArrivalDistribution):
     """Exponentially Bounded Burstiness"""
 
-    def __init__(self, prefactor: float, decay: float, rho_single: float,
+    def __init__(self, pre_m: float, decay: float, rho_single: float,
                  n=1) -> None:
-        self.prefactor = prefactor
+        self.pre_m = pre_m
         self.decay = decay
         self.rho_single = rho_single
         self.n = n
@@ -91,15 +90,14 @@ class EBB(ArrivalDistribution):
         if theta <= 0:
             raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
 
-        if is_equal(theta, self.decay):
-            raise ParameterOutOfBounds(
-                "theta {0} and decay {1} must be different".format(
-                    theta, self.decay))
+        if theta >= self.decay:
+            raise ParameterOutOfBounds("theta {0} must be < decay {1}".format(
+                theta, self.decay))
 
-        theta_decay = theta / self.decay
+        theta_over_decay = theta / self.decay
 
         return (self.n / theta) * log(
-            (self.prefactor**theta_decay) / (1 - theta_decay))
+            (self.pre_m**theta_over_decay) / (1 - theta_over_decay))
 
     def rho(self, theta=0.0) -> float:
         return self.n * self.rho_single
@@ -109,12 +107,12 @@ class EBB(ArrivalDistribution):
 
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
-            return "M{0}={1}_b{0}={2}_rho{0}={3}_n{0}={4}".format(
-                str(number), str(self.prefactor), str(self.decay),
+            return "M{0}={1}_decay{0}={2}_rho{0}={3}_n{0}={4}".format(
+                str(number), str(self.pre_m), str(self.decay),
                 str(self.rho_single), str(self.n))
         else:
-            return "M{0}={1}_b{0}={2}_rho{0}={3}".format(
-                str(number), str(self.prefactor), str(self.decay),
+            return "M{0}={1}_decay{0}={2}_rho{0}={3}".format(
+                str(number), str(self.pre_m), str(self.decay),
                 str(self.rho_single))
 
 

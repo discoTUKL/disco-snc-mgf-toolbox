@@ -58,7 +58,7 @@ def csv_single_param_power(
 
         elif arrival_enum == ArrivalEnum.EBB:
             arrival = EBB(
-                prefactor=param_array[i, 0],
+                pre_m=param_array[i, 0],
                 decay=param_array[i, 1],
                 rho_single=param_array[i, 2])
 

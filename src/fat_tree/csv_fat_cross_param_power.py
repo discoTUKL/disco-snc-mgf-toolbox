@@ -73,7 +73,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
 
         elif arrival_enum == ArrivalEnum.EBB:
             arrive_list = [
-                EBB(prefactor=param_array[i, j],
+                EBB(pre_m=param_array[i, j],
                     decay=param_array[i, number_servers + j],
                     rho_single=param_array[i, 2 * number_servers + j])
                 for j in range(number_servers)
