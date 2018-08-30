@@ -206,12 +206,12 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    PACKET_SIZE3 = 3.8
+    PACKET_SIZE3 = 3.0
     PACKET_SIZE4 = 0.05
-    MD1_FOI2 = MD1(lamb=0.05, packet_size=PACKET_SIZE3)
+    MD1_FOI2 = MD1(lamb=0.6, packet_size=PACKET_SIZE3)
     MD1_CROSS2 = MD1(lamb=0.4, packet_size=PACKET_SIZE4)
-    RATE_FOI6 = ConstantRate(rate=PACKET_SIZE1)
-    RATE_CROSS6 = ConstantRate(rate=PACKET_SIZE2)
+    RATE_FOI6 = ConstantRate(rate=PACKET_SIZE3)
+    RATE_CROSS6 = ConstantRate(rate=PACKET_SIZE4)
 
     print(
         csv_fat_cross_perform(
