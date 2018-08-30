@@ -2,7 +2,6 @@
 
 import csv
 from math import nan
-from multiprocessing import Process
 
 import numpy as np
 from tqdm import tqdm
@@ -57,8 +56,10 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
 
         elif arrival_enum == ArrivalEnum.MD1:
             arrive_list = [
+                # MD1(lamb=param_array[i, j],
+                #     packet_size=param_array[i, number_servers + j])
                 MD1(lamb=param_array[i, j],
-                    packet_size=param_array[i, number_servers + j])
+                    packet_size=1.0)
                 for j in range(number_servers)
             ]
 
@@ -168,32 +169,18 @@ if __name__ == '__main__':
 
     ARRIVAL_PROCESS = ArrivalEnum.MD1
 
-    def fun1():
-        print(
-            csv_fat_cross_param_power(
-                arrival_enum=ARRIVAL_PROCESS,
-                number_servers=2,
-                perform_param=DELAY_PROB10,
-                opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_EXP1))
+    print(
+        csv_fat_cross_param_power(
+            arrival_enum=ARRIVAL_PROCESS,
+            number_servers=2,
+            perform_param=DELAY_PROB10,
+            opt_method=COMMON_OPTIMIZATION,
+            mc_dist=MC_EXP1))
 
-    def fun2():
-        print(
-            csv_fat_cross_param_power(
-                arrival_enum=ARRIVAL_PROCESS,
-                number_servers=2,
-                perform_param=DELAY_PROB10,
-                opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_UNIF5))
-
-    def run_in_parallel(*funcs):
-        """Run auxiliary functions in parallel."""
-        proc = []
-        for func in funcs:
-            process_instance = Process(target=func)
-            process_instance.start()
-            proc.append(process_instance)
-        for process_instance in proc:
-            process_instance.join()
-
-    run_in_parallel(fun1, fun2)
+    print(
+        csv_fat_cross_param_power(
+            arrival_enum=ARRIVAL_PROCESS,
+            number_servers=2,
+            perform_param=DELAY_PROB10,
+            opt_method=COMMON_OPTIMIZATION,
+            mc_dist=MC_UNIF5))

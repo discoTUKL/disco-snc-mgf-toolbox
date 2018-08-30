@@ -2,7 +2,6 @@
 
 import csv
 from math import inf, nan
-from multiprocessing import Process
 
 import numpy as np
 from tqdm import tqdm
@@ -170,32 +169,19 @@ if __name__ == '__main__':
 
     ARRIVAL_PROCESS = ArrivalEnum.MD1
 
-    def fun1():
-        print(
-            csv_single_param_power(
-                arrival_enum=ARRIVAL_PROCESS,
-                perform_param=DELAY10,
-                opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_UNIF20))
+    print(
+        csv_single_param_power(
+            arrival_enum=ARRIVAL_PROCESS,
+            perform_param=DELAY10,
+            opt_method=COMMON_OPTIMIZATION,
+            mc_dist=MC_UNIF20))
 
-    def fun2():
-        print(
-            csv_single_param_power(
-                arrival_enum=ARRIVAL_PROCESS,
-                perform_param=DELAY10,
-                opt_method=COMMON_OPTIMIZATION,
-                mc_dist=MC_EXP1))
-
-    def run_in_parallel(*funcs):
-        proc = []
-        for func in funcs:
-            process_instance = Process(target=func)
-            process_instance.start()
-            proc.append(process_instance)
-        for process_instance in proc:
-            process_instance.join()
-
-    run_in_parallel(fun1, fun2)
+    print(
+        csv_single_param_power(
+            arrival_enum=ARRIVAL_PROCESS,
+            perform_param=DELAY10,
+            opt_method=COMMON_OPTIMIZATION,
+            mc_dist=MC_EXP1))
 
     # print(
     #     grid_param_single_dm1(
