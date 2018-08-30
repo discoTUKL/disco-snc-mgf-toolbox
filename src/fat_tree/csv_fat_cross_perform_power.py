@@ -189,12 +189,10 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    PACKET_SIZE1 = 1.0
-    PACKET_SIZE2 = 0.1
-    MD1_FOI1 = MD1(lamb=0.5, packet_size=PACKET_SIZE1)
-    MD1_CROSS1 = MD1(lamb=0.5, packet_size=PACKET_SIZE2)
-    RATE_FOI5 = ConstantRate(rate=PACKET_SIZE1)
-    RATE_CROSS5 = ConstantRate(rate=PACKET_SIZE2)
+    MD1_FOI1 = MD1(lamb=1.6, packet_size=1.0)
+    MD1_CROSS1 = MD1(lamb=0.01, packet_size=1.0)
+    RATE_FOI5 = ConstantRate(rate=2.0)
+    RATE_CROSS5 = ConstantRate(rate=0.15)
 
     print(
         csv_fat_cross_perform(
@@ -206,12 +204,10 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    PACKET_SIZE3 = 3.0
-    PACKET_SIZE4 = 0.05
-    MD1_FOI2 = MD1(lamb=0.6, packet_size=PACKET_SIZE3)
-    MD1_CROSS2 = MD1(lamb=0.4, packet_size=PACKET_SIZE4)
-    RATE_FOI6 = ConstantRate(rate=PACKET_SIZE3)
-    RATE_CROSS6 = ConstantRate(rate=PACKET_SIZE4)
+    MD1_FOI2 = MD1(lamb=3.6, packet_size=1.0)
+    MD1_CROSS2 = MD1(lamb=0.28, packet_size=1.0)
+    RATE_FOI6 = ConstantRate(rate=4.4)
+    RATE_CROSS6 = ConstantRate(rate=0.7)
 
     print(
         csv_fat_cross_perform(

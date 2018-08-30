@@ -128,9 +128,8 @@ if __name__ == '__main__':
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    PACKET_SIZE1 = 1.0
-    MD1_FOI = MD1(lamb=0.5, packet_size=PACKET_SIZE1)
-    CONST_RATE3 = ConstantRate(rate=PACKET_SIZE1)
+    MD1_FOI = MD1(lamb=0.5, packet_size=1.0)
+    CONST_RATE3 = ConstantRate(rate=1.0)
 
     print(
         csv_single_perform(

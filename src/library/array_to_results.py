@@ -65,8 +65,9 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
             res_dict["rate{0}".format(j + 1)] = param_array[row_max,
                                                             number_servers + j]
-            res_dict["packet_size{0}".format(j + 1)] = param_array[
-                row_max, number_servers + j]
+            # res_dict["packet_size{0}".format(j + 1)] = param_array[
+            #     row_max, number_servers + j]
+            res_dict["packet_size{0}".format(j + 1)] = 1.0
 
         elif arrival_enum == ArrivalEnum.MMOO:
             res_dict["mu{0}".format(j + 1)] = param_array[row_max, j]
