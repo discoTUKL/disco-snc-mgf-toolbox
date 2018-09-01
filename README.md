@@ -5,7 +5,7 @@ The (sigma, rho)-calculus is implemented in this tool. It is supposed to provide
 ## Prerequisites
 
 - Python 3.6 or higher
-- Python3 Packages in `requiremets.txt`
+- Python packages in `requiremets.txt`
 
 ## Introduction
 
