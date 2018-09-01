@@ -17,23 +17,23 @@ The easiest start is to use `Calculate_Examples.py`. Set a performance parameter
 OUTPUT_TIME6 = PerformParameter(perform_metric=PerformMetric.OUTPUT, value=6)
 ```
 
-This means that we want the compute the output for time delta = 6.
+we compute the output bound for time delta = 6.
 
 ```python
-SINGLE_SERVER = SingleServerPerform(arr=ExponentialArrival(lamb=1.0),
+SINGLE_SERVER = SingleServerPerform(arr=DM1(lamb=1.0),
                                     ser=ConstantRate(rate=10.0),
                                     perform_param=OUTPUT_TIME6)
 ```
 
-means that we consider the single hop topology we exponentially distributed arrival (parameter lambda equal to 1) and a constant rate server (with rate 10).
+means that we consider the single hop topology with exponentially distributed arrival increments (DM1 with parameter lambda equal to 1) and a constant rate server (with rate 10).
 
 ```python
 print(SINGLE_SERVER.get_bound(0.1))
 ```
 
-gives then the bound at theta = 0.1.
+for theta = 0.1.
 
-For the new output bound computation, we have to set a list of parameters:
+For the new output bound computation, we insert a list of parameters (first element is theta, the rest are for the new output bound computation):
 
 ```python
 [0.1, 2.7]
@@ -48,7 +48,7 @@ print(SINGLE_SERVER.get_new_bound([0.1, 2.7]))
 #### Compute Optimized Bound
 
 Assume we want to optimize the parameter for the above setting. Therefore, we choose to optimize, e.g., via grid search.
-We optimize the bound of the SINGLE_SERVER setting with the old approach "Optimize" and the new approach OptimizeNew and want to print the optimal parameter set ("print_x=true"). The last step is to choose the method "grid_search()" and to set the granularity (in this case = 0.1):
+We optimize the bound in the SINGLE_SERVER setting with the old approach "Optimize" and the new approach OptimizeNew and want to print the optimal parameter set ("print_x=true"). The last step is to choose the method "grid_search()" and to set the search's granularity (in this case = 0.1):
 
 ```python
 print(Optimize(SINGLE_SERVER, print_x=True).grid_search(
