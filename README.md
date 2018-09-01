@@ -93,13 +93,13 @@ Topologies / settings:
 - Fat tree
 - Canonical tandem
 
-## Paper Submission
+## Paper Submissions
 
-This folder contains the files that directly produces data for paper submissions.
+This folder contains the files that directly produce data for paper submissions.
 
-paper_submission/
+paper_submissions/
 
-- OTCS/ submission at Open Transactions on Communication Systems (OTCS)
+- OTCS2018/ submission at Open Transactions on Communication Systems (OTCS) 2018
 
 ## Folder Structure
 
