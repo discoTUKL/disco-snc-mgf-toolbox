@@ -1,4 +1,4 @@
-# Python MGF Calculator
+# Stochastic Network Calculus with Moment Generating Function (Python)
 
 The (sigma, rho)-calculus is implemented in this tool. It is supposed to provide solutions quickly for small networks. Yet, it must not show weak points when it comes to parameter optimization. It also includes a new approach using Jensen inequality to improve the output bound.
 
