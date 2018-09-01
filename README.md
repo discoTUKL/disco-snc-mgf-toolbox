@@ -1,20 +1,17 @@
 # Python MGF Calculator
 
-The (sigma, rho)-calculus is implemented in this tool.
-It is supposed to provide quick solutions for small networks.
-Yet, it must not show weak points when it comes to parameter optimization.
-The new approach using Lyapunov's inequality for the output is also included.
+The (sigma, rho)-calculus is implemented in this tool. It is supposed to provide solutions quickly for small networks. Yet, it must not show weak points when it comes to parameter optimization. It also includes a new approach using Jensen inequality to improve the output bound.
 
 ## Prerequisites
 
 - Python 3.6 or higher
+- Python3 Packages in `requiremets.txt`
 
 ## Introduction
 
 #### Compute Bound Directly
 
-The easiest start is to use `Calculate_Examples.py`.
-Set a performance parameter, e.g., by
+The easiest start is to use `Calculate_Examples.py`. Set a performance parameter, e.g., by
 
 ```python
 OUTPUT_TIME6 = PerformParameter(perform_metric=PerformMetric.OUTPUT, value=6)
@@ -50,8 +47,7 @@ print(SINGLE_SERVER.get_new_bound([0.1, 2.7]))
 
 #### Compute Optimized Bound
 
-Assume we want to optimize the parameter for the above setting.
-Therefore, we choose to optimize via grid search.
+Assume we want to optimize the parameter for the above setting. Therefore, we choose to optimize, e.g., via grid search.
 We optimize the bound of the SINGLE_SERVER setting with the old approach "Optimize" and the new approach OptimizeNew and want to print the optimal parameter set ("print_x=true"). The last step is to choose the method "grid_search()" and to set the granularity (in this case = 0.1):
 
 ```python
@@ -77,15 +73,17 @@ Network Calculus operations:
 
 Performance Metrics:
 
-- Backlog (probability)
-- Delay (probability)
-- Output
+- Backlog bound for a given probability and vice versa
+- Delay bound for a given probability and vice versa
+- MGF-output bound
 
 Arrival processes:
 
-- Exponential Distribution
-- MMOO
-- Token Bucket with constant parameters and with stochastic multiplexing gain (called "Leaky Bucket" to separate easily)
+- DM1
+- MD1
+- Markov modulated on-off traffic (MMOO)
+- Exponentially bounded burstiness (EBB)
+- Token Bucket
 
 For the service, only a constant rate server is available.
 
@@ -94,6 +92,14 @@ Topologies / settings:
 - Single server
 - Fat tree
 - Canonical tandem
+
+## Paper Submission
+
+This folder contains the files that directly produces data for paper submissions.
+
+paper_submission/
+
+- OTCS/ submission at Open Transactions on Communication Systems (OTCS)
 
 ## Folder Structure
 
