@@ -95,7 +95,7 @@ Topologies / settings:
 
 ## Paper Submissions
 
-This folder contains the files that directly produce data for paper submissions.
+This folder contains the files that directly produce data for paper submissions:
 
 paper_submissions/
 
