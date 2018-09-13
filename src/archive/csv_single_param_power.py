@@ -13,7 +13,7 @@ from library.mc_enum_to_dist import mc_enum_to_dist
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, EBB, MD1, MMOO
+from nc_processes.arrival_distribution import DM1, EBBConverse, MD1, MMOO
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.regulated_arrivals import LeakyBucketMassOne
@@ -56,8 +56,8 @@ def csv_single_param_power(
                 burst=param_array[i, 2])
 
         elif arrival_enum == ArrivalEnum.EBB:
-            arrival = EBB(
-                pre_m=param_array[i, 0],
+            arrival = EBBConverse(
+                factor_m=param_array[i, 0],
                 decay=param_array[i, 1],
                 rho_single=param_array[i, 2])
 

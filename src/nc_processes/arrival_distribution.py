@@ -76,12 +76,12 @@ class MMOO(ArrivalDistribution):
                 str(number), str(self.mu), str(self.lamb), str(self.burst))
 
 
-class EBB(ArrivalDistribution):
-    """Exponentially Bounded Burstiness"""
+class EBBConverse(ArrivalDistribution):
+    """Exponentially Bounded Burstiness obtained via Conversion Theorem"""
 
-    def __init__(self, pre_m: float, decay: float, rho_single: float,
+    def __init__(self, factor_m: float, decay: float, rho_single: float,
                  n=1) -> None:
-        self.pre_m = pre_m
+        self.factor_m = factor_m
         self.decay = decay
         self.rho_single = rho_single
         self.n = n
@@ -97,7 +97,7 @@ class EBB(ArrivalDistribution):
         theta_over_decay = theta / self.decay
 
         return (self.n / theta) * log(
-            (self.pre_m**theta_over_decay) / (1 - theta_over_decay))
+            (self.factor_m ** theta_over_decay) / (1 - theta_over_decay))
 
     def rho(self, theta=0.0) -> float:
         return self.n * self.rho_single
@@ -108,11 +108,11 @@ class EBB(ArrivalDistribution):
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "M{0}={1}_decay{0}={2}_rho{0}={3}_n{0}={4}".format(
-                str(number), str(self.pre_m), str(self.decay),
+                str(number), str(self.factor_m), str(self.decay),
                 str(self.rho_single), str(self.n))
         else:
             return "M{0}={1}_decay{0}={2}_rho{0}={3}".format(
-                str(number), str(self.pre_m), str(self.decay),
+                str(number), str(self.factor_m), str(self.decay),
                 str(self.rho_single))
 
 
