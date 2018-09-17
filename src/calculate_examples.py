@@ -140,22 +140,22 @@ if __name__ == '__main__':
     DELAY_PROB10 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=10)
 
-    SINGLE_SERVER_EBB_1 = SingleServerPerform(
+    SINGLE_SERVER_EBB_CONVERSE = SingleServerPerform(
         arr=EBBConverse(factor_m=1.0, decay=3.0, rho_single=1.0),
         const_rate=ConstantRate(rate=1.1),
         perform_param=DELAY_PROB10)
 
-    SINGLE_SERVER_EBB_2 = SingleServerPerform(
+    SINGLE_SERVER_EBB_DIRECT = SingleServerPerform(
         arr=EBBDirect(factor_m=1.0, decay=3.0, rho_single=1.0),
         const_rate=ConstantRate(rate=1.1),
         perform_param=DELAY_PROB10)
 
-    print(
-        Optimize(SINGLE_SERVER_EBB_1, print_x=True,
+    print("EBB converse = {}".format(
+        Optimize(SINGLE_SERVER_EBB_CONVERSE, print_x=True,
                  show_warn=True).grid_search(
-                     bound_list=[(0.1, 5.0)], delta=0.1))
+                     bound_list=[(0.1, 5.0)], delta=0.1)))
 
-    print(
-        Optimize(SINGLE_SERVER_EBB_2, print_x=True,
+    print("EBB direct = {}".format(
+        Optimize(SINGLE_SERVER_EBB_DIRECT, print_x=True,
                  show_warn=True).grid_search(
-                     bound_list=[(0.1, 5.0)], delta=0.1))
+                     bound_list=[(0.1, 5.0)], delta=0.1)))
