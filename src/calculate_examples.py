@@ -141,12 +141,12 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY_PROB, value=10)
 
     SINGLE_SERVER_EBB_CONVERSE = SingleServerPerform(
-        arr=EBBConverse(factor_m=1.0, decay=3.0, rho_single=1.0),
+        arr=EBBConverse(factor_m=1.0, decay=1.5, rho_single=1.0),
         const_rate=ConstantRate(rate=1.1),
         perform_param=DELAY_PROB10)
 
     SINGLE_SERVER_EBB_DIRECT = SingleServerPerform(
-        arr=EBBDirect(factor_m=1.0, decay=3.0, rho_single=1.0),
+        arr=EBBDirect(factor_m=1.0, decay=1.5, rho_single=1.0),
         const_rate=ConstantRate(rate=1.1),
         perform_param=DELAY_PROB10)
 
