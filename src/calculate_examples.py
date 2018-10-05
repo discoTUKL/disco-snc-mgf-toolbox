@@ -6,8 +6,7 @@ from typing import List
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (DM1, MMOO, ArrivalDistribution,
-                                               EBBConverse, EBBDirect)
+from nc_processes.arrival_distribution import (DM1, MMOO, ArrivalDistribution)
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
@@ -133,29 +132,3 @@ if __name__ == '__main__':
     print(
         OPTIMIZE_NEW.simulated_annealing(
             start_list=[0.5, 1.0], simul_annealing=SIMU_ANNEAL_PARAM))
-
-    print("\n-------------------------------------------\n")
-    print("EBB Comparison:\n")
-
-    DELAY_PROB10 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=10)
-
-    SINGLE_SERVER_EBB_CONVERSE = SingleServerPerform(
-        arr=EBBConverse(factor_m=1.0, decay=1.5, rho_single=1.0),
-        const_rate=ConstantRate(rate=1.1),
-        perform_param=DELAY_PROB10)
-
-    SINGLE_SERVER_EBB_DIRECT = SingleServerPerform(
-        arr=EBBDirect(factor_m=1.0, decay=1.5, rho_single=1.0),
-        const_rate=ConstantRate(rate=1.1),
-        perform_param=DELAY_PROB10)
-
-    print("EBB converse = {}".format(
-        Optimize(SINGLE_SERVER_EBB_CONVERSE, print_x=True,
-                 show_warn=True).grid_search(
-                     bound_list=[(0.1, 5.0)], delta=0.1)))
-
-    print("EBB direct = {}".format(
-        Optimize(SINGLE_SERVER_EBB_DIRECT, print_x=True,
-                 show_warn=True).grid_search(
-                     bound_list=[(0.1, 5.0)], delta=0.1)))

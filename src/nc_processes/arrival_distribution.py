@@ -76,7 +76,7 @@ class MMOO(ArrivalDistribution):
                 str(number), str(self.mu), str(self.lamb), str(self.burst))
 
 
-class EBBConverse(ArrivalDistribution):
+class EBB(ArrivalDistribution):
     """Exponentially Bounded Burstiness obtained via Conversion Theorem"""
 
     def __init__(self, factor_m: float, decay: float, rho_single: float,
@@ -101,44 +101,6 @@ class EBBConverse(ArrivalDistribution):
 
     def rho(self, theta=0.0) -> float:
         return self.n * self.rho_single
-
-    def is_discrete(self) -> bool:
-        return True
-
-    def to_value(self, number=1, show_n=False) -> str:
-        if show_n:
-            return "M{0}={1}_decay{0}={2}_rho{0}={3}_n{0}={4}".format(
-                str(number), str(self.factor_m), str(self.decay),
-                str(self.rho_single), str(self.n))
-        else:
-            return "M{0}={1}_decay{0}={2}_rho{0}={3}".format(
-                str(number), str(self.factor_m), str(self.decay),
-                str(self.rho_single))
-
-
-class EBBDirect(ArrivalDistribution):
-    """Exponentially Bounded Burstiness obtained directly"""
-
-    def __init__(self, factor_m: float, decay: float, rho_single: float,
-                 n=1) -> None:
-        self.factor_m = factor_m
-        self.decay = decay
-        self.rho_single = rho_single
-        self.n = n
-
-    def sigma(self, theta: float) -> float:
-        if theta <= 0:
-            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
-
-        if theta >= self.decay:
-            raise ParameterOutOfBounds("theta {0} must be < decay {1}".format(
-                theta, self.decay))
-
-        return (self.n / theta) * log(self.factor_m * theta /
-                                      (self.decay - theta))
-
-    def rho(self, theta: float) -> float:
-        return self.n * self.decay * self.rho_single / theta
 
     def is_discrete(self) -> bool:
         return True
