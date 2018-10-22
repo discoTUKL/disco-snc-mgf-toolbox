@@ -135,7 +135,7 @@ def standard_delay_opt(delay: int,
 
 
 if __name__ == '__main__':
-    TT = 2
+    TT = 20
     DELAY = 5
     A_1 = DM1(lamb=1.0, n=1)
     A_2 = DM1(lamb=1.0, n=1)
