@@ -70,8 +70,9 @@ def compute_improvement(setting: SettingNew,
                 simplex=start_simplex, sd_min=10**(-2))
 
         start_list_new = [theta_start] + [1.0] * number_l
-        start_simplex_new = InitialSimplex(parameters_to_optimize=number_l + 1
-                                           ).gao_han(start_list=start_list_new)
+        start_simplex_new = InitialSimplex(
+            parameters_to_optimize=number_l + 1).gao_han(
+                start_list=start_list_new)
 
         new_bound = OptimizeNew(
             setting_new=setting, print_x=print_x,
@@ -139,8 +140,8 @@ def compute_improvement(setting: SettingNew,
             print_x=print_x).differential_evolution(bound_list=bound_array)
 
     else:
-        raise NameError("Optimization parameter {0} is infeasible".format(
-            opt_method.name))
+        raise NameError(
+            f"Optimization parameter {opt_method.name} is infeasible")
 
     # This part is there to overcome opt_method issues
     if new_bound > standard_bound:
@@ -202,9 +203,9 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
         stop = timer()
         time_standard = stop - start
 
-        start_simplex_new = InitialSimplex(parameters_to_optimize=number_l +
-                                           1).uniform_dist(
-                                               max_theta=1.0, max_l=2.0)
+        start_simplex_new = InitialSimplex(
+            parameters_to_optimize=number_l + 1).uniform_dist(
+                max_theta=1.0, max_l=2.0)
 
         start = timer()
         OptimizeNew(setting_new=setting).nelder_mead(
@@ -213,8 +214,8 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
         time_lyapunov = stop - start
 
     else:
-        raise NameError("Optimization parameter {0} is infeasible".format(
-            opt_method.name))
+        raise NameError(
+            f"Optimization parameter {opt_method.name} is infeasible")
 
     return time_standard, time_lyapunov
 

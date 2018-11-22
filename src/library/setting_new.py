@@ -1,8 +1,9 @@
 """This superclass represents our get_value abstract class"""
 
 from abc import abstractmethod
-from library.setting import Setting
 from typing import List
+
+from library.setting import Setting
 
 
 class SettingNew(Setting):

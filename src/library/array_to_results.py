@@ -16,8 +16,7 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
                              metric: str = "relative") -> dict:
     """Writes the array values into a dictionary"""
     if res_array.shape[1] != 2:
-        raise NameError("Array must have 2 columns, not {0}".format(
-            res_array.shape[1]))
+        raise NameError(f"Array must have 2 columns, not {res_array.shape[1]}")
 
     iterations = int(res_array.shape[0])
 
@@ -26,7 +25,7 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     elif metric == "absolute":
         improvement_vec = np.subtract(res_array[:, 0], res_array[:, 1])
     else:
-        raise NameError("Metric parameter {0} is infeasible".format(metric))
+        raise NameError(f"Metric parameter {metric} is infeasible")
 
     row_max = np.nanargmax(improvement_vec)
     opt_standard_bound = res_array[row_max, 0]
@@ -42,12 +41,14 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     count_nan_new = count_nan[1]
 
     if count_nan_standard != count_nan_new:
-        warn("number of nan's does not match, {0} != {1}".format(
-            count_nan_standard, count_nan_new))
+        warn(
+            f"number of nan's does not match, {count_nan_standard} != {count_nan_new}"
+        )
 
     if valid_iterations < iterations * 0.25:
-        warn("way too many nan's: {0} out of {1}!".format(
-            iterations - valid_iterations, iterations))
+        warn(
+            f"way too many nan's: {iterations - valid_iterations} out of {iterations}!"
+        )
 
         if valid_iterations < 100:
             warn("result is useless")
@@ -58,38 +59,38 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     for j in range(number_servers):
         if arrival_enum == ArrivalEnum.DM1:
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
-            res_dict["rate{0}".format(j + 1)] = param_array[row_max,
-                                                            number_servers + j]
+            res_dict["rate{0}".format(
+                j + 1)] = param_array[row_max, number_servers + j]
 
         elif arrival_enum == ArrivalEnum.MD1:
             res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
-            res_dict["rate{0}".format(j + 1)] = param_array[row_max,
-                                                            number_servers + j]
+            res_dict["rate{0}".format(
+                j + 1)] = param_array[row_max, number_servers + j]
             # res_dict["packet_size{0}".format(j + 1)] = param_array[
             #     row_max, number_servers + j]
             res_dict["packet_size{0}".format(j + 1)] = 1.0
 
         elif arrival_enum == ArrivalEnum.MMOO:
             res_dict["mu{0}".format(j + 1)] = param_array[row_max, j]
-            res_dict["lamb{0}".format(j + 1)] = param_array[row_max,
-                                                            number_servers + j]
-            res_dict["burst{0}".format(j + 1)] = param_array[
-                row_max, 2 * number_servers + j]
-            res_dict["rate{0}".format(j + 1)] = param_array[
-                row_max, 3 * number_servers + j]
+            res_dict["lamb{0}".format(
+                j + 1)] = param_array[row_max, number_servers + j]
+            res_dict["burst{0}".format(
+                j + 1)] = param_array[row_max, 2 * number_servers + j]
+            res_dict["rate{0}".format(
+                j + 1)] = param_array[row_max, 3 * number_servers + j]
 
         elif arrival_enum == ArrivalEnum.EBB:
             res_dict["M{0}".format(j + 1)] = param_array[row_max, j]
-            res_dict["b{0}".format(j + 1)] = param_array[row_max,
-                                                         number_servers + j]
-            res_dict["rho{0}".format(j + 1)] = param_array[
-                row_max, 2 * number_servers + j]
-            res_dict["rate{0}".format(j + 1)] = param_array[
-                row_max, 3 * number_servers + j]
+            res_dict["b{0}".format(
+                j + 1)] = param_array[row_max, number_servers + j]
+            res_dict["rho{0}".format(
+                j + 1)] = param_array[row_max, 2 * number_servers + j]
+            res_dict["rate{0}".format(
+                j + 1)] = param_array[row_max, 3 * number_servers + j]
 
         else:
-            raise NameError("Arrival parameter {0} is infeasible".format(
-                arrival_enum.name))
+            raise NameError(
+                f"Arrival parameter {arrival_enum.name} is infeasible")
 
     res_dict.update({
         "opt standard bound": opt_standard_bound,
@@ -124,7 +125,7 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
         improvement_vec_2 = np.subtract(res_array[:, 0], res_array[:, 2])
         improvement_vec_news = np.subtract(res_array[:, 1], res_array[:, 2])
     else:
-        raise NameError("Metric parameter {0} is infeasible".format(metric))
+        raise NameError(f"Metric parameter {metric} is infeasible")
 
     row_exp_max = np.nanargmax(improvement_vec_news)
     opt_standard_bound = res_array[row_exp_max, 0]
@@ -143,8 +144,9 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     number_improved = np.sum(res_array[:, 1] > res_array[:, 2])
 
     if valid_iterations < iterations * 0.25:
-        warn("way too many nan's: {0} nan out of {1}!".format(
-            iterations - valid_iterations, iterations))
+        warn(
+            f"way too many nan's: {iterations - valid_iterations} nan out of {iterations}!"
+        )
 
         if valid_iterations < 100:
             warn("result in useless")

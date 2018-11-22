@@ -73,11 +73,11 @@ class Optimize(object):
             for i in range(len(bound_list)):
                 if (is_equal(grid_res[0][i], bound_list[i][0])
                         or is_equal(grid_res[0][i], bound_list[i][1])):
-                    warn("optimal x is on the boundary: {0}".format(
-                        str(grid_res[0][i])))
+                    warn(
+                        f"optimal x is on the boundary: {str(grid_res[0][i])}")
 
         if self.print_x:
-            print("grid search optimal x: {0}".format(grid_res[0].tolist()))
+            print(f"grid search optimal x: {grid_res[0].tolist()}")
 
         return grid_res[1]
 
@@ -135,7 +135,7 @@ class Optimize(object):
                 delta *= 0.5
 
         if self.print_x:
-            print("pattern search optimal x: {0}".format(param_list))
+            print(f"pattern search optimal x: {param_list}")
 
         return optimum_new
 
@@ -163,7 +163,7 @@ class Optimize(object):
             return inf
 
         if self.print_x:
-            print("Nelder Mead optimal x: {0}".format(nm_res.x))
+            print(f"Nelder Mead optimal x: {nm_res.x}")
 
         return nm_res.fun
 
@@ -182,7 +182,7 @@ class Optimize(object):
             return inf
 
         if self.print_x:
-            print("Basin Hopping optimal x: {0}".format(bh_res.x))
+            print(f"Basin Hopping optimal x: {bh_res.x}")
 
         return bh_res.fun
 
@@ -241,7 +241,7 @@ class Optimize(object):
             temperature *= simul_annealing.cooling_factor
 
         if self.print_x:
-            print("simulated annealing optimal x: {0}".format(param_best))
+            print(f"simulated annealing optimal x: {param_best}")
 
         return optimum_best
 
@@ -262,7 +262,7 @@ class Optimize(object):
             return inf
 
         if self.print_x:
-            print("Differential Evolution optimal x: {0}".format(de_res.x))
+            print(f"Differential Evolution optimal x: {de_res.x}")
 
         return de_res.fun
 
@@ -279,7 +279,7 @@ class Optimize(object):
             return inf
 
         if self.print_x:
-            print("BFGS optimal x: {0}".format(bfgs_res.x))
+            print(f"BFGS optimal x: {bfgs_res.x}")
 
         return bfgs_res.fun
 
@@ -328,8 +328,7 @@ class Optimize(object):
                         str(param_grid_df.iloc[opt_row][i])))
 
         if self.print_x:
-            print("GS old optimal x: {0}".format(
-                param_grid_df.iloc[opt_row].tolist()))
+            print(f"GS old optimal x: {param_grid_df.iloc[opt_row].tolist()}")
 
         return y_opt
 
@@ -354,8 +353,8 @@ class Optimize(object):
         # number of columns is the number of parameters
         if number_rows is not number_columns + 1:
             raise ValueError(
-                "array argument is not a simplex, rows: {0}, columns: {1}".
-                format(number_rows, number_columns))
+                f"array argument is not a simplex, rows: {number_rows}, columns: {number_columns}"
+            )
 
         reflection_alpha = nelder_mead_param.reflection_alpha
         expansion_gamma = nelder_mead_param.expansion_gamma
@@ -444,6 +443,6 @@ class Optimize(object):
                 y_value[worst_index] = y_p_reflection
 
         if self.print_x:
-            print("NM old optimal x: {0}".format(simplex[best_index]))
+            print(f"NM old optimal x: {simplex[best_index]}")
 
         return y_value[best_index]

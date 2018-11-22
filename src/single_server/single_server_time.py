@@ -50,15 +50,15 @@ def mc_time_single(arrival_enum: ArrivalEnum, perform_param: PerformParameter,
                 perform_param=perform_param)
 
         else:
-            raise NameError("Arrival parameter {0} is infeasible".format(
-                arrival_enum.name))
+            raise NameError(
+                f"Arrival parameter {arrival_enum.name} is infeasible")
 
         # time_standard, time_lyapunov = compute_overhead()
         time_array[i, 0], time_array[i, 1] = compute_overhead(
             setting=setting, opt_method=opt_method, number_l=1)
 
         if i % floor(total_iterations / 10) == 0:
-            print("iteration {0} of {1}".format(i, total_iterations))
+            print(f"iteration {i} of {total_iterations}")
 
     return time_array_to_results(
         arrival_enum=arrival_enum,

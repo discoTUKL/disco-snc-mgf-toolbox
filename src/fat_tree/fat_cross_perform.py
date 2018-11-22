@@ -22,8 +22,8 @@ class FatCrossPerform(SettingNew):
         # The first element in these lists in dedicated to the foi
         if len(arr_list) != len(ser_list):
             raise ValueError(
-                "number of arrivals {0} and servers {1} have to match".format(
-                    len(arr_list), len(ser_list)))
+                f"number of arrivals {len(arr_list)} and servers {len(ser_list)} have to match"
+            )
 
         self.arr_list = arr_list
         self.ser_list = ser_list

@@ -14,7 +14,7 @@ class PerformParameter(object):
         return str(self.perform_metric.name)
 
     def to_name_value(self) -> str:
-        return "{0}_{1}".format(self.to_name(), str(self.value))
+        return f"{self.to_name()}_{str(self.value)}"
 
     # TODO: get to know how to use @property
     # @property

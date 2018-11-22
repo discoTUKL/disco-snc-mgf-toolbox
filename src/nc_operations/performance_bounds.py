@@ -27,8 +27,8 @@ def backlog_prob(arr: Arrival,
 
     if rho_a_p >= -rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {-rho_s_q}")
 
     try:
         return mgf(
@@ -95,8 +95,8 @@ def backlog(arr: Arrival,
 
     if rho_a_p >= -rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {-rho_s_q}")
 
     log_part = log(prob_b * (1 - mgf(theta=theta, x=rho_a_p + rho_s_q)))
 
@@ -155,8 +155,8 @@ def delay_prob(arr: Arrival,
 
     if rho_a_p >= -rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {-rho_s_q}")
 
     try:
         return mgf(
@@ -224,8 +224,8 @@ def delay(arr: Arrival,
 
     if rho_a_p >= -rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {-rho_s_q}")
 
     log_part = log(prob_d * (1 - mgf(theta=theta, x=rho_a_p + rho_s_q)))
 
@@ -285,8 +285,8 @@ def output(arr: Arrival,
 
     if rho_a_p >= -rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {-rho_s_q}")
 
     try:
         return mgf(

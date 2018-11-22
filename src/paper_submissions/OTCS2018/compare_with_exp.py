@@ -41,14 +41,14 @@ def output_lower_exp_dm1(theta: float, s: int, delta_time: int, lamb: float,
                          rate: float, a: float) -> float:
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
-            ("The arrivals' long term rate {0} has to be smaller than"
-             "the service's long term rate {1}").format(1 / lamb, rate))
+            (f"The arrivals' long term rate {1 / lamb} has to be smaller than"
+             f"the service's long term rate {rate}"))
 
     if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+        raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
     if a <= 1:
-        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
+        raise ParameterOutOfBounds(f"base a = {a} must be >0")
 
     sum_j = 0.0
 

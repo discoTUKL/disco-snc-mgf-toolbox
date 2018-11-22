@@ -90,9 +90,9 @@ def mc_time_fat_cross(arrival_enum: ArrivalEnum,
                 number_servers=num_serv,
                 time_ratio=time_ratio))
 
-    with open(("time_{0}_{1}_{2}.csv").format(
-            perform_param.to_name(), arrival_enum.name, opt_method.name),
-              'w') as csv_file:
+    with open(
+        (f"time_{perform_param.to_name()}_{arrival_enum.name}_{opt_method.name}.csv"
+         ), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in time_ratio.items():
             writer.writerow([key, value])
