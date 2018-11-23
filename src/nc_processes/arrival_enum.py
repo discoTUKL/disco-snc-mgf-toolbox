@@ -32,5 +32,4 @@ class ArrivalEnum(Enum):
             return 2
 
         else:
-            raise NameError(
-                "Arrival process {0} is not implemented".format(self))
+            raise NameError(f"Arrival process {self} is not implemented")

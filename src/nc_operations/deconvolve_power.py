@@ -25,7 +25,7 @@ class DeconvolvePower(Arrival):
         l_theta = self.l_power * theta
 
         k_sig = -log(1 - mgf(
-            theta=l_theta, x=self.arr.rho(l_theta) + self.ser.rho(l_theta))
+            theta=l_theta, x=self.arr.rho(l_theta) - self.ser.rho(l_theta))
                      ) / l_theta
 
         return self.arr.sigma(l_theta) + self.ser.sigma(l_theta) + k_sig
@@ -34,10 +34,10 @@ class DeconvolvePower(Arrival):
         # here, theta can simply be replaced by l * theta
         l_theta = self.l_power * theta
 
-        if self.arr.rho(l_theta) < 0 or self.ser.rho(l_theta) > 0:
-            raise ParameterOutOfBounds("Check RHO_SINGLE's sign")
+        if self.arr.rho(l_theta) < 0 or self.ser.rho(l_theta) < 0:
+            raise ParameterOutOfBounds("Check rho's sign")
 
-        if self.arr.rho(l_theta) >= -self.ser.rho(l_theta):
+        if self.arr.rho(l_theta) >= self.ser.rho(l_theta):
             raise ParameterOutOfBounds(
                 "The arrivals' rho has to be smaller than the service's rho")
 

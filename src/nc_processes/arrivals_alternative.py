@@ -9,14 +9,13 @@ from library.helper_functions import mgf
 def mgf_fbm(theta: float, delta_time: int, lamb: float, sigma: float,
             hurst: float) -> float:
     if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+        raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
     if sigma <= 0:
-        raise ParameterOutOfBounds("sigma = {0} must be > 0".format(sigma))
+        raise ParameterOutOfBounds(f"sigma = {sigma} must be > 0")
 
     if hurst <= 0 or hurst >= 1:
-        raise ParameterOutOfBounds(
-            "Hurst = {0} must be in (0, 1)".format(hurst))
+        raise ParameterOutOfBounds(f"Hurst = {hurst} must be in (0, 1)")
 
     return exp(lamb * theta * delta_time +
                (0.5 * (sigma * theta)**2) * delta_time**(2 * hurst))
@@ -28,7 +27,7 @@ def mgf_regulated_arrive(theta: float,
                          rho_single: float,
                          n=1) -> float:
     if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+        raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
     rho_delta = rho_single * delta_time
 

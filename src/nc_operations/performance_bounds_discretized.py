@@ -1,6 +1,6 @@
 """Performance bounds for continuous Process (need discretization)"""
 
-from math import inf, log
+from math import exp, inf, log
 
 from library.exceptions import ParameterOutOfBounds
 from library.helper_functions import get_q, mgf
@@ -26,14 +26,14 @@ def backlog_prob_discretized(arr: Arrival,
     rho_s_q = ser.rho(theta=q * theta)
     sigma_s_q = ser.sigma(theta=q * theta)
 
-    if rho_a_p >= -rho_s_q:
+    if rho_a_p >= rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {rho_s_q}")
 
-    return mgf(
-        theta=theta, x=-backlog_value + rho_a_p * tau + sigma_a_p +
-        sigma_s_q) / (1 - mgf(theta=theta, x=tau * (rho_a_p + rho_s_q)))
+    return exp(-theta * backlog_value) * mgf(
+        theta=theta, x=rho_a_p * tau + sigma_a_p + sigma_s_q) / (
+            1 - mgf(theta=theta, x=tau * (rho_a_p - rho_s_q)))
 
 
 def backlog_discretized(arr: Arrival,
@@ -54,13 +54,13 @@ def backlog_discretized(arr: Arrival,
     rho_s_q = ser.rho(theta=q * theta)
     sigma_s_q = ser.sigma(theta=q * theta)
 
-    if rho_a_p >= -rho_s_q:
+    if rho_a_p >= rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {rho_s_q}")
 
     log_part = log(
-        prob_b * (1 - mgf(theta=theta, x=tau * (rho_a_p + rho_s_q))))
+        prob_b * (1 - mgf(theta=theta, x=tau * (rho_a_p - rho_s_q))))
 
     return tau * rho_a_p + sigma_a_p + sigma_s_q - log_part / theta
 
@@ -83,16 +83,15 @@ def delay_prob_discretized(arr: Arrival,
     rho_s_q = ser.rho(theta=q * theta)
     sigma_s_q = ser.sigma(theta=q * theta)
 
-    if rho_a_p >= -rho_s_q:
+    if rho_a_p >= rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {rho_s_q}")
 
     try:
-        return mgf(
-            theta=theta,
-            x=rho_a_p * tau + sigma_a_p + sigma_s_q + rho_s_q * delay_value
-        ) / (1 - mgf(theta=theta, x=tau * (rho_a_p + rho_s_q)))
+        return exp(-theta * rho_s_q * delay_value) * mgf(
+            theta=theta, x=rho_a_p * tau + sigma_a_p + sigma_s_q) / (
+                1 - mgf(theta=theta, x=tau * (rho_a_p - rho_s_q)))
 
     except ZeroDivisionError:
         return inf
@@ -116,13 +115,15 @@ def delay_discretized(arr: Arrival,
     rho_s_q = ser.rho(theta=q * theta)
     sigma_s_q = ser.sigma(theta=q * theta)
 
-    if rho_a_p >= -rho_s_q:
+    if rho_a_p >= rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {rho_s_q}")
 
     log_part = log(
-        prob_d * (1 - mgf(theta=theta, x=tau * (rho_a_p + rho_s_q))))
+        prob_d * (1 - mgf(theta=theta, x=tau * (rho_a_p - rho_s_q))))
+
+    # TODO: fix it
 
     return (log_part / theta -
             (tau * rho_a_p + sigma_a_p + sigma_s_q)) / rho_s_q
@@ -145,15 +146,15 @@ def output_discretized(arr: Arrival,
     rho_s_q = ser.rho(theta=q * theta)
     sigma_s_q = ser.sigma(theta=q * theta)
 
-    if rho_a_p >= -rho_s_q:
+    if rho_a_p >= rho_s_q:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a_p, -rho_s_q))
+            f"The arrivals' rho {rho_a_p} has to be smaller than"
+            f"the service's rho {rho_s_q}")
 
     try:
-        return mgf(
-            theta=theta, x=rho_a_p * (delta_time + 1) + sigma_a_p +
-            sigma_s_q) / (1 - mgf(theta=theta, x=rho_a_p + rho_s_q))
+        return exp(theta * rho_a_p * (delta_time + 1)) * mgf(
+            theta=theta, x=sigma_a_p + sigma_s_q) / (
+                1 - mgf(theta=theta, x=rho_a_p - rho_s_q))
 
     except ZeroDivisionError:
         return inf

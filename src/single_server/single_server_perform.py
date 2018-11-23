@@ -72,8 +72,9 @@ class SingleServerPerform(SettingNew):
                     l_power=param_l_list[1])
 
         else:
-            raise NameError("{0} is an infeasible performance metric".format(
-                self.perform_param.perform_metric))
+            raise NameError(
+                f"{self.perform_param.perform_metric} is an infeasible performance metric"
+            )
 
     def to_string(self) -> str:
         return self.to_name() + "_" + self.arr.to_value(

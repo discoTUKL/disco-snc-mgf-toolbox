@@ -9,8 +9,8 @@ from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateList, Deconvolve, Leftover
 from nc_processes.arrival import Arrival
 from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.service import Service
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.service import Service
 
 
 class FatCrossPerform(SettingNew):
@@ -21,9 +21,8 @@ class FatCrossPerform(SettingNew):
                  perform_param: PerformParameter) -> None:
         # The first element in these lists in dedicated to the foi
         if len(arr_list) != len(ser_list):
-            raise ValueError(
-                f"number of arrivals {len(arr_list)} and servers {len(ser_list)} have to match"
-            )
+            raise ValueError(f"number of arrivals {len(arr_list)}"
+                             f"and servers {len(ser_list)} have to match")
 
         self.arr_list = arr_list
         self.ser_list = ser_list

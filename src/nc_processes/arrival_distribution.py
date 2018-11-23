@@ -56,7 +56,7 @@ class MMOO(ArrivalDistribution):
 
     def rho(self, theta: float) -> float:
         if theta <= 0:
-            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
         bb = self.mu + self.lamb - theta * self.burst
 
@@ -88,7 +88,7 @@ class EBB(ArrivalDistribution):
 
     def sigma(self, theta: float) -> float:
         if theta <= 0:
-            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
         if theta >= self.decay:
             raise ParameterOutOfBounds("theta {0} must be < decay {1}".format(
@@ -137,11 +137,11 @@ class DM1(ArrivalDistribution):
         :param theta: mgf parameter
         """
         if theta <= 0:
-            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
         if theta >= self.lamb:
             raise ParameterOutOfBounds(
-                "theta = {0} must be < lambda = {1}".format(theta, self.lamb))
+                f"theta = {theta} must be < lambda = {self.lamb}")
 
         return (self.n / theta) * log(self.lamb / (self.lamb - theta))
 
@@ -169,7 +169,7 @@ class MD1(ArrivalDistribution):
 
     def rho(self, theta: float) -> float:
         if theta <= 0:
-            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
         return (self.n / theta) * self.lamb * (
             exp(theta * self.packet_size) - 1)

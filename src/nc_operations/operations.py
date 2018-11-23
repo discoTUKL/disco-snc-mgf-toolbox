@@ -3,8 +3,8 @@
 from math import log
 from typing import List
 
-from library.helper_functions import is_equal, get_p_n, get_q, mgf
 from library.exceptions import ParameterOutOfBounds
+from library.helper_functions import get_p_n, get_q, is_equal, mgf
 from nc_processes.arrival import Arrival
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.service import Service
@@ -33,7 +33,7 @@ class Deconvolve(Arrival):
         q_theta = self.q * theta
 
         k_sig = -log(1 - mgf(
-            theta=theta, x=self.arr.rho(p_theta) + self.ser.rho(q_theta))
+            theta=theta, x=self.arr.rho(p_theta) - self.ser.rho(q_theta))
                      ) / theta
 
         return self.arr.sigma(p_theta) + self.ser.sigma(q_theta) + k_sig
@@ -47,10 +47,10 @@ class Deconvolve(Arrival):
         p_theta = self.p * theta
         q_theta = self.q * theta
 
-        if self.arr.rho(p_theta) < 0 or self.ser.rho(q_theta) > 0:
-            raise ParameterOutOfBounds("Check rho's sign")
+        if self.arr.rho(p_theta) < 0 or self.ser.rho(q_theta) < 0:
+            raise ParameterOutOfBounds("The rhos must be >= 0")
 
-        if self.arr.rho(p_theta) >= -self.ser.rho(q_theta):
+        if self.arr.rho(p_theta) >= self.ser.rho(q_theta):
             raise ParameterOutOfBounds(
                 "The arrivals' rho has to be smaller than the service's rho")
 
@@ -97,15 +97,15 @@ class Convolve(Service):
         p_theta = self.p * theta
         q_theta = self.q * theta
 
-        if self.ser1.rho(p_theta) > 0 or self.ser2.rho(q_theta) > 0:
-            raise ParameterOutOfBounds("Check rho's sign")
+        if self.ser1.rho(p_theta) < 0 or self.ser2.rho(q_theta) < 0:
+            raise ParameterOutOfBounds("The rhos must be > 0")
 
         if not is_equal(
                 abs(self.ser1.rho(p_theta)), abs(self.ser2.rho(q_theta))):
-            return max(self.ser1.rho(p_theta), self.ser2.rho(q_theta))
+            return min(self.ser1.rho(p_theta), self.ser2.rho(q_theta))
 
         else:
-            return self.ser1.rho(p_theta) + (1 / theta)
+            return self.ser1.rho(p_theta) - (1 / theta)
 
 
 class Leftover(Service):
@@ -125,16 +125,16 @@ class Leftover(Service):
         p_theta = self.p * theta
         q_theta = self.q * theta
 
-        return self.arr.sigma(p_theta) + self.ser.sigma(q_theta)
+        return self.ser.sigma(q_theta) + self.arr.sigma(p_theta)
 
     def rho(self, theta):
         p_theta = self.p * theta
         q_theta = self.q * theta
 
-        if self.arr.rho(p_theta) < 0 or self.ser.rho(q_theta) > 0:
-            raise ParameterOutOfBounds("Check rho's sign")
+        if self.ser.rho(q_theta) < 0 or self.arr.rho(p_theta) < 0:
+            raise ParameterOutOfBounds("The rhos must be > 0")
 
-        return self.arr.rho(p_theta) + self.ser.rho(q_theta)
+        return self.ser.rho(q_theta) - self.arr.rho(p_theta)
 
 
 class AggregateList(Arrival):
@@ -163,7 +163,10 @@ class AggregateList(Arrival):
         return res
 
     def rho(self, theta: float) -> float:
-        # There is no sign checker implemented yet
+        for i in range(len(self.arr_list)):
+            if self.arr_list[i].rho(self.p_list[i] * theta) < 0:
+                raise ParameterOutOfBounds("The rhos must be > 0")
+
         res = 0.0
         for i in range(len(self.arr_list)):
             res += self.arr_list[i].rho(self.p_list[i] * theta)
