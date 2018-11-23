@@ -74,10 +74,10 @@ if __name__ == '__main__':
     DELAY_PROB6 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=6)
 
-    ARR_LIST: List[ArrivalDistribution] = [DM1(lamb=1), DM1(lamb=4)]
+    ARR_LIST: List[ArrivalDistribution] = [DM1(lamb=1.0), DM1(lamb=4.0)]
 
     SER_LIST: List[ConstantRate] = [
-        ConstantRate(rate=4), ConstantRate(rate=0.5)
+        ConstantRate(rate=4.0), ConstantRate(rate=0.5)
     ]
 
     EXAMPLE = FatCrossPerform(
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY_PROB, value=4)
 
     SER_LIST2: List[ConstantRate] = [
-        ConstantRate(rate=3), ConstantRate(rate=3)
+        ConstantRate(rate=3.0), ConstantRate(rate=3.0)
     ]
 
     EXAMPLE2 = FatCrossPerform(
