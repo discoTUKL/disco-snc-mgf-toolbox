@@ -60,9 +60,8 @@ if __name__ == '__main__':
             bound_list=[(0.1, 5.0), (0.9, 6.0)], delta=0.1))
 
     print(
-        OptimizeNew(
-            SINGLE_SERVER2, print_x=True,
-            show_warn=True).differential_evolution(bound_list=[(0.1,
+        OptimizeNew(SINGLE_SERVER2, print_x=True,
+                    show_warn=True).diff_evolution(bound_list=[(0.1,
                                                                 5.0), (0.9,
                                                                        6.0)]))
 
@@ -93,18 +92,8 @@ if __name__ == '__main__':
 
     print(EXAMPLE_REVERSE.bound(param_list=[0.3]))
 
-    DELAY_PROB10 = PerformParameter(
+    DELAY_PROB4 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=4)
-
-    SER_LIST2: List[ConstantRate] = [
-        ConstantRate(rate=3.0), ConstantRate(rate=3.0)
-    ]
-
-    EXAMPLE2 = FatCrossPerform(
-        arr_list=ARR_LIST, ser_list=SER_LIST2, perform_param=DELAY_PROB10)
-
-    print(EXAMPLE2.bound(param_list=[0.3]))
-    print(EXAMPLE2.new_bound(param_l_list=[0.3, 3]))
 
     print(
         Optimize(EXAMPLE, print_x=True, show_warn=True).grid_search_old(
@@ -132,3 +121,37 @@ if __name__ == '__main__':
     print(
         OPTIMIZE_NEW.simulated_annealing(
             start_list=[0.5, 1.0], simul_annealing=SIMU_ANNEAL_PARAM))
+
+    print("\n-------------------------------------------\n")
+
+    # Fat cross delay probability calculation
+    print("Sanity Checks:\n")
+
+    DELAY_PROB5 = PerformParameter(
+        perform_metric=PerformEnum.DELAY_PROB, value=5)
+
+    ARR_LIST: List[ArrivalDistribution] = [
+        MMOO(mu=0.5, lamb=0.5, burst=2.0),
+        MMOO(mu=0.5, lamb=0.5, burst=0.5)
+    ]
+
+    SER_LIST: List[ConstantRate] = [
+        ConstantRate(rate=2.0), ConstantRate(rate=0.5)
+    ]
+
+    EXAMPLE3 = FatCrossPerform(
+        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB5)
+    print(
+        Optimize(EXAMPLE3, print_x=True).grid_search(
+            bound_list=[(0.1, 5.0)], delta=0.1))
+
+    DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.07)
+
+    EXAMPLE_REVERSE3 = FatCrossPerform(
+        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)
+
+    print(
+        Optimize(EXAMPLE_REVERSE3, print_x=True).grid_search(
+            bound_list=[(0.1, 5.0)], delta=0.1))
+
+    # TODO: fix this bug

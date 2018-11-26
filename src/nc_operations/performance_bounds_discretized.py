@@ -123,10 +123,7 @@ def delay_discretized(arr: Arrival,
     log_part = log(
         prob_d * (1 - mgf(theta=theta, x=tau * (rho_a_p - rho_s_q))))
 
-    # TODO: fix it
-
-    return (log_part / theta -
-            (tau * rho_a_p + sigma_a_p + sigma_s_q)) / rho_s_q
+    return (tau * rho_a_p + sigma_a_p + sigma_s_q - log_part / theta) * rho_s_q
 
 
 def output_discretized(arr: Arrival,

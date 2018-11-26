@@ -129,7 +129,7 @@ def compute_improvement(setting: SettingNew,
 
         standard_bound = Optimize(
             setting=setting,
-            print_x=print_x).differential_evolution(bound_list=theta_bounds)
+            print_x=print_x).diff_evolution(bound_list=theta_bounds)
 
         bound_array = theta_bounds[:]
         for _i in range(1, number_l + 1):
@@ -137,7 +137,7 @@ def compute_improvement(setting: SettingNew,
 
         new_bound = OptimizeNew(
             setting_new=setting,
-            print_x=print_x).differential_evolution(bound_list=bound_array)
+            print_x=print_x).diff_evolution(bound_list=bound_array)
 
     else:
         raise NameError(

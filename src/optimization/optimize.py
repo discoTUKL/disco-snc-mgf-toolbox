@@ -245,7 +245,7 @@ class Optimize(object):
 
         return optimum_best
 
-    def differential_evolution(self, bound_list: List[tuple]) -> float:
+    def diff_evolution(self, bound_list: List[tuple]) -> float:
         """
         Differential Evolution optimization from the sciPy package.
 

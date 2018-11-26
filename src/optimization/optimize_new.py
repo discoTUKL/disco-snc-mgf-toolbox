@@ -83,7 +83,7 @@ if __name__ == '__main__':
             simplex=SIMPLEX_RAND,
             nelder_mead_param=NM_PARAM_SET))
     print(OPTI_OLD.basin_hopping(start_list=[2.0]))
-    print(OPTI_OLD.differential_evolution(bound_list=[(0.1, 4.0)]))
+    print(OPTI_OLD.diff_evolution(bound_list=[(0.1, 4.0)]))
     print(OPTI_OLD.bfgs(start_list=[0.4]))
 
     OPTI_NEW = OptimizeNew(setting_new=SETTING, new=True, print_x=True)

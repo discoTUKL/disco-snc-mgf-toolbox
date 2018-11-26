@@ -84,7 +84,7 @@ def compare_optimization(setting: SettingNew,
 
             bound = OptimizeNew(
                 setting_new=setting, new=new,
-                print_x=print_x).differential_evolution(bound_list=bound_list)
+                print_x=print_x).diff_evolution(bound_list=bound_list)
 
         elif opt == OptMethod.BFGS:
             theta_start = 0.5
