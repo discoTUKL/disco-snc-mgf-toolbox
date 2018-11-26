@@ -99,7 +99,7 @@ if __name__ == '__main__':
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB5)
 
     print(
-        Optimize(EXAMPLE, show_warn=True).grid_search(
+        Optimize(EXAMPLE, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
     DELAY_TIME = PerformParameter(
@@ -109,8 +109,10 @@ if __name__ == '__main__':
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)
 
     print(
-        Optimize(EXAMPLE_REVERSE, show_warn=True).grid_search(
+        Optimize(EXAMPLE_REVERSE, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
+
+    # TODO: Reverse does not work for continuous time and multiplie servers
 
     # DELAY_PROB4 = PerformParameter(
     #     perform_metric=PerformEnum.DELAY_PROB, value=4)
