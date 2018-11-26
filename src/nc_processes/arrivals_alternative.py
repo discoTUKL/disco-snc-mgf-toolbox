@@ -3,7 +3,6 @@
 from math import exp
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import mgf
 
 
 def mgf_fbm(theta: float, delta_time: int, lamb: float, sigma: float,
@@ -32,7 +31,7 @@ def mgf_regulated_arrive(theta: float,
     rho_delta = rho_single * delta_time
 
     return 1 + rho_delta / (sigma_single + rho_delta) * (
-        mgf(theta=theta, x=n * (sigma_single + rho_delta)) - 1)
+        exp(theta * n * (sigma_single + rho_delta)) - 1)
 
 
 def expect_dm1(delta_time: int, lamb: float) -> float:

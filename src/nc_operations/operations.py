@@ -1,10 +1,10 @@
 """Implements all network operations in the sigma-rho calculus."""
 
-from math import log
+from math import exp, log
 from typing import List
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import get_p_n, get_q, is_equal, mgf
+from library.helper_functions import get_p_n, get_q, is_equal
 from nc_processes.arrival import Arrival
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.service import Service
@@ -32,9 +32,8 @@ class Deconvolve(Arrival):
         p_theta = self.p * theta
         q_theta = self.q * theta
 
-        k_sig = -log(1 - mgf(
-            theta=theta, x=self.arr.rho(p_theta) - self.ser.rho(q_theta))
-                     ) / theta
+        k_sig = -log(1 - exp(
+            theta * (self.arr.rho(p_theta) - self.ser.rho(q_theta)))) / theta
 
         return self.arr.sigma(p_theta) + self.ser.sigma(q_theta) + k_sig
 
@@ -80,9 +79,8 @@ class Convolve(Service):
 
         if not is_equal(
                 abs(self.ser1.rho(p_theta)), abs(self.ser2.rho(q_theta))):
-            k_sig = -(1 / theta) * log(1 - mgf(
-                theta=theta,
-                x=-abs(self.ser1.rho(p_theta) - self.ser2.rho(q_theta))))
+            k_sig = -log(1 - exp(-theta * abs(
+                self.ser1.rho(p_theta) - self.ser2.rho(q_theta)))) / theta
 
             return self.ser1.sigma(p_theta) + self.ser2.sigma(q_theta) + k_sig
 
@@ -150,8 +148,8 @@ class AggregateList(Arrival):
         else:
             if len(p_list) != (len(self.arr_list) - 1):
                 raise ValueError(
-                    "number of p_list {0} arr_list {1} - 1 have to match".
-                    format(len(p_list), len(self.arr_list)))
+                    f"number of p {len(p_list)} and length of "
+                    f"arr_list {len(self.arr_list)} - 1 have to match")
 
             self.p_list = p_list.append(get_p_n(p_list=p_list, indep=indep))
 

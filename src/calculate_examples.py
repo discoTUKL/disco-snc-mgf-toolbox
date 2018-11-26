@@ -6,7 +6,8 @@ from typing import List
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (DM1, MMOO, ArrivalDistribution)
+from nc_processes.arrival_distribution import (DM1, EBB, MD1, MMOO,
+                                               ArrivalDistribution)
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
@@ -130,9 +131,14 @@ if __name__ == '__main__':
     DELAY_PROB5 = PerformParameter(
         perform_metric=PerformEnum.DELAY_PROB, value=5)
 
+    # ARR_LIST: List[ArrivalDistribution] = [
+    #     MMOO(mu=0.5, lamb=0.5, burst=2.0),
+    #     MMOO(mu=0.5, lamb=0.5, burst=0.5)
+    # ]
+
     ARR_LIST: List[ArrivalDistribution] = [
-        MMOO(mu=0.5, lamb=0.5, burst=2.0),
-        MMOO(mu=0.5, lamb=0.5, burst=0.5)
+        MD1(lamb=0.5, packet_size=1.0),
+        MD1(lamb=0.3, packet_size=1.0)
     ]
 
     SER_LIST: List[ConstantRate] = [
@@ -145,7 +151,7 @@ if __name__ == '__main__':
         Optimize(EXAMPLE3, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
-    DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.07)
+    DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.3)
 
     EXAMPLE_REVERSE3 = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)

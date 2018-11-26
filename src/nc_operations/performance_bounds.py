@@ -3,7 +3,7 @@
 from math import exp, inf, log
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import get_q, mgf
+from library.helper_functions import get_q
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 
@@ -30,10 +30,12 @@ def backlog_prob(arr: Arrival,
             f"The arrivals' rho {rho_a_p} has to be smaller than"
             f"the service's rho {rho_s_q}")
 
+    rho_arr_ser = rho_a_p - rho_s_q
+    sigma_arr_ser = sigma_a_p + sigma_s_q
+
     try:
-        return exp(-theta * backlog_value) * mgf(
-            theta=theta, x=sigma_a_p + sigma_s_q) / (
-                1 - mgf(theta=theta, x=rho_a_p - rho_s_q))
+        return exp(-theta * backlog_value) * exp(
+            theta * sigma_arr_ser) / (1 - exp(theta * rho_arr_ser))
     except ZeroDivisionError:
         return inf
 
@@ -60,9 +62,12 @@ def backlog(arr: Arrival,
             f"The arrivals' rho {rho_a_p} has to be smaller than"
             f"the service's rho {rho_s_q}")
 
-    log_part = log(prob_b * (1 - mgf(theta=theta, x=rho_a_p - rho_s_q)))
+    rho_arr_ser = rho_a_p - rho_s_q
+    sigma_arr_ser = sigma_a_p + sigma_s_q
 
-    return sigma_a_p + sigma_s_q - log_part / theta
+    log_part = log(prob_b * (1 - exp(theta * rho_arr_ser)))
+
+    return sigma_arr_ser - log_part / theta
 
 
 def delay_prob(arr: Arrival,
@@ -87,10 +92,12 @@ def delay_prob(arr: Arrival,
             f"The arrivals' rho {rho_a_p} has to be smaller than"
             f"the service's rho {rho_s_q}")
 
+    rho_arr_ser = rho_a_p - rho_s_q
+    sigma_arr_ser = sigma_a_p + sigma_s_q
+
     try:
-        return exp(-theta * rho_s_q * delay_value) * mgf(
-            theta=theta, x=sigma_a_p + sigma_s_q) / (
-                1 - mgf(theta=theta, x=rho_a_p - rho_s_q))
+        return exp(-theta * rho_s_q * delay_value) * exp(
+            theta * sigma_arr_ser) / (1 - exp(theta * rho_arr_ser))
     except ZeroDivisionError:
         return inf
 
@@ -117,9 +124,12 @@ def delay(arr: Arrival,
             f"The arrivals' rho {rho_a_p} has to be smaller than"
             f"the service's rho {rho_s_q}")
 
-    log_part = log(prob_d * (1 - mgf(theta=theta, x=rho_a_p - rho_s_q)))
+    rho_arr_ser = rho_a_p - rho_s_q
+    sigma_arr_ser = sigma_a_p + sigma_s_q
 
-    return (sigma_a_p + sigma_s_q - log_part / theta) / rho_s_q
+    log_part = log(prob_d * (1 - exp(theta * rho_arr_ser)))
+
+    return (sigma_arr_ser - log_part / theta) / rho_s_q
 
 
 def output(arr: Arrival,
@@ -144,10 +154,12 @@ def output(arr: Arrival,
             f"The arrivals' rho {rho_a_p} has to be smaller than"
             f"the service's rho {rho_s_q}")
 
+    rho_arr_ser = rho_a_p - rho_s_q
+    sigma_arr_ser = sigma_a_p + sigma_s_q
+
     try:
-        return exp(theta * rho_a_p * delta_time) * mgf(
-            theta=theta, x=sigma_a_p + sigma_s_q) / (
-                1 - mgf(theta=theta, x=rho_a_p - rho_s_q))
+        return exp(theta * rho_a_p * delta_time) * exp(
+            theta * sigma_arr_ser) / (1 - exp(theta * rho_arr_ser))
 
     except ZeroDivisionError:
         return inf

@@ -1,12 +1,11 @@
 """Compare with alternative traffic description"""
 
-from math import inf, log, nan
+from math import exp, inf, log, nan
 
 import numpy as np
 import scipy.optimize
 
 from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import mgf
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrivals_alternative import mgf_regulated_arrive
@@ -26,7 +25,7 @@ def delay_prob_leaky(theta: float,
                      t: int,
                      n=1) -> float:
     if t < 0:
-        raise ValueError("sum index t = {0} must be >= 0".format(t))
+        raise ValueError(f"sum index t = {t} must be >= 0")
 
     sigma_a = n * sigma_single
     rho_a = n * rho_single
@@ -34,10 +33,10 @@ def delay_prob_leaky(theta: float,
     sigma_s = ser.sigma(theta=theta)
     rho_s = ser.rho(theta=theta)
 
-    if rho_a >= -rho_s:
+    if rho_a >= rho_s:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a, -rho_s))
+            f"The arrivals' rho {rho_a} has to be smaller than"
+            f"the service's rho {rho_s}")
 
     sum_j = 0.0
 
@@ -50,8 +49,7 @@ def delay_prob_leaky(theta: float,
                 delta_time=_j,
                 sigma_single=sigma_single,
                 rho_single=rho_single,
-                n=n) * mgf(
-                    theta=theta, x=_j * rho_s)
+                n=n) * exp(theta * _j * rho_s)
         except (FloatingPointError, OverflowError):
             summand = inf
 
@@ -59,11 +57,13 @@ def delay_prob_leaky(theta: float,
     # print(sum_j)
     # sum_j = 1.0
 
+    rho_arr_ser = rho_a - rho_s
+    sigma_arr_ser = sigma_a + sigma_s
+
     try:
-        return mgf(
-            theta=theta, x=sigma_s + rho_s * delay_value) * (
-                mgf(theta=theta, x=sigma_a + (rho_a + rho_s) * t) /
-                (1 - mgf(theta=theta, x=rho_a + rho_s)) + sum_j)
+        return exp(-theta * rho_s * delay_value) * (
+            exp(theta * (sigma_arr_ser + rho_arr_ser * t)) /
+            (1 - exp(theta * rho_arr_ser)) + sum_j)
     except FloatingPointError:
         return nan
 
@@ -134,7 +134,7 @@ def delay_leaky(theta: float,
                 t: int,
                 n=1) -> float:
     if t < 0:
-        raise ValueError("sum index t = {0} must be >= 0".format(t))
+        raise ValueError(f"sum index t = {0} must be >= 0")
 
     sigma_a = n * sigma_single
     rho_a = n * rho_single
@@ -142,10 +142,10 @@ def delay_leaky(theta: float,
     sigma_s = ser.sigma(theta=theta)
     rho_s = ser.rho(theta=theta)
 
-    if rho_a >= -rho_s:
+    if rho_a >= rho_s:
         raise ParameterOutOfBounds(
-            "The arrivals' rho {0} has to be smaller than"
-            "the service's rho {1}".format(rho_a, -rho_s))
+            f"The arrivals' rho {rho_a} has to be smaller than"
+            f"the service's rho {rho_s}")
 
     sum_j = 0.0
 
@@ -156,18 +156,19 @@ def delay_leaky(theta: float,
                 delta_time=_j,
                 sigma_single=sigma_single,
                 rho_single=rho_single,
-                n=n) * mgf(
-                    theta=theta, x=_j * rho_s)
+                n=n) * exp(theta * _j * rho_s)
 
         except (FloatingPointError, OverflowError):
             summand = inf
 
         sum_j += summand
 
+    rho_arr_ser = rho_a - rho_s
+
     try:
-        return -(log(mgf(theta=theta, x=sigma_s) / prob_d) + log(
-            mgf(theta=theta, x=sigma_a + (rho_a + rho_s) * t) /
-            (1 - mgf(theta=theta, x=rho_a + rho_s)) + sum_j)) / (theta * rho_s)
+        return -(log(exp(theta * sigma_s) / prob_d) + log(
+            exp(theta * (sigma_a + rho_arr_ser * t)) /
+            (1 - exp(theta * rho_arr_ser)) + sum_j)) / (theta * rho_s)
 
     except FloatingPointError:
         return nan

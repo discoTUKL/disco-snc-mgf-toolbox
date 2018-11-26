@@ -1,8 +1,7 @@
 """Implements new Lyapunov Deconvolution"""
 
-from math import log
+from math import exp, log
 
-from library.helper_functions import mgf
 from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
@@ -24,9 +23,9 @@ class DeconvolvePower(Arrival):
         # here, theta can simply be replaced by l * theta
         l_theta = self.l_power * theta
 
-        k_sig = -log(1 - mgf(
-            theta=l_theta, x=self.arr.rho(l_theta) - self.ser.rho(l_theta))
-                     ) / l_theta
+        k_sig = -log(
+            1 - exp(l_theta *
+                    (self.arr.rho(l_theta) - self.ser.rho(l_theta)))) / l_theta
 
         return self.arr.sigma(l_theta) + self.ser.sigma(l_theta) + k_sig
 
