@@ -41,3 +41,6 @@ class DeconvolvePower(Arrival):
                 "The arrivals' rho has to be smaller than the service's rho")
 
         return self.arr.rho(l_theta)
+
+    def is_discrete(self):
+        return self.arr.is_discrete()

@@ -21,3 +21,10 @@ class Arrival(object):
         :param theta: mgf parameter
         """
         pass
+
+    @abstractmethod
+    def is_discrete(self) -> bool:
+        """
+        :return True if the arrival distribution is discrete, False if not
+        """
+        pass

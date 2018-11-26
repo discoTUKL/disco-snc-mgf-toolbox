@@ -55,6 +55,9 @@ class Deconvolve(Arrival):
 
         return self.arr.rho(p_theta)
 
+    def is_discrete(self):
+        return self.arr.is_discrete()
+
 
 class Convolve(Service):
     """Convolution class."""
@@ -170,3 +173,6 @@ class AggregateList(Arrival):
             res += self.arr_list[i].rho(self.p_list[i] * theta)
 
         return res
+
+    def is_discrete(self):
+        return self.arr_list[0].is_discrete()

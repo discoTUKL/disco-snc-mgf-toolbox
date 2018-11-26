@@ -7,9 +7,9 @@ from library.perform_parameter import PerformParameter
 from library.setting_new import SettingNew
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.perform_enum import PerformEnum
-from nc_operations.performance_bounds_discretized import delay_prob_discretized
-from nc_operations.performance_bounds_power import (
-    delay_prob_power, output_power, output_power_discretized)
+from nc_operations.performance_bounds import delay_prob
+from nc_operations.performance_bounds_power import (delay_prob_power,
+                                                    output_power)
 from nc_processes.arrival_distribution import DM1, ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 
@@ -49,31 +49,24 @@ class SingleServerPerform(SettingNew):
                     l_power=param_l_list[1])
             else:
                 warn("old approach is applied")
-                return delay_prob_discretized(
+                return delay_prob(
                     arr=self.arr,
                     ser=self.ser,
                     theta=param_l_list[0],
                     delay_value=self.perform_param.value)
 
         elif self.perform_param.perform_metric == PerformEnum.OUTPUT:
-            if self.arr.is_discrete():
-                return output_power(
-                    arr=self.arr,
-                    ser=self.ser,
-                    theta=param_l_list[0],
-                    delta_time=self.perform_param.value,
-                    l_power=param_l_list[1])
-            else:
-                return output_power_discretized(
-                    arr=self.arr,
-                    ser=self.ser,
-                    theta=param_l_list[0],
-                    delta_time=self.perform_param.value,
-                    l_power=param_l_list[1])
+            return output_power(
+                arr=self.arr,
+                ser=self.ser,
+                theta=param_l_list[0],
+                delta_time=self.perform_param.value,
+                l_power=param_l_list[1])
 
         else:
             raise NameError(
-                f"{self.perform_param.perform_metric} is an infeasible performance metric"
+                f"{self.perform_param.perform_metric} is an"
+                f"infeasible performance metric"
             )
 
     def to_string(self) -> str:
