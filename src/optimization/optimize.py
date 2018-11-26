@@ -14,7 +14,7 @@ from library.helper_functions import (
     average_towards_best_row, centroid_without_one_row, expand_grid, is_equal)
 from library.setting import Setting
 from optimization.nelder_mead_parameters import NelderMeadParameters
-from optimization.simul_annealing import SimulAnnealing
+from optimization.sim_anneal_param import SimAnnealParams
 
 
 class Optimize(object):
@@ -186,12 +186,12 @@ class Optimize(object):
 
         return bh_res.fun
 
-    def simulated_annealing(self, start_list: List[float],
-                            simul_annealing: SimulAnnealing) -> float:
+    def sim_annealing(self, start_list: List[float],
+                      sim_anneal_params: SimAnnealParams) -> float:
         """
 
         :param start_list:       initial parameter set
-        :param simul_annealing:  object that contains all the simulated
+        :param sim_anneal_params:  object that contains all the simulated
                                  annealing-parameters and helper methods
         :return:                 optimized bound
         """
@@ -202,9 +202,9 @@ class Optimize(object):
         param_best = param_list[:]
         optimum_best = optimum_current
 
-        temperature = simul_annealing.temp_start
-        rep_max = simul_annealing.rep_max
-        search_radius = simul_annealing.search_radius
+        temperature = sim_anneal_params.temp_start
+        rep_max = sim_anneal_params.rep_max
+        search_radius = sim_anneal_params.search_radius
 
         objective_change = True
 
@@ -213,7 +213,7 @@ class Optimize(object):
             random_numbers = np.random.uniform(size=rep_max)
 
             for iteration in range(rep_max):
-                param_new = simul_annealing.search_feasible_neighbor(
+                param_new = sim_anneal_params.search_feasible_neighbor(
                     objective=self.eval_except,
                     input_list=param_list,
                     search_radius=search_radius)
@@ -238,7 +238,7 @@ class Optimize(object):
                         # in the temperature
                         objective_change = True
 
-            temperature *= simul_annealing.cooling_factor
+            temperature *= sim_anneal_params.cooling_factor
 
         if self.print_x:
             print(f"simulated annealing optimal x: {param_best}")

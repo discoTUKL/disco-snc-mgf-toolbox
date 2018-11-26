@@ -11,7 +11,7 @@ from nc_processes.arrival_distribution import (DM1, EBB, MD1, MMOO,
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
-from optimization.simul_annealing import SimulAnnealing
+from optimization.sim_anneal_param import SimAnnealParams
 from single_server.single_server_perform import SingleServerPerform
 
 if __name__ == '__main__':
@@ -40,13 +40,13 @@ if __name__ == '__main__':
                     show_warn=True).pattern_search(
                         start_list=[0.5, 1.0], delta=3, delta_min=0.01))
 
-    DELAY_PROB10 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=10)
+    DELAY_PROB8 = PerformParameter(
+        perform_metric=PerformEnum.DELAY_PROB, value=8)
 
     SINGLE_SERVER2 = SingleServerPerform(
         arr=MMOO(mu=0.7, lamb=0.4, burst=1.2),
         const_rate=ConstantRate(rate=1.0),
-        perform_param=DELAY_PROB10)
+        perform_param=DELAY_PROB8)
 
     print(
         Optimize(SINGLE_SERVER2, print_x=True, show_warn=True).grid_search_old(
@@ -66,98 +66,78 @@ if __name__ == '__main__':
                                                                 5.0), (0.9,
                                                                        6.0)]))
 
+    DELAY_PROB_REV = PerformParameter(
+        perform_metric=PerformEnum.DELAY, value=0.0183)
+
+    SINGLE_SERVER2 = SingleServerPerform(
+        arr=MMOO(mu=0.7, lamb=0.4, burst=1.2),
+        const_rate=ConstantRate(rate=1.0),
+        perform_param=DELAY_PROB_REV)
+
+    print(
+        Optimize(SINGLE_SERVER2, show_warn=True).grid_search(
+            bound_list=[(0.1, 5.0)], delta=0.1))
+
     print("\n-------------------------------------------\n")
 
     # Fat cross delay probability calculation
     print("Fat Cross Performance Bounds:\n")
 
-    DELAY_PROB6 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=6)
+    DELAY_PROB5 = PerformParameter(
+        perform_metric=PerformEnum.DELAY_PROB, value=5)
 
-    ARR_LIST: List[ArrivalDistribution] = [DM1(lamb=1.0), DM1(lamb=4.0)]
+    ARR_LIST: List[ArrivalDistribution] = [
+        MMOO(mu=0.5, lamb=0.5, burst=1.5),
+        MMOO(mu=0.5, lamb=0.5, burst=0.7)
+    ]
 
     SER_LIST: List[ConstantRate] = [
-        ConstantRate(rate=4.0), ConstantRate(rate=0.5)
+        ConstantRate(rate=2.5), ConstantRate(rate=0.5)
     ]
 
     EXAMPLE = FatCrossPerform(
-        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB6)
-    print(EXAMPLE.bound(param_list=[0.3]))
-    print(EXAMPLE.new_bound(param_l_list=[0.3, 1.5]))
+        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB5)
+
+    print(
+        Optimize(EXAMPLE, show_warn=True).grid_search(
+            bound_list=[(0.1, 5.0)], delta=0.1))
 
     DELAY_TIME = PerformParameter(
-        perform_metric=PerformEnum.DELAY, value=0.032)
+        perform_metric=PerformEnum.DELAY, value=0.0013)
 
     EXAMPLE_REVERSE = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)
 
-    print(EXAMPLE_REVERSE.bound(param_list=[0.3]))
-
-    DELAY_PROB4 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=4)
-
     print(
-        Optimize(EXAMPLE, print_x=True, show_warn=True).grid_search_old(
+        Optimize(EXAMPLE_REVERSE, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
-    print(
-        OptimizeNew(EXAMPLE, print_x=True, show_warn=True).grid_search(
-            bound_list=[(0.1, 5.0), (0.9, 5)], delta=0.1))
+    # DELAY_PROB4 = PerformParameter(
+    #     perform_metric=PerformEnum.DELAY_PROB, value=4)
+    #
+    # print(
+    #     Optimize(EXAMPLE, print_x=True, show_warn=True).grid_search_old(
+    #         bound_list=[(0.1, 5.0)], delta=0.1))
+    #
+    # print(
+    #     OptimizeNew(EXAMPLE, print_x=True, show_warn=True).grid_search(
+    #         bound_list=[(0.1, 5.0), (0.9, 5)], delta=0.1))
+    #
+    # print(
+    #     Optimize(EXAMPLE, print_x=True, show_warn=True).grid_search(
+    #         bound_list=[(0.1, 5.0)], delta=0.1))
 
-    print(
-        Optimize(EXAMPLE, print_x=True, show_warn=True).grid_search(
-            bound_list=[(0.1, 5.0)], delta=0.1))
+    # OPTIMIZE_NEW = OptimizeNew(EXAMPLE, print_x=True, show_warn=True)
 
-    OPTIMIZE_NEW = OptimizeNew(EXAMPLE, print_x=True, show_warn=True)
-
-    print(
-        OPTIMIZE_NEW.pattern_search(
-            start_list=[0.5, 1.0], delta=3, delta_min=0.01))
-
-    SIMU_ANNEAL_PARAM = SimulAnnealing(
-        rep_max=15, temp_start=1000.0, cooling_factor=0.95, search_radius=1.0)
-
-    print(OPTIMIZE_NEW.basin_hopping(start_list=[0.5, 1.0]))
-
-    print(
-        OPTIMIZE_NEW.simulated_annealing(
-            start_list=[0.5, 1.0], simul_annealing=SIMU_ANNEAL_PARAM))
-
-    print("\n-------------------------------------------\n")
-
-    # Fat cross delay probability calculation
-    print("Sanity Checks:\n")
-
-    DELAY_PROB5 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=5)
-
-    # ARR_LIST: List[ArrivalDistribution] = [
-    #     MMOO(mu=0.5, lamb=0.5, burst=2.0),
-    #     MMOO(mu=0.5, lamb=0.5, burst=0.5)
-    # ]
-
-    ARR_LIST: List[ArrivalDistribution] = [
-        MD1(lamb=0.5, packet_size=1.0),
-        MD1(lamb=0.3, packet_size=1.0)
-    ]
-
-    SER_LIST: List[ConstantRate] = [
-        ConstantRate(rate=2.0), ConstantRate(rate=0.5)
-    ]
-
-    EXAMPLE3 = FatCrossPerform(
-        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB5)
-    print(
-        Optimize(EXAMPLE3, print_x=True).grid_search(
-            bound_list=[(0.1, 5.0)], delta=0.1))
-
-    DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.38)
-
-    EXAMPLE_REVERSE3 = FatCrossPerform(
-        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)
-
-    print(
-        Optimize(EXAMPLE_REVERSE3, print_x=True).grid_search(
-            bound_list=[(0.1, 5.0)], delta=0.1))
-
-    # TODO: fix this bug
+    # print(
+    #     OPTIMIZE_NEW.pattern_search(
+    #         start_list=[0.5, 1.0], delta=3, delta_min=0.01))
+    #
+    # SIMU_ANNEAL_PARAM = SimulAnnealing(
+    #     rep_max=15, temp_start=1000.0, cooling_factor=0.95, search_radius=1.0)
+    #
+    # print(OPTIMIZE_NEW.basin_hopping(start_list=[0.5, 1.0]))
+    #
+    # print(
+    #     OPTIMIZE_NEW.sim_annealing(
+    #         start_list=[0.5, 1.0], simul_annealing=SIMU_ANNEAL_PARAM))

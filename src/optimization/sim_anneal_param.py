@@ -6,7 +6,7 @@ from typing import Callable, List
 import numpy as np
 
 
-class SimulAnnealing(object):
+class SimAnnealParams(object):
     """Gather all simulated annealing attributes in one class."""
 
     def __init__(self,

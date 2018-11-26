@@ -8,7 +8,7 @@ from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.opt_method import OptMethod
 from optimization.optimize_new import OptimizeNew
-from optimization.simul_annealing import SimulAnnealing
+from optimization.sim_anneal_param import SimAnnealParams
 
 
 def compare_optimization(setting: SettingNew,
@@ -48,8 +48,9 @@ def compare_optimization(setting: SettingNew,
             theta_start = 0.5
 
             start_list = [theta_start] + [1.0] * number_l
-            start_simplex = InitialSimplex(parameters_to_optimize=number_l +
-                                           1).gao_han(start_list=start_list)
+            start_simplex = InitialSimplex(
+                parameters_to_optimize=number_l + 1).gao_han(
+                    start_list=start_list)
 
             bound = OptimizeNew(
                 setting_new=setting, new=new, print_x=print_x).nelder_mead(
@@ -65,15 +66,15 @@ def compare_optimization(setting: SettingNew,
                 print_x=print_x).basin_hopping(start_list=start_list)
 
         elif opt == OptMethod.SIMULATED_ANNEALING:
-            simul_anneal_param = SimulAnnealing()
+            simul_anneal_param = SimAnnealParams()
             theta_start = 0.5
 
             start_list = [theta_start] + [1.0] * number_l
 
             bound = OptimizeNew(
-                setting_new=setting, new=new,
-                print_x=print_x).simulated_annealing(
-                    start_list=start_list, simul_annealing=simul_anneal_param)
+                setting_new=setting, new=new, print_x=print_x).sim_annealing(
+                    start_list=start_list,
+                    sim_anneal_params=simul_anneal_param)
 
         elif opt == OptMethod.DIFFERENTIAL_EVOLUTION:
             theta_bounds = [(0.1, 4.0)]
@@ -111,8 +112,9 @@ def compare_optimization(setting: SettingNew,
             theta_start = 0.5
 
             start_list = [theta_start] + [1.0] * number_l
-            start_simplex = InitialSimplex(parameters_to_optimize=number_l +
-                                           1).gao_han(start_list=start_list)
+            start_simplex = InitialSimplex(
+                parameters_to_optimize=number_l + 1).gao_han(
+                    start_list=start_list)
 
             bound = OptimizeNew(
                 setting_new=setting, new=new, print_x=print_x).nelder_mead_old(
