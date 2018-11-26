@@ -151,7 +151,7 @@ if __name__ == '__main__':
         Optimize(EXAMPLE3, print_x=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
 
-    DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.3)
+    DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.38)
 
     EXAMPLE_REVERSE3 = FatCrossPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_TIME)

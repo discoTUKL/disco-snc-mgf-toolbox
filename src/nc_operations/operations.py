@@ -35,7 +35,11 @@ class Deconvolve(Arrival):
         k_sig = -log(1 - exp(
             theta * (self.arr.rho(p_theta) - self.ser.rho(q_theta)))) / theta
 
-        return self.arr.sigma(p_theta) + self.ser.sigma(q_theta) + k_sig
+        if self.arr.is_discrete():
+            return self.arr.sigma(p_theta) + self.ser.sigma(q_theta) + k_sig
+        else:
+            return self.arr.sigma(p_theta) + self.ser.sigma(
+                q_theta) + self.arr.rho(p_theta) + k_sig
 
     def rho(self, theta: float) -> float:
         """

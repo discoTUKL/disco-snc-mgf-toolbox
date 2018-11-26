@@ -27,7 +27,11 @@ class DeconvolvePower(Arrival):
             1 - exp(l_theta *
                     (self.arr.rho(l_theta) - self.ser.rho(l_theta)))) / l_theta
 
-        return self.arr.sigma(l_theta) + self.ser.sigma(l_theta) + k_sig
+        if self.arr.is_discrete():
+            return self.arr.sigma(l_theta) + self.ser.sigma(l_theta) + k_sig
+        else:
+            return self.arr.sigma(l_theta) + self.ser.sigma(
+                l_theta) + self.arr.rho(l_theta) + k_sig
 
     def rho(self, theta: float) -> float:
         # here, theta can simply be replaced by l * theta
