@@ -15,10 +15,10 @@ from library.mc_enum import MCEnum
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.arrivals_alternative import expect_dm1, var_dm1
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.qt import DM1
 from nc_processes.service_alternative import expect_const_rate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew

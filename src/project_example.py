@@ -3,9 +3,9 @@
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
+from nc_processes.qt import DM1
 
 if __name__ == '__main__':
     PROB_VALUES = [0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01]

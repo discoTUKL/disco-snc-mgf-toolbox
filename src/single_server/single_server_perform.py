@@ -10,8 +10,9 @@ from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds import delay_prob
 from nc_operations.performance_bounds_power import (delay_prob_power,
                                                     output_power)
-from nc_processes.arrival_distribution import DM1, ArrivalDistribution
+from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.qt import DM1
 
 
 class SingleServerPerform(SettingNew):

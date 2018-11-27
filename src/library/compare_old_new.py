@@ -224,8 +224,8 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
 if __name__ == '__main__':
     from fat_tree.fat_cross_perform import FatCrossPerform
     from library.perform_parameter import PerformParameter
-    from nc_processes.arrival_distribution import DM1
     from nc_processes.constant_rate_server import ConstantRate
+    from nc_processes.qt import DM1
     from single_server.single_server_perform import SingleServerPerform
 
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)

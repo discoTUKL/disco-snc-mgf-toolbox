@@ -6,9 +6,10 @@ import pandas as pd
 
 from library.perform_param_list import PerformParamList
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (DM1, MD1, ArrivalDistribution)
+from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.markov_modulated import MMOOCont
+from nc_processes.qt import DM1, MD1
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew

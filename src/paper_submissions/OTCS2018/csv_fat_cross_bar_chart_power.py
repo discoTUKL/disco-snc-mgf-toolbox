@@ -11,8 +11,9 @@ from fat_tree.fat_cross_perform import FatCrossPerform
 from library.compare_old_new import compute_improvement
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, ArrivalDistribution
+from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.qt import DM1
 from optimization.opt_method import OptMethod
 
 
