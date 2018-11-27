@@ -1,7 +1,7 @@
 """Implemented arrival classes for different distributions"""
 
 from abc import abstractmethod
-from math import exp, log, sqrt
+from math import exp, log
 
 from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival import Arrival
@@ -40,80 +40,6 @@ class ArrivalDistribution(Arrival):
     @abstractmethod
     def to_value(self, number=1, show_n=False) -> str:
         pass
-
-
-class MMOO(ArrivalDistribution):
-    """Markov Modulated On-Off Traffic"""
-
-    def __init__(self, mu: float, lamb: float, burst: float, n=1) -> None:
-        self.mu = mu
-        self.lamb = lamb
-        self.burst = burst
-        self.n = n
-
-    def sigma(self, theta=0.0) -> float:
-        return 0.0
-
-    def rho(self, theta: float) -> float:
-        if theta <= 0:
-            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
-
-        bb = self.mu + self.lamb - theta * self.burst
-
-        return (self.n / (2 * theta)) * (-bb + sqrt(
-            (bb**2) + 4 * self.mu * theta * self.burst))
-
-    def is_discrete(self) -> bool:
-        return False
-
-    def to_value(self, number=1, show_n=False) -> str:
-        if show_n:
-            return "mu{0}={1}_lambda{0}={2}_burst{0}={3}_n{0}={4}".format(
-                str(number), str(self.mu), str(self.lamb), str(self.burst),
-                str(self.n))
-        else:
-            return "mu{0}={1}_lambda{0}={2}_burst{0}={3}".format(
-                str(number), str(self.mu), str(self.lamb), str(self.burst))
-
-
-class EBB(ArrivalDistribution):
-    """Exponentially Bounded Burstiness obtained via Conversion Theorem"""
-
-    def __init__(self, factor_m: float, decay: float, rho_single: float,
-                 n=1) -> None:
-        self.factor_m = factor_m
-        self.decay = decay
-        self.rho_single = rho_single
-        self.n = n
-
-    def sigma(self, theta: float) -> float:
-        if theta <= 0:
-            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
-
-        if theta >= self.decay:
-            raise ParameterOutOfBounds("theta {0} must be < decay {1}".format(
-                theta, self.decay))
-
-        theta_over_decay = theta / self.decay
-
-        return (self.n / theta) * log(
-            (self.factor_m**theta_over_decay) / (1 - theta_over_decay))
-
-    def rho(self, theta=0.0) -> float:
-        return self.n * self.rho_single
-
-    def is_discrete(self) -> bool:
-        return True
-
-    def to_value(self, number=1, show_n=False) -> str:
-        if show_n:
-            return "M{0}={1}_decay{0}={2}_rho{0}={3}_n{0}={4}".format(
-                str(number), str(self.factor_m), str(self.decay),
-                str(self.rho_single), str(self.n))
-        else:
-            return "M{0}={1}_decay{0}={2}_rho{0}={3}".format(
-                str(number), str(self.factor_m), str(self.decay),
-                str(self.rho_single))
 
 
 class DM1(ArrivalDistribution):

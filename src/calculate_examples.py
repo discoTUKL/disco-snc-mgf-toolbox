@@ -6,12 +6,11 @@ from typing import List
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (DM1, EBB, MD1, MMOO,
-                                               ArrivalDistribution)
+from nc_processes.arrival_distribution import (DM1, ArrivalDistribution)
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.markov_modulated import MMOOCont
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
-from optimization.sim_anneal_param import SimAnnealParams
 from single_server.single_server_perform import SingleServerPerform
 
 if __name__ == '__main__':
@@ -44,7 +43,7 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY_PROB, value=8)
 
     SINGLE_SERVER2 = SingleServerPerform(
-        arr=MMOO(mu=0.7, lamb=0.4, burst=1.2),
+        arr=MMOOCont(mu=0.7, lamb=0.4, burst=1.2),
         const_rate=ConstantRate(rate=1.0),
         perform_param=DELAY_PROB8)
 
@@ -70,7 +69,7 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY, value=0.0183)
 
     SINGLE_SERVER2 = SingleServerPerform(
-        arr=MMOO(mu=0.7, lamb=0.4, burst=1.2),
+        arr=MMOOCont(mu=0.7, lamb=0.4, burst=1.2),
         const_rate=ConstantRate(rate=1.0),
         perform_param=DELAY_PROB_REV)
 
@@ -87,8 +86,8 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY_PROB, value=5)
 
     ARR_LIST: List[ArrivalDistribution] = [
-        MMOO(mu=0.5, lamb=0.5, burst=1.5),
-        MMOO(mu=0.5, lamb=0.5, burst=0.7)
+        MMOOCont(mu=0.5, lamb=0.5, burst=1.5),
+        MMOOCont(mu=0.5, lamb=0.5, burst=0.7)
     ]
 
     SER_LIST: List[ConstantRate] = [

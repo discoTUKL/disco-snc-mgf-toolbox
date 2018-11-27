@@ -50,13 +50,13 @@ if __name__ == '__main__':
     from fat_tree.fat_cross_perform import FatCrossPerform
     from library.perform_parameter import PerformParameter
     from nc_operations.perform_enum import PerformEnum
-    from nc_processes.arrival_distribution import MMOO
     from nc_processes.constant_rate_server import ConstantRate
+    from nc_processes.markov_modulated import MMOOCont
 
     DELAY_4 = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.0001)
 
-    MMOO_1 = MMOO(mu=1.0, lamb=2.2, burst=3.4)
-    MMOO_2 = MMOO(mu=3.6, lamb=1.6, burst=0.4)
+    MMOO_1 = MMOOCont(mu=1.0, lamb=2.2, burst=3.4)
+    MMOO_2 = MMOOCont(mu=3.6, lamb=1.6, burst=0.4)
     CONST_RATE_1 = ConstantRate(rate=2.0)
     CONST_RATE_2 = ConstantRate(rate=0.3)
 

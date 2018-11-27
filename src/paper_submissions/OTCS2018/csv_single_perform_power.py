@@ -6,9 +6,9 @@ import pandas as pd
 
 from library.perform_param_list import PerformParamList
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (DM1, MD1, MMOO,
-                                               ArrivalDistribution)
+from nc_processes.arrival_distribution import (DM1, MD1, ArrivalDistribution)
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.markov_modulated import MMOOCont
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
@@ -61,12 +61,11 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ConstantRate,
             raise NameError(
                 "Optimization parameter {0} is infeasible".format(opt_method))
 
-    delay_bounds_df = pd.DataFrame(
-        {
-            "bound": bound,
-            "new_bound": new_bound
-        },
-        index=perform_param_list.values_list)
+    delay_bounds_df = pd.DataFrame({
+        "bound": bound,
+        "new_bound": new_bound
+    },
+                                   index=perform_param_list.values_list)
     delay_bounds_df = delay_bounds_df[["bound", "new_bound"]]
 
     return delay_bounds_df
@@ -118,7 +117,7 @@ if __name__ == '__main__':
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MMOO_FOI = MMOO(mu=8.0, lamb=12.0, burst=3.0, n=1)
+    MMOO_FOI = MMOOCont(mu=8.0, lamb=12.0, burst=3.0, n=1)
     CONST_RATE2 = ConstantRate(rate=1.5)
 
     print(

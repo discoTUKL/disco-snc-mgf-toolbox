@@ -8,9 +8,9 @@ import pandas as pd
 from fat_tree.fat_cross_perform import FatCrossPerform
 from library.perform_param_list import PerformParamList
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import (DM1, MD1, MMOO,
-                                               ArrivalDistribution)
+from nc_processes.arrival_distribution import (DM1, MD1, ArrivalDistribution)
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.markov_modulated import MMOOCont
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
@@ -65,12 +65,11 @@ def fat_cross_df(arr_list: List[ArrivalDistribution],
             raise ValueError(
                 "Optimization parameter {0} is infeasible".format(opt_method))
 
-    results_df = pd.DataFrame(
-        {
-            "bound": bound,
-            "new_bound": new_bound
-        },
-        index=perform_param_list.values_list)
+    results_df = pd.DataFrame({
+        "bound": bound,
+        "new_bound": new_bound
+    },
+                              index=perform_param_list.values_list)
     results_df = results_df[["bound", "new_bound"]]
 
     return results_df
@@ -115,9 +114,10 @@ def csv_fat_cross_perform(
         perform_param_list=perform_param_list)
 
     filename += "_" + foi_arrival.to_name() + "_" + foi_arrival.to_value(
-        number=1, show_n=False
-    ) + "_" + foi_service.to_value(number=1) + "_" + cross_arrival.to_value(
-        number=2, show_n=False) + "_" + cross_service.to_value(number=2)
+        number=1, show_n=False) + "_" + foi_service.to_value(
+            number=1) + "_" + cross_arrival.to_value(
+                number=2,
+                show_n=False) + "_" + cross_service.to_value(number=2)
 
     data_frame.to_csv(
         filename + '.csv', index=True, quoting=csv.QUOTE_NONNUMERIC)
@@ -159,8 +159,8 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MMOO_FOI1 = MMOO(mu=1.2, lamb=2.1, burst=3.5)
-    MMOO_CROSS1 = MMOO(mu=3.7, lamb=1.5, burst=0.4)
+    MMOO_FOI1 = MMOOCont(mu=1.2, lamb=2.1, burst=3.5)
+    MMOO_CROSS1 = MMOOCont(mu=3.7, lamb=1.5, burst=0.4)
     RATE_FOI3 = ConstantRate(rate=2.0)
     RATE_CROSS3 = ConstantRate(rate=0.3)
 
@@ -174,8 +174,8 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MMOO_FOI2 = MMOO(mu=1.0, lamb=2.2, burst=3.4)
-    MMOO_CROSS2 = MMOO(mu=3.6, lamb=1.6, burst=0.4)
+    MMOO_FOI2 = MMOOCont(mu=1.0, lamb=2.2, burst=3.4)
+    MMOO_CROSS2 = MMOOCont(mu=3.6, lamb=1.6, burst=0.4)
     RATE_FOI4 = ConstantRate(rate=2.0)
     RATE_CROSS4 = ConstantRate(rate=0.3)
 

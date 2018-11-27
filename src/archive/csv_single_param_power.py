@@ -13,9 +13,11 @@ from library.mc_enum_to_dist import mc_enum_to_dist
 from library.monte_carlo_dist import MonteCarloDist
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import DM1, EBB, MD1, MMOO
+from nc_processes.arrival_distribution import DM1, MD1
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
+from nc_processes.ebb import EBB
+from nc_processes.markov_modulated import MMOOCont
 from nc_processes.regulated_arrivals import LeakyBucketMassOne
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
@@ -50,7 +52,7 @@ def csv_single_param_power(
         # TODO: check whether this is reasonable
 
         elif arrival_enum == ArrivalEnum.MMOO:
-            arrival = MMOO(
+            arrival = MMOOCont(
                 mu=param_array[i, 0],
                 lamb=param_array[i, 1],
                 burst=param_array[i, 2])
