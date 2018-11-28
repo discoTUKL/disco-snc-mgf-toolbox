@@ -6,7 +6,7 @@ from library.exceptions import ParameterOutOfBounds
 from nc_processes.arrival_distribution import ArrivalDistribution
 
 
-class MMOOCont(ArrivalDistribution):
+class MMOOFluid(ArrivalDistribution):
     """Continuous Markov Modulated On-Off Traffic"""
 
     def __init__(self, mu: float, lamb: float, burst: float, n=1) -> None:

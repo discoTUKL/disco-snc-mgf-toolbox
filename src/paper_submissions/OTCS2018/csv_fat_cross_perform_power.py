@@ -10,7 +10,7 @@ from library.perform_param_list import PerformParamList
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.markov_modulated import MMOOCont
+from nc_processes.markov_modulated import MMOOFluid
 from nc_processes.qt import DM1, MD1
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -160,8 +160,8 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MMOO_FOI1 = MMOOCont(mu=1.2, lamb=2.1, burst=3.5)
-    MMOO_CROSS1 = MMOOCont(mu=3.7, lamb=1.5, burst=0.4)
+    MMOO_FOI1 = MMOOFluid(mu=1.2, lamb=2.1, burst=3.5)
+    MMOO_CROSS1 = MMOOFluid(mu=3.7, lamb=1.5, burst=0.4)
     RATE_FOI3 = ConstantRate(rate=2.0)
     RATE_CROSS3 = ConstantRate(rate=0.3)
 
@@ -175,8 +175,8 @@ if __name__ == '__main__':
             perform_param_list=DELAY_PROB_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MMOO_FOI2 = MMOOCont(mu=1.0, lamb=2.2, burst=3.4)
-    MMOO_CROSS2 = MMOOCont(mu=3.6, lamb=1.6, burst=0.4)
+    MMOO_FOI2 = MMOOFluid(mu=1.0, lamb=2.2, burst=3.4)
+    MMOO_CROSS2 = MMOOFluid(mu=3.6, lamb=1.6, burst=0.4)
     RATE_FOI4 = ConstantRate(rate=2.0)
     RATE_CROSS4 = ConstantRate(rate=0.3)
 

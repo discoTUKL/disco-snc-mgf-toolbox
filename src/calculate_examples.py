@@ -8,7 +8,7 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.markov_modulated import MMOOCont
+from nc_processes.markov_modulated import MMOOFluid
 from nc_processes.qt import DM1
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
@@ -44,7 +44,7 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY_PROB, value=8)
 
     SINGLE_SERVER2 = SingleServerPerform(
-        arr=MMOOCont(mu=0.7, lamb=0.4, burst=1.2),
+        arr=MMOOFluid(mu=0.7, lamb=0.4, burst=1.2),
         const_rate=ConstantRate(rate=1.0),
         perform_param=DELAY_PROB8)
 
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY, value=0.0183)
 
     SINGLE_SERVER2 = SingleServerPerform(
-        arr=MMOOCont(mu=0.7, lamb=0.4, burst=1.2),
+        arr=MMOOFluid(mu=0.7, lamb=0.4, burst=1.2),
         const_rate=ConstantRate(rate=1.0),
         perform_param=DELAY_PROB_REV)
 
@@ -87,8 +87,8 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY_PROB, value=5)
 
     ARR_LIST: List[ArrivalDistribution] = [
-        MMOOCont(mu=0.5, lamb=0.5, burst=1.5),
-        MMOOCont(mu=0.5, lamb=0.5, burst=0.7)
+        MMOOFluid(mu=0.5, lamb=0.5, burst=1.5),
+        MMOOFluid(mu=0.5, lamb=0.5, burst=0.7)
     ]
 
     SER_LIST: List[ConstantRate] = [

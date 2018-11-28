@@ -3,7 +3,7 @@
 from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.markov_modulated import MMOOCont, MMOODisc
+from nc_processes.markov_modulated import MMOOFluid, MMOODisc
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
@@ -13,7 +13,7 @@ if __name__ == '__main__':
         perform_metric=PerformEnum.DELAY_PROB, value=8)
 
     SINGLE_SERVER2 = SingleServerPerform(
-        arr=MMOOCont(mu=0.5, lamb=0.5, burst=2.0),
+        arr=MMOOFluid(mu=0.5, lamb=0.5, burst=2.0),
         const_rate=ConstantRate(rate=1.5),
         perform_param=DELAY_PROB8)
 

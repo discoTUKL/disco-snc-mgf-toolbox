@@ -17,7 +17,7 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.markov_modulated import MMOOCont
+from nc_processes.markov_modulated import MMOOFluid
 from nc_processes.qt import DM1
 from optimization.opt_method import OptMethod
 
@@ -55,7 +55,7 @@ def mc_time_fat_cross(arrival_enum: ArrivalEnum,
                 ]
             elif arrival_enum == ArrivalEnum.MMOO:
                 arrive_list = [
-                    MMOOCont(
+                    MMOOFluid(
                         mu=param_array[i, j],
                         lamb=param_array[i, num_serv + j],
                         burst=param_array[i, 2 * num_serv + j])

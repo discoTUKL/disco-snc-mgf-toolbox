@@ -16,7 +16,7 @@ from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.ebb import EBB
-from nc_processes.markov_modulated import MMOOCont
+from nc_processes.markov_modulated import MMOOFluid
 from nc_processes.qt import DM1, MD1
 from nc_processes.regulated_arrivals import LeakyBucketMassOne
 from optimization.opt_method import OptMethod
@@ -52,7 +52,7 @@ def csv_single_param_power(
         # TODO: check whether this is reasonable
 
         elif arrival_enum == ArrivalEnum.MMOO:
-            arrival = MMOOCont(
+            arrival = MMOOFluid(
                 mu=param_array[i, 0],
                 lamb=param_array[i, 1],
                 burst=param_array[i, 2])

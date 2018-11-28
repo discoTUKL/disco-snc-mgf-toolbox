@@ -13,7 +13,7 @@ from library.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.markov_modulated import MMOOCont
+from nc_processes.markov_modulated import MMOOFluid
 from nc_processes.qt import DM1
 from optimization.opt_method import OptMethod
 from single_server.single_server_perform import SingleServerPerform
@@ -43,7 +43,7 @@ def mc_time_single(arrival_enum: ArrivalEnum, perform_param: PerformParameter,
 
         elif arrival_enum == ArrivalEnum.MMOO:
             setting = SingleServerPerform(
-                arr=MMOOCont(
+                arr=MMOOFluid(
                     mu=param_array[i, 0],
                     lamb=param_array[i, 1],
                     burst=param_array[i, 2]),
