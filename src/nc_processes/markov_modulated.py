@@ -22,10 +22,10 @@ class MMOOFluid(ArrivalDistribution):
         if theta <= 0:
             raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
-        bb = self.mu + self.lamb - theta * self.burst
+        bb = theta * self.burst - self.mu - self.lamb
 
-        return (self.n / (2 * theta)) * (-bb + sqrt(
-            (bb**2) + 4 * self.mu * theta * self.burst))
+        return 0.5 * self.n * (bb + sqrt(
+            (bb**2) + 4 * self.mu * theta * self.burst)) / theta
 
     def is_discrete(self) -> bool:
         return False
