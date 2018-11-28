@@ -44,7 +44,7 @@ class MMOODisc(ArrivalDistribution):
     """Discrete Markov Modulated On-Off Traffic"""
 
     def __init__(self, stay_on: float, stay_off: float, burst: float,
-                 n: int) -> None:
+                 n=1) -> None:
         self.stay_on = stay_on
         self.stay_off = stay_off
         self.burst = burst
