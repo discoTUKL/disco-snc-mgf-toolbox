@@ -92,7 +92,7 @@ class MM1(ArrivalDistribution):
         if theta <= 0:
             raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
-        return self.n * self.lamb * / (self.mu - theta)
+        return self.n * self.lamb / (self.mu - theta)
 
     def is_discrete(self) -> bool:
         return False

@@ -47,9 +47,9 @@ def csv_single_param_power(
 
         elif arrival_enum == ArrivalEnum.MD1:
             arrival = MD1(
-                lamb=param_array[i, 0], packet_size=param_array[i, 1])
-        #     choose packet size = server rate
-        # TODO: check whether this is reasonable
+                lamb=param_array[i, 0],
+                mu=1 / (param_array[i, arrival_enum.number_parameters()]))
+        # TODO: double check
 
         elif arrival_enum == ArrivalEnum.MMOO:
             arrival = MMOOFluid(
@@ -74,11 +74,17 @@ def csv_single_param_power(
             raise NameError("Arrival parameter {0} is infeasible".format(
                 arrival_enum.name))
 
-        setting = SingleServerPerform(
-            arr=arrival,
-            const_rate=ConstantRate(
-                rate=param_array[i, arrival_enum.number_parameters()]),
-            perform_param=perform_param)
+        if arrival_enum == ArrivalEnum.MD1 or arrival_enum == ArrivalEnum.MM1:
+            setting = SingleServerPerform(
+                arr=arrival,
+                const_rate=ConstantRate(rate=1.0),
+                perform_param=perform_param)
+        else:
+            setting = SingleServerPerform(
+                arr=arrival,
+                const_rate=ConstantRate(
+                    rate=param_array[i, arrival_enum.number_parameters()]),
+                perform_param=perform_param)
 
         # standard_bound, new_bound = compute_improvement()
         res_array[i, 0], res_array[i, 1] = compute_improvement(

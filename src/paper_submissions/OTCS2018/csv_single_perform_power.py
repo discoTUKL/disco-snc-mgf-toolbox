@@ -128,7 +128,7 @@ if __name__ == '__main__':
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MD1_FOI = MD1(lamb=0.5, packet_size=1.0)
+    MD1_FOI = MD1(lamb=0.5, mu=1.0)
     CONST_RATE3 = ConstantRate(rate=1.0)
 
     print(

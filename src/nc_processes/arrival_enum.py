@@ -7,8 +7,9 @@ class ArrivalEnum(Enum):
     """All implemented arrival processes"""
     MMOO = "Markov Modulated On-Off Traffic"
     EBB = "Exponentially Bounded Burstiness"
-    DM1 = "Exponentially distributed packet size"
-    MD1 = "Poisson process"
+    DM1 = "D/M/1 queue"
+    MD1 = "M/D/1 queue"
+    MM1 = "M/M/1 queue"
     TBConst = "Token-Bucket with constant parameters"
     MassOne = "Leaky Bucket following Massoulie"
 
@@ -23,6 +24,9 @@ class ArrivalEnum(Enum):
             return 1
 
         elif self == ArrivalEnum.MD1:
+            return 1
+
+        elif self == ArrivalEnum.MM1:
             return 1
 
         elif self.TBConst:

@@ -58,9 +58,10 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
 
         elif arrival_enum == ArrivalEnum.MD1:
             arrive_list = [
-                # MD1(lamb=param_array[i, j],
-                #     packet_size=param_array[i, number_servers + j])
-                MD1(lamb=param_array[i, j], packet_size=1.0)
+                MD1(lamb=param_array[i, j],
+                    mu=1 / (param_array[i,
+                                        arrival_enum.number_parameters() *
+                                        number_servers + j]))
                 for j in range(number_servers)
             ]
 
@@ -102,11 +103,18 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
             raise NameError("Arrival parameter {0} is infeasible".format(
                 arrival_enum.name))
 
-        service_list = [
-            ConstantRate(rate=param_array[
-                i, arrival_enum.number_parameters() * number_servers + j])
-            for j in range(number_servers)
-        ]
+        if arrival_enum == ArrivalEnum.MD1 or arrival_enum == ArrivalEnum.MM1:
+            service_list = [
+                ConstantRate(rate=1.0) for j in range(number_servers)
+            ]
+        else:
+            service_list = [
+                ConstantRate(
+                    rate=param_array[i,
+                                     arrival_enum.number_parameters() *
+                                     number_servers + j])
+                for j in range(number_servers)
+            ]
 
         setting = FatCrossPerform(
             arr_list=arrive_list,
