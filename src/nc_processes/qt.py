@@ -7,7 +7,7 @@ from nc_processes.arrival_distribution import ArrivalDistribution
 
 
 class DM1(ArrivalDistribution):
-    """Exponentially distributed packet size."""
+    """Corresponds to D/M/1 queue."""
 
     def __init__(self, lamb: float, n=1) -> None:
         self.lamb = lamb
@@ -47,11 +47,11 @@ class DM1(ArrivalDistribution):
 
 
 class MD1(ArrivalDistribution):
-    """Poisson process"""
+    """Corresponds to M/D/1 queue."""
 
-    def __init__(self, lamb: float, packet_size: float, n=1) -> None:
+    def __init__(self, lamb: float, mu: float, n=1) -> None:
         self.lamb = lamb
-        self.packet_size = packet_size
+        self.mu = mu
         self.n = n
 
     def sigma(self, theta=0.0) -> float:
@@ -62,16 +62,46 @@ class MD1(ArrivalDistribution):
             raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
         return (self.n / theta) * self.lamb * (
-            exp(theta * self.packet_size) - 1)
+            exp(theta / self.mu) - 1)
 
     def is_discrete(self) -> bool:
         return False
 
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
-            return "lambda{0}={1}_size{0}={2}_n{0}={3}".format(
-                str(number), str(self.lamb), str(self.packet_size),
+            return "lambda{0}={1}_mu{0}={2}_n{0}={3}".format(
+                str(number), str(self.lamb), str(self.mu),
                 str(self.n))
         else:
-            return "lambda{0}={1}_size{0}={2}".format(
-                str(number), str(self.lamb), str(self.packet_size))
+            return "lambda{0}={1}_mu{0}={2}".format(
+                str(number), str(self.lamb), str(self.mu))
+
+
+class MM1(ArrivalDistribution):
+    """Corresponds to M/M/1 queue."""
+
+    def __init__(self, lamb: float, mu: float, n=1) -> None:
+        self.lamb = lamb
+        self.mu = mu
+        self.n = n
+
+    def sigma(self, theta=0.0) -> float:
+        return 0.0
+
+    def rho(self, theta: float) -> float:
+        if theta <= 0:
+            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
+
+        return self.n * self.lamb * / (self.mu - theta)
+
+    def is_discrete(self) -> bool:
+        return False
+
+    def to_value(self, number=1, show_n=False) -> str:
+        if show_n:
+            return "lambda{0}={1}_mu{0}={2}_n{0}={3}".format(
+                str(number), str(self.lamb), str(self.mu),
+                str(self.n))
+        else:
+            return "lambda{0}={1}_mu{0}={2}".format(
+                str(number), str(self.lamb), str(self.mu))
