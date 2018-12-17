@@ -1,5 +1,6 @@
 """This serves as our main function."""
 # TODO: Write a test
+# TODO: Add to_string()-method to classes
 
 from typing import List
 
