@@ -3,7 +3,7 @@ in one class"""
 
 from typing import List
 
-from library.mc_enum import MCEnum
+from utils.mc_enum import MCEnum
 
 
 class MonteCarloDist(object):

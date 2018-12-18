@@ -4,7 +4,7 @@ from typing import List
 
 import numpy as np
 
-from library.helper_functions import get_unit_vector
+from utils.helper_functions import get_unit_vector
 
 
 class InitialSimplex(object):

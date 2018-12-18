@@ -2,7 +2,7 @@
 
 from math import exp
 
-from library.exceptions import ParameterOutOfBounds
+from utils.exceptions import ParameterOutOfBounds
 
 
 def mgf_fbm(theta: float, delta_time: int, lamb: float, sigma: float,

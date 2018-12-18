@@ -2,7 +2,7 @@
 
 from math import exp, log
 
-from library.exceptions import ParameterOutOfBounds
+from utils.exceptions import ParameterOutOfBounds
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 

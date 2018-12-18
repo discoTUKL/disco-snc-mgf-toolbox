@@ -1,6 +1,6 @@
 """MMOO Comparison"""
 
-from library.perform_parameter import PerformParameter
+from utils.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.markov_modulated import MMOOFluid, MMOODisc

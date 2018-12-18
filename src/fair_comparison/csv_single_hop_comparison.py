@@ -5,8 +5,8 @@ from typing import List
 
 import pandas as pd
 
-from library.perform_param_list import PerformParamList
-from library.perform_parameter import PerformParameter
+from utils.perform_param_list import PerformParamList
+from utils.perform_parameter import PerformParameter
 from nc_operations.dnc_performance_bounds import fifo_delay
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.regulated_arrivals import (

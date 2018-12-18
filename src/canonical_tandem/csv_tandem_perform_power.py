@@ -8,8 +8,8 @@ import pandas as pd
 
 from canonical_tandem.tandem_sfa_perform import TandemSFA
 from canonical_tandem.tandem_tfa_delay import TandemTFADelay
-from library.perform_parameter import PerformParameter
-from library.perform_param_list import PerformParamList
+from utils.perform_parameter import PerformParameter
+from utils.perform_param_list import PerformParamList
 from nc_operations.nc_analysis import NCAnalysis
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import ArrivalDistribution

@@ -3,8 +3,8 @@
 from abc import abstractmethod
 from math import erf, exp, inf, log, pi, sqrt
 
-from library.exceptions import ParameterOutOfBounds
-from library.deprecated import deprecated
+from utils.exceptions import ParameterOutOfBounds
+from utils.deprecated import deprecated
 from nc_processes.arrival_distribution import ArrivalDistribution
 
 

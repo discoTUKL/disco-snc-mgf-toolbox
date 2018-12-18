@@ -2,8 +2,8 @@
 
 from typing import List
 
-from library.perform_parameter import PerformParameter
-from library.setting_new import SettingNew
+from utils.perform_parameter import PerformParameter
+from utils.setting_new import SettingNew
 from nc_operations.deconvolve_power import DeconvolvePower
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateList, Deconvolve, Leftover

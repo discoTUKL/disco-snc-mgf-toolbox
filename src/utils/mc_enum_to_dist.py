@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from library.mc_enum import MCEnum
-from library.monte_carlo_dist import MonteCarloDist
+from utils.mc_enum import MCEnum
+from utils.monte_carlo_dist import MonteCarloDist
 
 
 def mc_enum_to_dist(mc_dist: MonteCarloDist, size: (int, int)) -> np.ndarray:

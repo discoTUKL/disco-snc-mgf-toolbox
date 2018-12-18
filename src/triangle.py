@@ -6,8 +6,8 @@ from typing import List
 import numpy as np
 import scipy.optimize
 
-from library.exceptions import ParameterOutOfBounds
-from library.perform_parameter import PerformEnum, PerformParameter
+from utils.exceptions import ParameterOutOfBounds
+from utils.perform_parameter import PerformEnum, PerformParameter
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import Convolve, Deconvolve, Leftover
 from nc_processes.arrival import Arrival

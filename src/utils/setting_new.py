@@ -3,7 +3,7 @@
 from abc import abstractmethod
 from typing import List
 
-from library.setting import Setting
+from utils.setting import Setting
 
 
 class SettingNew(Setting):

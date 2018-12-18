@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 
 from fat_tree.fat_cross_perform import FatCrossPerform
-from library.compare_old_new import compute_improvement
-from library.perform_parameter import PerformParameter
+from utils.compare_old_new import compute_improvement
+from utils.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate

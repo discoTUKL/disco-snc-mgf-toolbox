@@ -4,7 +4,7 @@ import csv
 
 import pandas as pd
 
-from library.perform_param_list import PerformParamList
+from utils.perform_param_list import PerformParamList
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_distribution import ArrivalDistribution
 from nc_processes.constant_rate_server import ConstantRate

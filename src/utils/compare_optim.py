@@ -3,7 +3,7 @@
 from timeit import default_timer as timer
 from typing import List
 
-from library.setting_new import SettingNew
+from utils.setting_new import SettingNew
 from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.opt_method import OptMethod
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     from nc_processes.qt import DM1
     from single_server.single_server_perform import SingleServerPerform
     from fat_tree.fat_cross_perform import FatCrossPerform
-    from library.perform_parameter import PerformParameter
+    from utils.perform_parameter import PerformParameter
 
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 

@@ -5,8 +5,8 @@ from math import exp, inf, log, nan
 import numpy as np
 import scipy.optimize
 
-from library.exceptions import ParameterOutOfBounds
-from library.perform_parameter import PerformParameter
+from utils.exceptions import ParameterOutOfBounds
+from utils.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrivals_alternative import mgf_regulated_arrive
 from nc_processes.constant_rate_server import ConstantRate

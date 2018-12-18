@@ -4,8 +4,8 @@
 
 from math import exp, inf, log
 
-from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import get_q
+from utils.exceptions import ParameterOutOfBounds
+from utils.helper_functions import get_q
 from nc_processes.arrival import Arrival
 from nc_processes.service import Service
 

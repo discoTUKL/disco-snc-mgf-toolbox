@@ -1,6 +1,6 @@
 """Helper function to evaluate a single hop."""
 
-from library.perform_parameter import PerformParameter
+from utils.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds import (backlog, backlog_prob, delay,
                                               delay_prob, output)

@@ -9,11 +9,11 @@ import numpy as np
 import scipy.optimize
 from tqdm import tqdm
 
-from library.array_to_results import three_col_array_to_results
-from library.exceptions import ParameterOutOfBounds
-from library.mc_enum import MCEnum
-from library.monte_carlo_dist import MonteCarloDist
-from library.perform_parameter import PerformParameter
+from utils.array_to_results import three_col_array_to_results
+from utils.exceptions import ParameterOutOfBounds
+from utils.mc_enum import MCEnum
+from utils.monte_carlo_dist import MonteCarloDist
+from utils.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.arrivals_alternative import expect_dm1, var_dm1

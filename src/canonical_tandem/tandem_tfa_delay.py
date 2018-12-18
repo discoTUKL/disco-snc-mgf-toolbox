@@ -2,7 +2,7 @@
 
 from typing import List
 
-from library.setting import Setting
+from utils.setting import Setting
 from nc_operations.operations import Deconvolve, Leftover
 from nc_operations.performance_bounds import delay
 from nc_processes.arrival_distribution import ArrivalDistribution

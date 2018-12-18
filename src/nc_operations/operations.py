@@ -3,8 +3,8 @@
 from math import exp, log
 from typing import List
 
-from library.exceptions import ParameterOutOfBounds
-from library.helper_functions import get_p_n, get_q, is_equal
+from utils.exceptions import ParameterOutOfBounds
+from utils.helper_functions import get_p_n, get_q, is_equal
 from nc_processes.arrival import Arrival
 from nc_processes.constant_rate_server import ConstantRate
 from nc_processes.service import Service

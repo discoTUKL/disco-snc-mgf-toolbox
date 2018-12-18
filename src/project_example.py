@@ -1,7 +1,7 @@
 """Computed some examples from the project"""
 
 from fat_tree.fat_cross_perform import FatCrossPerform
-from library.perform_parameter import PerformParameter
+from utils.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize

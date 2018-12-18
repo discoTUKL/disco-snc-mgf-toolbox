@@ -5,8 +5,8 @@ from typing import List
 
 import numpy as np
 
-from library.exceptions import ParameterOutOfBounds
-from library.setting_new import SettingNew
+from utils.exceptions import ParameterOutOfBounds
+from utils.setting_new import SettingNew
 from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.optimize import Optimize
@@ -48,7 +48,7 @@ class OptimizeNew(Optimize):
 
 if __name__ == '__main__':
     from fat_tree.fat_cross_perform import FatCrossPerform
-    from library.perform_parameter import PerformParameter
+    from utils.perform_parameter import PerformParameter
     from nc_operations.perform_enum import PerformEnum
     from nc_processes.constant_rate_server import ConstantRate
     from nc_processes.markov_modulated import MMOOFluid

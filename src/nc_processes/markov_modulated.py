@@ -2,7 +2,7 @@
 
 from math import exp, log, sqrt
 
-from library.exceptions import ParameterOutOfBounds
+from utils.exceptions import ParameterOutOfBounds
 from nc_processes.arrival_distribution import ArrivalDistribution
 
 

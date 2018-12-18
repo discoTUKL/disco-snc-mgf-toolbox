@@ -6,7 +6,7 @@ from typing import List
 import numpy as np
 import pandas as pd
 
-from library.exceptions import ParameterOutOfBounds
+from utils.exceptions import ParameterOutOfBounds
 
 EPSILON = 1e-09
 

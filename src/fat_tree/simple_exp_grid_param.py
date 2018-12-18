@@ -5,9 +5,9 @@ from math import floor, nan
 import numpy as np
 
 from fat_tree.fat_cross_perform import FatCrossPerform
-from library.array_to_results import two_col_array_to_results
-from library.compare_old_new import compute_improvement
-from library.perform_parameter import PerformParameter
+from utils.array_to_results import two_col_array_to_results
+from utils.compare_old_new import compute_improvement
+from utils.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
 from nc_processes.arrival_enum import ArrivalEnum
 from nc_processes.constant_rate_server import ConstantRate

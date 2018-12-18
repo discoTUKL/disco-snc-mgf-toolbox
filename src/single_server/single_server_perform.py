@@ -3,8 +3,8 @@
 from typing import List
 from warnings import warn
 
-from library.perform_parameter import PerformParameter
-from library.setting_new import SettingNew
+from utils.perform_parameter import PerformParameter
+from utils.setting_new import SettingNew
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds import delay_prob

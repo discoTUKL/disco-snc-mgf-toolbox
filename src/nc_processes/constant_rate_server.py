@@ -1,6 +1,6 @@
 """Implemented service classes for different distributions"""
 
-from library.exceptions import ParameterOutOfBounds
+from utils.exceptions import ParameterOutOfBounds
 from nc_processes.service import Service
 
 
