@@ -18,10 +18,10 @@ from nc_service.service_alternative import expect_const_rate
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
-from utils.array_to_results import three_col_array_to_results
+from bound_evaluation.array_to_results import three_col_array_to_results
 from utils.exceptions import ParameterOutOfBounds
-from utils.mc_enum import MCEnum
-from utils.monte_carlo_dist import MonteCarloDist
+from bound_evaluation.mc_enum import MCEnum
+from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from utils.perform_parameter import PerformParameter
 
 

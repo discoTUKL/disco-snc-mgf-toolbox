@@ -41,14 +41,12 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     count_nan_new = count_nan[1]
 
     if count_nan_standard != count_nan_new:
-        warn(
-            f"number of nan's does not match, {count_nan_standard} != {count_nan_new}"
-        )
+        warn(f"number of nan's does not match, "
+             f"{count_nan_standard} != {count_nan_new}")
 
     if valid_iterations < iterations * 0.25:
-        warn(
-            f"way too many nan's: {iterations - valid_iterations} out of {iterations}!"
-        )
+        warn(f"way too many nan's: "
+             f"{iterations - valid_iterations} out of {iterations}!")
 
         if valid_iterations < 100:
             warn("result is useless")
@@ -144,9 +142,8 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     number_improved = np.sum(res_array[:, 1] > res_array[:, 2])
 
     if valid_iterations < iterations * 0.25:
-        warn(
-            f"way too many nan's: {iterations - valid_iterations} nan out of {iterations}!"
-        )
+        warn(f"way too many nan's: "
+             f"{iterations - valid_iterations} nan out of {iterations}!")
 
         if valid_iterations < 100:
             warn("result in useless")

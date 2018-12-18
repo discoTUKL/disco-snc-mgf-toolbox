@@ -7,14 +7,14 @@ from warnings import warn
 import numpy as np
 import pandas as pd
 
+from bound_evaluation.compare_old_new import compute_improvement
 from fat_tree.fat_cross_perform import FatCrossPerform
-from utils.compare_old_new import compute_improvement
-from utils.perform_parameter import PerformParameter
-from nc_operations.perform_enum import PerformEnum
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_service.constant_rate_server import ConstantRate
 from nc_arrivals.qt import DM1
+from nc_operations.perform_enum import PerformEnum
+from nc_service.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
+from utils.perform_parameter import PerformParameter
 
 
 def csv_bar_chart(ar_list: List[ArrivalDistribution],
