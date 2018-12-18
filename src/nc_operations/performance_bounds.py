@@ -1,5 +1,7 @@
 """Performance bounds"""
 
+# TODO: write a "get_rho_arr_ser"-function
+
 from math import exp, inf, log
 
 from library.exceptions import ParameterOutOfBounds
@@ -42,7 +44,7 @@ def backlog_prob(arr: Arrival,
         else:
             return exp(-theta * backlog_value) * exp(
                 theta * (rho_a_p * tau + sigma_arr_ser)) / (
-                           1 - exp(theta * tau * rho_arr_ser))
+                    1 - exp(theta * tau * rho_arr_ser))
 
     except ZeroDivisionError:
         return inf
@@ -118,7 +120,7 @@ def delay_prob(arr: Arrival,
         else:
             return exp(-theta * rho_s_q * delay_value) * exp(
                 theta * (rho_a_p * tau + sigma_arr_ser)) / (
-                           1 - exp(theta * tau * rho_arr_ser))
+                    1 - exp(theta * tau * rho_arr_ser))
 
     except ZeroDivisionError:
         return inf
