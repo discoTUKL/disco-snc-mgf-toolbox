@@ -18,4 +18,4 @@ class Setting(ABC):
         pass
 
     def to_name(self) -> str:
-        return self.__class__.to_name()
+        return self.__class__.__name__
