@@ -3,16 +3,16 @@
 from typing import List
 from warnings import warn
 
-from utils.perform_parameter import PerformParameter
-from utils.setting_new import SettingNew
+from nc_arrivals.arrival_distribution import ArrivalDistribution
+from nc_arrivals.qt import DM1
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds import delay_prob
 from nc_operations.performance_bounds_power import (delay_prob_power,
                                                     output_power)
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.qt import DM1
+from nc_service.constant_rate_server import ConstantRate
+from utils.perform_parameter import PerformParameter
+from utils.setting_new import SettingNew
 
 
 class SingleServerPerform(SettingNew):
@@ -65,10 +65,8 @@ class SingleServerPerform(SettingNew):
                 l_power=param_l_list[1])
 
         else:
-            raise NameError(
-                f"{self.perform_param.perform_metric} is an"
-                f"infeasible performance metric"
-            )
+            raise NameError(f"{self.perform_param.perform_metric} is an"
+                            f"infeasible performance metric")
 
     def to_string(self) -> str:
         return self.to_name() + "_" + self.arr.to_value(

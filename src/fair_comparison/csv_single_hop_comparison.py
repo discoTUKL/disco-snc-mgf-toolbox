@@ -5,17 +5,18 @@ from typing import List
 
 import pandas as pd
 
-from utils.perform_param_list import PerformParamList
-from utils.perform_parameter import PerformParameter
+from nc_arrivals.regulated_arrivals import (LeakyBucketMassOne,
+                                            LeakyBucketMassTwo,
+                                            LeakyBucketMassTwoExact,
+                                            TokenBucketConstant)
 from nc_operations.dnc_performance_bounds import fifo_delay
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.regulated_arrivals import (
-    LeakyBucketMassOne, LeakyBucketMassTwo, LeakyBucketMassTwoExact,
-    TokenBucketConstant)
-from nc_processes.constant_rate_server import ConstantRate
+from nc_service.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
+from utils.perform_param_list import PerformParamList
+from utils.perform_parameter import PerformParameter
 
 
 def single_hop_comparison(

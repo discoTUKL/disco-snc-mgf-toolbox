@@ -2,12 +2,12 @@
 
 from typing import List
 
-from utils.setting import Setting
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.operations import Deconvolve, Leftover
 from nc_operations.performance_bounds import delay
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.service import Service
-from nc_processes.constant_rate_server import ConstantRate
+from nc_service.constant_rate_server import ConstantRate
+from nc_service.service import Service
+from utils.setting import Setting
 
 
 class TandemTFADelay(Setting):

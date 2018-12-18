@@ -2,9 +2,9 @@
 
 from math import exp, log
 
+from nc_arrivals.arrival import Arrival
+from nc_service.service import Service
 from utils.exceptions import ParameterOutOfBounds
-from nc_processes.arrival import Arrival
-from nc_processes.service import Service
 
 
 class DeconvolvePower(Arrival):

@@ -2,8 +2,8 @@
 
 from math import exp, log, sqrt
 
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from utils.exceptions import ParameterOutOfBounds
-from nc_processes.arrival_distribution import ArrivalDistribution
 
 
 class MMOOFluid(ArrivalDistribution):

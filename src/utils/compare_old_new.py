@@ -4,14 +4,14 @@ from math import nan
 from timeit import default_timer as timer
 from typing import List
 
-from utils.setting_new import SettingNew
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import ArrivalDistribution
 from optimization.initial_simplex import InitialSimplex
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from optimization.optimize_new import OptimizeNew
 from optimization.sim_anneal_param import SimAnnealParams
+from utils.setting_new import SettingNew
 
 
 def compute_improvement(setting: SettingNew,
@@ -224,8 +224,8 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
 if __name__ == '__main__':
     from fat_tree.fat_cross_perform import FatCrossPerform
     from utils.perform_parameter import PerformParameter
-    from nc_processes.constant_rate_server import ConstantRate
-    from nc_processes.qt import DM1
+    from nc_service.constant_rate_server import ConstantRate
+    from nc_arrivals.qt import DM1
     from single_server.single_server_perform import SingleServerPerform
 
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)

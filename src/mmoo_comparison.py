@@ -1,11 +1,11 @@
 """MMOO Comparison"""
 
-from utils.perform_parameter import PerformParameter
+from nc_arrivals.markov_modulated import MMOODisc, MMOOFluid
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.markov_modulated import MMOOFluid, MMOODisc
+from nc_service.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
+from utils.perform_parameter import PerformParameter
 
 if __name__ == '__main__':
     DELAY_PROB8 = PerformParameter(

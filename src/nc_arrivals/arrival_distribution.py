@@ -2,7 +2,7 @@
 
 from abc import abstractmethod
 
-from nc_processes.arrival import Arrival
+from nc_arrivals.arrival import Arrival
 
 
 class ArrivalDistribution(Arrival):

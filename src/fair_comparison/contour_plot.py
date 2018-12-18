@@ -5,14 +5,14 @@ from typing import List
 
 import pandas as pd
 
-from utils.perform_parameter import PerformParameter
+from nc_arrivals.regulated_arrivals import (LeakyBucketMassOne,
+                                            TokenBucketConstant)
 from nc_operations.dnc_performance_bounds import fifo_delay
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
-                                             TokenBucketConstant)
-from nc_processes.constant_rate_server import ConstantRate
+from nc_service.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
+from utils.perform_parameter import PerformParameter
 
 
 def single_hop_contour(sigma_single: float,
@@ -118,10 +118,9 @@ def csv_contour(rho_single: float,
             perform_param=perform_param,
             pure_snc=pure_snc)
 
-    results_df = pd.DataFrame(
-        {
-            "aggregation": agg_list,
-        }, index=sigma_list)
+    results_df = pd.DataFrame({
+        "aggregation": agg_list,
+    }, index=sigma_list)
 
     if pure_snc:
         filename = "contour_{0}_rho_{1}_utilization_{2}_pure".format(

@@ -2,15 +2,15 @@
 
 from typing import List
 
-from utils.perform_parameter import PerformParameter
-from utils.setting_new import SettingNew
+from nc_arrivals.arrival import Arrival
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.deconvolve_power import DeconvolvePower
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateList, Deconvolve, Leftover
-from nc_processes.arrival import Arrival
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.service import Service
+from nc_service.constant_rate_server import ConstantRate
+from nc_service.service import Service
+from utils.perform_parameter import PerformParameter
+from utils.setting_new import SettingNew
 
 
 class FatCrossPerform(SettingNew):

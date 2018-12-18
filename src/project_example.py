@@ -1,11 +1,11 @@
 """Computed some examples from the project"""
 
 from fat_tree.fat_cross_perform import FatCrossPerform
-from utils.perform_parameter import PerformParameter
+from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.constant_rate_server import ConstantRate
+from nc_service.constant_rate_server import ConstantRate
 from optimization.optimize import Optimize
-from nc_processes.qt import DM1
+from utils.perform_parameter import PerformParameter
 
 if __name__ == '__main__':
     PROB_VALUES = [0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01]

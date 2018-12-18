@@ -2,9 +2,9 @@
 
 from math import exp, inf
 
+from nc_arrivals.arrival import Arrival
+from nc_service.service import Service
 from utils.exceptions import ParameterOutOfBounds
-from nc_processes.arrival import Arrival
-from nc_processes.service import Service
 
 
 def output_power(arr: Arrival,
@@ -33,10 +33,9 @@ def output_power(arr: Arrival,
         denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_power)
 
     else:
-        numerator = exp(
-            theta * arr.rho(theta=l_theta) * (delta_time + 1)) * exp(
-            theta * sigma_l_arr_ser)
-        denominator = (1 - exp(l_theta * rho_l_arr_ser)) ** (1 / l_power)
+        numerator = exp(theta * arr.rho(theta=l_theta) *
+                        (delta_time + 1)) * exp(theta * sigma_l_arr_ser)
+        denominator = (1 - exp(l_theta * rho_l_arr_ser))**(1 / l_power)
 
     try:
         return numerator / denominator

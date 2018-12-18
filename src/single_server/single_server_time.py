@@ -4,19 +4,19 @@ from math import floor
 
 import numpy as np
 
+from nc_arrivals.arrival_enum import ArrivalEnum
+from nc_arrivals.markov_modulated import MMOOFluid
+from nc_arrivals.qt import DM1
+from nc_operations.perform_enum import PerformEnum
+from nc_service.constant_rate_server import ConstantRate
+from optimization.opt_method import OptMethod
+from single_server.single_server_perform import SingleServerPerform
 from utils.array_to_results import time_array_to_results
 from utils.compare_old_new import compute_overhead
 from utils.mc_enum import MCEnum
 from utils.mc_enum_to_dist import mc_enum_to_dist
 from utils.monte_carlo_dist import MonteCarloDist
 from utils.perform_parameter import PerformParameter
-from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_enum import ArrivalEnum
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.markov_modulated import MMOOFluid
-from nc_processes.qt import DM1
-from optimization.opt_method import OptMethod
-from single_server.single_server_perform import SingleServerPerform
 
 
 def mc_time_single(arrival_enum: ArrivalEnum, perform_param: PerformParameter,

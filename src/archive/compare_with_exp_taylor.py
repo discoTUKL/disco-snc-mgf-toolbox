@@ -9,20 +9,20 @@ import numpy as np
 import scipy.optimize
 from tqdm import tqdm
 
+from nc_arrivals.arrival_enum import ArrivalEnum
+from nc_arrivals.arrivals_alternative import expect_dm1, var_dm1
+from nc_arrivals.qt import DM1
+from nc_operations.perform_enum import PerformEnum
+from nc_service.constant_rate_server import ConstantRate
+from nc_service.service_alternative import expect_const_rate
+from optimization.optimize import Optimize
+from optimization.optimize_new import OptimizeNew
+from single_server.single_server_perform import SingleServerPerform
 from utils.array_to_results import three_col_array_to_results
 from utils.exceptions import ParameterOutOfBounds
 from utils.mc_enum import MCEnum
 from utils.monte_carlo_dist import MonteCarloDist
 from utils.perform_parameter import PerformParameter
-from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_enum import ArrivalEnum
-from nc_processes.arrivals_alternative import expect_dm1, var_dm1
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.qt import DM1
-from nc_processes.service_alternative import expect_const_rate
-from optimization.optimize import Optimize
-from optimization.optimize_new import OptimizeNew
-from single_server.single_server_perform import SingleServerPerform
 
 
 def f_exp(theta: float, i: int, s: int, t: int, lamb: float, rate: float,

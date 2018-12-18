@@ -5,7 +5,7 @@ from warnings import warn
 
 import numpy as np
 
-from nc_processes.arrival_enum import ArrivalEnum
+from nc_arrivals.arrival_enum import ArrivalEnum
 
 
 def two_col_array_to_results(arrival_enum: ArrivalEnum,

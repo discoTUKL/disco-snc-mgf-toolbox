@@ -8,13 +8,13 @@ import numpy as np
 import pandas as pd
 import scipy.optimize
 
+from optimization.nelder_mead_parameters import NelderMeadParameters
+from optimization.sim_anneal_param import SimAnnealParams
 from utils.deprecated import deprecated
 from utils.exceptions import ParameterOutOfBounds
 from utils.helper_functions import (
     average_towards_best_row, centroid_without_one_row, expand_grid, is_equal)
 from utils.setting import Setting
-from optimization.nelder_mead_parameters import NelderMeadParameters
-from optimization.sim_anneal_param import SimAnnealParams
 
 
 class Optimize(object):

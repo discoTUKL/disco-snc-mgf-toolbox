@@ -3,9 +3,9 @@
 from abc import abstractmethod
 from math import erf, exp, inf, log, pi, sqrt
 
-from utils.exceptions import ParameterOutOfBounds
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from utils.deprecated import deprecated
-from nc_processes.arrival_distribution import ArrivalDistribution
+from utils.exceptions import ParameterOutOfBounds
 
 
 class RegulatedArrivals(ArrivalDistribution):

@@ -6,21 +6,21 @@ from math import inf, nan
 import numpy as np
 from tqdm import tqdm
 
+from nc_arrivals.arrival_enum import ArrivalEnum
+from nc_arrivals.ebb import EBB
+from nc_arrivals.markov_modulated import MMOOFluid
+from nc_arrivals.qt import DM1, MD1
+from nc_arrivals.regulated_arrivals import LeakyBucketMassOne
+from nc_operations.perform_enum import PerformEnum
+from nc_service.constant_rate_server import ConstantRate
+from optimization.opt_method import OptMethod
+from single_server.single_server_perform import SingleServerPerform
 from utils.array_to_results import two_col_array_to_results
 from utils.compare_old_new import compute_improvement
 from utils.mc_enum import MCEnum
 from utils.mc_enum_to_dist import mc_enum_to_dist
 from utils.monte_carlo_dist import MonteCarloDist
 from utils.perform_parameter import PerformParameter
-from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_enum import ArrivalEnum
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.ebb import EBB
-from nc_processes.markov_modulated import MMOOFluid
-from nc_processes.qt import DM1, MD1
-from nc_processes.regulated_arrivals import LeakyBucketMassOne
-from optimization.opt_method import OptMethod
-from single_server.single_server_perform import SingleServerPerform
 
 
 def csv_single_param_power(

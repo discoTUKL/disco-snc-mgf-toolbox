@@ -1,7 +1,7 @@
 """Implemented service classes for different distributions"""
 
+from nc_service.service import Service
 from utils.exceptions import ParameterOutOfBounds
-from nc_processes.service import Service
 
 
 class ConstantRate(Service):

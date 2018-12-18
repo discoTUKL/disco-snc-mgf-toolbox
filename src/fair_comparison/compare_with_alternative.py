@@ -5,16 +5,16 @@ from math import exp, inf, log, nan
 import numpy as np
 import scipy.optimize
 
-from utils.exceptions import ParameterOutOfBounds
-from utils.perform_parameter import PerformParameter
+from nc_arrivals.arrivals_alternative import mgf_regulated_arrive
+from nc_arrivals.regulated_arrivals import (LeakyBucketMassOne,
+                                            TokenBucketConstant)
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrivals_alternative import mgf_regulated_arrive
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
-                                             TokenBucketConstant)
-from nc_processes.service import Service
+from nc_service.constant_rate_server import ConstantRate
+from nc_service.service import Service
 from optimization.optimize import Optimize
 from single_server.single_server_perform import SingleServerPerform
+from utils.exceptions import ParameterOutOfBounds
+from utils.perform_parameter import PerformParameter
 
 
 def delay_prob_leaky(theta: float,

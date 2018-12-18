@@ -2,8 +2,8 @@
 
 from math import exp, log
 
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from utils.exceptions import ParameterOutOfBounds
-from nc_processes.arrival_distribution import ArrivalDistribution
 
 
 class DM1(ArrivalDistribution):
@@ -61,8 +61,7 @@ class MD1(ArrivalDistribution):
         if theta <= 0:
             raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
-        return (self.n / theta) * self.lamb * (
-            exp(theta / self.mu) - 1)
+        return (self.n / theta) * self.lamb * (exp(theta / self.mu) - 1)
 
     def is_discrete(self) -> bool:
         return False
@@ -70,8 +69,7 @@ class MD1(ArrivalDistribution):
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "lambda{0}={1}_mu{0}={2}_n{0}={3}".format(
-                str(number), str(self.lamb), str(self.mu),
-                str(self.n))
+                str(number), str(self.lamb), str(self.mu), str(self.n))
         else:
             return "lambda{0}={1}_mu{0}={2}".format(
                 str(number), str(self.lamb), str(self.mu))
@@ -100,8 +98,7 @@ class MM1(ArrivalDistribution):
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "lambda{0}={1}_mu{0}={2}_n{0}={3}".format(
-                str(number), str(self.lamb), str(self.mu),
-                str(self.n))
+                str(number), str(self.lamb), str(self.mu), str(self.n))
         else:
             return "lambda{0}={1}_mu{0}={2}".format(
                 str(number), str(self.lamb), str(self.mu))

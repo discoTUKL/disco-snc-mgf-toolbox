@@ -1,23 +1,23 @@
 """Compute delay bound for various T and write into csv file."""
 
 import csv
-from typing import List
 from timeit import default_timer as timer
+from typing import List
 
 import pandas as pd
 
 from canonical_tandem.tandem_sfa_perform import TandemSFA
 from canonical_tandem.tandem_tfa_delay import TandemTFADelay
-from utils.perform_parameter import PerformParameter
-from utils.perform_param_list import PerformParamList
+from nc_arrivals.arrival_distribution import ArrivalDistribution
+from nc_arrivals.regulated_arrivals import (LeakyBucketMassOne,
+                                            TokenBucketConstant)
 from nc_operations.nc_analysis import NCAnalysis
 from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.regulated_arrivals import (LeakyBucketMassOne,
-                                             TokenBucketConstant)
+from nc_service.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
+from utils.perform_param_list import PerformParamList
+from utils.perform_parameter import PerformParameter
 
 
 def tandem_compare(arr_list: List[ArrivalDistribution],
@@ -31,8 +31,8 @@ def tandem_compare(arr_list: List[ArrivalDistribution],
             arr_list=arr_list, ser_list=ser_list, perform_param=perform_param)
         setting2 = TandemSFA(
             arr_list=arr_list2, ser_list=ser_list, perform_param=perform_param)
-    elif (nc_analysis == NCAnalysis.TFA and
-          perform_param.perform_metric == PerformEnum.DELAY):
+    elif (nc_analysis == NCAnalysis.TFA
+          and perform_param.perform_metric == PerformEnum.DELAY):
         setting = TandemTFADelay(
             arr_list=arr_list, ser_list=ser_list, prob_d=perform_param.value)
         setting2 = TandemTFADelay(
@@ -104,12 +104,11 @@ def csv_tandem_compare_servers(
     filename += "_max" + str(max_servers) + "servers_" + foi_arrival.to_value(
     ) + "_rate=" + str(rate)
 
-    results_df = pd.DataFrame(
-        {
-            "bounds": bounds,
-            "bounds2": bounds2
-        },
-        index=range(1, max_servers + 1))
+    results_df = pd.DataFrame({
+        "bounds": bounds,
+        "bounds2": bounds2
+    },
+                              index=range(1, max_servers + 1))
     results_df = results_df[["bounds", "bounds2"]]
 
     results_df.to_csv(
@@ -163,12 +162,11 @@ def csv_tandem_compare_perform(
             perform_param=perform_param_list.get_parameter_at_i(_i),
             nc_analysis=nc_analysis)
 
-    results_df = pd.DataFrame(
-        {
-            "bounds": bounds,
-            "bounds2": bounds2
-        },
-        index=perform_param_list.values_list)
+    results_df = pd.DataFrame({
+        "bounds": bounds,
+        "bounds2": bounds2
+    },
+                              index=perform_param_list.values_list)
     results_df = results_df[["bounds", "bounds2"]]
 
     filename += "_" + str(number_servers) + "servers_" + foi_arrival.to_value(

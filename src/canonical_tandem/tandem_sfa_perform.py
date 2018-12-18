@@ -2,13 +2,13 @@
 
 from typing import List
 
-from utils.perform_parameter import PerformParameter
-from utils.setting import Setting
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import Convolve, Leftover
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.service import Service
-from nc_processes.constant_rate_server import ConstantRate
+from nc_service.constant_rate_server import ConstantRate
+from nc_service.service import Service
+from utils.perform_parameter import PerformParameter
+from utils.setting import Setting
 
 
 class TandemSFA(Setting):

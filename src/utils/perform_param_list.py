@@ -1,7 +1,7 @@
 """The perform_parameter counterpart with lists"""
 
-from utils.perform_parameter import PerformParameter
 from nc_operations.perform_enum import PerformEnum
+from utils.perform_parameter import PerformParameter
 
 
 class PerformParamList(object):

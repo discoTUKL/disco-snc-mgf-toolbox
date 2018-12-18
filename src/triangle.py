@@ -6,16 +6,16 @@ from typing import List
 import numpy as np
 import scipy.optimize
 
-from utils.exceptions import ParameterOutOfBounds
-from utils.perform_parameter import PerformEnum, PerformParameter
+from nc_arrivals.arrival import Arrival
+from nc_arrivals.arrival_distribution import ArrivalDistribution
+from nc_arrivals.qt import DM1
+from nc_arrivals.regulated_arrivals import TokenBucketConstant
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import Convolve, Deconvolve, Leftover
-from nc_processes.arrival import Arrival
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.qt import DM1
-from nc_processes.regulated_arrivals import TokenBucketConstant
-from nc_processes.service import Service
+from nc_service.constant_rate_server import ConstantRate
+from nc_service.service import Service
+from utils.exceptions import ParameterOutOfBounds
+from utils.perform_parameter import PerformEnum, PerformParameter
 
 
 def new_delay(theta: float, delay: int, a_1: ArrivalDistribution,

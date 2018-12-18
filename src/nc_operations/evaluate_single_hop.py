@@ -1,11 +1,11 @@
 """Helper function to evaluate a single hop."""
 
-from utils.perform_parameter import PerformParameter
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds import (backlog, backlog_prob, delay,
                                               delay_prob, output)
-from nc_processes.arrival_distribution import ArrivalDistribution
-from nc_processes.service import Service
+from nc_service.service import Service
+from utils.perform_parameter import PerformParameter
 
 
 def evaluate_single_hop(foi: ArrivalDistribution,
@@ -37,12 +37,12 @@ def evaluate_single_hop(foi: ArrivalDistribution,
 
     elif perform_param.perform_metric == PerformEnum.DELAY_PROB:
         return delay_prob(
-                arr=foi,
-                ser=s_net,
-                theta=theta,
-                delay_value=perform_param.value,
-                indep=indep,
-                p=p)
+            arr=foi,
+            ser=s_net,
+            theta=theta,
+            delay_value=perform_param.value,
+            indep=indep,
+            p=p)
 
     elif perform_param.perform_metric == PerformEnum.DELAY:
         return delay(

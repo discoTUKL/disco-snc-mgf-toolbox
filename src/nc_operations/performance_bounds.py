@@ -4,10 +4,10 @@
 
 from math import exp, inf, log
 
+from nc_arrivals.arrival import Arrival
+from nc_service.service import Service
 from utils.exceptions import ParameterOutOfBounds
 from utils.helper_functions import get_q
-from nc_processes.arrival import Arrival
-from nc_processes.service import Service
 
 
 def backlog_prob(arr: Arrival,

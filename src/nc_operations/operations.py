@@ -3,11 +3,11 @@
 from math import exp, log
 from typing import List
 
+from nc_arrivals.arrival import Arrival
+from nc_service.constant_rate_server import ConstantRate
+from nc_service.service import Service
 from utils.exceptions import ParameterOutOfBounds
 from utils.helper_functions import get_p_n, get_q, is_equal
-from nc_processes.arrival import Arrival
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.service import Service
 
 
 class Deconvolve(Arrival):

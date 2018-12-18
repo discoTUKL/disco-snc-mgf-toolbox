@@ -5,14 +5,14 @@ from math import floor, nan
 import numpy as np
 
 from fat_tree.fat_cross_perform import FatCrossPerform
+from nc_arrivals.arrival_enum import ArrivalEnum
+from nc_arrivals.qt import DM1
+from nc_operations.perform_enum import PerformEnum
+from nc_service.constant_rate_server import ConstantRate
+from optimization.opt_method import OptMethod
 from utils.array_to_results import two_col_array_to_results
 from utils.compare_old_new import compute_improvement
 from utils.perform_parameter import PerformParameter
-from nc_operations.perform_enum import PerformEnum
-from nc_processes.arrival_enum import ArrivalEnum
-from nc_processes.constant_rate_server import ConstantRate
-from nc_processes.qt import DM1
-from optimization.opt_method import OptMethod
 
 ########################################################################
 # Find Optimal Parameters

@@ -5,11 +5,11 @@ from typing import List
 
 import numpy as np
 
-from utils.exceptions import ParameterOutOfBounds
-from utils.setting_new import SettingNew
 from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.optimize import Optimize
+from utils.exceptions import ParameterOutOfBounds
+from utils.setting_new import SettingNew
 
 
 class OptimizeNew(Optimize):
@@ -50,8 +50,8 @@ if __name__ == '__main__':
     from fat_tree.fat_cross_perform import FatCrossPerform
     from utils.perform_parameter import PerformParameter
     from nc_operations.perform_enum import PerformEnum
-    from nc_processes.constant_rate_server import ConstantRate
-    from nc_processes.markov_modulated import MMOOFluid
+    from nc_service.constant_rate_server import ConstantRate
+    from nc_arrivals.markov_modulated import MMOOFluid
 
     DELAY_4 = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.0001)
 
