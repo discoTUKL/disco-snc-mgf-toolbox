@@ -1,9 +1,9 @@
 """Abstract Arrival class."""
 
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 
-class Arrival(object):
+class Arrival(ABC):
     """Abstract Arrival class."""
 
     @abstractmethod
