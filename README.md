@@ -91,7 +91,6 @@ Topologies / settings:
 
 - Single server
 - Fat tree
-- Canonical tandem
 
 ## Paper Submissions
 
@@ -103,20 +102,20 @@ paper_submissions/
 
 ## Folder Structure
 
-- dnc  
+- dnc
   Only contains the delay bound for deterministic token bucket arrivals
-- library  
+- library
   Contains all helper classes, for example:
   - `array_to_results.py` takes an input Numpy-array, performs an analysis and write the results in a dictionary
   - `compare_old_new.py` compares the standard approach with the new bound
   - `perform_parameter.py` stores emum PerformMetric (delay, output,...) and its value
-- nc_operations  
+- nc_operations
   Network Calculus Operations, (De-)Convolution and computation of performance metrics (delay, backlog, delay probability)
 - nc_processes
   All arrival and service processes, such as MMOO and constant rate server
-- optimization  
+- optimization
   All classes that are necessary for the parameter optimization, as this is an important aspect of MGF-calculus.
-- simulation and simulation fluid  
+- simulation and simulation fluid
   Simulation, i.e., no bound computation, with packets or in a fluid model. Only very basic.
 
 The topologies have their own dedicated folders as they also include all classes needed for a performance evaluation (random input parameters, save results in csv-files)
