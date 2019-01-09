@@ -1,7 +1,4 @@
 """This serves as our main function."""
-# TODO: Write a test
-# TODO: Add .__str__-method to classes
-
 from typing import List
 
 from fat_tree.fat_cross_perform import FatCrossPerform
@@ -112,8 +109,6 @@ if __name__ == '__main__':
     print(
         Optimize(EXAMPLE_REVERSE, print_x=True, show_warn=True).grid_search(
             bound_list=[(0.1, 5.0)], delta=0.1))
-
-    # TODO: Reverse does not work for continuous time and multiplie servers
 
     # DELAY_PROB4 = PerformParameter(
     #     perform_metric=PerformEnum.DELAY_PROB, value=4)

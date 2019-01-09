@@ -15,20 +15,3 @@ class PerformParameter(object):
 
     def to_name_value(self) -> str:
         return f"{self.to_name()}_{str(self.value)}"
-
-    # TODO: get to know how to use @property
-    # @property
-    # def perform_metric(self):
-    #     return self.perform_metric
-    #
-    # @perform_metric.setter
-    # def perform_metric(self, new_perf_bound):
-    #     self.perform_metric = new_perf_bound
-    #
-    # @property
-    # def to_value(self):
-    #     return self.to_value
-    #
-    # @to_value.setter
-    # def to_value(self, new_value):
-    #     self.to_value = new_value

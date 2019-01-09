@@ -11,17 +11,9 @@ class ConstantRate(Service):
         self.rate = rate
 
     def sigma(self, theta=0.0) -> float:
-        # TODO: remove the sign constraints later
-        if theta <= 0:
-            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
-
         return 0.0
 
     def rho(self, theta: float) -> float:
-        # TODO: remove the sign constraints later
-        if theta <= 0:
-            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
-
         return self.rate
 
     def to_value(self, number=1):
