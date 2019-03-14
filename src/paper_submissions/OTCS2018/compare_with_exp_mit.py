@@ -12,6 +12,7 @@ from tqdm import tqdm
 from bound_evaluation.array_to_results import three_col_array_to_results
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
+from h_mitigator.optimize_mitigator import OptimizeMitigator
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.arrivals_alternative import expect_dm1
 from nc_arrivals.qt import DM1
@@ -19,7 +20,6 @@ from nc_operations.perform_enum import PerformEnum
 from nc_service.constant_rate_server import ConstantRate
 from nc_service.service_alternative import expect_const_rate
 from optimization.optimize import Optimize
-from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
 from utils.exceptions import ParameterOutOfBounds
 from utils.perform_parameter import PerformParameter
@@ -37,8 +37,8 @@ def f_sample(i: int, s: int, t: int, lamb: float, rate: float) -> float:
     return res
 
 
-def output_lower_exp_dm1(theta: float, s: int, delta_time: int, lamb: float,
-                         rate: float, a: float) -> float:
+def perform_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
+                          rate: float, a: float) -> float:
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
             (f"The arrivals' long term rate {1 / lamb} has to be smaller than"
@@ -55,13 +55,7 @@ def output_lower_exp_dm1(theta: float, s: int, delta_time: int, lamb: float,
     for _i in range(s + 1):
         try:
             summand = f_exp(
-                theta=theta,
-                i=_i,
-                s=s,
-                t=s + delta_time,
-                lamb=lamb,
-                rate=rate,
-                a=a)
+                theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate, a=a)
         except (FloatingPointError, OverflowError):
             summand = inf
 
@@ -70,79 +64,17 @@ def output_lower_exp_dm1(theta: float, s: int, delta_time: int, lamb: float,
     return log(sum_j) / log(a)
 
 
-def output_lower_exp_dm1_opt(s: int,
-                             delta_time: int,
-                             lamb: float,
-                             rate: float,
-                             print_x=False) -> float:
+def perform_lower_exp_dm1_opt(s: int,
+                              t: int,
+                              lamb: float,
+                              rate: float,
+                              print_x=False) -> float:
     def helper_fun(param_list: List[float]) -> float:
         try:
-            return output_lower_exp_dm1(
+            return perform_lower_exp_dm1(
                 theta=param_list[0],
                 s=s,
-                delta_time=delta_time,
-                lamb=lamb,
-                rate=rate,
-                a=param_list[1])
-        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
-            return inf
-
-    # np.seterr("raise")
-    np.seterr("warn")
-
-    try:
-        grid_res = scipy.optimize.brute(
-            func=helper_fun,
-            ranges=(slice(0.05, 4.0, 0.05), slice(1.05, 10.0, 0.05)),
-            full_output=True)
-    except (FloatingPointError, OverflowError):
-        return inf
-
-    if print_x:
-        print("grid search optimal parameter: theta={0}, a={1}".format(
-            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
-
-    return grid_res[1]
-
-
-def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
-                             rate: float, a: float) -> float:
-    if 1 / lamb >= rate:
-        raise ParameterOutOfBounds(
-            ("The arrivals' long term rate {0} has to be smaller than"
-             "the service's long term rate {1}").format(1 / lamb, rate))
-
-    if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
-
-    if a <= 1:
-        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
-
-    sum_j = 0.0
-
-    for _i in range(t + 1):
-        try:
-            summand = f_exp(
-                theta=theta, i=_i, s=t + delay, t=t, lamb=lamb, rate=rate, a=a)
-        except (FloatingPointError, OverflowError):
-            summand = inf
-
-        sum_j += summand
-
-    return log(sum_j) / log(a)
-
-
-def delay_prob_lower_exp_dm1_opt(t: int,
-                                 delay: int,
-                                 lamb: float,
-                                 rate: float,
-                                 print_x=False) -> float:
-    def helper_fun(param_list: List[float]) -> float:
-        try:
-            return delay_prob_lower_exp_dm1(
-                theta=param_list[0],
                 t=t,
-                delay=delay,
                 lamb=lamb,
                 rate=rate,
                 a=param_list[1])
@@ -161,18 +93,17 @@ def delay_prob_lower_exp_dm1_opt(t: int,
         return inf
 
     if print_x:
-        print("grid search optimal parameter: theta={0}, a={1}".format(
-            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
+        print(
+            f"grid search optimal parameter: theta={grid_res[0].tolist()[0]},"
+            f" a={grid_res[0].tolist()[1]}")
 
-    return grid_res[1]
 
-
-def delay_prob_sample_exp_dm1(theta: float, t: int, delay: int, lamb: float,
-                              rate: float, a: float,
-                              sample_size: int) -> float:
+def perform_sample_exp_dm1(theta: float, s: int, t: int, lamb: float,
+                           rate: float, a: float,
+                           sample_size: int) -> float:
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
-            ("The arrivals' long term rate {0} has to be smaller than"
+            ("The arrivals' long term rate {0} has to be smaller than "
              "the service's long term rate {1}").format(1 / lamb, rate))
 
     if theta <= 0:
@@ -187,7 +118,7 @@ def delay_prob_sample_exp_dm1(theta: float, t: int, delay: int, lamb: float,
         sum_i = 0.0
         for i in range(t + 1):
             sum_i += a**(exp(
-                theta * f_sample(i=i, s=t + delay, t=t, lamb=lamb, rate=rate)))
+                theta * f_sample(i=i, s=s, t=t, lamb=lamb, rate=rate)))
         res += sum_i
 
     res /= sample_size
@@ -195,18 +126,18 @@ def delay_prob_sample_exp_dm1(theta: float, t: int, delay: int, lamb: float,
     return res
 
 
-def delay_prob_sample_exp_dm1_opt(t: int,
-                                  delay: int,
+def delay_prob_sample_exp_dm1_opt(s: int,
+                                  t: int,
                                   lamb: float,
                                   rate: float,
                                   sample_size: int,
                                   print_x=False) -> float:
     def helper_fun(param_list: List[float]) -> float:
         try:
-            return delay_prob_sample_exp_dm1(
+            return perform_sample_exp_dm1(
                 theta=param_list[0],
+                s=s,
                 t=t,
-                delay=delay,
                 lamb=lamb,
                 rate=rate,
                 a=param_list[1],
@@ -253,12 +184,11 @@ def csv_single_param_exp_lower(start_time: int,
         param_array = np.random.exponential(
             scale=mc_dist.param_list[0], size=size_array)
     else:
-        raise NameError("Distribution parameter {0} is infeasible".format(
-            mc_dist.mc_enum))
+        raise NameError(
+            f"Distribution parameter {mc_dist.mc_enum} is infeasible")
 
     res_array = np.empty([total_iterations, 3])
-    if sample:
-        res_array_sample = np.empty([total_iterations, 3])
+    res_array_sample = np.empty([total_iterations, 3])
 
     for i in tqdm(range(total_iterations)):
         setting = SingleServerPerform(
@@ -275,13 +205,13 @@ def csv_single_param_exp_lower(start_time: int,
         bound_array_power = theta_bounds[:]
         bound_array_power.append((0.9, 4.0))
 
-        res_array[i, 1] = OptimizeNew(setting_new=setting).grid_search(
+        res_array[i, 1] = OptimizeMitigator(setting_h_mit=setting).grid_search(
             bound_list=bound_array_power, delta=delta)
 
         if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            res_array[i, 2] = delay_prob_lower_exp_dm1_opt(
+            res_array[i, 2] = perform_lower_exp_dm1_opt(
+                s=start_time + perform_param.value,
                 t=start_time,
-                delay=perform_param.value,
                 lamb=param_array[i, 0],
                 rate=param_array[i, 1])
 
@@ -289,8 +219,8 @@ def csv_single_param_exp_lower(start_time: int,
                 res_array_sample[i, 0] = res_array[i, 0]
                 res_array_sample[i, 1] = res_array[i, 1]
                 res_array_sample[i, 2] = delay_prob_sample_exp_dm1_opt(
+                    s=start_time + perform_param.value,
                     t=start_time,
-                    delay=perform_param.value,
                     lamb=param_array[i, 0],
                     rate=param_array[i, 1],
                     sample_size=sample_size)
@@ -301,15 +231,15 @@ def csv_single_param_exp_lower(start_time: int,
                     res_array_sample[i, ] = nan
 
         elif perform_param.perform_metric == PerformEnum.OUTPUT:
-            res_array[i, 2] = output_lower_exp_dm1_opt(
+            res_array[i, 2] = perform_lower_exp_dm1_opt(
                 s=start_time,
-                delta_time=perform_param.value,
+                t=start_time + perform_param.value,
                 lamb=param_array[i, 0],
                 rate=param_array[i, 1])
 
         else:
-            raise NameError("{0} is an infeasible performance metric".format(
-                perform_param.perform_metric))
+            raise NameError(f"{perform_param.perform_metric} is an infeasible "
+                            f"performance metric")
 
         if (res_array[i, 1] == inf or res_array[i, 2] == inf
                 or res_array[i, 0] == nan or res_array[i, 1] == nan
@@ -352,14 +282,14 @@ def csv_single_param_exp_lower(start_time: int,
 
     with open(
             "lower_single_{0}_DM1_results_MC{1}_power_exp.csv".format(
-                perform_param.to_name(), mc_dist.to_name()), 'w') as csv_file:
+                perform_param.__str__(), mc_dist.to_name()), 'w') as csv_file:
         writer = csv.writer(fileobj=csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])
     if sample:
         with open(
                 "sample_single_{0}_DM1_results_MC{1}_power_exp.csv".format(
-                    perform_param.to_name(), mc_dist.to_name()),
+                    perform_param.__str__(), mc_dist.to_name()),
                 'w') as csv_file:
             writer = csv.writer(fileobj=csv_file)
             for key, value in res_dict_sample.items():
@@ -453,13 +383,13 @@ def csv_single_param_exp_lower(start_time: int,
 #         "delta_time": perform_param.value,
 #         "optimization": "grid_search",
 #         "metric": "relative",
-#         "MCDistribution": mc_dist.to_name(),
+#         "MCDistribution": mc_dist.__str__(),
 #         "MCParam": mc_dist.param_to_string()
 #     })
 #
 #     with open(
 #             "lower_single_{0}_DM1_results_MC{1}_power_exp.csv".format(
-#                 perform_param.to_name(), mc_dist.to_name()), 'w') as csv_file:
+#                 perform_param.__str__(), mc_dist.__str__()), 'w') as csv_file:
 #         writer = csv.writer(fileobj=csv_file)
 #         for key, value in res_dict.items():
 #             writer.writerow([key, value])

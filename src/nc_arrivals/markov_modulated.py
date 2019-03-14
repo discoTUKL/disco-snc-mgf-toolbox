@@ -30,6 +30,10 @@ class MMOOFluid(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
+    def __str__(self) -> str:
+        return f"MMOOFluid_mu={self.mu}_lamb={self.lamb}_" \
+            f"burst={self.burst}_n={self.n}"
+
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "mu{0}={1}_lambda{0}={2}_burst{0}={3}_n{0}={4}".format(
@@ -61,10 +65,17 @@ class MMOODisc(ArrivalDistribution):
         sqrt_part = sqrt(off_on**2 - 4 * (self.stay_off + self.stay_on - 1) *
                          exp(theta * self.burst))
 
+        if log(0.5 * (off_on + sqrt_part)) < 0:
+            raise ValueError("rho must be >= 0")
+
         return log(0.5 * (off_on + sqrt_part)) / theta
 
     def is_discrete(self) -> bool:
         return True
+
+    def __str__(self) -> str:
+        return f"MMOODisc_stay_on={self.stay_on}_stay_off={self.stay_off}_" \
+            f"burst={self.burst}_n={self.n}"
 
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:

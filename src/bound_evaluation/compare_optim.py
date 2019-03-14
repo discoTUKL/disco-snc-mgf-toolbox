@@ -6,16 +6,15 @@ from typing import List
 from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.opt_method import OptMethod
-from optimization.optimize_new import OptimizeNew
+from h_mitigator.optimize_mitigator import OptimizeMitigator
 from optimization.sim_anneal_param import SimAnnealParams
-from utils.setting_new import SettingNew
+from h_mitigator.setting_mitigator import SettingMitigator
 
 
-def compare_optimization(setting: SettingNew,
+def compare_optimization(setting: SettingMitigator,
                          opt_methods: List[OptMethod],
                          number_l=1) -> List[float]:
     """Measures time for different optimizations"""
-    new = True
     print_x = False
 
     list_of_bounds: List[float] = []
@@ -31,8 +30,8 @@ def compare_optimization(setting: SettingNew,
             for _i in range(1, number_l + 1):
                 bound_list.append((0.9, 4.0))
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new, print_x=print_x).grid_search(
+            bound = OptimizeMitigator(
+                setting_h_mit=setting, print_x=print_x).grid_search(
                     bound_list=bound_list, delta=0.1)
 
         elif opt == OptMethod.PATTERN_SEARCH:
@@ -40,8 +39,8 @@ def compare_optimization(setting: SettingNew,
 
             start_list = [theta_start] + [1.0] * number_l
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new, print_x=print_x).pattern_search(
+            bound = OptimizeMitigator(
+                setting_h_mit=setting, print_x=print_x).pattern_search(
                     start_list=start_list, delta=3.0, delta_min=0.01)
 
         elif opt == OptMethod.NELDER_MEAD:
@@ -52,8 +51,8 @@ def compare_optimization(setting: SettingNew,
                 parameters_to_optimize=number_l + 1).gao_han(
                     start_list=start_list)
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new, print_x=print_x).nelder_mead(
+            bound = OptimizeMitigator(
+                setting_h_mit=setting, print_x=print_x).nelder_mead(
                     simplex=start_simplex, sd_min=10**(-2))
 
         elif opt == OptMethod.BASIN_HOPPING:
@@ -61,8 +60,8 @@ def compare_optimization(setting: SettingNew,
 
             start_list = [theta_start] + [1.0] * number_l
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new,
+            bound = OptimizeMitigator(
+                setting_h_mit=setting,
                 print_x=print_x).basin_hopping(start_list=start_list)
 
         elif opt == OptMethod.SIMULATED_ANNEALING:
@@ -71,8 +70,8 @@ def compare_optimization(setting: SettingNew,
 
             start_list = [theta_start] + [1.0] * number_l
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new, print_x=print_x).sim_annealing(
+            bound = OptimizeMitigator(
+                setting_h_mit=setting, print_x=print_x).sim_annealing(
                     start_list=start_list,
                     sim_anneal_params=simul_anneal_param)
 
@@ -83,8 +82,8 @@ def compare_optimization(setting: SettingNew,
             for _i in range(1, number_l + 1):
                 bound_list.append((0.9, 4.0))
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new,
+            bound = OptimizeMitigator(
+                setting_h_mit=setting,
                 print_x=print_x).diff_evolution(bound_list=bound_list)
 
         elif opt == OptMethod.BFGS:
@@ -92,8 +91,8 @@ def compare_optimization(setting: SettingNew,
 
             start_list = [theta_start] + [1.0] * number_l
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new,
+            bound = OptimizeMitigator(
+                setting_h_mit=setting,
                 print_x=print_x).bfgs(start_list=start_list)
 
         elif opt == OptMethod.GS_OLD:
@@ -103,8 +102,8 @@ def compare_optimization(setting: SettingNew,
             for _i in range(1, number_l + 1):
                 bound_list.append((0.9, 4.0))
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new, print_x=print_x).grid_search_old(
+            bound = OptimizeMitigator(
+                setting_h_mit=setting, print_x=print_x).grid_search_old(
                     bound_list=bound_list, delta=0.1)
 
         elif opt == OptMethod.NM_OLD:
@@ -116,8 +115,8 @@ def compare_optimization(setting: SettingNew,
                 parameters_to_optimize=number_l + 1).gao_han(
                     start_list=start_list)
 
-            bound = OptimizeNew(
-                setting_new=setting, new=new, print_x=print_x).nelder_mead_old(
+            bound = OptimizeMitigator(
+                setting_h_mit=setting, print_x=print_x).nelder_mead_old(
                     simplex=start_simplex,
                     nelder_mead_param=nelder_mead_param,
                     sd_min=10**(-2))

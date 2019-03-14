@@ -38,6 +38,9 @@ class DM1(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return True
 
+    def __str__(self) -> str:
+        return f"D/M/1_lambda={self.lamb}_n={self.n}"
+
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
             return "lambda{0}={1}_n{0}={2}".format(
@@ -65,6 +68,9 @@ class MD1(ArrivalDistribution):
 
     def is_discrete(self) -> bool:
         return False
+
+    def __str__(self) -> str:
+        return f"M/D/1_lambda={self.lamb}_mu={self.mu}_n={self.n}"
 
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
@@ -98,6 +104,9 @@ class MM1(ArrivalDistribution):
 
     def is_discrete(self) -> bool:
         return False
+
+    def __str__(self) -> str:
+        return f"M/M/1_lambda={self.lamb}_mu={self.mu}_n={self.n}"
 
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:

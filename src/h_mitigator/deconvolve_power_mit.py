@@ -7,7 +7,7 @@ from nc_service.service import Service
 from utils.exceptions import ParameterOutOfBounds
 
 
-class DeconvolvePower(Arrival):
+class DeconvolvePowerMit(Arrival):
     """New Lyapunov Deconvolution Class"""
 
     def __init__(self, arr: Arrival, ser: Service, l_power=1.0) -> None:

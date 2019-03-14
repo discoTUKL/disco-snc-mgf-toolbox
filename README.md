@@ -4,7 +4,7 @@ The (sigma, rho)-calculus is implemented in this tool. It is supposed to provide
 
 ## Prerequisites
 
-- Python 3.6 or higher
+- Python 3.7 or higher
 - Python packages in `requiremets.txt`
 
 ## Introduction
@@ -28,12 +28,12 @@ SINGLE_SERVER = SingleServerPerform(arr=DM1(lamb=1.0),
 means that we consider the single hop topology with exponentially distributed arrival increments (DM1 with parameter lambda equal to 1) and a constant rate server (with rate 10).
 
 ```python
-print(SINGLE_SERVER.get_bound(0.1))
+print(SINGLE_SERVER.bound(0.1))
 ```
 
 for theta = 0.1.
 
-For the new output bound computation, we insert a list of parameters (first element is theta, the rest are for the new output bound computation):
+For the output bound computation with the $h$ - mitigator, we insert a list of parameters (first element is theta, the rest are for the new output bound computation):
 
 ```python
 [0.1, 2.7]
@@ -42,13 +42,13 @@ For the new output bound computation, we insert a list of parameters (first elem
 and compute
 
 ```python
-print(SINGLE_SERVER.get_new_bound([0.1, 2.7]))
+print(SINGLE_SERVER.h_mit_bound([0.1, 2.7]))
 ```
 
 #### Compute Optimized Bound
 
 Assume we want to optimize the parameter for the above setting. Therefore, we choose to optimize, e.g., via grid search.
-We optimize the bound in the SINGLE_SERVER setting with the old approach "Optimize" and the new approach OptimizeNew and want to print the optimal parameter set ("print_x=true"). The last step is to choose the method "grid_search()" and to set the search's granularity (in this case = 0.1):
+We optimize the bound in the SINGLE_SERVER setting with the old approach "Optimize" and the approach OptimizeMitigator and want to print the optimal parameter set ("print_x=true"). The last step is to choose the method "grid_search()" and to set the search's granularity (in this case = 0.1):
 
 ```python
 print(Optimize(SINGLE_SERVER, print_x=True).grid_search(
@@ -58,7 +58,7 @@ print(Optimize(SINGLE_SERVER, print_x=True).grid_search(
 and for the new version:
 
 ```python
-print(OptimizeNew(SINGLE_SERVER, new=True, print_x=True).grid_search(
+print(OptimizeMitigator(SINGLE_SERVER, new=True, print_x=True).grid_search(
         bound_list=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))
 ```
 
@@ -91,6 +91,7 @@ Topologies / settings:
 
 - Single server
 - Fat tree
+- Canonical tandem
 
 ## Paper Submissions
 
@@ -102,20 +103,17 @@ paper_submissions/
 
 ## Folder Structure
 
-- dnc
-  Only contains the delay bound for deterministic token bucket arrivals
-- library
-  Contains all helper classes, for example:
-  - `array_to_results.py` takes an input Numpy-array, performs an analysis and write the results in a dictionary
-  - `compare_old_new.py` compares the standard approach with the new bound
-  - `perform_parameter.py` stores emum PerformMetric (delay, output,...) and its value
+- nc_arrivals
+  All arrival processes, such as MMOO and constant rate server
 - nc_operations
   Network Calculus Operations, (De-)Convolution and computation of performance metrics (delay, backlog, delay probability)
-- nc_processes
-  All arrival and service processes, such as MMOO and constant rate server
+- nc_service
+  Constant rate server and the abstract class Service
 - optimization
   All classes that are necessary for the parameter optimization, as this is an important aspect of MGF-calculus.
-- simulation and simulation fluid
-  Simulation, i.e., no bound computation, with packets or in a fluid model. Only very basic.
+- utils
+  Contains all helper classes, for example:
+  - `exceptions.py` includes special ParameterOutOfBounds class that is handled in the optimization
+  - `perform_parameter.py` stores emum PerformMetric (delay, output,...) and its value
 
 The topologies have their own dedicated folders as they also include all classes needed for a performance evaluation (random input parameters, save results in csv-files)

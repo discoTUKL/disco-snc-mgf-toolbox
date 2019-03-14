@@ -26,6 +26,9 @@ class EBB(ArrivalDistribution):
 
         theta_over_decay = theta / self.decay
 
+        if log((self.factor_m**theta_over_decay) / (1 - theta_over_decay)) < 0:
+            raise ValueError("rho must be >= 0")
+
         return (self.n / theta) * log(
             (self.factor_m**theta_over_decay) / (1 - theta_over_decay))
 

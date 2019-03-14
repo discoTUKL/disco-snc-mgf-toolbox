@@ -1,4 +1,4 @@
-"""Compare standard bound with Lyapunov bound."""
+"""Compare standard bound with h-mitigator."""
 
 from math import nan
 from timeit import default_timer as timer
@@ -9,32 +9,30 @@ from nc_operations.perform_enum import PerformEnum
 from optimization.initial_simplex import InitialSimplex
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
-from optimization.optimize_new import OptimizeNew
+from h_mitigator.optimize_mitigator import OptimizeMitigator
 from optimization.sim_anneal_param import SimAnnealParams
-from utils.setting_new import SettingNew
+from h_mitigator.setting_mitigator import SettingMitigator
 
 
-def compute_improvement(setting: SettingNew,
-                        opt_method: OptMethod,
-                        number_l=1,
-                        print_x=False,
-                        show_warn=False) -> tuple:
+def compare_value(setting: SettingMitigator,
+                  opt_method: OptMethod,
+                  number_l=1,
+                  print_x=False) -> tuple:
     """Compare standard_bound with the new Lyapunov bound."""
 
     if opt_method == OptMethod.GRID_SEARCH:
         theta_bounds = [(0.1, 4.0)]
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x, show_warn=show_warn).grid_search(
+            setting=setting, print_x=print_x).grid_search(
                 bound_list=theta_bounds, delta=0.1)
 
         bound_array = theta_bounds[:]
         for _i in range(1, number_l + 1):
             bound_array.append((0.9, 4.0))
 
-        new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x,
-            show_warn=show_warn).grid_search(
+        new_bound = OptimizeMitigator(
+            setting_h_mit=setting, print_x=print_x).grid_search(
                 bound_list=bound_array, delta=0.1)
 
     elif opt_method == OptMethod.PATTERN_SEARCH:
@@ -43,15 +41,13 @@ def compute_improvement(setting: SettingNew,
         start_list = [theta_start]
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x,
-            show_warn=show_warn).pattern_search(
+            setting=setting, print_x=print_x).pattern_search(
                 start_list=start_list, delta=3.0, delta_min=0.01)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
-        new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x,
-            show_warn=show_warn).pattern_search(
+        new_bound = OptimizeMitigator(
+            setting_h_mit=setting, print_x=print_x).pattern_search(
                 start_list=start_list_new, delta=3.0, delta_min=0.01)
 
         # This part is there to overcome opt_method issues
@@ -66,7 +62,7 @@ def compute_improvement(setting: SettingNew,
             start_list=start_list)
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x, show_warn=show_warn).nelder_mead(
+            setting=setting, print_x=print_x).nelder_mead(
                 simplex=start_simplex, sd_min=10**(-2))
 
         start_list_new = [theta_start] + [1.0] * number_l
@@ -74,9 +70,8 @@ def compute_improvement(setting: SettingNew,
             parameters_to_optimize=number_l + 1).gao_han(
                 start_list=start_list_new)
 
-        new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x,
-            show_warn=show_warn).nelder_mead(
+        new_bound = OptimizeMitigator(
+            setting_h_mit=setting, print_x=print_x).nelder_mead(
                 simplex=start_simplex_new, sd_min=10**(-2))
 
         # This part is there to overcome opt_method issues
@@ -89,14 +84,14 @@ def compute_improvement(setting: SettingNew,
         start_list = [theta_start]
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x,
-            show_warn=show_warn).basin_hopping(start_list=start_list)
+            setting=setting,
+            print_x=print_x).basin_hopping(start_list=start_list)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
-        new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x,
-            show_warn=show_warn).basin_hopping(start_list=start_list_new)
+        new_bound = OptimizeMitigator(
+            setting_h_mit=setting,
+            print_x=print_x).basin_hopping(start_list=start_list_new)
 
         # This part is there to overcome opt_method issues
         if new_bound > standard_bound:
@@ -109,15 +104,13 @@ def compute_improvement(setting: SettingNew,
         start_list = [theta_start]
 
         standard_bound = Optimize(
-            setting=setting, print_x=print_x,
-            show_warn=show_warn).sim_annealing(
+            setting=setting, print_x=print_x).sim_annealing(
                 start_list=start_list, sim_anneal_params=simul_anneal_param)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
-        new_bound = OptimizeNew(
-            setting_new=setting, print_x=print_x,
-            show_warn=show_warn).sim_annealing(
+        new_bound = OptimizeMitigator(
+            setting_h_mit=setting, print_x=print_x).sim_annealing(
                 start_list=start_list_new,
                 sim_anneal_params=simul_anneal_param)
 
@@ -136,8 +129,8 @@ def compute_improvement(setting: SettingNew,
         for _i in range(1, number_l + 1):
             bound_array.append((0.9, 8.0))
 
-        new_bound = OptimizeNew(
-            setting_new=setting,
+        new_bound = OptimizeMitigator(
+            setting_h_mit=setting,
             print_x=print_x).diff_evolution(bound_list=bound_array)
 
     else:
@@ -155,8 +148,8 @@ def compute_improvement(setting: SettingNew,
     return standard_bound, new_bound
 
 
-def compute_overhead(setting: SettingNew, opt_method: OptMethod,
-                     number_l=1) -> tuple:
+def compare_time(setting: SettingMitigator, opt_method: OptMethod,
+                 number_l=1) -> tuple:
     """Compare computation times."""
 
     if opt_method == OptMethod.GRID_SEARCH:
@@ -172,7 +165,7 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
             bound_array.append((0.9, 4.0))
 
         start = timer()
-        OptimizeNew(setting_new=setting).grid_search(
+        OptimizeMitigator(setting_h_mit=setting).grid_search(
             bound_list=bound_array, delta=0.1)
         stop = timer()
         time_lyapunov = stop - start
@@ -189,7 +182,7 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
         start_list = [0.5] + [1.0] * number_l
 
         start = timer()
-        OptimizeNew(setting_new=setting).pattern_search(
+        OptimizeMitigator(setting_h_mit=setting).pattern_search(
             start_list=start_list, delta=3.0, delta_min=0.01)
         stop = timer()
         time_lyapunov = stop - start
@@ -209,7 +202,7 @@ def compute_overhead(setting: SettingNew, opt_method: OptMethod,
                 max_theta=1.0, max_l=2.0)
 
         start = timer()
-        OptimizeNew(setting_new=setting).nelder_mead(
+        OptimizeMitigator(setting_h_mit=setting).nelder_mead(
             simplex=start_simplex_new, sd_min=10**(-2))
         stop = timer()
         time_lyapunov = stop - start
@@ -237,7 +230,7 @@ if __name__ == '__main__':
         arr=EXP_ARRIVAL, const_rate=CONST_RATE, perform_param=OUTPUT_TIME)
 
     # print(
-    #     compute_improvement(
+    #     compare_value(
     #         setting=SETTING1, opt_method=OptMethod.GRID_SEARCH,
     #         print_x=True))
 
@@ -257,15 +250,15 @@ if __name__ == '__main__':
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB)
 
     print(
-        compute_improvement(
+        compare_value(
             setting=SETTING2, opt_method=OptMethod.GRID_SEARCH, print_x=True))
 
     print(
-        compute_improvement(
+        compare_value(
             setting=SETTING2,
             opt_method=OptMethod.PATTERN_SEARCH,
             print_x=True))
 
     print(
-        compute_overhead(
+        compare_time(
             setting=SETTING2, opt_method=OptMethod.GRID_SEARCH, number_l=1))

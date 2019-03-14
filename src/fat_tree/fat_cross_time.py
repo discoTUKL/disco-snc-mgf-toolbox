@@ -8,11 +8,11 @@ import numpy as np
 from tqdm import tqdm  # Progressbar in for loop
 
 from bound_evaluation.array_to_results import time_array_to_results
-from bound_evaluation.compare_old_new import compute_overhead
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from fat_tree.fat_cross_perform import FatCrossPerform
+from h_mitigator.compare_mitigator import compare_time
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.markov_modulated import MMOOFluid
 from nc_arrivals.qt import DM1
@@ -77,8 +77,8 @@ def mc_time_fat_cross(arrival_enum: ArrivalEnum,
                 ser_list=service_list,
                 perform_param=perform_param)
 
-            # time_standard, time_lyapunov = compute_overhead()
-            time_array[i, 0], time_array[i, 1] = compute_overhead(
+            # time_standard, time_lyapunov = compare_time()
+            time_array[i, 0], time_array[i, 1] = compare_time(
                 setting=setting, opt_method=opt_method, number_l=num_serv - 1)
 
             if i % floor(total_iterations / 10) == 0:
@@ -92,7 +92,7 @@ def mc_time_fat_cross(arrival_enum: ArrivalEnum,
                 time_ratio=time_ratio))
 
     with open(
-        (f"time_{perform_param.to_name()}_{arrival_enum.name}_{opt_method.name}.csv"
+        (f"time_{perform_param.__str__()}_{arrival_enum.name}_{opt_method.name}.csv"
          ), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in time_ratio.items():

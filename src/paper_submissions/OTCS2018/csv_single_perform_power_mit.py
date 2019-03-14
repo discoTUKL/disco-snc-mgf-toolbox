@@ -4,16 +4,16 @@ import csv
 
 import pandas as pd
 
-from utils.perform_param_list import PerformParamList
-from nc_operations.perform_enum import PerformEnum
+from h_mitigator.optimize_mitigator import OptimizeMitigator
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_service.constant_rate_server import ConstantRate
 from nc_arrivals.markov_modulated import MMOOFluid
 from nc_arrivals.qt import DM1, MD1
+from nc_operations.perform_enum import PerformEnum
+from nc_service.constant_rate_server import ConstantRate
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
-from optimization.optimize_new import OptimizeNew
 from single_server.single_server_perform import SingleServerPerform
+from utils.perform_param_list import PerformParamList
 
 # import sys
 # import os
@@ -25,7 +25,8 @@ from single_server.single_server_perform import SingleServerPerform
 def single_server_df(arr1: ArrivalDistribution, ser1: ConstantRate,
                      opt_method: OptMethod,
                      perform_param_list: PerformParamList) -> pd.DataFrame:
-    """Compute output bound for T in T_list and write into dataframe
+    """
+    Compute output bound for T in T_list and write into dataframe
     Args:
         arr1: Arrival object
         ser1: Service object
@@ -36,10 +37,10 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ConstantRate,
         dataframe
     """
 
-    bound = [0.0] * len(perform_param_list.values_list)
-    new_bound = [0.0] * len(perform_param_list.values_list)
+    bound = [0.0] * len(perform_param_list)
+    new_bound = [0.0] * len(perform_param_list)
 
-    for _i in range(len(perform_param_list.values_list)):
+    for _i in range(len(perform_param_list)):
         setting = SingleServerPerform(
             arr=arr1,
             const_rate=ser1,
@@ -48,26 +49,26 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ConstantRate,
         if opt_method == OptMethod.GRID_SEARCH:
             bound[_i] = Optimize(setting=setting).grid_search(
                 bound_list=[(0.1, 4.0)], delta=0.1)
-            new_bound[_i] = OptimizeNew(
-                setting_new=setting, new=True).grid_search(
+            new_bound[_i] = OptimizeMitigator(
+                setting_h_mit=setting).grid_search(
                     bound_list=[(0.1, 4.0), (0.9, 8.0)], delta=0.05)
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
             bound[_i] = Optimize(setting=setting).pattern_search(
                 start_list=[0.5], delta=3.0, delta_min=0.01)
-            new_bound[_i] = OptimizeNew(
-                setting_new=setting, new=True).pattern_search(
+            new_bound[_i] = OptimizeMitigator(
+                setting_h_mit=setting).pattern_search(
                     start_list=[0.5, 2.0], delta=3.0, delta_min=0.01)
         else:
             raise NameError(
-                "Optimization parameter {0} is infeasible".format(opt_method))
+                f"Optimization parameter {opt_method} is infeasible")
 
     delay_bounds_df = pd.DataFrame({
         "bound": bound,
-        "new_bound": new_bound
+        "h_mit_bound": new_bound
     },
                                    index=perform_param_list.values_list)
-    delay_bounds_df = delay_bounds_df[["bound", "new_bound"]]
+    delay_bounds_df = delay_bounds_df[["bound", "h_mit_bound"]]
 
     return delay_bounds_df
 
@@ -75,7 +76,8 @@ def single_server_df(arr1: ArrivalDistribution, ser1: ConstantRate,
 def csv_single_perform(arrival: ArrivalDistribution, service: ConstantRate,
                        perform_param_list: PerformParamList,
                        opt_method: OptMethod) -> pd.DataFrame:
-    """Writes dataframe results into a csv file
+    """
+    Writes dataframe results into a csv file
 
     Args:
         arrival: flow of interest's arrival distribution
@@ -87,7 +89,7 @@ def csv_single_perform(arrival: ArrivalDistribution, service: ConstantRate,
         csv file
     """
 
-    filename = "single_{0}".format(perform_param_list.to_name())
+    filename = f"single_{perform_param_list.to_name()}"
 
     data_frame = single_server_df(
         arr1=arrival,
@@ -108,32 +110,25 @@ if __name__ == '__main__':
     OUTPUT_LIST = PerformParamList(
         perform_metric=PerformEnum.OUTPUT, values_list=range(4, 15))
 
-    DM1_FOI = DM1(lamb=3.8, n=1)
-    CONST_RATE1 = ConstantRate(rate=3.0)
-
     print(
         csv_single_perform(
-            arrival=DM1_FOI,
-            service=CONST_RATE1,
+            arrival=DM1(lamb=3.8, n=1),
+            service=ConstantRate(rate=3.0),
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MMOO_FOI = MMOOFluid(mu=8.0, lamb=12.0, burst=3.0, n=1)
-    CONST_RATE2 = ConstantRate(rate=1.5)
-
     print(
         csv_single_perform(
-            arrival=MMOO_FOI,
-            service=CONST_RATE2,
+            arrival=MMOOFluid(mu=8.0, lamb=12.0, burst=3.0, n=1),
+            service=ConstantRate(rate=1.5),
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
 
-    MD1_FOI = MD1(lamb=0.5, mu=1.0)
-    CONST_RATE3 = ConstantRate(rate=1.0)
+    RATE_1 = ConstantRate(rate=1.0)
 
     print(
         csv_single_perform(
-            arrival=MD1_FOI,
-            service=CONST_RATE3,
+            arrival=MD1(lamb=0.5, mu=1.0),
+            service=RATE_1,
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))

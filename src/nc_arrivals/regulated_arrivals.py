@@ -59,6 +59,10 @@ class TokenBucketConstant(RegulatedArrivals):
     def sigma(self, theta=0.0) -> float:
         return self.n * self.sigma_single
 
+    def __str__(self) -> str:
+        return f"TBconst_sigma={self.sigma_single}_" \
+            f"rho={self.rho_single}_n={self.n}"
+
 
 class LeakyBucketMassOne(RegulatedArrivals):
     """Leaky Bucket according to Massoulie using directly Lemma 2"""
@@ -68,34 +72,18 @@ class LeakyBucketMassOne(RegulatedArrivals):
 
     def sigma(self, theta: float) -> float:
         if theta <= 0:
-            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+            raise ParameterOutOfBounds(f"theta={theta} must be > 0")
 
         return self.n * log(0.5 * (exp(theta * self.sigma_single) + exp(
             -theta * self.sigma_single))) / theta
 
+    def __str__(self) -> str:
+        return f"MassOne_sigma={self.sigma_single}_" \
+            f"rho={self.rho_single}_n={self.n}"
+
 
 @deprecated
 class LeakyBucketMassTwo(RegulatedArrivals):
-    """Leaky Bucket according to Massoulie after MGF transformation and bound
-    on erf() by 1"""
-
-    def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
-        super().__init__(sigma_single, rho_single, n)
-
-    def sigma(self, theta: float) -> float:
-        if theta <= 0:
-            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
-
-        try:
-            return log(1.0 + sqrt(2 * pi * self.n * (self.sigma_single**2)) *
-                       theta * exp(0.5 * self.n * (self.sigma_single**2) *
-                                   (theta**2))) / theta
-        except OverflowError:
-            return inf
-
-
-@deprecated
-class LeakyBucketMassTwoExact(RegulatedArrivals):
     """Exact Leaky Bucket according to Massoulie after MGF transformation"""
 
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
@@ -103,7 +91,7 @@ class LeakyBucketMassTwoExact(RegulatedArrivals):
 
     def sigma(self, theta: float) -> float:
         if theta <= 0:
-            raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+            raise ParameterOutOfBounds(f"theta={theta} must be > 0")
 
         try:
             return log(1.0 + sqrt(0.5 * pi * self.n * (self.sigma_single**2)) *
@@ -113,3 +101,7 @@ class LeakyBucketMassTwoExact(RegulatedArrivals):
                                               (self.sigma_single**2)))) / theta
         except OverflowError:
             return inf
+
+    def __str__(self) -> str:
+        return f"MassTwo_sigma={self.sigma_single}_" \
+            f"rho={self.rho_single}_n={self.n}"

@@ -13,7 +13,6 @@ EPSILON = 1e-09
 
 def get_q(p: float, indep: bool) -> float:
     """
-
     :param p: Hoelder p
     :param indep: if true, p=q=1, else q = p / (p - 1)
     :return: q
@@ -22,7 +21,7 @@ def get_q(p: float, indep: bool) -> float:
         return 1.0
     else:
         if p <= 1:
-            raise ParameterOutOfBounds("p={0} must be >1".format(p))
+            raise ParameterOutOfBounds(f"p={p} must be >1")
 
         # 1/p + 1/q = 1
         # 1/q = (p - 1) / p
@@ -32,7 +31,6 @@ def get_q(p: float, indep: bool) -> float:
 
 def get_p_n(p_list: List[float], indep: bool) -> float:
     """
-
     :param p_list: first p_1, ..., p_n in generalized Hoelder inequality
     :param indep: if true, all p_i = 1, else 1 / (sum p_i) = 1
     :return: last p_n
@@ -42,18 +40,19 @@ def get_p_n(p_list: List[float], indep: bool) -> float:
     else:
         for p_i in p_list:
             if p_i <= 1:
-                raise ParameterOutOfBounds("p={0} must be >1".format(p_i))
+                raise ParameterOutOfBounds(f"p={p_i} must be >1")
 
         return 1 / (1 - sum(p_list))
 
 
-def is_equal(float1: float, float2: float) -> bool:
+def is_equal(float1: float, float2: float, epsilon=EPSILON) -> bool:
     """
     :param float1: real 1
     :param float2: real 2
+    :param epsilon: accuracy of the comparison (default is the global Epsilon)
     :return: returns true if distance is less than epsilon
     """
-    return abs(float1 - float2) < EPSILON
+    return abs(float1 - float2) < epsilon
 
 
 def expand_grid(list_input: list) -> pd.DataFrame:
@@ -86,7 +85,6 @@ def average_towards_best_row(simplex: np.ndarray, best_index: int,
 
 def get_unit_vector(length: int, index: int) -> List[float]:
     """
-
     :param length: length of unit vector
     :param index:  index of 1.0 to_value
     :return:       unit vector with 1.0 at index and 0.0 else

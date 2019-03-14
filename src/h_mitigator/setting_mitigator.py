@@ -6,12 +6,12 @@ from typing import List
 from utils.setting import Setting
 
 
-class SettingNew(Setting):
+class SettingMitigator(Setting):
     """Each setting (topology) has to implements methods to obtain
     the bounds"""
 
     @abstractmethod
-    def new_bound(self, param_l_list: List[float]) -> float:
+    def h_mit_bound(self, param_l_list: List[float]) -> float:
         """
         new Lyapunov bound
 

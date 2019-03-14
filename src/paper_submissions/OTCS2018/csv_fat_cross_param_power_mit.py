@@ -7,11 +7,11 @@ import numpy as np
 from tqdm import tqdm
 
 from bound_evaluation.array_to_results import two_col_array_to_results
-from bound_evaluation.compare_old_new import compute_improvement
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from fat_tree.fat_cross_perform import FatCrossPerform
+from h_mitigator.compare_mitigator import compare_value
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.ebb import EBB
 from nc_arrivals.markov_modulated import MMOOFluid
@@ -58,10 +58,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
 
         elif arrival_enum == ArrivalEnum.MD1:
             arrive_list = [
-                MD1(lamb=param_array[i, j],
-                    mu=1 / (param_array[i,
-                                        arrival_enum.number_parameters() *
-                                        number_servers + j]))
+                MD1(lamb=param_array[i, j], mu=1.0)
                 for j in range(number_servers)
             ]
 
@@ -103,18 +100,11 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
             raise NameError("Arrival parameter {0} is infeasible".format(
                 arrival_enum.name))
 
-        if arrival_enum == ArrivalEnum.MD1 or arrival_enum == ArrivalEnum.MM1:
-            service_list = [
-                ConstantRate(rate=1.0) for j in range(number_servers)
-            ]
-        else:
-            service_list = [
-                ConstantRate(
-                    rate=param_array[i,
-                                     arrival_enum.number_parameters() *
-                                     number_servers + j])
-                for j in range(number_servers)
-            ]
+        service_list = [
+            ConstantRate(rate=param_array[
+                i, arrival_enum.number_parameters() * number_servers + j])
+            for j in range(number_servers)
+        ]
 
         setting = FatCrossPerform(
             arr_list=arrive_list,
@@ -123,8 +113,8 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
 
         # print(res_array[i, ])
 
-        # standard_bound, new_bound = compute_improvement()
-        res_array[i, 0], res_array[i, 1] = compute_improvement(
+        # standard_bound, h_mit_bound = compare_value()
+        res_array[i, 0], res_array[i, 1] = compare_value(
             setting=setting,
             opt_method=opt_method,
             number_l=number_servers - 1)
@@ -157,7 +147,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
 
     with open(
             "sim_{0}_{1}_results_MC{2}_{3}_{4}.csv".format(
-                perform_param.to_name(), arrival_enum.name, mc_dist.to_name(),
+                perform_param.__str__(), arrival_enum.name, mc_dist.to_name(),
                 opt_method.name, metric), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in res_dict.items():

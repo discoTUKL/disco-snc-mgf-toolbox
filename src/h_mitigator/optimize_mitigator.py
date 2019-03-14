@@ -9,22 +9,18 @@ from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.optimize import Optimize
 from utils.exceptions import ParameterOutOfBounds
-from utils.setting_new import SettingNew
+from h_mitigator.setting_mitigator import SettingMitigator
 
 
-class OptimizeNew(Optimize):
+class OptimizeMitigator(Optimize):
     """Optimize class"""
 
     def __init__(self,
-                 setting_new: SettingNew,
-                 new=True,
-                 print_x=False,
-                 show_warn=False) -> None:
-        super().__init__(setting_new, print_x, show_warn)
-        self.setting_bound = setting_new
-        self.new = new
+                 setting_h_mit: SettingMitigator,
+                 print_x=False) -> None:
+        super().__init__(setting_h_mit, print_x)
+        self.setting_h_mit = setting_h_mit
         self.print_x = print_x
-        self.show_warn = show_warn
 
     def eval_except(self, param_list: List[float]) -> float:
         """
@@ -34,16 +30,10 @@ class OptimizeNew(Optimize):
         :return:           function to_value
         """
 
-        if self.new:
-            try:
-                return self.setting_bound.new_bound(param_l_list=param_list)
-            except (ParameterOutOfBounds, OverflowError):
-                return inf
-        else:
-            try:
-                return self.setting_bound.bound(param_list=param_list)
-            except (ParameterOutOfBounds, OverflowError):
-                return inf
+        try:
+            return self.setting_h_mit.h_mit_bound(param_l_list=param_list)
+        except (ParameterOutOfBounds, OverflowError):
+            return inf
 
 
 if __name__ == '__main__':
@@ -86,7 +76,8 @@ if __name__ == '__main__':
     print(OPTI_OLD.diff_evolution(bound_list=[(0.1, 4.0)]))
     print(OPTI_OLD.bfgs(start_list=[0.4]))
 
-    OPTI_NEW = OptimizeNew(setting_new=SETTING, new=True, print_x=True)
+    OPTI_NEW = OptimizeMitigator(
+        setting_h_mit=SETTING, print_x=True)
     print(
         OPTI_NEW.grid_search_old(
             bound_list=[(0.1, 4.0), (0.9, 4.0)], delta=0.1))

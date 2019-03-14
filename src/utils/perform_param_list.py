@@ -18,3 +18,9 @@ class PerformParamList(object):
     def get_parameter_at_i(self, i: int) -> PerformParameter:
         return PerformParameter(
             perform_metric=self.perform_metric, value=self.values_list[i])
+
+    def __len__(self) -> int:
+        return len(self.values_list)
+
+    def __str__(self) -> str:
+        return str(self.perform_metric.name) + "_LIST"

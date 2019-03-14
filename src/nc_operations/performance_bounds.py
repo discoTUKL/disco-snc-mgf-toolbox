@@ -1,12 +1,11 @@
 """Performance bounds"""
 
-# TODO: write a "get_rho_arr_ser"-function
-
 from math import exp, inf, log
 
 from nc_arrivals.arrival import Arrival
+from nc_operations.get_sigma_rho import get_sigma_rho
+from nc_operations.stability_check import stability_check
 from nc_service.service import Service
-from utils.exceptions import ParameterOutOfBounds
 from utils.helper_functions import get_q
 
 
@@ -21,30 +20,18 @@ def backlog_prob(arr: Arrival,
     if indep:
         p = 1.0
 
-    q = get_q(p=p, indep=indep)
-
-    rho_a_p = arr.rho(theta=p * theta)
-    sigma_a_p = arr.sigma(theta=p * theta)
-    rho_s_q = ser.rho(theta=q * theta)
-    sigma_s_q = ser.sigma(theta=q * theta)
-
-    if rho_a_p >= rho_s_q:
-        raise ParameterOutOfBounds(
-            f"The arrivals' rho {rho_a_p} has to be smaller than"
-            f"the service's rho {rho_s_q}")
-
-    rho_arr_ser = rho_a_p - rho_s_q
-    sigma_arr_ser = sigma_a_p + sigma_s_q
+    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    sigma_sum, rho_diff = get_sigma_rho(
+        arr=arr, ser=ser, theta=theta, indep=indep, p=p)
 
     try:
         if arr.is_discrete():
             return exp(-theta * backlog_value) * exp(
-                theta * sigma_arr_ser) / (1 - exp(theta * rho_arr_ser))
-
+                theta * sigma_sum) / (1 - exp(theta * rho_diff))
         else:
             return exp(-theta * backlog_value) * exp(
-                theta * (rho_a_p * tau + sigma_arr_ser)) / (
-                    1 - exp(theta * tau * rho_arr_ser))
+                theta * (arr.rho(theta=p * theta) * tau + sigma_sum)) / (
+                           1 - exp(theta * tau * rho_diff))
 
     except ZeroDivisionError:
         return inf
@@ -61,30 +48,16 @@ def backlog(arr: Arrival,
     if indep:
         p = 1.0
 
-    q = get_q(p=p, indep=indep)
-
-    rho_a_p = arr.rho(theta=p * theta)
-    sigma_a_p = arr.sigma(theta=p * theta)
-    rho_s_q = ser.rho(theta=q * theta)
-    sigma_s_q = ser.sigma(theta=q * theta)
-
-    if rho_a_p >= rho_s_q:
-        raise ParameterOutOfBounds(
-            f"The arrivals' rho {rho_a_p} has to be smaller than"
-            f"the service's rho {rho_s_q}")
-
-    rho_arr_ser = rho_a_p - rho_s_q
-    sigma_arr_ser = sigma_a_p + sigma_s_q
+    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    sigma_sum, rho_diff = get_sigma_rho(
+        arr=arr, ser=ser, theta=theta, indep=indep, p=p)
 
     if arr.is_discrete():
-        log_part = log(prob_b * (1 - exp(theta * rho_arr_ser)))
-
-        return sigma_arr_ser - log_part / theta
-
+        log_part = log(prob_b * (1 - exp(theta * rho_diff)))
+        return sigma_sum - log_part / theta
     else:
-        log_part = log(prob_b * (1 - exp(theta * tau * rho_arr_ser)))
-
-        return tau * rho_a_p + sigma_arr_ser - log_part / theta
+        log_part = log(prob_b * (1 - exp(theta * tau * rho_diff)))
+        return tau * arr.rho(theta=p * theta) + sigma_sum - log_part / theta
 
 
 def delay_prob(arr: Arrival,
@@ -98,29 +71,22 @@ def delay_prob(arr: Arrival,
     if indep:
         p = 1.0
 
+    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    sigma_sum, rho_diff = get_sigma_rho(
+        arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+
     q = get_q(p=p, indep=indep)
-
-    rho_a_p = arr.rho(theta=p * theta)
-    sigma_a_p = arr.sigma(theta=p * theta)
-    rho_s_q = ser.rho(theta=q * theta)
-    sigma_s_q = ser.sigma(theta=q * theta)
-
-    if rho_a_p >= rho_s_q:
-        raise ParameterOutOfBounds(
-            f"The arrivals' rho {rho_a_p} has to be smaller than"
-            f"the service's rho {rho_s_q}")
-
-    rho_arr_ser = rho_a_p - rho_s_q
-    sigma_arr_ser = sigma_a_p + sigma_s_q
 
     try:
         if arr.is_discrete():
-            return exp(-theta * rho_s_q * delay_value) * exp(
-                theta * sigma_arr_ser) / (1 - exp(theta * rho_arr_ser))
+            return exp(
+                -theta * ser.rho(theta=q * theta) * delay_value) * exp(
+                theta * sigma_sum) / (1 - exp(theta * rho_diff))
         else:
-            return exp(-theta * rho_s_q * delay_value) * exp(
-                theta * (rho_a_p * tau + sigma_arr_ser)) / (
-                    1 - exp(theta * tau * rho_arr_ser))
+            return exp(
+                -theta * ser.rho(theta=q * theta) * delay_value) * exp(
+                theta * (arr.rho(theta=p * theta) * tau + sigma_sum)) / (
+                           1 - exp(theta * tau * rho_diff))
 
     except ZeroDivisionError:
         return inf
@@ -137,30 +103,19 @@ def delay(arr: Arrival,
     if indep:
         p = 1.0
 
+    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    sigma_sum, rho_diff = get_sigma_rho(
+        arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+
     q = get_q(p=p, indep=indep)
 
-    rho_a_p = arr.rho(theta=p * theta)
-    sigma_a_p = arr.sigma(theta=p * theta)
-    rho_s_q = ser.rho(theta=q * theta)
-    sigma_s_q = ser.sigma(theta=q * theta)
-
-    if rho_a_p >= rho_s_q:
-        raise ParameterOutOfBounds(
-            f"The arrivals' rho {rho_a_p} has to be smaller than"
-            f"the service's rho {rho_s_q}")
-
-    rho_arr_ser = rho_a_p - rho_s_q
-    sigma_arr_ser = sigma_a_p + sigma_s_q
-
     if arr.is_discrete():
-        log_part = log(prob_d * (1 - exp(theta * rho_arr_ser)))
-
-        return (sigma_arr_ser - log_part / theta) / rho_s_q
-
+        log_part = log(prob_d * (1 - exp(theta * rho_diff)))
+        return (sigma_sum - log_part / theta) / ser.rho(theta=q * theta)
     else:
-        log_part = log(prob_d * (1 - exp(theta * tau * rho_arr_ser)))
-
-        return (tau * rho_a_p + sigma_arr_ser - log_part / theta) * rho_s_q
+        log_part = log(prob_d * (1 - exp(theta * tau * rho_diff)))
+        return (tau * arr.rho(theta=p * theta) + sigma_sum -
+                log_part / theta) / ser.rho(theta=q * theta)
 
 
 def output(arr: Arrival,
@@ -173,29 +128,19 @@ def output(arr: Arrival,
     if indep:
         p = 1.0
 
-    q = get_q(p=p, indep=indep)
-
-    rho_a_p = arr.rho(theta=p * theta)
-    sigma_a_p = arr.sigma(theta=p * theta)
-    rho_s_q = ser.rho(theta=q * theta)
-    sigma_s_q = ser.sigma(theta=q * theta)
-
-    if rho_a_p >= rho_s_q:
-        raise ParameterOutOfBounds(
-            f"The arrivals' rho {rho_a_p} has to be smaller than"
-            f"the service's rho {rho_s_q}")
-
-    rho_arr_ser = rho_a_p - rho_s_q
-    sigma_arr_ser = sigma_a_p + sigma_s_q
+    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    sigma_sum, rho_diff = get_sigma_rho(
+        arr=arr, ser=ser, theta=theta, indep=indep, p=p)
 
     try:
         if arr.is_discrete():
-            return exp(theta * rho_a_p * delta_time) * exp(
-                theta * sigma_arr_ser) / (1 - exp(theta * rho_arr_ser))
+            return exp(theta * arr.rho(theta=p * theta) * delta_time) * exp(
+                theta * sigma_sum) / (1 - exp(theta * rho_diff))
 
         else:
-            return exp(theta * rho_a_p * (delta_time + 1)) * exp(
-                theta * sigma_arr_ser) / (1 - exp(theta * rho_arr_ser))
+            return exp(theta * arr.rho(theta=p * theta) *
+                       (delta_time + 1)) * exp(
+                           theta * sigma_sum) / (1 - exp(theta * rho_diff))
 
     except ZeroDivisionError:
         return inf

@@ -2,18 +2,18 @@
 
 from typing import List
 
+from h_mitigator.deconvolve_power_mit import DeconvolvePowerMit
+from h_mitigator.setting_mitigator import SettingMitigator
 from nc_arrivals.arrival import Arrival
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_operations.deconvolve_power import DeconvolvePower
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateList, Deconvolve, Leftover
 from nc_service.constant_rate_server import ConstantRate
 from nc_service.service import Service
 from utils.perform_parameter import PerformParameter
-from utils.setting_new import SettingNew
 
 
-class FatCrossPerform(SettingNew):
+class FatCrossPerform(SettingMitigator):
     """Fat tree cross topology with the Simple topology as a sub-problem."""
 
     def __init__(self, arr_list: List[ArrivalDistribution],
@@ -40,7 +40,7 @@ class FatCrossPerform(SettingNew):
 
         aggregated_cross: Arrival = AggregateList(
             arr_list=output_list, p_list=[])
-        s_net: Service = Leftover(arr=aggregated_cross, ser=self.ser_list[0])
+        s_net: Service = Leftover(ser=self.ser_list[0], arr=aggregated_cross)
 
         return evaluate_single_hop(
             foi=self.arr_list[0],
@@ -48,13 +48,13 @@ class FatCrossPerform(SettingNew):
             theta=theta,
             perform_param=self.perform_param)
 
-    def new_bound(self, param_l_list: List[float]) -> float:
+    def h_mit_bound(self, param_l_list: List[float]) -> float:
         # len(param_list) = theta (1) + output bounds (len(arr_list)-1)
         if len(param_l_list) != len(self.arr_list):
             raise NameError("Check number of parameters")
 
         output_list: List[Arrival] = [
-            DeconvolvePower(
+            DeconvolvePowerMit(
                 arr=self.arr_list[i],
                 ser=self.ser_list[i],
                 l_power=param_l_list[i])
@@ -64,7 +64,7 @@ class FatCrossPerform(SettingNew):
 
         aggregated_cross: Arrival = AggregateList(
             arr_list=output_list, p_list=[])
-        s_net: Service = Leftover(arr=aggregated_cross, ser=self.ser_list[0])
+        s_net: Service = Leftover(ser=self.ser_list[0], arr=aggregated_cross)
 
         return evaluate_single_hop(
             foi=self.arr_list[0],

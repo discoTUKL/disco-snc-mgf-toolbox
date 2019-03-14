@@ -10,8 +10,8 @@ class PerformParameter(object):
         self.perform_metric = perform_metric
         self.value = value
 
-    def to_name(self) -> str:
+    def __str__(self) -> str:
         return str(self.perform_metric.name)
 
     def to_name_value(self) -> str:
-        return f"{self.to_name()}_{str(self.value)}"
+        return f"{self.__str__()}_{str(self.value)}"

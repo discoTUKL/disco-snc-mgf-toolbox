@@ -7,8 +7,8 @@ from warnings import warn
 import numpy as np
 import pandas as pd
 
-from bound_evaluation.compare_old_new import compute_improvement
 from fat_tree.fat_cross_perform import FatCrossPerform
+from h_mitigator.compare_mitigator import compare_value
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
@@ -37,7 +37,7 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
             ser_list=ser_list_copy,
             perform_param=perform_param)
 
-        standard_bound, new_bound = compute_improvement(
+        standard_bound, new_bound = compare_value(
             setting=large_setting, opt_method=opt_method, number_l=i)
 
         if new_bound >= 1:
@@ -64,12 +64,12 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
     delay_bounds_df = pd.DataFrame({
         "number_servers": range(1, size + 1),
         "standard_bound": bar_matrix[:, 0],
-        "new_bound": bar_matrix[:, 1],
+        "h_mit_bound": bar_matrix[:, 1],
         "improvement": bar_matrix[:, 2]
     })
 
     delay_bounds_df = delay_bounds_df[[
-        "number_servers", "standard_bound", "new_bound", "improvement"
+        "number_servers", "standard_bound", "h_mit_bound", "improvement"
     ]]
 
     delay_bounds_df.to_csv(
