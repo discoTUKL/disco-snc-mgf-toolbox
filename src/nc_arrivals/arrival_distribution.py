@@ -33,6 +33,10 @@ class ArrivalDistribution(Arrival):
         """
         pass
 
+    @abstractmethod
+    def average_rate(self) -> float:
+        pass
+
     def to_name(self) -> str:
         return self.__class__.__name__
 

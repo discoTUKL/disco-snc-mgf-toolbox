@@ -6,11 +6,11 @@ from warnings import warn
 from nc_arrivals.arrival import Arrival
 from nc_operations.get_sigma_rho import get_sigma_rho
 from nc_operations.stability_check import stability_check
-from nc_service.service import Service
+from nc_server.server import Server
 
 
 def output_power_mit(arr: Arrival,
-                     ser: Service,
+                     ser: Server,
                      theta: float,
                      delta_time: int,
                      l_power=1.0) -> float:
@@ -22,8 +22,11 @@ def output_power_mit(arr: Arrival,
     l_theta = l_power * theta
 
     stability_check(arr=arr, ser=ser, theta=l_theta, indep=True, p=1.0)
-    sigma_l_sum, rho_l_diff = get_sigma_rho(
-        arr=arr, ser=ser, theta=l_theta, indep=True, p=1.0)
+    sigma_l_sum, rho_l_diff = get_sigma_rho(arr=arr,
+                                            ser=ser,
+                                            theta=l_theta,
+                                            indep=True,
+                                            p=1.0)
 
     if arr.is_discrete():
         numerator = exp(theta * arr.rho(theta=l_theta) * delta_time) * exp(
@@ -43,7 +46,7 @@ def output_power_mit(arr: Arrival,
 
 
 def delay_prob_power_mit(arr: Arrival,
-                         ser: Service,
+                         ser: Server,
                          theta: float,
                          delay: int,
                          l_power=1.0) -> float:
@@ -55,8 +58,11 @@ def delay_prob_power_mit(arr: Arrival,
     l_theta = l_power * theta
 
     stability_check(arr=arr, ser=ser, theta=l_theta, indep=True, p=1.0)
-    sigma_l_sum, rho_l_diff = get_sigma_rho(
-        arr=arr, ser=ser, theta=l_theta, indep=True, p=1.0)
+    sigma_l_sum, rho_l_diff = get_sigma_rho(arr=arr,
+                                            ser=ser,
+                                            theta=l_theta,
+                                            indep=True,
+                                            p=1.0)
 
     if not arr.is_discrete():
         warn("discretized version is not implemented")

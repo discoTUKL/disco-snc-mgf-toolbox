@@ -3,12 +3,12 @@
 from math import ceil
 
 from nc_arrivals.regulated_arrivals import TokenBucketConstant
-from nc_service.constant_rate_server import ConstantRate
+from nc_server.constant_rate_server import ConstantRateServer
 from utils.exceptions import ParameterOutOfBounds
 
 
 def fifo_delay(token_bucket_constant: TokenBucketConstant,
-               constant_rate: ConstantRate) -> int:
+               constant_rate: ConstantRateServer) -> int:
     """DNC FIFO Delay Bound"""
     if token_bucket_constant.rho(1.0) >= constant_rate.rate:
         raise ParameterOutOfBounds(

@@ -2,57 +2,61 @@
 
 from math import nan
 from timeit import default_timer as timer
-from typing import List
+from typing import List, Tuple
 
+from h_mitigator.optimize_mitigator import OptimizeMitigator
+from h_mitigator.setting_mitigator import SettingMitigator
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.perform_enum import PerformEnum
 from optimization.initial_simplex import InitialSimplex
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
-from h_mitigator.optimize_mitigator import OptimizeMitigator
 from optimization.sim_anneal_param import SimAnnealParams
-from h_mitigator.setting_mitigator import SettingMitigator
 
 
-def compare_value(setting: SettingMitigator,
-                  opt_method: OptMethod,
-                  number_l=1,
-                  print_x=False) -> tuple:
+def compare_mitigator(setting: SettingMitigator,
+                      opt_method: OptMethod,
+                      number_l=1,
+                      print_x=False) -> Tuple[float, float]:
     """Compare standard_bound with the new Lyapunov bound."""
 
     if opt_method == OptMethod.GRID_SEARCH:
         theta_bounds = [(0.1, 4.0)]
 
-        standard_bound = Optimize(
-            setting=setting, print_x=print_x).grid_search(
-                bound_list=theta_bounds, delta=0.1)
+        standard_bound = Optimize(setting=setting,
+                                  print_x=print_x).grid_search(
+                                      bound_list=theta_bounds, delta=0.1)
 
         bound_array = theta_bounds[:]
         for _i in range(1, number_l + 1):
             bound_array.append((0.9, 4.0))
 
-        new_bound = OptimizeMitigator(
-            setting_h_mit=setting, print_x=print_x).grid_search(
-                bound_list=bound_array, delta=0.1)
+        h_mit_bound = OptimizeMitigator(setting_h_mit=setting,
+                                        print_x=print_x).grid_search(
+                                            bound_list=bound_array, delta=0.1)
 
     elif opt_method == OptMethod.PATTERN_SEARCH:
         theta_start = 0.5
 
         start_list = [theta_start]
 
-        standard_bound = Optimize(
-            setting=setting, print_x=print_x).pattern_search(
-                start_list=start_list, delta=3.0, delta_min=0.01)
+        standard_bound = Optimize(setting=setting,
+                                  print_x=print_x).pattern_search(
+                                      start_list=start_list,
+                                      delta=3.0,
+                                      delta_min=0.01)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
-        new_bound = OptimizeMitigator(
-            setting_h_mit=setting, print_x=print_x).pattern_search(
-                start_list=start_list_new, delta=3.0, delta_min=0.01)
+        h_mit_bound = OptimizeMitigator(setting_h_mit=setting,
+                                        print_x=print_x).pattern_search(
+                                            start_list=start_list_new,
+                                            delta=3.0,
+                                            delta_min=0.01)
 
         # This part is there to overcome opt_method issues
-        if new_bound > standard_bound:
-            new_bound = standard_bound
+        if h_mit_bound > standard_bound:
+            h_mit_bound = standard_bound
 
     elif opt_method == OptMethod.NELDER_MEAD:
         theta_start = 0.5
@@ -61,22 +65,23 @@ def compare_value(setting: SettingMitigator,
         start_simplex = InitialSimplex(parameters_to_optimize=1).gao_han(
             start_list=start_list)
 
-        standard_bound = Optimize(
-            setting=setting, print_x=print_x).nelder_mead(
-                simplex=start_simplex, sd_min=10**(-2))
+        standard_bound = Optimize(setting=setting,
+                                  print_x=print_x).nelder_mead(
+                                      simplex=start_simplex, sd_min=10**(-2))
 
         start_list_new = [theta_start] + [1.0] * number_l
-        start_simplex_new = InitialSimplex(
-            parameters_to_optimize=number_l + 1).gao_han(
-                start_list=start_list_new)
+        start_simplex_new = InitialSimplex(parameters_to_optimize=number_l +
+                                           1).gao_han(
+                                               start_list=start_list_new)
 
-        new_bound = OptimizeMitigator(
-            setting_h_mit=setting, print_x=print_x).nelder_mead(
-                simplex=start_simplex_new, sd_min=10**(-2))
+        h_mit_bound = OptimizeMitigator(setting_h_mit=setting,
+                                        print_x=print_x).nelder_mead(
+                                            simplex=start_simplex_new,
+                                            sd_min=10**(-2))
 
         # This part is there to overcome opt_method issues
-        if new_bound > standard_bound:
-            new_bound = standard_bound
+        if h_mit_bound > standard_bound:
+            h_mit_bound = standard_bound
 
     elif opt_method == OptMethod.BASIN_HOPPING:
         theta_start = 0.5
@@ -89,13 +94,13 @@ def compare_value(setting: SettingMitigator,
 
         start_list_new = [theta_start] + [1.0] * number_l
 
-        new_bound = OptimizeMitigator(
+        h_mit_bound = OptimizeMitigator(
             setting_h_mit=setting,
             print_x=print_x).basin_hopping(start_list=start_list_new)
 
         # This part is there to overcome opt_method issues
-        if new_bound > standard_bound:
-            new_bound = standard_bound
+        if h_mit_bound > standard_bound:
+            h_mit_bound = standard_bound
 
     elif opt_method == OptMethod.SIMULATED_ANNEALING:
         simul_anneal_param = SimAnnealParams()
@@ -103,20 +108,21 @@ def compare_value(setting: SettingMitigator,
 
         start_list = [theta_start]
 
-        standard_bound = Optimize(
-            setting=setting, print_x=print_x).sim_annealing(
-                start_list=start_list, sim_anneal_params=simul_anneal_param)
+        standard_bound = Optimize(setting=setting,
+                                  print_x=print_x).sim_annealing(
+                                      start_list=start_list,
+                                      sim_anneal_params=simul_anneal_param)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
-        new_bound = OptimizeMitigator(
+        h_mit_bound = OptimizeMitigator(
             setting_h_mit=setting, print_x=print_x).sim_annealing(
                 start_list=start_list_new,
                 sim_anneal_params=simul_anneal_param)
 
         # This part is there to overcome opt_method issues
-        if new_bound > standard_bound:
-            new_bound = standard_bound
+        if h_mit_bound > standard_bound:
+            h_mit_bound = standard_bound
 
     elif opt_method == OptMethod.DIFFERENTIAL_EVOLUTION:
         theta_bounds = [(0.1, 8.0)]
@@ -129,7 +135,7 @@ def compare_value(setting: SettingMitigator,
         for _i in range(1, number_l + 1):
             bound_array.append((0.9, 8.0))
 
-        new_bound = OptimizeMitigator(
+        h_mit_bound = OptimizeMitigator(
             setting_h_mit=setting,
             print_x=print_x).diff_evolution(bound_list=bound_array)
 
@@ -138,14 +144,14 @@ def compare_value(setting: SettingMitigator,
             f"Optimization parameter {opt_method.name} is infeasible")
 
     # This part is there to overcome opt_method issues
-    if new_bound > standard_bound:
-        new_bound = standard_bound
+    if h_mit_bound > standard_bound:
+        h_mit_bound = standard_bound
 
-    if standard_bound == 0 or new_bound == 0:
+    if standard_bound == 0 or h_mit_bound == 0:
         standard_bound = nan
-        new_bound = nan
+        h_mit_bound = nan
 
-    return standard_bound, new_bound
+    return standard_bound, h_mit_bound
 
 
 def compare_time(setting: SettingMitigator, opt_method: OptMethod,
@@ -156,8 +162,8 @@ def compare_time(setting: SettingMitigator, opt_method: OptMethod,
         bound_array = [(0.1, 4.0)]
 
         start = timer()
-        Optimize(setting=setting).grid_search(
-            bound_list=bound_array, delta=0.1)
+        Optimize(setting=setting).grid_search(bound_list=bound_array,
+                                              delta=0.1)
         stop = timer()
         time_standard = stop - start
 
@@ -174,8 +180,9 @@ def compare_time(setting: SettingMitigator, opt_method: OptMethod,
         start_list = [0.5]
 
         start = timer()
-        Optimize(setting=setting).pattern_search(
-            start_list=start_list, delta=3.0, delta_min=0.01)
+        Optimize(setting=setting).pattern_search(start_list=start_list,
+                                                 delta=3.0,
+                                                 delta_min=0.01)
         stop = timer()
         time_standard = stop - start
 
@@ -192,14 +199,14 @@ def compare_time(setting: SettingMitigator, opt_method: OptMethod,
             max_theta=1.0)
 
         start = timer()
-        Optimize(setting=setting).nelder_mead(
-            simplex=start_simplex, sd_min=10**(-2))
+        Optimize(setting=setting).nelder_mead(simplex=start_simplex,
+                                              sd_min=10**(-2))
         stop = timer()
         time_standard = stop - start
 
-        start_simplex_new = InitialSimplex(
-            parameters_to_optimize=number_l + 1).uniform_dist(
-                max_theta=1.0, max_l=2.0)
+        start_simplex_new = InitialSimplex(parameters_to_optimize=number_l +
+                                           1).uniform_dist(max_theta=1.0,
+                                                           max_l=2.0)
 
         start = timer()
         OptimizeMitigator(setting_h_mit=setting).nelder_mead(
@@ -215,50 +222,53 @@ def compare_time(setting: SettingMitigator, opt_method: OptMethod,
 
 
 if __name__ == '__main__':
-    from fat_tree.fat_cross_perform import FatCrossPerform
+    from h_mitigator.fat_cross_perform import FatCrossPerform
+    from h_mitigator.single_server_mit_perform import SingleServerMitPerform
     from utils.perform_parameter import PerformParameter
-    from nc_service.constant_rate_server import ConstantRate
+    from nc_server.constant_rate_server import ConstantRateServer
     from nc_arrivals.qt import DM1
-    from single_server.single_server_perform import SingleServerPerform
 
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
     EXP_ARRIVAL = DM1(lamb=4.4)
-    CONST_RATE = ConstantRate(rate=0.24)
+    CONST_RATE = ConstantRateServer(rate=0.24)
 
-    SETTING1 = SingleServerPerform(
-        arr=EXP_ARRIVAL, const_rate=CONST_RATE, perform_param=OUTPUT_TIME)
+    SETTING1 = SingleServerMitPerform(arr=EXP_ARRIVAL,
+                                      const_rate=CONST_RATE,
+                                      perform_param=OUTPUT_TIME)
 
     # print(
-    #     compare_value(
+    #     compare_mitigator(
     #         setting=SETTING1, opt_method=OptMethod.GRID_SEARCH,
     #         print_x=True))
 
-    DELAY_PROB = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=4)
+    DELAY_PROB = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
+                                  value=4)
 
     EXP_ARRIVAL1 = DM1(lamb=11.0)
     EXP_ARRIVAL2 = DM1(lamb=9.0)
 
-    CONST_RATE1 = ConstantRate(rate=5.0)
-    CONST_RATE2 = ConstantRate(rate=4.0)
+    CONST_RATE1 = ConstantRateServer(rate=5.0)
+    CONST_RATE2 = ConstantRateServer(rate=4.0)
 
     ARR_LIST: List[ArrivalDistribution] = [EXP_ARRIVAL1, EXP_ARRIVAL2]
-    SER_LIST: List[ConstantRate] = [CONST_RATE1, CONST_RATE2]
+    SER_LIST: List[ConstantRateServer] = [CONST_RATE1, CONST_RATE2]
 
-    SETTING2 = FatCrossPerform(
-        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB)
-
-    print(
-        compare_value(
-            setting=SETTING2, opt_method=OptMethod.GRID_SEARCH, print_x=True))
+    SETTING2 = FatCrossPerform(arr_list=ARR_LIST,
+                               ser_list=SER_LIST,
+                               perform_param=DELAY_PROB)
 
     print(
-        compare_value(
-            setting=SETTING2,
-            opt_method=OptMethod.PATTERN_SEARCH,
-            print_x=True))
+        compare_mitigator(setting=SETTING2,
+                          opt_method=OptMethod.GRID_SEARCH,
+                          print_x=True))
 
     print(
-        compare_time(
-            setting=SETTING2, opt_method=OptMethod.GRID_SEARCH, number_l=1))
+        compare_mitigator(setting=SETTING2,
+                          opt_method=OptMethod.PATTERN_SEARCH,
+                          print_x=True))
+
+    print(
+        compare_time(setting=SETTING2,
+                     opt_method=OptMethod.GRID_SEARCH,
+                     number_l=1))

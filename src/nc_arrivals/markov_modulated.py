@@ -30,6 +30,10 @@ class MMOOFluid(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return False
 
+    def average_rate(self) -> float:
+        on_probability = self.mu / (self.lamb + self.mu)
+        return self.n * on_probability * self.burst
+
     def __str__(self) -> str:
         return f"MMOOFluid_mu={self.mu}_lamb={self.lamb}_" \
             f"burst={self.burst}_n={self.n}"
@@ -73,13 +77,19 @@ class MMOODisc(ArrivalDistribution):
     def is_discrete(self) -> bool:
         return True
 
+    def average_rate(self) -> float:
+        # TODO: check this again
+        return self.n * self.stay_on / (
+            self.stay_on + self.stay_off) * self.burst
+
     def __str__(self) -> str:
         return f"MMOODisc_stay_on={self.stay_on}_stay_off={self.stay_off}_" \
             f"burst={self.burst}_n={self.n}"
 
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:
-            return "stay_on{0}={1}_stay_off{0}={2}_burst{0}={3}_n{0}={4}".format(
+            return "stay_on{0}={1}_stay_off{0}={2}_burst{0}={3}_" \
+                   "n{0}={4}".format(
                 str(number), str(self.stay_on), str(self.stay_off),
                 str(self.burst), str(self.n))
         else:

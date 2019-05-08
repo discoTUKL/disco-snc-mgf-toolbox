@@ -7,7 +7,7 @@ import numpy as np
 import scipy.optimize
 
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_service.constant_rate_server import ConstantRate
+from nc_server.constant_rate_server import ConstantRateServer
 from utils.exceptions import ParameterOutOfBounds
 from utils.perform_parameter import PerformParameter
 
@@ -16,31 +16,29 @@ def optimizer_st(fun: callable,
                  s: int,
                  t: int,
                  arr_list: List[ArrivalDistribution],
-                 ser_list: List[ConstantRate],
+                 ser_list: List[ConstantRateServer],
                  number_param: int,
                  ranges: list,
                  print_x=False) -> float:
     def helper_fun(param_list: [float, float]) -> float:
         if number_param == 1:
             try:
-                return fun(
-                    theta=param_list[0],
-                    s=s,
-                    t=t,
-                    arr_list=arr_list,
-                    ser_list=ser_list)
+                return fun(theta=param_list[0],
+                           s=s,
+                           t=t,
+                           arr_list=arr_list,
+                           ser_list=ser_list)
             except (FloatingPointError, ParameterOutOfBounds, OverflowError):
                 return inf
 
         elif number_param == 2:
             try:
-                return fun(
-                    theta=param_list[0],
-                    s=s,
-                    t=t,
-                    arr_list=arr_list,
-                    ser_list=ser_list,
-                    p=param_list[1])
+                return fun(theta=param_list[0],
+                           s=s,
+                           t=t,
+                           arr_list=arr_list,
+                           ser_list=ser_list,
+                           p=param_list[1])
             except (FloatingPointError, ParameterOutOfBounds, OverflowError):
                 return inf
 
@@ -52,8 +50,9 @@ def optimizer_st(fun: callable,
     np.seterr("warn")
 
     try:
-        grid_res = scipy.optimize.brute(
-            func=helper_fun, ranges=ranges, full_output=True)
+        grid_res = scipy.optimize.brute(func=helper_fun,
+                                        ranges=ranges,
+                                        full_output=True)
     except (FloatingPointError, OverflowError):
         return inf
 
@@ -66,29 +65,27 @@ def optimizer_st(fun: callable,
 def optimizer_perform(fun: callable,
                       perform_param: PerformParameter,
                       arr_list: List[ArrivalDistribution],
-                      ser_list: List[ConstantRate],
+                      ser_list: List[ConstantRateServer],
                       number_param: int,
                       ranges: list,
                       print_x=False) -> float:
     def helper_fun(param_list: [float, float]) -> float:
         if number_param == 1:
             try:
-                return fun(
-                    theta=param_list[0],
-                    perform_param=perform_param,
-                    arr_list=arr_list,
-                    ser_list=ser_list)
+                return fun(theta=param_list[0],
+                           perform_param=perform_param,
+                           arr_list=arr_list,
+                           ser_list=ser_list)
             except (FloatingPointError, ParameterOutOfBounds, OverflowError):
                 return inf
 
         elif number_param == 2:
             try:
-                return fun(
-                    theta=param_list[0],
-                    perform_param=perform_param,
-                    arr_list=arr_list,
-                    ser_list=ser_list,
-                    p=param_list[1])
+                return fun(theta=param_list[0],
+                           perform_param=perform_param,
+                           arr_list=arr_list,
+                           ser_list=ser_list,
+                           p=param_list[1])
             except (FloatingPointError, ParameterOutOfBounds, OverflowError):
                 return inf
 
@@ -100,8 +97,9 @@ def optimizer_perform(fun: callable,
     np.seterr("warn")
 
     try:
-        grid_res = scipy.optimize.brute(
-            func=helper_fun, ranges=ranges, full_output=True)
+        grid_res = scipy.optimize.brute(func=helper_fun,
+                                        ranges=ranges,
+                                        full_output=True)
     except (FloatingPointError, OverflowError):
         return inf
 

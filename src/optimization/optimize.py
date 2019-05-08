@@ -11,8 +11,8 @@ from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.sim_anneal_param import SimAnnealParams
 from utils.deprecated import deprecated
 from utils.exceptions import ParameterOutOfBounds
-from utils.helper_functions import (
-    average_towards_best_row, centroid_without_one_row, expand_grid)
+from utils.helper_functions import (average_towards_best_row,
+                                    centroid_without_one_row, expand_grid)
 from utils.setting import Setting
 
 
@@ -336,8 +336,8 @@ class Optimize(object):
         # number of columns is the number of parameters
         if number_rows is not number_columns + 1:
             raise ValueError(
-                f"array argument is not a simplex, rows: {number_rows}, columns: {number_columns}"
-            )
+                f"array argument is not a simplex, rows: {number_rows},"
+                f" columns: {number_columns}")
 
         reflection_alpha = nelder_mead_param.reflection_alpha
         expansion_gamma = nelder_mead_param.expansion_gamma

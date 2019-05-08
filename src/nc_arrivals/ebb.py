@@ -18,16 +18,16 @@ class EBB(ArrivalDistribution):
 
     def sigma(self, theta: float) -> float:
         if theta <= 0:
-            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
+            raise ParameterOutOfBounds(f"theta={theta} must be > 0")
 
         if theta >= self.decay:
-            raise ParameterOutOfBounds("theta {0} must be < decay {1}".format(
-                theta, self.decay))
+            raise ParameterOutOfBounds(f"theta={theta} must "
+                                       f"be < decay={self.decay}")
 
         theta_over_decay = theta / self.decay
 
         if log((self.factor_m**theta_over_decay) / (1 - theta_over_decay)) < 0:
-            raise ValueError("rho must be >= 0")
+            raise ParameterOutOfBounds("rho must be >= 0")
 
         return (self.n / theta) * log(
             (self.factor_m**theta_over_decay) / (1 - theta_over_decay))
@@ -37,6 +37,9 @@ class EBB(ArrivalDistribution):
 
     def is_discrete(self) -> bool:
         return True
+
+    def average_rate(self) -> float:
+        return self.rho()
 
     def to_value(self, number=1, show_n=False) -> str:
         if show_n:

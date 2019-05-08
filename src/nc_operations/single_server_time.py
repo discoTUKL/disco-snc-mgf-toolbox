@@ -9,13 +9,13 @@ from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from h_mitigator.compare_mitigator import compare_time
+from h_mitigator.single_server_mit_perform import SingleServerMitPerform
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.markov_modulated import MMOOFluid
 from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
-from nc_service.constant_rate_server import ConstantRate
+from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
-from single_server.single_server_perform import SingleServerPerform
 from utils.perform_parameter import PerformParameter
 
 
@@ -36,18 +36,18 @@ def mc_time_single(arrival_enum: ArrivalEnum, perform_param: PerformParameter,
 
     for i in range(total_iterations):
         if arrival_enum == ArrivalEnum.DM1:
-            setting = SingleServerPerform(
+            setting = SingleServerMitPerform(
                 arr=DM1(lamb=param_array[i, 0]),
-                const_rate=ConstantRate(rate=param_array[i, 1]),
+                const_rate=ConstantRateServer(rate=param_array[i, 1]),
                 perform_param=perform_param)
 
-        elif arrival_enum == ArrivalEnum.MMOO:
-            setting = SingleServerPerform(
+        elif arrival_enum == ArrivalEnum.MMOOFluid:
+            setting = SingleServerMitPerform(
                 arr=MMOOFluid(
                     mu=param_array[i, 0],
                     lamb=param_array[i, 1],
                     burst=param_array[i, 2]),
-                const_rate=ConstantRate(rate=param_array[i, 3]),
+                const_rate=ConstantRateServer(rate=param_array[i, 3]),
                 perform_param=perform_param)
 
         else:
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
     print(
         mc_time_single(
-            arrival_enum=ArrivalEnum.MMOO,
+            arrival_enum=ArrivalEnum.MMOOFluid,
             perform_param=OUTPUT_TIME,
             opt_method=COMMON_OPTIMIZATION,
             mc_dist=MC_UNIF20))

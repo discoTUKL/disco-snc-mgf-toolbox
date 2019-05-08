@@ -3,8 +3,8 @@
 from abc import abstractmethod, ABC
 
 
-class Service(ABC):
-    """Abstract Service class"""
+class Server(ABC):
+    """Abstract Server class"""
 
     @abstractmethod
     def sigma(self, theta: float) -> float:

@@ -1,7 +1,7 @@
 """Compare with alternative traffic description"""
 
 import csv
-from math import exp, inf, log, nan
+from math import exp, inf, log
 from multiprocessing import Process
 from typing import List
 
@@ -10,17 +10,18 @@ import scipy.optimize
 from tqdm import tqdm
 
 from bound_evaluation.array_to_results import three_col_array_to_results
+from bound_evaluation.change_enum import ChangeEnum
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from h_mitigator.optimize_mitigator import OptimizeMitigator
+from h_mitigator.single_server_mit_perform import SingleServerMitPerform
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.arrivals_alternative import expect_dm1
 from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
-from nc_service.constant_rate_server import ConstantRate
-from nc_service.service_alternative import expect_const_rate
+from nc_server.constant_rate_server import ConstantRateServer
+from nc_server.server_alternative import expect_const_rate
 from optimization.optimize import Optimize
-from single_server.single_server_perform import SingleServerPerform
 from utils.exceptions import ParameterOutOfBounds
 from utils.perform_parameter import PerformParameter
 
@@ -54,8 +55,13 @@ def perform_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
 
     for _i in range(s + 1):
         try:
-            summand = f_exp(
-                theta=theta, i=_i, s=s, t=t, lamb=lamb, rate=rate, a=a)
+            summand = f_exp(theta=theta,
+                            i=_i,
+                            s=s,
+                            t=t,
+                            lamb=lamb,
+                            rate=rate,
+                            a=a)
         except (FloatingPointError, OverflowError):
             summand = inf
 
@@ -71,13 +77,12 @@ def perform_lower_exp_dm1_opt(s: int,
                               print_x=False) -> float:
     def helper_fun(param_list: List[float]) -> float:
         try:
-            return perform_lower_exp_dm1(
-                theta=param_list[0],
-                s=s,
-                t=t,
-                lamb=lamb,
-                rate=rate,
-                a=param_list[1])
+            return perform_lower_exp_dm1(theta=param_list[0],
+                                         s=s,
+                                         t=t,
+                                         lamb=lamb,
+                                         rate=rate,
+                                         a=param_list[1])
         except (FloatingPointError, OverflowError, ParameterOutOfBounds):
             return inf
 
@@ -85,10 +90,10 @@ def perform_lower_exp_dm1_opt(s: int,
     np.seterr("warn")
 
     try:
-        grid_res = scipy.optimize.brute(
-            func=helper_fun,
-            ranges=(slice(0.05, 4.0, 0.05), slice(1.05, 10.0, 0.05)),
-            full_output=True)
+        grid_res = scipy.optimize.brute(func=helper_fun,
+                                        ranges=(slice(0.05, 4.0, 0.05),
+                                                slice(1.05, 10.0, 0.05)),
+                                        full_output=True)
     except (FloatingPointError, OverflowError):
         return inf
 
@@ -99,8 +104,7 @@ def perform_lower_exp_dm1_opt(s: int,
 
 
 def perform_sample_exp_dm1(theta: float, s: int, t: int, lamb: float,
-                           rate: float, a: float,
-                           sample_size: int) -> float:
+                           rate: float, a: float, sample_size: int) -> float:
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
             ("The arrivals' long term rate {0} has to be smaller than "
@@ -117,8 +121,8 @@ def perform_sample_exp_dm1(theta: float, s: int, t: int, lamb: float,
     for j in range(sample_size):
         sum_i = 0.0
         for i in range(t + 1):
-            sum_i += a**(exp(
-                theta * f_sample(i=i, s=s, t=t, lamb=lamb, rate=rate)))
+            sum_i += a**(exp(theta *
+                             f_sample(i=i, s=s, t=t, lamb=lamb, rate=rate)))
         res += sum_i
 
     res /= sample_size
@@ -134,14 +138,13 @@ def delay_prob_sample_exp_dm1_opt(s: int,
                                   print_x=False) -> float:
     def helper_fun(param_list: List[float]) -> float:
         try:
-            return perform_sample_exp_dm1(
-                theta=param_list[0],
-                s=s,
-                t=t,
-                lamb=lamb,
-                rate=rate,
-                a=param_list[1],
-                sample_size=sample_size)
+            return perform_sample_exp_dm1(theta=param_list[0],
+                                          s=s,
+                                          t=t,
+                                          lamb=lamb,
+                                          rate=rate,
+                                          a=param_list[1],
+                                          sample_size=sample_size)
         except (FloatingPointError, OverflowError, ParameterOutOfBounds):
             return inf
 
@@ -149,10 +152,10 @@ def delay_prob_sample_exp_dm1_opt(s: int,
     np.seterr("warn")
 
     try:
-        grid_res = scipy.optimize.brute(
-            func=helper_fun,
-            ranges=(slice(0.05, 4.0, 0.05), slice(1.05, 10.0, 0.05)),
-            full_output=True)
+        grid_res = scipy.optimize.brute(func=helper_fun,
+                                        ranges=(slice(0.05, 4.0, 0.05),
+                                                slice(1.05, 10.0, 0.05)),
+                                        full_output=True)
     except (FloatingPointError, OverflowError):
         return inf
 
@@ -169,7 +172,7 @@ def csv_single_param_exp_lower(start_time: int,
                                sample=False) -> dict:
     total_iterations = 10**2
     valid_iterations = total_iterations
-    metric = "relative"
+    metric = ChangeEnum.RATIO_REF_NEW
     sample_size = 10**3
 
     delta = 0.05
@@ -178,11 +181,12 @@ def csv_single_param_exp_lower(start_time: int,
     # [rows, columns]
 
     if mc_dist.mc_enum == MCEnum.UNIFORM:
-        param_array = np.random.uniform(
-            low=0, high=mc_dist.param_list[0], size=size_array)
+        param_array = np.random.uniform(low=0,
+                                        high=mc_dist.param_list[0],
+                                        size=size_array)
     elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
-        param_array = np.random.exponential(
-            scale=mc_dist.param_list[0], size=size_array)
+        param_array = np.random.exponential(scale=mc_dist.param_list[0],
+                                            size=size_array)
     else:
         raise NameError(
             f"Distribution parameter {mc_dist.mc_enum} is infeasible")
@@ -191,9 +195,9 @@ def csv_single_param_exp_lower(start_time: int,
     res_array_sample = np.empty([total_iterations, 3])
 
     for i in tqdm(range(total_iterations)):
-        setting = SingleServerPerform(
+        setting = SingleServerMitPerform(
             arr=DM1(lamb=param_array[i, 0]),
-            const_rate=ConstantRate(rate=param_array[i, 1]),
+            const_rate=ConstantRateServer(rate=param_array[i, 1]),
             perform_param=perform_param)
 
         theta_bounds = [(0.1, 4.0)]
@@ -209,11 +213,11 @@ def csv_single_param_exp_lower(start_time: int,
             bound_list=bound_array_power, delta=delta)
 
         if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            res_array[i, 2] = perform_lower_exp_dm1_opt(
-                s=start_time + perform_param.value,
-                t=start_time,
-                lamb=param_array[i, 0],
-                rate=param_array[i, 1])
+            res_array[i, 2] = perform_lower_exp_dm1_opt(s=start_time +
+                                                        perform_param.value,
+                                                        t=start_time,
+                                                        lamb=param_array[i, 0],
+                                                        rate=param_array[i, 1])
 
             if sample:
                 res_array_sample[i, 0] = res_array[i, 0]
@@ -226,41 +230,40 @@ def csv_single_param_exp_lower(start_time: int,
                     sample_size=sample_size)
 
             if res_array[i, 0] > 1.0:
-                res_array[i, ] = nan
+                res_array[i, ] = np.nan
                 if sample:
-                    res_array_sample[i, ] = nan
+                    res_array_sample[i, ] = np.nan
 
         elif perform_param.perform_metric == PerformEnum.OUTPUT:
-            res_array[i, 2] = perform_lower_exp_dm1_opt(
-                s=start_time,
-                t=start_time + perform_param.value,
-                lamb=param_array[i, 0],
-                rate=param_array[i, 1])
+            res_array[i, 2] = perform_lower_exp_dm1_opt(s=start_time,
+                                                        t=start_time +
+                                                        perform_param.value,
+                                                        lamb=param_array[i, 0],
+                                                        rate=param_array[i, 1])
 
         else:
             raise NameError(f"{perform_param.perform_metric} is an infeasible "
                             f"performance metric")
 
         if (res_array[i, 1] == inf or res_array[i, 2] == inf
-                or res_array[i, 0] == nan or res_array[i, 1] == nan
-                or res_array[i, 2] == nan):
-            res_array[i, ] = nan
-            res_array_sample[i, ] = nan
+                or np.isnan(res_array[i, 0]) or np.isnan(res_array[i, 1])
+                or np.isnan(res_array[i, 2])):
+            res_array[i, ] = np.nan
+            res_array_sample[i, ] = np.nan
             valid_iterations -= 1
 
     # print("exponential results", res_array[:, 2])
 
-    res_dict = three_col_array_to_results(
-        arrival_enum=ArrivalEnum.DM1,
-        res_array=res_array,
-        valid_iterations=valid_iterations,
-        metric=metric)
+    res_dict = three_col_array_to_results(arrival_enum=ArrivalEnum.DM1,
+                                          res_array=res_array,
+                                          valid_iterations=valid_iterations,
+                                          compare_metric=metric)
 
     res_dict.update({
         "iterations": total_iterations,
         "delta_time": perform_param.value,
         "optimization": "grid_search",
-        "metric": "relative",
+        "metric": ChangeEnum.name,
         "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string()
     })
@@ -269,28 +272,27 @@ def csv_single_param_exp_lower(start_time: int,
         arrival_enum=ArrivalEnum.DM1,
         res_array=res_array_sample,
         valid_iterations=valid_iterations,
-        metric=metric)
+        compare_metric=metric)
 
     res_dict_sample.update({
         "iterations": total_iterations,
         "delta_time": perform_param.value,
         "optimization": "grid_search",
-        "metric": "relative",
+        "metric": ChangeEnum.name,
         "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string()
     })
 
     with open(
-            "lower_single_{0}_DM1_results_MC{1}_power_exp.csv".format(
-                perform_param.__str__(), mc_dist.to_name()), 'w') as csv_file:
+            f"lower_single_{perform_param.to_name()}_DM1_results"
+            f"_MC{mc_dist.to_name()}_power_exp.csv", 'w') as csv_file:
         writer = csv.writer(fileobj=csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])
     if sample:
         with open(
-                "sample_single_{0}_DM1_results_MC{1}_power_exp.csv".format(
-                    perform_param.__str__(), mc_dist.to_name()),
-                'w') as csv_file:
+                f"sample_single_{perform_param.to_name()}_DM1_results"
+                f"_MC{mc_dist.to_name()}_power_exp.csv", 'w') as csv_file:
             writer = csv.writer(fileobj=csv_file)
             for key, value in res_dict_sample.items():
                 writer.writerow([key, value])
@@ -319,7 +321,7 @@ def csv_single_param_exp_lower(start_time: int,
 #
 #     setting = SingleServerPerform(
 #         arr=DM1(lamb=param_array[index, 0]),
-#         const_rate=ConstantRate(rate=param_array[index, 1]),
+#         const_rate=ConstantRateServer(rate=param_array[index, 1]),
 #         perform_param=perform_param)
 #
 #     theta_bounds = [(0.1, 4.0)]
@@ -331,18 +333,18 @@ def csv_single_param_exp_lower(start_time: int,
 #     bound_array_power = theta_bounds[:]
 #     bound_array_power.append((0.9, 4.0))
 #
-#     res_array[index, 1] = OptimizeNew(setting_new=setting).grid_search(
+#     res_array[index, 1] = OptimizeMitigator(setting_h_mit=setting).grid_search(
 #         bound_list=bound_array_power, delta=DELTA)
 #
 #     if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-#         res_array[index, 2] = delay_prob_lower_exp_dm1_opt(
+#         res_array[index, 2] = perform_lower_exp_dm1_opt(
+#             s=START + perform_param.value,
 #             t=START,
-#             delay=perform_param.value,
 #             lamb=param_array[index, 0],
 #             rate=param_array[index, 1])
 #
 #         if res_array[index, 0] > 1.0:
-#             res_array[index, ] = nan
+#             res_array[index, ] = np.nan
 #
 #     elif perform_param.perform_metric == PerformEnum.OUTPUT:
 #         res_array[index, 2] = output_lower_exp_dm1_opt(
@@ -356,9 +358,9 @@ def csv_single_param_exp_lower(start_time: int,
 #             perform_param.perform_metric))
 #
 #     if (res_array[index, 1] == inf or res_array[index, 2] == inf
-#             or res_array[index, 0] == nan or res_array[index, 1] == nan
-#             or res_array[index, 2] == nan):
-#         res_array[index, ] = nan
+#             or np.isnan(res_array[index, 0]) or np.isnan(res_array[index, 1])
+#             or np.isnan(res_array[index, 2])):
+#         res_array[index, ] = np.nan
 #         valid_iterations -= 1
 #
 #     return res_array, valid_iterations
@@ -383,13 +385,13 @@ def csv_single_param_exp_lower(start_time: int,
 #         "delta_time": perform_param.value,
 #         "optimization": "grid_search",
 #         "metric": "relative",
-#         "MCDistribution": mc_dist.__str__(),
+#         "MCDistribution": mc_dist.to_name(),
 #         "MCParam": mc_dist.param_to_string()
 #     })
 #
 #     with open(
 #             "lower_single_{0}_DM1_results_MC{1}_power_exp.csv".format(
-#                 perform_param.__str__(), mc_dist.__str__()), 'w') as csv_file:
+#                 perform_param.to_name(), mc_dist.to_name()), 'w') as csv_file:
 #         writer = csv.writer(fileobj=csv_file)
 #         for key, value in res_dict.items():
 #             writer.writerow([key, value])
@@ -399,20 +401,20 @@ def csv_single_param_exp_lower(start_time: int,
 if __name__ == '__main__':
     # TOTAL_ITERATIONS = 10**3
     TOTAL_ITERATIONS = 200
-    METRIC = "relative"
+    METRIC = ChangeEnum.RATIO_NEW_REF
 
     DELTA = 0.05
 
     START = 30
 
     DELTA_TIME = 10
-    DELAY10 = PerformParameter(
-        perform_metric=PerformEnum.DELAY_PROB, value=DELTA_TIME)
+    DELAY10 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
+                               value=DELTA_TIME)
 
     # DELTA_TIME = 4
     # OUTPUT4 = PerformParameter(
     #     perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
-
+    #
     # LAMB = 1.0
     # SERVICE_RATE = 1.2
     #
@@ -421,7 +423,7 @@ if __name__ == '__main__':
     # DELTA = 0.05
     # PRINT_X = False
     #
-    # CR_SERVER = ConstantRate(SERVICE_RATE)
+    # CR_SERVER = ConstantRateServer(SERVICE_RATE)
     #
     # EXP_ARRIVAL = DM1(lamb=LAMB)
     #
@@ -433,14 +435,14 @@ if __name__ == '__main__':
     #         bound_list=BOUND_LIST, delta=DELTA)
     # print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
     #
-    # DM1_POWER_OPT = OptimizeNew(
-    #     setting_new=DM1_SINGLE, print_x=PRINT_X).grid_search(
+    # DM1_POWER_OPT = OptimizeMitigator(
+    #     setting_h_mit=DM1_SINGLE, print_x=PRINT_X).grid_search(
     #         bound_list=BOUND_LIST_NEW, delta=DELTA)
     # print("DM1 Power Opt: ", DM1_POWER_OPT)
     #
-    # DM1_EXP_LOWER_OPT = delay_prob_lower_exp_dm1_opt(
+    # DM1_EXP_LOWER_OPT = perform_lower_exp_dm1_opt(
+    #     s=START + DELTA_TIME,
     #     t=START,
-    #     delay=DELTA_TIME,
     #     lamb=LAMB,
     #     rate=SERVICE_RATE,
     #     print_x=PRINT_X)
@@ -452,19 +454,17 @@ if __name__ == '__main__':
 
     def fun1():
         print(
-            csv_single_param_exp_lower(
-                start_time=START,
-                perform_param=DELAY10,
-                mc_dist=MC_UNIF10,
-                sample=False))
+            csv_single_param_exp_lower(start_time=START,
+                                       perform_param=DELAY10,
+                                       mc_dist=MC_UNIF10,
+                                       sample=False))
 
     def fun2():
         print(
-            csv_single_param_exp_lower(
-                start_time=START,
-                perform_param=DELAY10,
-                mc_dist=MC_EXP1,
-                sample=False))
+            csv_single_param_exp_lower(start_time=START,
+                                       perform_param=DELAY10,
+                                       mc_dist=MC_EXP1,
+                                       sample=False))
 
     def run_in_parallel(*funcs):
         proc = []

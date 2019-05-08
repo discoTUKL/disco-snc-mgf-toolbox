@@ -2,11 +2,11 @@
 
 from math import exp
 
-from nc_service.service import Service
+from nc_server.server import Server
 from utils.exceptions import ParameterOutOfBounds
 
 
-class ConstantRate(Service):
+class ConstantRateServer(Server):
     """Constant rate service"""
 
     def __init__(self, rate: float) -> None:

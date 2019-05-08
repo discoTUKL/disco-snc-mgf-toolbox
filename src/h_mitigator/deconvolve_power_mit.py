@@ -3,14 +3,14 @@
 from math import exp, log
 
 from nc_arrivals.arrival import Arrival
-from nc_service.service import Service
+from nc_server.server import Server
 from utils.exceptions import ParameterOutOfBounds
 
 
 class DeconvolvePowerMit(Arrival):
     """New Lyapunov Deconvolution Class"""
 
-    def __init__(self, arr: Arrival, ser: Service, l_power=1.0) -> None:
+    def __init__(self, arr: Arrival, ser: Server, l_power=1.0) -> None:
         self.arr = arr
         self.ser = ser
         self.l_power = l_power

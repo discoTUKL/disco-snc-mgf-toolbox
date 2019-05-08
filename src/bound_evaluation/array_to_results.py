@@ -5,32 +5,37 @@ from warnings import warn
 
 import numpy as np
 
+from bound_evaluation.change_enum import ChangeEnum
 from nc_arrivals.arrival_enum import ArrivalEnum
 
 
-def two_col_array_to_results(arrival_enum: ArrivalEnum,
-                             param_array: np.array,
-                             res_array: np.array,
-                             number_servers: int,
-                             valid_iterations: int,
-                             metric: str = "relative") -> dict:
+def two_col_array_to_results(
+        arrival_enum: ArrivalEnum,
+        param_array: np.array,
+        res_array: np.array,
+        number_servers: int,
+        valid_iterations: int,
+        compare_metric: ChangeEnum = ChangeEnum.RATIO_REF_NEW) -> dict:
     """Writes the array values into a dictionary"""
     if res_array.shape[1] != 2:
         raise NameError(f"Array must have 2 columns, not {res_array.shape[1]}")
 
     iterations = int(res_array.shape[0])
 
-    if metric == "relative":
+    if compare_metric == ChangeEnum.RATIO_REF_NEW:
         improvement_vec = np.divide(res_array[:, 0], res_array[:, 1])
-    elif metric == "absolute":
+    elif compare_metric == ChangeEnum.DIFF_REF_NEW:
         improvement_vec = np.subtract(res_array[:, 0], res_array[:, 1])
     else:
-        raise NameError(f"Metric parameter {metric} is infeasible")
+        raise NotImplementedError(
+            f"Metric={compare_metric.name} is not implemented")
 
     row_max = np.nanargmax(improvement_vec)
+
     opt_standard_bound = res_array[row_max, 0]
-    opt_new_bound = res_array[row_max, 1]
+    opt_h_mit_bound = res_array[row_max, 1]
     opt_improvement = improvement_vec[row_max]
+
     mean_improvement = np.nanmean(improvement_vec)
 
     # number_improved = np.sum(np.greater(res_array[:, 0], res_array[:, 1]))
@@ -38,13 +43,13 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
 
     count_nan = np.count_nonzero(np.isnan(res_array), axis=0)
     count_nan_standard = count_nan[0]
-    count_nan_new = count_nan[1]
+    count_nan_h_mit = count_nan[1]
 
-    if count_nan_standard != count_nan_new:
+    if count_nan_standard != count_nan_h_mit:
         warn(f"number of nan's does not match, "
-             f"{count_nan_standard} != {count_nan_new}")
+             f"{count_nan_standard} != {count_nan_h_mit}")
 
-    if valid_iterations < iterations * 0.25:
+    if valid_iterations < iterations * 0.2:
         warn(f"way too many nan's: "
              f"{iterations - valid_iterations} out of {iterations}!")
 
@@ -56,43 +61,42 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
 
     for j in range(number_servers):
         if arrival_enum == ArrivalEnum.DM1:
-            res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
-            res_dict["rate{0}".format(
-                j + 1)] = param_array[row_max, number_servers + j]
+            res_dict[f"lamb{j + 1}"] = format(param_array[row_max, j], '.3f')
+            res_dict[f"rate{j + 1}"] = format(
+                param_array[row_max, number_servers + j], '.3f')
 
         elif arrival_enum == ArrivalEnum.MD1:
-            res_dict["lamb{0}".format(j + 1)] = param_array[row_max, j]
-            res_dict["rate{0}".format(
-                j + 1)] = param_array[row_max, number_servers + j]
-            # res_dict["packet_size{0}".format(j + 1)] = param_array[
-            #     row_max, number_servers + j]
-            res_dict["packet_size{0}".format(j + 1)] = 1.0
+            res_dict[f"lamb{j + 1}"] = format(param_array[row_max, j], '.3f')
+            res_dict[f"rate{j + 1}"] = format(
+                param_array[row_max, number_servers + j], '.3f')
+            res_dict[f"packet_size{j + 1}"] = format(
+                param_array[row_max, number_servers + j], '.3f')
 
-        elif arrival_enum == ArrivalEnum.MMOO:
-            res_dict["mu{0}".format(j + 1)] = param_array[row_max, j]
-            res_dict["lamb{0}".format(
-                j + 1)] = param_array[row_max, number_servers + j]
-            res_dict["burst{0}".format(
-                j + 1)] = param_array[row_max, 2 * number_servers + j]
-            res_dict["rate{0}".format(
-                j + 1)] = param_array[row_max, 3 * number_servers + j]
+        elif arrival_enum == ArrivalEnum.MMOOFluid:
+            res_dict[f"mu{j + 1}"] = format(param_array[row_max, j], '.3f')
+            res_dict[f"lamb{j + 1}"] = format(
+                param_array[row_max, number_servers + j], '.3f')
+            res_dict[f"burst{j + 1}"] = format(
+                param_array[row_max, 2 * number_servers + j], '.3f')
+            res_dict[f"rate{j + 1}"] = format(
+                param_array[row_max, 3 * number_servers + j], '.3f')
 
         elif arrival_enum == ArrivalEnum.EBB:
-            res_dict["M{0}".format(j + 1)] = param_array[row_max, j]
-            res_dict["b{0}".format(
-                j + 1)] = param_array[row_max, number_servers + j]
-            res_dict["rho{0}".format(
-                j + 1)] = param_array[row_max, 2 * number_servers + j]
-            res_dict["rate{0}".format(
-                j + 1)] = param_array[row_max, 3 * number_servers + j]
+            res_dict[f"M{j + 1}"] = format(param_array[row_max, j], '.3f')
+            res_dict[f"b{j + 1}"] = format(
+                param_array[row_max, number_servers + j], '.3f')
+            res_dict[f"rho{j + 1}"] = format(
+                param_array[row_max, 2 * number_servers + j], '.3f')
+            res_dict[f"rate{j + 1}"] = format(
+                param_array[row_max, 3 * number_servers + j], '.3f')
 
         else:
-            raise NameError(
-                f"Arrival parameter {arrival_enum.name} is infeasible")
+            raise NotImplementedError(
+                f"Arrival parameter={arrival_enum.name} is not implemented")
 
     res_dict.update({
         "opt standard bound": opt_standard_bound,
-        "opt new bound": opt_new_bound,
+        "opt h-mitigator bound": opt_h_mit_bound,
         "optimum improvement": opt_improvement,
         "mean improvement": mean_improvement,
         "number improved": number_improved,
@@ -103,29 +107,31 @@ def two_col_array_to_results(arrival_enum: ArrivalEnum,
     return res_dict
 
 
-def three_col_array_to_results(arrival_enum: ArrivalEnum,
-                               res_array: np.array,
-                               valid_iterations: int,
-                               metric: str = "relative") -> dict:
-    """Writes the array values into a dictionary, MMOO"""
+def three_col_array_to_results(
+        arrival_enum: ArrivalEnum,
+        res_array: np.array,
+        valid_iterations: int,
+        compare_metric: ChangeEnum = ChangeEnum.RATIO_REF_NEW) -> dict:
+    """Writes the array values into a dictionary"""
     if res_array.shape[1] != 3:
-        raise NameError("Array must have 3 columns, not {0}".format(
-            res_array.shape[1]))
+        raise NameError(f"Array must have 3 columns, not {res_array.shape[1]}")
 
     iterations = int(res_array.shape[0])
 
-    if metric == "relative":
+    if compare_metric == ChangeEnum.RATIO_REF_NEW:
         improvement_vec_1 = np.divide(res_array[:, 0], res_array[:, 1])
         improvement_vec_2 = np.divide(res_array[:, 0], res_array[:, 2])
         improvement_vec_news = np.divide(res_array[:, 1], res_array[:, 2])
-    elif metric == "absolute":
+    elif compare_metric == ChangeEnum.DIFF_REF_NEW:
         improvement_vec_1 = np.subtract(res_array[:, 0], res_array[:, 1])
         improvement_vec_2 = np.subtract(res_array[:, 0], res_array[:, 2])
         improvement_vec_news = np.subtract(res_array[:, 1], res_array[:, 2])
     else:
-        raise NameError(f"Metric parameter {metric} is infeasible")
+        raise NotImplementedError(
+            f"Metric={compare_metric.name} is not implemented")
 
     row_exp_max = np.nanargmax(improvement_vec_news)
+
     opt_standard_bound = res_array[row_exp_max, 0]
     opt_power_bound = res_array[row_exp_max, 1]
     opt_exp_bound = res_array[row_exp_max, 2]
@@ -141,7 +147,7 @@ def three_col_array_to_results(arrival_enum: ArrivalEnum,
     # number_improved = np.sum(np.greater(res_array[:, 1], res_array[:, 2]))
     number_improved = np.sum(res_array[:, 1] > res_array[:, 2])
 
-    if valid_iterations < iterations * 0.25:
+    if valid_iterations < iterations * 0.2:
         warn(f"way too many nan's: "
              f"{iterations - valid_iterations} nan out of {iterations}!")
 

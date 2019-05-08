@@ -11,13 +11,13 @@ from bound_evaluation.array_to_results import time_array_to_results
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
-from fat_tree.fat_cross_perform import FatCrossPerform
+from h_mitigator.fat_cross_perform import FatCrossPerform
 from h_mitigator.compare_mitigator import compare_time
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.markov_modulated import MMOOFluid
 from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
-from nc_service.constant_rate_server import ConstantRate
+from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
 from utils.perform_parameter import PerformParameter
 
@@ -53,7 +53,7 @@ def mc_time_fat_cross(arrival_enum: ArrivalEnum,
                 arrive_list = [
                     DM1(lamb=param_array[i, j]) for j in range(num_serv)
                 ]
-            elif arrival_enum == ArrivalEnum.MMOO:
+            elif arrival_enum == ArrivalEnum.MMOOFluid:
                 arrive_list = [
                     MMOOFluid(
                         mu=param_array[i, j],
@@ -67,7 +67,7 @@ def mc_time_fat_cross(arrival_enum: ArrivalEnum,
                     arrival_enum.name))
 
             service_list = [
-                ConstantRate(rate=param_array[
+                ConstantRateServer(rate=param_array[
                     i, arrival_enum.number_parameters() * num_serv + j])
                 for j in range(num_serv)
             ]
@@ -91,9 +91,8 @@ def mc_time_fat_cross(arrival_enum: ArrivalEnum,
                 number_servers=num_serv,
                 time_ratio=time_ratio))
 
-    with open(
-        (f"time_{perform_param.__str__()}_{arrival_enum.name}_{opt_method.name}.csv"
-         ), 'w') as csv_file:
+    with open((f"time_{perform_param.to_name()}_{arrival_enum.name}"
+               f"_{opt_method.name}.csv"), 'w') as csv_file:
         writer = csv.writer(csv_file)
         for key, value in time_ratio.items():
             writer.writerow([key, value])
@@ -121,7 +120,7 @@ if __name__ == '__main__':
 
     print(
         mc_time_fat_cross(
-            arrival_enum=ArrivalEnum.MMOO,
+            arrival_enum=ArrivalEnum.MMOOFluid,
             list_number_servers=list_number_servers1,
             perform_param=DELAY_PROB,
             opt_method=COMMON_OPTIMIZATION,

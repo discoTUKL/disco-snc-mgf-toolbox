@@ -37,6 +37,9 @@ class RegulatedArrivals(ArrivalDistribution):
         """
         return True
 
+    def average_rate(self) -> float:
+        return self.rho(1.0)
+
     def to_value(self, number=1, show_n=True) -> str:
         """
         :return string

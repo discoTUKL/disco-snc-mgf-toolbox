@@ -5,18 +5,16 @@ from typing import List
 
 from nc_arrivals.arrival import Arrival
 from nc_operations.stability_check import stability_check
-from nc_service.constant_rate_server import ConstantRate
-from nc_service.service import Service
+from nc_server.constant_rate_server import ConstantRateServer
+from nc_server.server import Server
 from utils.exceptions import ParameterOutOfBounds
 from utils.helper_functions import get_p_n, get_q, is_equal
-
-DELTA = 1e-05
 
 
 class Deconvolve(Arrival):
     """Deconvolution class."""
 
-    def __init__(self, arr: Arrival, ser: Service, indep=True, p=1.0) -> None:
+    def __init__(self, arr: Arrival, ser: Server, indep=True, p=1.0) -> None:
         self.arr = arr
         self.ser = ser
         self.indep = indep
@@ -37,8 +35,9 @@ class Deconvolve(Arrival):
         p_theta = self.p * theta
         q_theta = self.q * theta
 
-        k_sig = -log(1 - exp(
-            theta * (self.arr.rho(p_theta) - self.ser.rho(q_theta)))) / theta
+        k_sig = -log(
+            1 - exp(theta *
+                    (self.arr.rho(p_theta) - self.ser.rho(q_theta)))) / theta
 
         if self.arr.is_discrete():
             return self.arr.sigma(p_theta) + self.ser.sigma(q_theta) + k_sig
@@ -58,12 +57,11 @@ class Deconvolve(Arrival):
         if self.arr.rho(p_theta) < 0 or self.ser.rho(q_theta) < 0:
             raise ParameterOutOfBounds("The rhos must be >= 0")
 
-        stability_check(
-            arr=self.arr,
-            ser=self.ser,
-            theta=theta,
-            indep=self.indep,
-            p=self.p)
+        stability_check(arr=self.arr,
+                        ser=self.ser,
+                        theta=theta,
+                        indep=self.indep,
+                        p=self.p)
 
         return self.arr.rho(p_theta)
 
@@ -71,11 +69,16 @@ class Deconvolve(Arrival):
         return self.arr.is_discrete()
 
 
-class Convolve(Service):
+class Convolve(Server):
     """Convolution class."""
 
-    def __init__(self, ser1: Service, ser2: Service, indep=True,
-                 p=1.0) -> None:
+    def __init__(self,
+                 ser1: Server,
+                 ser2: Server,
+                 indep=True,
+                 p=1.0,
+                 alter=False,
+                 delta=1e-05) -> None:
         self.ser1 = ser1
         self.ser2 = ser2
         self.indep = indep
@@ -86,10 +89,12 @@ class Convolve(Service):
             self.p = p
 
         self.q = get_q(p=p, indep=indep)
+        self.alter = alter
+        self.delta = delta
 
     def sigma(self, theta: float) -> float:
-        if isinstance(self.ser1, ConstantRate) and isinstance(
-                self.ser2, ConstantRate):
+        if isinstance(self.ser1, ConstantRateServer) and isinstance(
+                self.ser2, ConstantRateServer):
             return 0.0
 
         p_theta = self.p * theta
@@ -102,17 +107,15 @@ class Convolve(Service):
             return self.ser1.sigma(p_theta) + self.ser2.sigma(q_theta) + k_sig
 
         else:
-            if DELTA < 1 / theta:
-                # if the DELTA rate reduction is smaller than the standard
-                # approach
+            if self.alter:
                 return self.ser1.sigma(p_theta) + self.ser2.sigma(
-                    q_theta) - log(1 - exp(-theta * DELTA))
-            else:
-                return self.ser1.sigma(p_theta) + self.ser2.sigma(q_theta)
+                    q_theta) - log(1 - exp(-theta * self.delta))
+
+            return self.ser1.sigma(p_theta) + self.ser2.sigma(q_theta)
 
     def rho(self, theta: float) -> float:
-        if isinstance(self.ser1, ConstantRate) and isinstance(
-                self.ser2, ConstantRate):
+        if isinstance(self.ser1, ConstantRateServer) and isinstance(
+                self.ser2, ConstantRateServer):
             return min(self.ser1.rate, self.ser2.rate)
 
         p_theta = self.p * theta
@@ -125,13 +128,16 @@ class Convolve(Service):
             return min(self.ser1.rho(p_theta), self.ser2.rho(q_theta))
 
         else:
-            return self.ser1.rho(p_theta) - min(1 / theta, DELTA)
+            if self.alter:
+                return self.ser1.rho(p_theta) - self.delta
+
+            return self.ser1.rho(p_theta) - 1 / theta
 
 
-class Leftover(Service):
+class Leftover(Server):
     """Subtract cross flow = nc_operations.Leftover class."""
 
-    def __init__(self, ser: Service, arr: Arrival, indep=True, p=1.0) -> None:
+    def __init__(self, ser: Server, arr: Arrival, indep=True, p=1.0) -> None:
         self.arr = arr
         self.ser = ser
         self.indep = indep
@@ -175,7 +181,8 @@ class AggregateList(Arrival):
                     f"number of p {len(p_list)} and length of "
                     f"arr_list {len(self.arr_list)} - 1 have to match")
 
-            self.p_list = p_list.append(get_p_n(p_list=p_list, indep=indep))
+            p_list.append(get_p_n(p_list=p_list, indep=False))
+            self.p_list = p_list
         self.indep = indep
 
     def sigma(self, theta: float) -> float:
@@ -211,3 +218,37 @@ class AggregateList(Arrival):
 
     def is_discrete(self):
         return self.arr_list[0].is_discrete()
+
+
+class AggregateTwo(Arrival):
+    """Multiple (list) aggregation class."""
+
+    def __init__(self, arr1: Arrival, arr2: Arrival, indep=True,
+                 p=1.0) -> None:
+        self.arr1 = arr1
+        self.arr2 = arr2
+        self.indep = indep
+        if indep:
+            self.p = 1.0
+        else:
+            self.p = p
+
+        self.q = get_q(p=p, indep=indep)
+
+    def sigma(self, theta: float) -> float:
+        p_theta = self.p * theta
+        q_theta = self.q * theta
+
+        return self.arr1.sigma(p_theta) + self.arr2.sigma(q_theta)
+
+    def rho(self, theta: float) -> float:
+        p_theta = self.p * theta
+        q_theta = self.q * theta
+
+        if self.arr1.rho(p_theta) < 0 or self.arr2.rho(q_theta) < 0:
+            raise ParameterOutOfBounds("The rhos must be >= 0")
+
+        return self.arr1.rho(p_theta) + self.arr2.rho(q_theta)
+
+    def is_discrete(self):
+        return self.arr1.is_discrete()
