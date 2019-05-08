@@ -93,14 +93,6 @@ Topologies / settings:
 - Fat tree
 - Canonical tandem
 
-## Paper Submissions
-
-This folder contains the files that directly produce data for paper submissions:
-
-paper_submissions/
-
-- OTCS2018/ submission at Open Transactions on Communication Systems (OTCS) 2018
-
 ## Folder Structure
 
 - nc_arrivals
@@ -115,5 +107,7 @@ paper_submissions/
   Contains all helper classes, for example:
   - `exceptions.py` includes special ParameterOutOfBounds class that is handled in the optimization
   - `perform_parameter.py` stores emum PerformMetric (delay, output,...) and its value
+- h_mitigator
+  contains all classes and functions concerning the new $h$-mitigator approach to improve performance bounds
 
 The topologies have their own dedicated folders as they also include all classes needed for a performance evaluation (random input parameters, save results in csv-files)
