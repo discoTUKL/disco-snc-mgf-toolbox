@@ -67,7 +67,7 @@ def delay_prob_power_mit(arr: Arrival,
     if not arr.is_discrete():
         warn("discretized version is not implemented")
 
-    numerator = exp(theta * ser.rho(theta=l_theta) * delay) * exp(
+    numerator = exp(-theta * ser.rho(theta=l_theta) * delay) * exp(
         theta * sigma_l_sum)
     denominator = (1 - exp(l_theta * rho_l_diff))**(1 / l_power)
 
