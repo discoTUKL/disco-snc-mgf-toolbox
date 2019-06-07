@@ -1,6 +1,6 @@
 # Stochastic Network Calculus with Moment Generating Functions
 
-The (sigma, rho)-calculus is implemented in this tool. It is supposed to provide solutions quickly for small networks. Yet, it must not show weak points when it comes to parameter optimization. It also includes a new approach using Jensen inequality to improve the output bound.
+The (sigma, rho)-calculus is implemented in this toolbox. It provides a list a typical stochastic network calculus arrival processes, operators, and performance bounds in order to conduct a network analysis.
 
 ## Prerequisites
 
@@ -55,14 +55,24 @@ print(Optimize(SINGLE_SERVER, print_x=True).grid_search(
         bound_list=[(0.1, 5.0)], delta=0.1))
 ```
 
-and for the new version:
+and for the h_mitigator:
 
 ```python
-print(OptimizeMitigator(SINGLE_SERVER, new=True, print_x=True).grid_search(
+print(OptimizeMitigator(SINGLE_SERVER, print_x=True).grid_search(
         bound_list=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))
 ```
 
 ## Status of Implementation
+
+Arrival processes:
+
+- DM1
+- MD1
+- Markov modulated on-off traffic (MMOO)
+- Exponentially bounded burstiness (EBB)
+- Token Bucket
+
+For the service, the typical constant rate server is available.
 
 Network Calculus operations:
 
@@ -76,16 +86,6 @@ Performance Metrics:
 - Backlog bound for a given probability and vice versa
 - Delay bound for a given probability and vice versa
 - MGF-output bound
-
-Arrival processes:
-
-- DM1
-- MD1
-- Markov modulated on-off traffic (MMOO)
-- Exponentially bounded burstiness (EBB)
-- Token Bucket
-
-For the service, only a constant rate server is available.
 
 Topologies / settings:
 
@@ -109,5 +109,3 @@ Topologies / settings:
   - `perform_parameter.py` stores emum PerformMetric (delay, output,...) and its value
 - h_mitigator
   contains all classes and functions concerning the new $h$-mitigator approach to improve performance bounds
-
-The topologies have their own dedicated folders as they also include all classes needed for a performance evaluation (random input parameters, save results in csv-files)
