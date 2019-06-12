@@ -32,18 +32,20 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return:      sigma(theta)
         """
-        p_theta = self.p * theta
-        q_theta = self.q * theta
+        arr_sigma_p_theta = self.arr.sigma(self.p * theta)
+        ser_sigma_q_theta = self.ser.sigma(self.q * theta)
+
+        arr_rho_p_theta = self.arr.rho(self.p * theta)
 
         k_sig = -log(
             1 - exp(theta *
-                    (self.arr.rho(p_theta) - self.ser.rho(q_theta)))) / theta
+                    (arr_rho_p_theta - self.ser.rho(self.q * theta)))) / theta
 
         if self.arr.is_discrete():
-            return self.arr.sigma(p_theta) + self.ser.sigma(q_theta) + k_sig
+            return arr_sigma_p_theta + ser_sigma_q_theta + k_sig
         else:
-            return self.arr.sigma(p_theta) + self.ser.sigma(
-                q_theta) + self.arr.rho(p_theta) + k_sig
+            return arr_sigma_p_theta + ser_sigma_q_theta + arr_rho_p_theta + \
+                   k_sig
 
     def rho(self, theta: float) -> float:
         """
@@ -51,10 +53,9 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return: rho(theta)
         """
-        p_theta = self.p * theta
-        q_theta = self.q * theta
+        arr_rho_p_theta = self.arr.rho(self.p * theta)
 
-        if self.arr.rho(p_theta) < 0 or self.ser.rho(q_theta) < 0:
+        if arr_rho_p_theta < 0 or self.ser.rho(self.q * theta) < 0:
             raise ParameterOutOfBounds("The rhos must be >= 0")
 
         stability_check(arr=self.arr,
@@ -63,7 +64,7 @@ class Deconvolve(Arrival):
                         indep=self.indep,
                         p=self.p)
 
-        return self.arr.rho(p_theta)
+        return arr_rho_p_theta
 
     def is_discrete(self):
         return self.arr.is_discrete()
@@ -97,41 +98,44 @@ class Convolve(Server):
                 self.ser2, ConstantRateServer):
             return 0.0
 
-        p_theta = self.p * theta
-        q_theta = self.q * theta
+        ser_1_sigma_p_theta = self.ser1.sigma(self.p * theta)
+        ser_2_sigma_q_theta = self.ser2.sigma(self.q * theta)
 
-        if not is_equal(self.ser1.rho(p_theta), self.ser2.rho(q_theta)):
-            k_sig = -log(1 - exp(-theta * abs(
-                self.ser1.rho(p_theta) - self.ser2.rho(q_theta)))) / theta
+        ser_1_rho_p_theta = self.ser1.rho(self.p * theta)
+        ser_2_rho_q_theta = self.ser2.rho(self.q * theta)
 
-            return self.ser1.sigma(p_theta) + self.ser2.sigma(q_theta) + k_sig
+        if not is_equal(ser_1_rho_p_theta, ser_2_rho_q_theta):
+            k_sig = -log(1 - exp(-theta * abs(ser_1_rho_p_theta -
+                                              ser_2_rho_q_theta))) / theta
+
+            return ser_1_sigma_p_theta + ser_2_sigma_q_theta + k_sig
 
         else:
             if self.alter:
-                return self.ser1.sigma(p_theta) + self.ser2.sigma(
-                    q_theta) - log(1 - exp(-theta * self.delta))
+                return ser_1_sigma_p_theta + ser_2_sigma_q_theta - log(
+                    1 - exp(-theta * self.delta))
 
-            return self.ser1.sigma(p_theta) + self.ser2.sigma(q_theta)
+            return ser_1_sigma_p_theta + ser_2_sigma_q_theta
 
     def rho(self, theta: float) -> float:
         if isinstance(self.ser1, ConstantRateServer) and isinstance(
                 self.ser2, ConstantRateServer):
             return min(self.ser1.rate, self.ser2.rate)
 
-        p_theta = self.p * theta
-        q_theta = self.q * theta
+        ser_1_rho_p_theta = self.ser1.rho(self.p * theta)
+        ser_2_rho_q_theta = self.ser2.rho(self.q * theta)
 
-        if self.ser1.rho(p_theta) < 0 or self.ser2.rho(q_theta) < 0:
+        if ser_1_rho_p_theta < 0 or ser_2_rho_q_theta < 0:
             raise ParameterOutOfBounds("The rhos must be > 0")
 
-        if not is_equal(self.ser1.rho(p_theta), self.ser2.rho(q_theta)):
-            return min(self.ser1.rho(p_theta), self.ser2.rho(q_theta))
+        if not is_equal(ser_1_rho_p_theta, ser_2_rho_q_theta):
+            return min(ser_1_rho_p_theta, ser_2_rho_q_theta)
 
         else:
             if self.alter:
-                return self.ser1.rho(p_theta) - self.delta
+                return ser_1_rho_p_theta - self.delta
 
-            return self.ser1.rho(p_theta) - 1 / theta
+            return ser_1_rho_p_theta - 1 / theta
 
 
 class Leftover(Server):
@@ -150,19 +154,16 @@ class Leftover(Server):
         self.q = get_q(p=p, indep=indep)
 
     def sigma(self, theta):
-        p_theta = self.p * theta
-        q_theta = self.q * theta
-
-        return self.ser.sigma(q_theta) + self.arr.sigma(p_theta)
+        return self.ser.sigma(self.q * theta) + self.arr.sigma(self.p * theta)
 
     def rho(self, theta):
-        p_theta = self.p * theta
-        q_theta = self.q * theta
+        arr_rho_p_theta = self.arr.rho(self.p * theta)
+        ser_rho_q_theta = self.ser.rho(self.q * theta)
 
-        if self.ser.rho(q_theta) < 0 or self.arr.rho(p_theta) < 0:
+        if ser_rho_q_theta < 0 or arr_rho_p_theta < 0:
             raise ParameterOutOfBounds("The rhos must be >= 0")
 
-        return self.ser.rho(q_theta) - self.arr.rho(p_theta)
+        return ser_rho_q_theta - arr_rho_p_theta
 
 
 class AggregateList(Arrival):
@@ -178,11 +179,11 @@ class AggregateList(Arrival):
         else:
             if len(p_list) != (len(self.arr_list) - 1):
                 raise ValueError(
-                    f"number of p {len(p_list)} and length of "
-                    f"arr_list {len(self.arr_list)} - 1 have to match")
+                    f"number of p={len(p_list)} and length of "
+                    f"arr_list={len(self.arr_list)} - 1 have to match")
 
-            p_list.append(get_p_n(p_list=p_list, indep=False))
             self.p_list = p_list
+            self.p_n = get_p_n(p_list=p_list, indep=False)
         self.indep = indep
 
     def sigma(self, theta: float) -> float:
@@ -191,8 +192,10 @@ class AggregateList(Arrival):
             for i in range(len(self.arr_list)):
                 res += self.arr_list[i].sigma(theta)
         else:
-            for i in range(len(self.arr_list)):
+            for i in range(len(self.arr_list) - 1):
                 res += self.arr_list[i].sigma(self.p_list[i] * theta)
+
+            res += self.arr_list[-1].sigma(self.p_n * theta)
 
         return res
 
@@ -201,17 +204,25 @@ class AggregateList(Arrival):
 
         if self.indep:
             for i in range(len(self.arr_list)):
-                if self.arr_list[i].rho(theta) < 0:
+                rho_i = self.arr_list[i].rho(theta)
+                if rho_i < 0:
                     raise ParameterOutOfBounds("The rhos must be >= 0")
 
-                res += self.arr_list[i].rho(theta)
+                res += rho_i
 
         else:
-            for i in range(len(self.arr_list)):
-                if self.arr_list[i].rho(self.p_list[i] * theta) < 0:
+            for i in range(len(self.arr_list) - 1):
+                rho_i = self.arr_list[i].rho(self.p_list[i] * theta)
+                if rho_i < 0:
                     raise ParameterOutOfBounds("The rhos must be >= 0")
 
-                res += self.arr_list[i].rho(self.p_list[i] * theta)
+                res += rho_i
+
+            rho_n = self.arr_list[-1].rho(self.p_n * theta)
+            if rho_n < 0:
+                raise ParameterOutOfBounds("The rhos must be >= 0")
+
+            res += rho_n
 
         return res
 
@@ -235,19 +246,17 @@ class AggregateTwo(Arrival):
         self.q = get_q(p=p, indep=indep)
 
     def sigma(self, theta: float) -> float:
-        p_theta = self.p * theta
-        q_theta = self.q * theta
-
-        return self.arr1.sigma(p_theta) + self.arr2.sigma(q_theta)
+        return self.arr1.sigma(self.p * theta) + self.arr2.sigma(
+            self.q * theta)
 
     def rho(self, theta: float) -> float:
-        p_theta = self.p * theta
-        q_theta = self.q * theta
+        arr_1_rho_p_theta = self.arr1.rho(self.p * theta)
+        arr_2_rho_q_theta = self.arr2.rho(self.q * theta)
 
-        if self.arr1.rho(p_theta) < 0 or self.arr2.rho(q_theta) < 0:
+        if arr_1_rho_p_theta < 0 or arr_2_rho_q_theta < 0:
             raise ParameterOutOfBounds("The rhos must be >= 0")
 
-        return self.arr1.rho(p_theta) + self.arr2.rho(q_theta)
+        return arr_1_rho_p_theta + arr_2_rho_q_theta
 
     def is_discrete(self):
         return self.arr1.is_discrete()
@@ -256,8 +265,10 @@ class AggregateTwo(Arrival):
 if __name__ == '__main__':
     from timeit import default_timer as timer
     from nc_arrivals.regulated_arrivals import TokenBucketConstant
-    ar_list = [TokenBucketConstant(sigma_single=1.0, rho_single=1.5, n=8),
-               TokenBucketConstant(sigma_single=2.0, rho_single=3.0, n=10)]
+    ar_list = [
+        TokenBucketConstant(sigma_single=1.0, rho_single=1.5, n=8),
+        TokenBucketConstant(sigma_single=2.0, rho_single=3.0, n=10)
+    ]
 
     start = timer()
     agg_list = AggregateList(arr_list=ar_list, p_list=[], indep=True)
