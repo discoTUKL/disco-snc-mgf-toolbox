@@ -197,21 +197,20 @@ class AggregateList(Arrival):
         return res
 
     def rho(self, theta: float) -> float:
+        res = 0.0
+
         if self.indep:
             for i in range(len(self.arr_list)):
                 if self.arr_list[i].rho(theta) < 0:
                     raise ParameterOutOfBounds("The rhos must be >= 0")
+
+                res += self.arr_list[i].rho(theta)
+
         else:
             for i in range(len(self.arr_list)):
                 if self.arr_list[i].rho(self.p_list[i] * theta) < 0:
                     raise ParameterOutOfBounds("The rhos must be >= 0")
 
-        res = 0.0
-        if self.indep:
-            for i in range(len(self.arr_list)):
-                res += self.arr_list[i].rho(theta)
-        else:
-            for i in range(len(self.arr_list)):
                 res += self.arr_list[i].rho(self.p_list[i] * theta)
 
         return res
@@ -252,3 +251,27 @@ class AggregateTwo(Arrival):
 
     def is_discrete(self):
         return self.arr1.is_discrete()
+
+
+if __name__ == '__main__':
+    from timeit import default_timer as timer
+    from nc_arrivals.regulated_arrivals import TokenBucketConstant
+    ar_list = [TokenBucketConstant(sigma_single=1.0, rho_single=1.5, n=8),
+               TokenBucketConstant(sigma_single=2.0, rho_single=3.0, n=10)]
+
+    start = timer()
+    agg_list = AggregateList(arr_list=ar_list, p_list=[], indep=True)
+    stop = timer()
+    time_list = stop - start
+    start = timer()
+    agg_two = AggregateTwo(arr1=ar_list[0], arr2=ar_list[1], indep=True)
+    stop = timer()
+    time_two = stop - start
+
+    print(f"sum sigma list = {agg_list.sigma(theta=1.0)}")
+    print(f"sum rho list = {agg_list.rho(theta=1.0)}")
+    print(f"time sigma two = {agg_two.sigma(theta=1.0)}")
+    print(f"time rho two = {agg_two.rho(theta=1.0)}")
+
+    print(f"time list = {time_list} s")
+    print(f"time two = {time_two} s")

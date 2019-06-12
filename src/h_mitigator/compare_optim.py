@@ -3,12 +3,12 @@
 from timeit import default_timer as timer
 from typing import List
 
+from h_mitigator.optimize_mitigator import OptimizeMitigator
+from h_mitigator.setting_mitigator import SettingMitigator
 from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.opt_method import OptMethod
-from h_mitigator.optimize_mitigator import OptimizeMitigator
 from optimization.sim_anneal_param import SimAnnealParams
-from h_mitigator.setting_mitigator import SettingMitigator
 
 
 def compare_optimization(setting: SettingMitigator,
@@ -27,7 +27,7 @@ def compare_optimization(setting: SettingMitigator,
             theta_bounds = [(0.1, 4.0)]
 
             bound_list = theta_bounds[:]
-            for _i in range(1, number_l + 1):
+            for _i in range(number_l):
                 bound_list.append((0.9, 4.0))
 
             bound = OptimizeMitigator(setting_h_mit=setting,
@@ -81,7 +81,7 @@ def compare_optimization(setting: SettingMitigator,
             theta_bounds = [(0.1, 4.0)]
 
             bound_list = theta_bounds[:]
-            for _i in range(1, number_l + 1):
+            for _i in range(number_l):
                 bound_list.append((0.9, 4.0))
 
             bound = OptimizeMitigator(
@@ -101,7 +101,7 @@ def compare_optimization(setting: SettingMitigator,
             theta_bounds = [(0.1, 4.0)]
 
             bound_list = theta_bounds[:]
-            for _i in range(1, number_l + 1):
+            for _i in range(number_l):
                 bound_list.append((0.9, 4.0))
 
             bound = OptimizeMitigator(setting_h_mit=setting,
