@@ -9,11 +9,10 @@ from utils.setting import Setting
 class SettingMitigator(Setting):
     """Each setting (topology) has to implements methods to obtain
     the bounds"""
-
     @abstractmethod
     def h_mit_bound(self, param_l_list: List[float]) -> float:
         """
-        new Lyapunov bound
+        new Lyapunov standard_bound
 
         :param param_l_list: theta and Lyapunov parameters
         """

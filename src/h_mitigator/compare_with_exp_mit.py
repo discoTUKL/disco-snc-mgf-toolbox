@@ -1,19 +1,17 @@
 """Compare with alternative traffic description"""
 
 import csv
-from math import exp, inf, log
-from multiprocessing import Process
+from math import inf
 from typing import List
 
 import numpy as np
 import scipy.optimize
 from tqdm import tqdm
 
-from bound_evaluation.array_to_results import three_col_array_to_results
 from bound_evaluation.change_enum import ChangeEnum
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
-from h_mitigator.optimize_mitigator import OptimizeMitigator
+from h_mitigator.array_to_results import two_col_array_to_results
 from h_mitigator.single_server_mit_perform import SingleServerMitPerform
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.arrivals_alternative import expect_dm1
@@ -28,18 +26,18 @@ from utils.perform_parameter import PerformParameter
 
 def f_exp(theta: float, i: int, s: int, t: int, lamb: float, rate: float,
           a: float) -> float:
-    return a**(exp(theta * (expect_dm1(delta_time=t - i, lamb=lamb) -
-                            expect_const_rate(delta_time=s - i, rate=rate))))
+    return a**(np.exp(theta *
+                      (expect_dm1(delta_time=t - i, lamb=lamb) -
+                       expect_const_rate(delta_time=s - i, rate=rate))))
 
 
-def f_sample(i: int, s: int, t: int, lamb: float, rate: float) -> float:
-    res: float = np.sum(
+def f_sample(i: int, s: int, t: int, lamb: float, rate: float) -> np.ndarray:
+    return np.sum(
         np.random.exponential(scale=1 / lamb, size=t - i) - rate * (s - i))
-    return res
 
 
-def perform_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
-                          rate: float, a: float) -> float:
+def delay_prob_lower_exp_dm1(theta: float, t: int, delay: int, lamb: float,
+                             rate: float, a: float) -> float:
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
             (f"The arrivals' long term rate {1 / lamb} has to be smaller than"
@@ -49,15 +47,15 @@ def perform_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
         raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
     if a <= 1:
-        raise ParameterOutOfBounds(f"base a = {a} must be >0")
+        raise ParameterOutOfBounds(f"base a = {a} must be >1")
 
     sum_j = 0.0
 
-    for _i in range(s + 1):
+    for _i in range(t + 1):
         try:
             summand = f_exp(theta=theta,
                             i=_i,
-                            s=s,
+                            s=t + delay,
                             t=t,
                             lamb=lamb,
                             rate=rate,
@@ -67,22 +65,22 @@ def perform_lower_exp_dm1(theta: float, s: int, t: int, lamb: float,
 
         sum_j += summand
 
-    return log(sum_j) / log(a)
+    return np.log(sum_j) / np.log(a)
 
 
-def perform_lower_exp_dm1_opt(s: int,
-                              t: int,
-                              lamb: float,
-                              rate: float,
-                              print_x=False) -> float:
+def delay_prob_lower_exp_dm1_opt(t: int,
+                                 delay: int,
+                                 lamb: float,
+                                 rate: float,
+                                 print_x=False) -> float:
     def helper_fun(param_list: List[float]) -> float:
         try:
-            return perform_lower_exp_dm1(theta=param_list[0],
-                                         s=s,
-                                         t=t,
-                                         lamb=lamb,
-                                         rate=rate,
-                                         a=param_list[1])
+            return delay_prob_lower_exp_dm1(theta=param_list[0],
+                                            t=t,
+                                            delay=delay,
+                                            lamb=lamb,
+                                            rate=rate,
+                                            a=param_list[1])
         except (FloatingPointError, OverflowError, ParameterOutOfBounds):
             return inf
 
@@ -102,27 +100,30 @@ def perform_lower_exp_dm1_opt(s: int,
             f"grid search optimal parameter: theta={grid_res[0].tolist()[0]},"
             f" a={grid_res[0].tolist()[1]}")
 
+    return grid_res[1]
 
-def perform_sample_exp_dm1(theta: float, s: int, t: int, lamb: float,
-                           rate: float, a: float, sample_size: int) -> float:
+
+def delay_prob_sample_exp_dm1(theta: float, t: int, delay: int, lamb: float,
+                              rate: float, a: float,
+                              sample_size: int) -> float:
     if 1 / lamb >= rate:
         raise ParameterOutOfBounds(
-            ("The arrivals' long term rate {0} has to be smaller than "
-             "the service's long term rate {1}").format(1 / lamb, rate))
+            (f"The arrivals' long term rate={1 / lamb} has to be smaller than "
+             f"the service's long term rate={rate}"))
 
     if theta <= 0:
-        raise ParameterOutOfBounds("theta = {0} must be > 0".format(theta))
+        raise ParameterOutOfBounds(f"theta={theta} must be > 0")
 
     if a <= 1:
-        raise ParameterOutOfBounds("base a={0} must be >0".format(a))
+        raise ParameterOutOfBounds(f"base a={a} must be >0")
 
     res = 0.0
 
     for j in range(sample_size):
         sum_i = 0.0
         for i in range(t + 1):
-            sum_i += a**(exp(theta *
-                             f_sample(i=i, s=s, t=t, lamb=lamb, rate=rate)))
+            sum_i += a**(np.exp(
+                theta * f_sample(i=i, s=t + delay, t=t, lamb=lamb, rate=rate)))
         res += sum_i
 
     res /= sample_size
@@ -130,21 +131,21 @@ def perform_sample_exp_dm1(theta: float, s: int, t: int, lamb: float,
     return res
 
 
-def delay_prob_sample_exp_dm1_opt(s: int,
-                                  t: int,
+def delay_prob_sample_exp_dm1_opt(t: int,
+                                  delay: int,
                                   lamb: float,
                                   rate: float,
                                   sample_size: int,
                                   print_x=False) -> float:
     def helper_fun(param_list: List[float]) -> float:
         try:
-            return perform_sample_exp_dm1(theta=param_list[0],
-                                          s=s,
-                                          t=t,
-                                          lamb=lamb,
-                                          rate=rate,
-                                          a=param_list[1],
-                                          sample_size=sample_size)
+            return delay_prob_sample_exp_dm1(theta=param_list[0],
+                                             t=t,
+                                             delay=delay,
+                                             lamb=lamb,
+                                             rate=rate,
+                                             a=param_list[1],
+                                             sample_size=sample_size)
         except (FloatingPointError, OverflowError, ParameterOutOfBounds):
             return inf
 
@@ -160,20 +161,21 @@ def delay_prob_sample_exp_dm1_opt(s: int,
         return inf
 
     if print_x:
-        print("grid search optimal parameter: theta={0}, a={1}".format(
-            grid_res[0].tolist()[0], grid_res[0].tolist()[1]))
+        print("grid search optimal parameter: "
+              f"theta={grid_res[0].tolist()[0]}, a={grid_res[0].tolist()[1]}")
 
     return grid_res[1]
 
 
-def csv_single_param_exp_lower(start_time: int,
-                               perform_param: PerformParameter,
-                               mc_dist: MonteCarloDist,
-                               sample=False) -> dict:
-    total_iterations = 10**2
+def csv_single_param_exp(start_time: int,
+                         delay: int,
+                         mc_dist: MonteCarloDist,
+                         target_util: float,
+                         total_iterations: int,
+                         sample=False) -> dict:
     valid_iterations = total_iterations
     metric = ChangeEnum.RATIO_REF_NEW
-    sample_size = 10**3
+    sample_size = 10**2
 
     delta = 0.05
 
@@ -191,40 +193,42 @@ def csv_single_param_exp_lower(start_time: int,
         raise NameError(
             f"Distribution parameter {mc_dist.mc_enum} is infeasible")
 
-    res_array = np.empty([total_iterations, 3])
-    res_array_sample = np.empty([total_iterations, 3])
+    res_array = np.empty([total_iterations, 2])
+    res_array_sample = np.empty([total_iterations, 2])
 
     for i in tqdm(range(total_iterations)):
-        setting = SingleServerMitPerform(
+        single_setting = SingleServerMitPerform(
             arr=DM1(lamb=param_array[i, 0]),
             const_rate=ConstantRateServer(rate=param_array[i, 1]),
-            perform_param=perform_param)
+            perform_param=PerformParameter(
+                perform_metric=PerformEnum.DELAY_PROB, value=delay))
 
-        theta_bounds = [(0.1, 4.0)]
-        bound_array = theta_bounds[:]
+        computation_necessary = True
 
-        res_array[i, 0] = Optimize(setting=setting).grid_search(
-            bound_list=bound_array, delta=delta)
+        # print(res_array[i, ])
+        if target_util > 0.0:
+            util = single_setting.approximate_utilization()
+            if util < target_util or util > 1:
+                res_array[i, ] = np.nan
+                computation_necessary = False
 
-        bound_array_power = theta_bounds[:]
-        bound_array_power.append((0.9, 4.0))
+        if computation_necessary:
 
-        res_array[i, 1] = OptimizeMitigator(setting_h_mit=setting).grid_search(
-            bound_list=bound_array_power, delta=delta)
+            theta_bounds = [(0.1, 4.0)]
 
-        if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            res_array[i, 2] = perform_lower_exp_dm1_opt(s=start_time +
-                                                        perform_param.value,
-                                                        t=start_time,
-                                                        lamb=param_array[i, 0],
-                                                        rate=param_array[i, 1])
+            res_array[i, 0] = Optimize(setting=single_setting).grid_search(
+                bound_list=theta_bounds, delta=delta)
+
+            res_array[i, 1] = delay_prob_lower_exp_dm1_opt(
+                t=start_time,
+                delay=delay,
+                lamb=param_array[i, 0],
+                rate=param_array[i, 1])
 
             if sample:
-                res_array_sample[i, 0] = res_array[i, 0]
-                res_array_sample[i, 1] = res_array[i, 1]
-                res_array_sample[i, 2] = delay_prob_sample_exp_dm1_opt(
-                    s=start_time + perform_param.value,
+                res_array_sample[i, 1] = delay_prob_sample_exp_dm1_opt(
                     t=start_time,
+                    delay=delay,
                     lamb=param_array[i, 0],
                     rate=param_array[i, 1],
                     sample_size=sample_size)
@@ -234,66 +238,59 @@ def csv_single_param_exp_lower(start_time: int,
                 if sample:
                     res_array_sample[i, ] = np.nan
 
-        elif perform_param.perform_metric == PerformEnum.OUTPUT:
-            res_array[i, 2] = perform_lower_exp_dm1_opt(s=start_time,
-                                                        t=start_time +
-                                                        perform_param.value,
-                                                        lamb=param_array[i, 0],
-                                                        rate=param_array[i, 1])
-
-        else:
-            raise NameError(f"{perform_param.perform_metric} is an infeasible "
-                            f"performance metric")
-
-        if (res_array[i, 1] == inf or res_array[i, 2] == inf
-                or np.isnan(res_array[i, 0]) or np.isnan(res_array[i, 1])
-                or np.isnan(res_array[i, 2])):
+        if np.isnan(res_array[i, 0]) or np.isnan(res_array[i, 1]):
             res_array[i, ] = np.nan
             res_array_sample[i, ] = np.nan
             valid_iterations -= 1
 
     # print("exponential results", res_array[:, 2])
 
-    res_dict = three_col_array_to_results(arrival_enum=ArrivalEnum.DM1,
-                                          res_array=res_array,
-                                          valid_iterations=valid_iterations,
-                                          compare_metric=metric)
+    res_dict = two_col_array_to_results(arrival_enum=ArrivalEnum.DM1,
+                                        param_array=param_array,
+                                        res_array=res_array,
+                                        number_servers=1,
+                                        valid_iterations=valid_iterations,
+                                        compare_metric=metric)
 
     res_dict.update({
         "iterations": total_iterations,
-        "delta_time": perform_param.value,
+        "delta_time": delay,
         "optimization": "grid_search",
-        "metric": ChangeEnum.name,
+        "metric": metric.name,
         "MCDistribution": mc_dist.to_name(),
         "MCParam": mc_dist.param_to_string()
     })
 
-    res_dict_sample = three_col_array_to_results(
-        arrival_enum=ArrivalEnum.DM1,
-        res_array=res_array_sample,
-        valid_iterations=valid_iterations,
-        compare_metric=metric)
+    if sample:
+        res_array_sample[:, 0] = res_array[:, 0]
 
-    res_dict_sample.update({
-        "iterations": total_iterations,
-        "delta_time": perform_param.value,
-        "optimization": "grid_search",
-        "metric": ChangeEnum.name,
-        "MCDistribution": mc_dist.to_name(),
-        "MCParam": mc_dist.param_to_string()
-    })
+        res_dict_sample = two_col_array_to_results(
+            arrival_enum=ArrivalEnum.DM1,
+            param_array=param_array,
+            res_array=res_array_sample,
+            number_servers=1,
+            valid_iterations=valid_iterations,
+            compare_metric=metric)
 
-    with open(
-            f"lower_single_{perform_param.to_name()}_DM1_results"
-            f"_MC{mc_dist.to_name()}_power_exp.csv", 'w') as csv_file:
-        writer = csv.writer(fileobj=csv_file)
+        res_dict_sample.update({
+            "iterations": total_iterations,
+            "delta_time": delay,
+            "optimization": "grid_search",
+            "metric": metric.name,
+            "MCDistribution": mc_dist.to_name(),
+            "MCParam": mc_dist.param_to_string()
+        })
+
+    suffix = f"single_DELAY_PROB_DM1_results" \
+        f"_MC{mc_dist.to_name()}_power_exp.csv"
+
+    with open("lower_" + suffix, 'w') as csv_file:
+        writer = csv.writer(csv_file)
         for key, value in res_dict.items():
             writer.writerow([key, value])
     if sample:
-        with open(
-                f"sample_single_{perform_param.to_name()}_DM1_results"
-                f"_MC{mc_dist.to_name()}_power_exp.csv", 'w') as csv_file:
-            writer = csv.writer(fileobj=csv_file)
+        with open("sample_" + suffix, 'w') as csv_file:
+            writer = csv.writer(csv_file)
             for key, value in res_dict_sample.items():
                 writer.writerow([key, value])
 
@@ -304,25 +301,26 @@ def csv_single_param_exp_lower(start_time: int,
 #     size_array = [TOTAL_ITERATIONS, 2]
 #     # [rows, columns]
 #     mc_dist = MC_UNIF10
-#     perform_param = DELAY10
 #
 #     if mc_dist.mc_enum == MCEnum.UNIFORM:
-#         param_array = np.random.uniform(
-#             low=0, high=mc_dist.param_list[0], size=size_array)
+#         param_array = np.random.uniform(low=0,
+#                                         high=mc_dist.param_list[0],
+#                                         size=size_array)
 #     elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
-#         param_array = np.random.exponential(
-#             scale=mc_dist.param_list[0], size=size_array)
+#         param_array = np.random.exponential(scale=mc_dist.param_list[0],
+#                                             size=size_array)
 #     else:
-#         raise NameError("Distribution parameter {0} is infeasible".format(
-#             mc_dist.mc_enum))
+#         raise NameError(
+#             f"Distribution parameter {mc_dist.mc_enum} is infeasible")
 #
 #     res_array = np.empty([TOTAL_ITERATIONS, 3])
 #     valid_iterations = TOTAL_ITERATIONS
 #
-#     setting = SingleServerPerform(
+#     setting = SingleServerMitPerform(
 #         arr=DM1(lamb=param_array[index, 0]),
 #         const_rate=ConstantRateServer(rate=param_array[index, 1]),
-#         perform_param=perform_param)
+#         perform_param=PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
+#                                        value=DELAY))
 #
 #     theta_bounds = [(0.1, 4.0)]
 #     bound_array = theta_bounds[:]
@@ -336,26 +334,14 @@ def csv_single_param_exp_lower(start_time: int,
 #     res_array[index, 1] = OptimizeMitigator(setting_h_mit=setting).grid_search(
 #         bound_list=bound_array_power, delta=DELTA)
 #
-#     if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-#         res_array[index, 2] = perform_lower_exp_dm1_opt(
-#             s=START + perform_param.value,
-#             t=START,
-#             lamb=param_array[index, 0],
-#             rate=param_array[index, 1])
+#     res_array[index, 2] = delay_prob_lower_exp_dm1_opt(
+#         t=START,
+#         delay=DELAY,
+#         lamb=param_array[index, 0],
+#         rate=param_array[index, 1])
 #
-#         if res_array[index, 0] > 1.0:
-#             res_array[index, ] = np.nan
-#
-#     elif perform_param.perform_metric == PerformEnum.OUTPUT:
-#         res_array[index, 2] = output_lower_exp_dm1_opt(
-#             s=START,
-#             delta_time=perform_param.value,
-#             lamb=param_array[index, 0],
-#             rate=param_array[index, 1])
-#
-#     else:
-#         raise NameError("{0} is an infeasible performance metric".format(
-#             perform_param.perform_metric))
+#     if res_array[index, 0] > 1.0:
+#         res_array[index, ] = np.nan
 #
 #     if (res_array[index, 1] == inf or res_array[index, 2] == inf
 #             or np.isnan(res_array[index, 0]) or np.isnan(res_array[index, 1])
@@ -370,15 +356,14 @@ def csv_single_param_exp_lower(start_time: int,
 #                                    mc_dist: MonteCarloDist) -> dict:
 #     with Pool() as p:
 #         resulting_array, valid_iter = list(
-#             tqdm(
-#                 p.imap(func=helper_parallel, iterable=range(TOTAL_ITERATIONS)),
-#                 total=TOTAL_ITERATIONS))
+#             tqdm(p.imap(func=helper_parallel,
+#                         iterable=range(TOTAL_ITERATIONS)),
+#                  total=TOTAL_ITERATIONS))
 #
-#     res_dict = three_col_array_to_results(
-#         arrival_enum=ArrivalEnum.DM1,
-#         res_array=resulting_array,
-#         valid_iterations=valid_iter,
-#         metric=METRIC)
+#     res_dict = three_col_array_to_results(arrival_enum=ArrivalEnum.DM1,
+#                                           res_array=resulting_array,
+#                                           valid_iterations=valid_iter,
+#                                           compare_metric=CHANGE_METRIC)
 #
 #     res_dict.update({
 #         "iterations": TOTAL_ITERATIONS,
@@ -401,20 +386,14 @@ def csv_single_param_exp_lower(start_time: int,
 if __name__ == '__main__':
     # TOTAL_ITERATIONS = 10**3
     TOTAL_ITERATIONS = 200
-    METRIC = ChangeEnum.RATIO_NEW_REF
+    CHANGE_METRIC = ChangeEnum.RATIO_NEW_REF
 
     DELTA = 0.05
 
     START = 30
 
-    DELTA_TIME = 10
-    DELAY10 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
-                               value=DELTA_TIME)
+    DELAY = 10
 
-    # DELTA_TIME = 4
-    # OUTPUT4 = PerformParameter(
-    #     perform_metric=PerformEnum.OUTPUT, value=DELTA_TIME)
-    #
     # LAMB = 1.0
     # SERVICE_RATE = 1.2
     #
@@ -427,52 +406,46 @@ if __name__ == '__main__':
     #
     # EXP_ARRIVAL = DM1(lamb=LAMB)
     #
-    # DM1_SINGLE = SingleServerPerform(
-    #     arr=EXP_ARRIVAL, const_rate=CR_SERVER, perform_param=OUTPUT4)
+    # DM1_SINGLE = SingleServerMitPerform(
+    #     arr=EXP_ARRIVAL,
+    #     const_rate=CR_SERVER,
+    #     perform_param=PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
+    #                                    value=DELTA_TIME))
     #
     # DM1_STANDARD_OPT = Optimize(
-    #     setting=DM1_SINGLE, print_x=PRINT_X).grid_search(
-    #         bound_list=BOUND_LIST, delta=DELTA)
+    #     setting=DM1_SINGLE, print_x=PRINT_X).grid_search(bound_list=BOUND_LIST,
+    #                                                      delta=DELTA)
     # print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
     #
-    # DM1_POWER_OPT = OptimizeMitigator(
-    #     setting_h_mit=DM1_SINGLE, print_x=PRINT_X).grid_search(
-    #         bound_list=BOUND_LIST_NEW, delta=DELTA)
+    # DM1_POWER_OPT = OptimizeMitigator(setting_h_mit=DM1_SINGLE,
+    #                                   print_x=PRINT_X).grid_search(
+    #                                       bound_list=BOUND_LIST_NEW,
+    #                                       delta=DELTA)
     # print("DM1 Power Opt: ", DM1_POWER_OPT)
     #
-    # DM1_EXP_LOWER_OPT = perform_lower_exp_dm1_opt(
-    #     s=START + DELTA_TIME,
-    #     t=START,
-    #     lamb=LAMB,
-    #     rate=SERVICE_RATE,
-    #     print_x=PRINT_X)
+    # DM1_EXP_LOWER_OPT = delay_prob_lower_exp_dm1_opt(t=START,
+    #                                                  delay=DELTA_TIME,
+    #                                                  lamb=LAMB,
+    #                                                  rate=SERVICE_RATE,
+    #                                                  print_x=PRINT_X)
     # print("DM1 Exp Lower Opt: ", DM1_EXP_LOWER_OPT)
 
     # MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_UNIF10 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[10.0])
     MC_EXP1 = MonteCarloDist(mc_enum=MCEnum.EXPONENTIAL, param_list=[1.0])
 
-    def fun1():
-        print(
-            csv_single_param_exp_lower(start_time=START,
-                                       perform_param=DELAY10,
-                                       mc_dist=MC_UNIF10,
-                                       sample=False))
+    print(
+        csv_single_param_exp(start_time=START,
+                             delay=DELAY,
+                             mc_dist=MC_UNIF10,
+                             target_util=0.0,
+                             total_iterations=10**4,
+                             sample=False))
 
-    def fun2():
-        print(
-            csv_single_param_exp_lower(start_time=START,
-                                       perform_param=DELAY10,
-                                       mc_dist=MC_EXP1,
-                                       sample=False))
-
-    def run_in_parallel(*funcs):
-        proc = []
-        for func in funcs:
-            process_instance = Process(target=func)
-            process_instance.start()
-            proc.append(process_instance)
-        for process_instance in proc:
-            process_instance.join()
-
-    run_in_parallel(fun1, fun2)
+    print(
+        csv_single_param_exp(start_time=START,
+                             delay=DELAY,
+                             mc_dist=MC_EXP1,
+                             target_util=0.0,
+                             total_iterations=10**4,
+                             sample=False))

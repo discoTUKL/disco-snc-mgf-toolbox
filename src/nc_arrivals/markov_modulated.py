@@ -8,7 +8,6 @@ from utils.exceptions import ParameterOutOfBounds
 
 class MMOOFluid(ArrivalDistribution):
     """Continuous Markov Modulated On-Off Traffic"""
-
     def __init__(self, mu: float, lamb: float, burst: float, n=1) -> None:
         self.mu = mu
         self.lamb = lamb
@@ -50,7 +49,6 @@ class MMOOFluid(ArrivalDistribution):
 
 class MMOODisc(ArrivalDistribution):
     """Discrete Markov Modulated On-Off Traffic"""
-
     def __init__(self, stay_on: float, stay_off: float, burst: float,
                  n=1) -> None:
         self.stay_on = stay_on
@@ -78,9 +76,8 @@ class MMOODisc(ArrivalDistribution):
         return True
 
     def average_rate(self) -> float:
-        # TODO: check this again
-        return self.n * self.stay_on / (
-            self.stay_on + self.stay_off) * self.burst
+        return self.n * (1 - self.stay_off) / (2 - self.stay_off -
+                                               self.stay_on) * self.burst
 
     def __str__(self) -> str:
         return f"MMOODisc_stay_on={self.stay_on}_stay_off={self.stay_off}_" \

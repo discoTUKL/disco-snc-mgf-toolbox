@@ -1,4 +1,4 @@
-"""Compare standard bound with h-mitigator."""
+"""Compare standard standard_bound with h-mitigator."""
 
 from math import nan
 from timeit import default_timer as timer
@@ -18,7 +18,7 @@ def compare_mitigator(setting: SettingMitigator,
                       opt_method: OptMethod,
                       number_l=1,
                       print_x=False) -> Tuple[float, float]:
-    """Compare standard_bound with the new Lyapunov bound."""
+    """Compare standard_bound with the new Lyapunov standard_bound."""
 
     if opt_method == OptMethod.GRID_SEARCH:
         theta_bounds = [(0.1, 4.0)]

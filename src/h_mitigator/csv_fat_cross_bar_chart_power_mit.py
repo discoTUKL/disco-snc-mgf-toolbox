@@ -7,6 +7,7 @@ from warnings import warn
 import numpy as np
 import pandas as pd
 
+from bound_evaluation.change_enum import ChangeEnum
 from h_mitigator.compare_mitigator import compare_mitigator
 from h_mitigator.fat_cross_perform import FatCrossPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
@@ -21,11 +22,11 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
                   ser_list: List[ConstantRateServer],
                   perform_param: PerformParameter,
                   opt_method: OptMethod,
-                  metric: str = "relative") -> pd.DataFrame:
+                  change_metric=ChangeEnum.RATIO_REF_NEW) -> pd.DataFrame:
     """Write the data for a special case in a csv."""
     size = len(ar_list)
 
-    bar_matrix = np.zeros(shape=[size, 3])
+    bar_matrix = np.zeros(shape=[size, 4])
     ar_list_copy = ar_list[:]
     ser_list_copy = ser_list[:]
 
@@ -36,25 +37,31 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
                                         ser_list=ser_list_copy,
                                         perform_param=perform_param)
 
+        utilization = format(large_setting.approximate_utilization(), '.3f')
+
         standard_bound, h_mit_bound = compare_mitigator(setting=large_setting,
                                                         opt_method=opt_method,
                                                         number_l=i)
 
+        standard_bound = float(format(standard_bound, '.4f'))
+        h_mit_bound = float(format(h_mit_bound, '.4f'))
+
         if h_mit_bound >= 1:
             warn(f"h-mitigator bound = {h_mit_bound} is >= 1")
 
-        if metric == "relative":
+        if change_metric == ChangeEnum.RATIO_REF_NEW:
             # improvement factor
-            opt_diff = standard_bound / h_mit_bound
+            opt_diff = float(format(standard_bound / h_mit_bound, '.4f'))
 
-        elif metric == "absolute":
+        elif change_metric == ChangeEnum.DIFF_REF_NEW:
             # absolute difference
-            opt_diff = standard_bound - h_mit_bound
+            opt_diff = float(format(standard_bound - h_mit_bound, '.4f'))
 
         else:
-            raise NameError(f"metric parameter = {metric} is infeasible")
+            raise NameError(
+                f"metric parameter = {change_metric} is infeasible")
 
-        bar_matrix[i, ] = [standard_bound, h_mit_bound, opt_diff]
+        bar_matrix[i, ] = [standard_bound, h_mit_bound, opt_diff, utilization]
 
         del ar_list_copy[-1]
         del ser_list_copy[-1]
@@ -64,24 +71,26 @@ def csv_bar_chart(ar_list: List[ArrivalDistribution],
         "number_servers": range(1, size + 1),
         "standard_bound": bar_matrix[:, 0],
         "h_mit_bound": bar_matrix[:, 1],
-        "improvement": bar_matrix[:, 2]
+        "improvement": bar_matrix[:, 2],
+        "utilization": bar_matrix[:, 3],
     })
 
     delay_bounds_df = delay_bounds_df[[
-        "number_servers", "standard_bound", "h_mit_bound", "improvement"
+        "number_servers", "standard_bound", "h_mit_bound", "improvement",
+        "utilization"
     ]]
 
-    delay_bounds_df.to_csv('bar_chart_{0}_{1}_improvement_factor.csv'.format(
-        str(size), opt_method.name),
-                           index=True,
-                           quoting=csv.QUOTE_NONNUMERIC)
+    delay_bounds_df.to_csv(
+        f"bar_chart_{str(size)}_{opt_method.name}_improvement_factor.csv",
+        index=True,
+        quoting=csv.QUOTE_NONNUMERIC)
 
     return delay_bounds_df
 
 
 if __name__ == '__main__':
     DELAY_PROB4 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
-                                   value=4)
+                                   value=8)
     print(
         csv_bar_chart(ar_list=[
             DM1(lamb=0.5),
@@ -94,7 +103,7 @@ if __name__ == '__main__':
             DM1(lamb=8.0)
         ],
                       ser_list=[
-                          ConstantRateServer(rate=4.5),
+                          ConstantRateServer(rate=4.0),
                           ConstantRateServer(rate=2.0),
                           ConstantRateServer(rate=2.0),
                           ConstantRateServer(rate=2.0),
@@ -105,4 +114,4 @@ if __name__ == '__main__':
                       ],
                       perform_param=DELAY_PROB4,
                       opt_method=OptMethod.PATTERN_SEARCH,
-                      metric="relative"))
+                      change_metric=ChangeEnum.RATIO_REF_NEW))

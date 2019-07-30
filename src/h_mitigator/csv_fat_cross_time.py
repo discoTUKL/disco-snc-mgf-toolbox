@@ -6,10 +6,10 @@ from typing import List
 import numpy as np
 from tqdm import tqdm  # Progressbar in for loop
 
-from bound_evaluation.array_to_results import time_array_to_results
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
+from h_mitigator.array_to_results import time_array_to_results
 from h_mitigator.compare_mitigator import compare_time
 from h_mitigator.fat_cross_perform import FatCrossPerform
 from nc_arrivals.arrival_enum import ArrivalEnum
@@ -61,8 +61,8 @@ def csv_fat_cross_time(arrival_enum: ArrivalEnum,
                 ]
 
             else:
-                raise NameError("Arrival parameter {0} is infeasible".format(
-                    arrival_enum.name))
+                raise NameError(f"Arrival parameter {arrival_enum.name} "
+                                f"is infeasible")
 
             service_list = [
                 ConstantRateServer(rate=param_array[

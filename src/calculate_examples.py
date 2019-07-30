@@ -24,7 +24,7 @@ if __name__ == '__main__':
         const_rate=ConstantRateServer(rate=10.0),
         perform_param=OUTPUT_TIME6)
 
-    print(SINGLE_SERVER.bound(param_list=[0.1]))
+    print(SINGLE_SERVER.standard_bound(param_list=[0.1]))
 
     print(SINGLE_SERVER.h_mit_bound(param_l_list=[0.1, 2.7]))
 
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     print(
         FatCrossPerform(arr_list=ARR_LIST1,
                         ser_list=SER_LIST1,
-                        perform_param=DELAY_PROB6).bound([0.3]))
+                        perform_param=DELAY_PROB6).standard_bound([0.3]))
 
     ARR_LIST2: List[ArrivalDistribution] = [
         MMOOFluid(mu=0.5, lamb=0.5, burst=1.5),

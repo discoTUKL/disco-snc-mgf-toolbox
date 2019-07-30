@@ -18,7 +18,6 @@ from utils.setting import Setting
 
 class Optimize(object):
     """Optimize class"""
-
     def __init__(self, setting: Setting, print_x=False) -> None:
         self.setting = setting
         self.print_x = print_x
@@ -32,7 +31,7 @@ class Optimize(object):
         """
 
         try:
-            return self.setting.bound(param_list=param_list)
+            return self.setting.standard_bound(param_list=param_list)
         except (FloatingPointError, OverflowError, ParameterOutOfBounds):
             return inf
 
@@ -43,7 +42,7 @@ class Optimize(object):
 
         :param bound_list: list of tuples of lower and upper bounds
         :param delta:      granularity of the grid search
-        :return:           optimized bound
+        :return:           optimized standard_bound
         """
 
         list_slices = [slice(0)] * len(bound_list)
@@ -58,10 +57,9 @@ class Optimize(object):
         #     full_output=True)
 
         try:
-            grid_res = scipy.optimize.brute(
-                func=self.eval_except,
-                ranges=tuple(list_slices),
-                full_output=True)
+            grid_res = scipy.optimize.brute(func=self.eval_except,
+                                            ranges=tuple(list_slices),
+                                            full_output=True)
         #     use "finish=None" to disable the "after-optimization"
 
         except FloatingPointError:
@@ -82,7 +80,7 @@ class Optimize(object):
         :param start_list: list of starting values
         :param delta:      initial granularity
         :param delta_min:  final granularity
-        :return:           optimized bound
+        :return:           optimized standard_bound
         """
 
         optimum_current = self.eval_except(param_list=start_list)
@@ -137,7 +135,7 @@ class Optimize(object):
         :param simplex:     initial parameter simplex
         :param sd_min:      abort criterion (detect when the changes
                             become very small)
-        :return:            optimized bound
+        :return:            optimized standard_bound
         """
         np.seterr("raise")
         try:
@@ -163,11 +161,11 @@ class Optimize(object):
         Basin Hopping optimization from the sciPy package.
 
         :param start_list:  initial guess
-        :return:            optimized bound
+        :return:            optimized standard_bound
         """
         try:
-            bh_res = scipy.optimize.basinhopping(
-                func=self.eval_except, x0=start_list)
+            bh_res = scipy.optimize.basinhopping(func=self.eval_except,
+                                                 x0=start_list)
 
         except FloatingPointError:
             return inf
@@ -184,7 +182,7 @@ class Optimize(object):
         :param start_list:       initial parameter set
         :param sim_anneal_params:  object that contains all the simulated
                                  annealing-parameters and helper methods
-        :return:                 optimized bound
+        :return:                 optimized standard_bound
         """
 
         param_list = start_list[:]
@@ -241,7 +239,7 @@ class Optimize(object):
         Differential Evolution optimization from the sciPy package.
 
         :param bound_list: list of tuples of lower and upper bounds
-        :return:           optimized bound
+        :return:           optimized standard_bound
         """
         np.seterr("raise")
 
@@ -263,8 +261,9 @@ class Optimize(object):
         np.seterr("raise")
 
         try:
-            bfgs_res = scipy.optimize.minimize(
-                fun=self.eval_except, x0=x0, method="BFGS")
+            bfgs_res = scipy.optimize.minimize(fun=self.eval_except,
+                                               x0=x0,
+                                               method="BFGS")
 
         except FloatingPointError:
             return inf
@@ -282,17 +281,17 @@ class Optimize(object):
 
         :param bound_list: list of tuples of lower and upper bounds
         :param delta:      granularity of the grid search
-        :return:           optimized bound
+        :return:           optimized standard_bound
         """
-        # first = lower bound
-        # second = upper bound
+        # first = lower standard_bound
+        # second = upper standard_bound
 
         param_list = [[]] * len(bound_list)
 
         for index, value in enumerate(bound_list):
-            param_list[index] = np.arange(
-                start=value[0], stop=value[1] + 10**(-10),
-                step=delta).tolist()
+            param_list[index] = np.arange(start=value[0],
+                                          stop=value[1] + 10**(-10),
+                                          step=delta).tolist()
 
         # each entry in the dictionary consists of lower and upper bounds
 
@@ -328,7 +327,7 @@ class Optimize(object):
                                    Nelder-Mead-parameters
         :param sd_min:             abort criterion (detect when the changes
                                    become very small)
-        :return:                   optimized bound
+        :return:                   optimized standard_bound
         """
         number_rows = simplex.shape[0]
         number_columns = simplex.shape[1]
@@ -369,8 +368,8 @@ class Optimize(object):
             best_index: int = np.argmin(y_value)
 
             # compute centroid without worst row
-            centroid = centroid_without_one_row(
-                simplex=simplex, index=worst_index)
+            centroid = centroid_without_one_row(simplex=simplex,
+                                                index=worst_index)
             # print("centroid: ", centroid)
 
             # print("worst_point: ", simplex_start[worst_index])

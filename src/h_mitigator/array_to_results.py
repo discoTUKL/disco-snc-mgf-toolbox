@@ -37,6 +37,7 @@ def two_col_array_to_results(
     opt_improvement = improvement_vec[row_max]
 
     mean_improvement = np.nanmean(improvement_vec)
+    median_improvement = np.nanmedian(improvement_vec)
 
     # number_improved = np.sum(np.greater(res_array[:, 0], res_array[:, 1]))
     number_improved = np.sum(res_array[:, 0] > res_array[:, 1])
@@ -95,10 +96,11 @@ def two_col_array_to_results(
                 f"Arrival parameter={arrival_enum.name} is not implemented")
 
     res_dict.update({
-        "opt standard bound": opt_standard_bound,
-        "opt h-mitigator bound": opt_h_mit_bound,
-        "optimum improvement": opt_improvement,
+        "opt standard standard_bound": opt_standard_bound,
+        "opt h-mitigator standard_bound": opt_h_mit_bound,
+        "optimum improvement": format(opt_improvement, '.3f'),
         "mean improvement": mean_improvement,
+        "median improvement": median_improvement,
         "number improved": number_improved,
         "valid iterations": valid_iterations,
         "share improved": number_improved / valid_iterations
@@ -144,6 +146,10 @@ def three_col_array_to_results(
     mean_exp_improvement = np.nanmean(improvement_vec_2)
     mean_new_improvement = np.nanmean(improvement_vec_news)
 
+    median_power_improvement = np.nanmedian(improvement_vec_1)
+    median_exp_improvement = np.nanmedian(improvement_vec_2)
+    median_new_improvement = np.nanmedian(improvement_vec_news)
+
     # number_improved = np.sum(np.greater(res_array[:, 1], res_array[:, 2]))
     number_improved = np.sum(res_array[:, 1] > res_array[:, 2])
 
@@ -163,10 +169,13 @@ def three_col_array_to_results(
         "opt_exp_bound": opt_exp_bound,
         # "opt_power_improvement": opt_power_improvement,
         # "opt_exp_improvement": opt_exp_improvement,
-        "opt_new_improvement": opt_new_improvement,
+        "opt_new_improvement": format(opt_new_improvement, '.3f'),
         "mean_power_improvement": mean_power_improvement,
         "mean_exp_improvement": mean_exp_improvement,
         "mean_new_improvement": mean_new_improvement,
+        "median_power_improvement": median_power_improvement,
+        "median_exp_improvement": median_exp_improvement,
+        "median_new_improvement": median_new_improvement,
         "number improved": number_improved,
         "valid iterations": valid_iterations,
         "share improved": number_improved / valid_iterations
@@ -180,21 +189,20 @@ def time_array_to_results(arrival_enum: ArrivalEnum, time_array,
     """Writes the array values into a dictionary"""
 
     standard_mean = np.nanmean(time_array[:, 0])
-    lyapunov_mean = np.nanmean(time_array[:, 1])
+    power_mean = np.nanmean(time_array[:, 1])
 
-    ratio = np.divide(time_array[:, 0], time_array[:, 1])
+    ratio = np.divide(time_array[:, 1], time_array[:, 0])
     mean_ratio = np.nanmean(ratio)
 
     time_ratio.update({number_servers: mean_ratio})
 
-    # time_standard = [-2], time_lyapunov = [-1]
     res_dict = {
         "Name": "Value",
         "arrival_distribution": arrival_enum.name,
         "number_servers": number_servers,
-        "standard_mean": standard_mean,
-        "Lyapunov_mean": lyapunov_mean,
-        "mean_fraction": mean_ratio
+        "standard_mean": format(standard_mean, '.4f'),
+        "power_mean": format(power_mean, '.4f'),
+        "mean_fraction": format(mean_ratio, '.3f')
     }
 
     return res_dict

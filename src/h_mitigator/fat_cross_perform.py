@@ -15,7 +15,6 @@ from utils.perform_parameter import PerformParameter
 
 class FatCrossPerform(SettingMitigator):
     """Fat tree cross topology with the Simple topology as a sub-problem."""
-
     def __init__(self, arr_list: List[ArrivalDistribution],
                  ser_list: List[ConstantRateServer],
                  perform_param: PerformParameter) -> None:
@@ -29,7 +28,7 @@ class FatCrossPerform(SettingMitigator):
         self.perform_param = perform_param
         self.number_servers = len(ser_list)
 
-    def bound(self, param_list: List[float]) -> float:
+    def standard_bound(self, param_list: List[float]) -> float:
         theta = param_list[0]
 
         output_list: List[Arrival] = [

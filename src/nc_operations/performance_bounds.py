@@ -17,16 +17,23 @@ def backlog_prob(arr: Arrival,
                  indep=True,
                  p=1.0,
                  use_standard=True) -> float:
-    """Implements stationary bound method"""
+    """Implements stationary standard_bound method"""
     if indep:
         p = 1.0
 
-    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    q = get_q(p=p, indep=indep)
+
+    stability_check(arr=arr,
+                    ser=ser,
+                    theta=theta,
+                    indep=indep,
+                    p=p,
+                    q=q)
     sigma_sum, rho_diff = get_sigma_rho(arr=arr,
                                         ser=ser,
                                         theta=theta,
                                         indep=indep,
-                                        p=p)
+                                        p=p, q=q)
 
     try:
         if not use_standard:
@@ -56,16 +63,23 @@ def backlog(arr: Arrival,
             indep=True,
             p=1.0,
             use_standard=True) -> float:
-    """Implements stationary bound method"""
+    """Implements stationary standard_bound method"""
     if indep:
         p = 1.0
 
-    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    q = get_q(p=p, indep=indep)
+
+    stability_check(arr=arr,
+                    ser=ser,
+                    theta=theta,
+                    indep=indep,
+                    p=p,
+                    q=q)
     sigma_sum, rho_diff = get_sigma_rho(arr=arr,
                                         ser=ser,
                                         theta=theta,
                                         indep=indep,
-                                        p=p)
+                                        p=p, q=q)
 
     if not use_standard:
         if arr.is_discrete():
@@ -89,18 +103,23 @@ def delay_prob(arr: Arrival,
                indep=True,
                p=1.0,
                use_standard=True) -> float:
-    """Implements stationary bound method"""
+    """Implements stationary standard_bound method"""
     if indep:
         p = 1.0
 
-    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    q = get_q(p=p, indep=indep)
+
+    stability_check(arr=arr,
+                    ser=ser,
+                    theta=theta,
+                    indep=indep,
+                    p=p,
+                    q=q)
     sigma_sum, rho_diff = get_sigma_rho(arr=arr,
                                         ser=ser,
                                         theta=theta,
                                         indep=indep,
-                                        p=p)
-
-    q = get_q(p=p, indep=indep)
+                                        p=p, q=q)
 
     try:
         if not use_standard:
@@ -131,18 +150,23 @@ def delay(arr: Arrival,
           indep=True,
           p=1.0,
           use_standard=True) -> float:
-    """Implements stationary bound method"""
+    """Implements stationary standard_bound method"""
     if indep:
         p = 1.0
 
-    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    q = get_q(p=p, indep=indep)
+
+    stability_check(arr=arr,
+                    ser=ser,
+                    theta=theta,
+                    indep=indep,
+                    p=p,
+                    q=q)
     sigma_sum, rho_diff = get_sigma_rho(arr=arr,
                                         ser=ser,
                                         theta=theta,
                                         indep=indep,
-                                        p=p)
-
-    q = get_q(p=p, indep=indep)
+                                        p=p, q=q)
 
     if not use_standard:
         if arr.is_discrete():
@@ -166,16 +190,23 @@ def output(arr: Arrival,
            delta_time: int,
            indep=True,
            p=1.0) -> float:
-    """Implements stationary bound method"""
+    """Implements stationary standard_bound method"""
     if indep:
         p = 1.0
 
-    stability_check(arr=arr, ser=ser, theta=theta, indep=indep, p=p)
+    q = get_q(p=p, indep=indep)
+
+    stability_check(arr=arr,
+                    ser=ser,
+                    theta=theta,
+                    indep=indep,
+                    p=p,
+                    q=q)
     sigma_sum, rho_diff = get_sigma_rho(arr=arr,
                                         ser=ser,
                                         theta=theta,
                                         indep=indep,
-                                        p=p)
+                                        p=p, q=q)
 
     try:
         if arr.is_discrete():

@@ -1,48 +1,13 @@
 """Typical Queueing Theory Processes"""
 
 from math import exp, log
-from abc import abstractmethod
 
 from nc_arrivals.arrival_distribution import ArrivalDistribution
+from nc_arrivals.iid_arrivals import IIDArrivals
 from utils.exceptions import ParameterOutOfBounds
 
 
-class IID(ArrivalDistribution):
-    """Abstract class for arrival processes that are of
-        iid."""
-
-    def sigma(self, theta=0.0) -> float:
-        """
-
-        :param theta: mgf parameter
-        :return:      sigma(theta)
-        """
-        return 0.0
-
-    @abstractmethod
-    def rho(self, theta: float) -> float:
-        """
-        rho(theta)
-        :param theta: mgf parameter
-        """
-        pass
-
-    def is_discrete(self) -> bool:
-        """
-        :return True if the arrival distribution is discrete, False if not
-        """
-        return True
-
-    @abstractmethod
-    def average_rate(self) -> float:
-        pass
-
-    @abstractmethod
-    def to_value(self, number=1, show_n=False) -> str:
-        pass
-
-
-class DM1(IID):
+class DM1(IIDArrivals):
     """Corresponds to D/M/1 queue."""
 
     def __init__(self, lamb: float, n=1) -> None:
@@ -153,7 +118,7 @@ class MM1(ArrivalDistribution):
                                                     str(self.mu))
 
 
-class DPoisson1(IID):
+class DPoisson1(IIDArrivals):
     """Corresponds to D/Poisson/1 queue."""
 
     def __init__(self, lamb: float, n=1) -> None:

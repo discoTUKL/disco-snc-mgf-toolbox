@@ -15,7 +15,6 @@ from utils.perform_parameter import PerformParameter
 
 class SingleServerMitPerform(SettingMitigator):
     """Single server topology class."""
-
     def __init__(self,
                  arr: ArrivalDistribution,
                  const_rate: ConstantRateServer,
@@ -33,7 +32,7 @@ class SingleServerMitPerform(SettingMitigator):
         self.perform_param = perform_param
         self.indep = indep
 
-    def bound(self, param_list: List[float]) -> float:
+    def standard_bound(self, param_list: List[float]) -> float:
         theta = param_list[0]
 
         if self.indep:
@@ -89,7 +88,7 @@ if __name__ == '__main__':
     EX_OUTPUT = SingleServerMitPerform(arr=EXP_ARRIVAL1,
                                        const_rate=CONST_RATE16,
                                        perform_param=OUTPUT_4)
-    print(EX_OUTPUT.bound(param_list=[0.5]))
+    print(EX_OUTPUT.standard_bound(param_list=[0.5]))
     print(EX_OUTPUT.h_mit_bound(param_l_list=[0.5, 1.2]))
 
     DELAY_PROB_4 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
@@ -97,5 +96,5 @@ if __name__ == '__main__':
     EX_DELAY_PROB = SingleServerMitPerform(arr=EXP_ARRIVAL1,
                                            const_rate=CONST_RATE16,
                                            perform_param=DELAY_PROB_4)
-    print(EX_DELAY_PROB.bound(param_list=[0.5]))
+    print(EX_DELAY_PROB.standard_bound(param_list=[0.5]))
     print(EX_DELAY_PROB.h_mit_bound(param_l_list=[0.5, 1.2]))

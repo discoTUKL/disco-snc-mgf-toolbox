@@ -32,11 +32,11 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return:      sigma(theta)
         """
+
         arr_sigma_p_theta = self.arr.sigma(self.p * theta)
         ser_sigma_q_theta = self.ser.sigma(self.q * theta)
 
         arr_rho_p_theta = self.arr.rho(self.p * theta)
-
         k_sig = -log(
             1 - exp(theta *
                     (arr_rho_p_theta - self.ser.rho(self.q * theta)))) / theta
@@ -62,7 +62,8 @@ class Deconvolve(Arrival):
                         ser=self.ser,
                         theta=theta,
                         indep=self.indep,
-                        p=self.p)
+                        p=self.p,
+                        q=self.q)
 
         return arr_rho_p_theta
 
@@ -203,8 +204,8 @@ class AggregateList(Arrival):
         res = 0.0
 
         if self.indep:
-            for i in range(len(self.arr_list)):
-                rho_i = self.arr_list[i].rho(theta)
+            for arrival in self.arr_list:
+                rho_i = arrival.rho(theta)
                 if rho_i < 0:
                     raise ParameterOutOfBounds("The rhos must be >= 0")
 
@@ -265,24 +266,24 @@ class AggregateTwo(Arrival):
 if __name__ == '__main__':
     from timeit import default_timer as timer
     from nc_arrivals.regulated_arrivals import TokenBucketConstant
-    ar_list = [
+    ARR_LIST = [
         TokenBucketConstant(sigma_single=1.0, rho_single=1.5, n=8),
         TokenBucketConstant(sigma_single=2.0, rho_single=3.0, n=10)
     ]
 
-    start = timer()
-    agg_list = AggregateList(arr_list=ar_list, p_list=[], indep=True)
-    stop = timer()
-    time_list = stop - start
-    start = timer()
-    agg_two = AggregateTwo(arr1=ar_list[0], arr2=ar_list[1], indep=True)
-    stop = timer()
-    time_two = stop - start
+    START = timer()
+    AGG_LIST = AggregateList(arr_list=ARR_LIST, p_list=[], indep=True)
+    STOP = timer()
+    TIME_LIST = STOP - START
+    START = timer()
+    AGG_TWO = AggregateTwo(arr1=ARR_LIST[0], arr2=ARR_LIST[1], indep=True)
+    STOP = timer()
+    TIME_TWO = STOP - START
 
-    print(f"sum sigma list = {agg_list.sigma(theta=1.0)}")
-    print(f"sum rho list = {agg_list.rho(theta=1.0)}")
-    print(f"time sigma two = {agg_two.sigma(theta=1.0)}")
-    print(f"time rho two = {agg_two.rho(theta=1.0)}")
+    print(f"sum sigma list = {AGG_LIST.sigma(theta=1.0)}")
+    print(f"sum rho list = {AGG_LIST.rho(theta=1.0)}")
+    print(f"time sigma two = {AGG_TWO.sigma(theta=1.0)}")
+    print(f"time rho two = {AGG_TWO.rho(theta=1.0)}")
 
-    print(f"time list = {time_list} s")
-    print(f"time two = {time_two} s")
+    print(f"time list = {TIME_LIST} s")
+    print(f"time two = {TIME_TWO} s")

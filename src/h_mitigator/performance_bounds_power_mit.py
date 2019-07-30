@@ -14,19 +14,18 @@ def output_power_mit(arr: Arrival,
                      theta: float,
                      delta_time: int,
                      l_power=1.0) -> float:
-    """Implements stationary bound method"""
+    """Implements stationary standard_bound method"""
     if l_power < 1.0:
         l_power = 1.0
         # raise ParameterOutOfBounds("l must be >= 1")
 
     l_theta = l_power * theta
 
-    stability_check(arr=arr, ser=ser, theta=l_theta, indep=True, p=1.0)
+    stability_check(arr=arr, ser=ser, theta=l_theta, indep=True)
     sigma_l_sum, rho_l_diff = get_sigma_rho(arr=arr,
                                             ser=ser,
                                             theta=l_theta,
-                                            indep=True,
-                                            p=1.0)
+                                            indep=True)
 
     if arr.is_discrete():
         numerator = exp(theta * arr.rho(theta=l_theta) * delta_time) * exp(
@@ -50,19 +49,18 @@ def delay_prob_power_mit(arr: Arrival,
                          theta: float,
                          delay: int,
                          l_power=1.0) -> float:
-    """Implements stationary bound method"""
+    """Implements stationary standard_bound method"""
     if l_power < 1.0:
         l_power = 1.0
         # raise ParameterOutOfBounds("l must be >= 1")
 
     l_theta = l_power * theta
 
-    stability_check(arr=arr, ser=ser, theta=l_theta, indep=True, p=1.0)
+    stability_check(arr=arr, ser=ser, theta=l_theta, indep=True)
     sigma_l_sum, rho_l_diff = get_sigma_rho(arr=arr,
                                             ser=ser,
                                             theta=l_theta,
-                                            indep=True,
-                                            p=1.0)
+                                            indep=True)
 
     if not arr.is_discrete():
         warn("discretized version is not implemented")

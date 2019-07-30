@@ -7,9 +7,8 @@ from typing import List
 class Setting(ABC):
     """Each setting (topology) has to implements methods to obtain
     the bounds"""
-
     @abstractmethod
-    def bound(self, param_list: List[float]) -> float:
+    def standard_bound(self, param_list: List[float]) -> float:
         """
         standard bound
 

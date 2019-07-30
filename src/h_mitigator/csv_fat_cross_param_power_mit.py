@@ -5,11 +5,11 @@ import csv
 import numpy as np
 from tqdm import tqdm
 
-from bound_evaluation.array_to_results import two_col_array_to_results
 from bound_evaluation.change_enum import ChangeEnum
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
+from h_mitigator.array_to_results import two_col_array_to_results
 from h_mitigator.compare_mitigator import compare_mitigator
 from h_mitigator.fat_cross_perform import FatCrossPerform
 from nc_arrivals.arrival_enum import ArrivalEnum

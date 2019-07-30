@@ -32,7 +32,7 @@ def get_q(p: float, indep: bool) -> float:
 def get_p_n(p_list: List[float], indep: bool) -> float:
     """
     :param p_list: first p_1, ..., p_n in generalized Hoelder inequality
-    :param indep: if true, all p_i = 1, else 1 / (sum p_i) = 1
+    :param indep: if true, all p_i = 1, else sum (1 / p_i) = 1
     :return: last p_n
     """
     if indep:

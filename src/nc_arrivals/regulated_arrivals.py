@@ -49,15 +49,14 @@ class RegulatedArrivals(ArrivalDistribution):
                 str(number), str(self.sigma_single), str(self.rho_single),
                 str(self.n))
         else:
-            return "sigma={0}_rho={1}".format(
-                str(self.sigma_single), str(self.rho_single))
+            return f"sigma={str(self.sigma_single)}_rho={str(self.rho_single)}"
 
 
 class TokenBucketConstant(RegulatedArrivals):
     """Primitive TokenBucket (quasi deterministic and independent of theta)"""
 
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
-        super().__init__(sigma_single, rho_single, n)
+        super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
 
     def sigma(self, theta=0.0) -> float:
         return self.n * self.sigma_single
@@ -71,14 +70,14 @@ class LeakyBucketMassOne(RegulatedArrivals):
     """Leaky Bucket according to Massoulie using directly Lemma 2"""
 
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
-        super().__init__(sigma_single, rho_single, n)
+        super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
 
     def sigma(self, theta: float) -> float:
         if theta <= 0:
             raise ParameterOutOfBounds(f"theta={theta} must be > 0")
 
-        return self.n * log(0.5 * (exp(theta * self.sigma_single) + exp(
-            -theta * self.sigma_single))) / theta
+        return self.n * log(0.5 * (exp(theta * self.sigma_single) +
+                                   exp(-theta * self.sigma_single))) / theta
 
     def __str__(self) -> str:
         return f"MassOne_sigma={self.sigma_single}_" \
@@ -90,7 +89,7 @@ class LeakyBucketMassTwo(RegulatedArrivals):
     """Exact Leaky Bucket according to Massoulie after MGF transformation"""
 
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
-        super().__init__(sigma_single, rho_single, n)
+        super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
 
     def sigma(self, theta: float) -> float:
         if theta <= 0:
