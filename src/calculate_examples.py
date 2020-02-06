@@ -1,5 +1,4 @@
 """Small examples to play with."""
-# TODO: Add .to_name-method to classes
 
 from typing import List
 
