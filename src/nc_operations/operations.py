@@ -13,7 +13,6 @@ from utils.helper_functions import get_p_n, get_q, is_equal
 
 class Deconvolve(Arrival):
     """Deconvolution class."""
-
     def __init__(self, arr: Arrival, ser: Server, indep=True, p=1.0) -> None:
         self.arr = arr
         self.ser = ser
@@ -33,19 +32,18 @@ class Deconvolve(Arrival):
         :return:      sigma(theta)
         """
 
-        arr_sigma_p_theta = self.arr.sigma(self.p * theta)
-        ser_sigma_q_theta = self.ser.sigma(self.q * theta)
+        arr_sigma_p = self.arr.sigma(self.p * theta)
+        ser_sigma_q = self.ser.sigma(self.q * theta)
 
-        arr_rho_p_theta = self.arr.rho(self.p * theta)
-        k_sig = -log(
-            1 - exp(theta *
-                    (arr_rho_p_theta - self.ser.rho(self.q * theta)))) / theta
+        arr_rho_p = self.arr.rho(self.p * theta)
+        k_sig = -log(1 -
+                     exp(theta *
+                         (arr_rho_p - self.ser.rho(self.q * theta)))) / theta
 
         if self.arr.is_discrete():
-            return arr_sigma_p_theta + ser_sigma_q_theta + k_sig
+            return arr_sigma_p + ser_sigma_q + k_sig
         else:
-            return arr_sigma_p_theta + ser_sigma_q_theta + arr_rho_p_theta + \
-                   k_sig
+            return arr_sigma_p + ser_sigma_q + arr_rho_p + k_sig
 
     def rho(self, theta: float) -> float:
         """
@@ -53,9 +51,9 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return: rho(theta)
         """
-        arr_rho_p_theta = self.arr.rho(self.p * theta)
+        arr_rho_p = self.arr.rho(self.p * theta)
 
-        if arr_rho_p_theta < 0 or self.ser.rho(self.q * theta) < 0:
+        if arr_rho_p < 0 or self.ser.rho(self.q * theta) < 0:
             raise ParameterOutOfBounds("The rhos must be >= 0")
 
         stability_check(arr=self.arr,
@@ -65,7 +63,7 @@ class Deconvolve(Arrival):
                         p=self.p,
                         q=self.q)
 
-        return arr_rho_p_theta
+        return arr_rho_p
 
     def is_discrete(self):
         return self.arr.is_discrete()
@@ -73,14 +71,7 @@ class Deconvolve(Arrival):
 
 class Convolve(Server):
     """Convolution class."""
-
-    def __init__(self,
-                 ser1: Server,
-                 ser2: Server,
-                 indep=True,
-                 p=1.0,
-                 alter=False,
-                 delta=1e-05) -> None:
+    def __init__(self, ser1: Server, ser2: Server, indep=True, p=1.0) -> None:
         self.ser1 = ser1
         self.ser2 = ser2
         self.indep = indep
@@ -91,7 +82,63 @@ class Convolve(Server):
             self.p = p
 
         self.q = get_q(p=p, indep=indep)
-        self.alter = alter
+
+    def sigma(self, theta: float) -> float:
+        if isinstance(self.ser1, ConstantRateServer) and isinstance(
+                self.ser2, ConstantRateServer):
+            return 0.0
+
+        ser_1_sigma_p = self.ser1.sigma(self.p * theta)
+        ser_2_sigma_q = self.ser2.sigma(self.q * theta)
+
+        ser_1_rho_p = self.ser1.rho(self.p * theta)
+        ser_2_rho_q = self.ser2.rho(self.q * theta)
+
+        if not is_equal(ser_1_rho_p, ser_2_rho_q):
+            k_sig = -log(1 -
+                         exp(-theta * abs(ser_1_rho_p - ser_2_rho_q))) / theta
+
+            return ser_1_sigma_p + ser_2_sigma_q + k_sig
+
+        else:
+            return ser_1_sigma_p + ser_2_sigma_q
+
+    def rho(self, theta: float) -> float:
+        if isinstance(self.ser1, ConstantRateServer) and isinstance(
+                self.ser2, ConstantRateServer):
+            return min(self.ser1.rate, self.ser2.rate)
+
+        ser_1_rho_p = self.ser1.rho(self.p * theta)
+        ser_2_rho_q = self.ser2.rho(self.q * theta)
+
+        if ser_1_rho_p < 0 or ser_2_rho_q < 0:
+            raise ParameterOutOfBounds("The rhos must be > 0")
+
+        if not is_equal(ser_1_rho_p, ser_2_rho_q):
+            return min(ser_1_rho_p, ser_2_rho_q)
+
+        else:
+            return ser_1_rho_p - 1 / theta
+
+
+class ConvolveAlter(Server):
+    """Convolution class."""
+    def __init__(self,
+                 ser1: Server,
+                 ser2: Server,
+                 delta: float,
+                 indep=True,
+                 p=1.0) -> None:
+        self.ser1 = ser1
+        self.ser2 = ser2
+        self.indep = indep
+
+        if indep:
+            self.p = 1.0
+        else:
+            self.p = p
+
+        self.q = get_q(p=p, indep=indep)
         self.delta = delta
 
     def sigma(self, theta: float) -> float:
@@ -99,49 +146,42 @@ class Convolve(Server):
                 self.ser2, ConstantRateServer):
             return 0.0
 
-        ser_1_sigma_p_theta = self.ser1.sigma(self.p * theta)
-        ser_2_sigma_q_theta = self.ser2.sigma(self.q * theta)
+        ser_1_sigma_p = self.ser1.sigma(self.p * theta)
+        ser_2_sigma_q = self.ser2.sigma(self.q * theta)
 
-        ser_1_rho_p_theta = self.ser1.rho(self.p * theta)
-        ser_2_rho_q_theta = self.ser2.rho(self.q * theta)
+        ser_1_rho_p = self.ser1.rho(self.p * theta)
+        ser_2_rho_q = self.ser2.rho(self.q * theta)
 
-        if not is_equal(ser_1_rho_p_theta, ser_2_rho_q_theta):
-            k_sig = -log(1 - exp(-theta * abs(ser_1_rho_p_theta -
-                                              ser_2_rho_q_theta))) / theta
+        if not is_equal(ser_1_rho_p, ser_2_rho_q):
+            k_sig = -log(1 -
+                         exp(-theta * abs(ser_1_rho_p - ser_2_rho_q))) / theta
 
-            return ser_1_sigma_p_theta + ser_2_sigma_q_theta + k_sig
+            return ser_1_sigma_p + ser_2_sigma_q + k_sig
 
         else:
-            if self.alter:
-                return ser_1_sigma_p_theta + ser_2_sigma_q_theta - log(
-                    1 - exp(-theta * self.delta))
-
-            return ser_1_sigma_p_theta + ser_2_sigma_q_theta
+            return ser_1_sigma_p + ser_2_sigma_q - log(1 - exp(-theta *
+                                                               self.delta))
 
     def rho(self, theta: float) -> float:
         if isinstance(self.ser1, ConstantRateServer) and isinstance(
                 self.ser2, ConstantRateServer):
             return min(self.ser1.rate, self.ser2.rate)
 
-        ser_1_rho_p_theta = self.ser1.rho(self.p * theta)
-        ser_2_rho_q_theta = self.ser2.rho(self.q * theta)
+        ser_1_rho_p = self.ser1.rho(self.p * theta)
+        ser_2_rho_q = self.ser2.rho(self.q * theta)
 
-        if ser_1_rho_p_theta < 0 or ser_2_rho_q_theta < 0:
+        if ser_1_rho_p < 0 or ser_2_rho_q < 0:
             raise ParameterOutOfBounds("The rhos must be > 0")
 
-        if not is_equal(ser_1_rho_p_theta, ser_2_rho_q_theta):
-            return min(ser_1_rho_p_theta, ser_2_rho_q_theta)
+        if not is_equal(ser_1_rho_p, ser_2_rho_q):
+            return min(ser_1_rho_p, ser_2_rho_q)
 
         else:
-            if self.alter:
-                return ser_1_rho_p_theta - self.delta
-
-            return ser_1_rho_p_theta - 1 / theta
+            return ser_1_rho_p - self.delta
 
 
 class Leftover(Server):
-    """Subtract cross flow = nc_operations.Leftover class."""
-
+    """Class to compute the leftover service."""
     def __init__(self, ser: Server, arr: Arrival, indep=True, p=1.0) -> None:
         self.arr = arr
         self.ser = ser
@@ -169,7 +209,6 @@ class Leftover(Server):
 
 class AggregateList(Arrival):
     """Multiple (list) aggregation class."""
-
     def __init__(self,
                  arr_list: List[Arrival],
                  p_list: List[float],
@@ -233,8 +272,10 @@ class AggregateList(Arrival):
 
 class AggregateTwo(Arrival):
     """Multiple (list) aggregation class."""
-
-    def __init__(self, arr1: Arrival, arr2: Arrival, indep=True,
+    def __init__(self,
+                 arr1: Arrival,
+                 arr2: Arrival,
+                 indep=True,
                  p=1.0) -> None:
         self.arr1 = arr1
         self.arr2 = arr2

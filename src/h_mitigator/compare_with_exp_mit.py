@@ -12,13 +12,13 @@ from bound_evaluation.change_enum import ChangeEnum
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from h_mitigator.array_to_results import two_col_array_to_results
+from h_mitigator.arrivals_time_dep import expect_dm1
+from h_mitigator.server_time_dep import expect_const_rate
 from h_mitigator.single_server_mit_perform import SingleServerMitPerform
 from nc_arrivals.arrival_enum import ArrivalEnum
-from nc_arrivals.arrivals_alternative import expect_dm1
 from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
-from nc_server.server_alternative import expect_const_rate
 from optimization.optimize import Optimize
 from utils.exceptions import ParameterOutOfBounds
 from utils.perform_parameter import PerformParameter
@@ -198,8 +198,8 @@ def csv_single_param_exp(start_time: int,
 
     for i in tqdm(range(total_iterations)):
         single_setting = SingleServerMitPerform(
-            arr=DM1(lamb=param_array[i, 0]),
-            const_rate=ConstantRateServer(rate=param_array[i, 1]),
+            arr_list=[DM1(lamb=param_array[i, 0])],
+            ser_list=[ConstantRateServer(rate=param_array[i, 1])],
             perform_param=PerformParameter(
                 perform_metric=PerformEnum.DELAY_PROB, value=delay))
 
@@ -219,11 +219,11 @@ def csv_single_param_exp(start_time: int,
             res_array[i, 0] = Optimize(setting=single_setting).grid_search(
                 bound_list=theta_bounds, delta=delta)
 
-            res_array[i, 1] = delay_prob_lower_exp_dm1_opt(
-                t=start_time,
-                delay=delay,
-                lamb=param_array[i, 0],
-                rate=param_array[i, 1])
+            res_array[i,
+                      1] = delay_prob_lower_exp_dm1_opt(t=start_time,
+                                                        delay=delay,
+                                                        lamb=param_array[i, 0],
+                                                        rate=param_array[i, 1])
 
             if sample:
                 res_array_sample[i, 1] = delay_prob_sample_exp_dm1_opt(

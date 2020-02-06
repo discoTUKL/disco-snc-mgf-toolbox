@@ -34,30 +34,29 @@ def csv_fat_cross_time(arrival_enum: ArrivalEnum,
 
     time_ratio = {"Number_of_servers": "Ratio"}
 
-    for num_serv in list_number_servers:
-        print(f"number of servers = {num_serv}")
+    for number_servers in list_number_servers:
+        print(f"number of servers = {number_servers}")
         # 1 Parameter for service
 
-        size_array = [
-            total_iterations, (arrival_enum.number_parameters() + 1) * num_serv
-        ]
-        # [rows, columns]
-
-        param_array = mc_enum_to_dist(mc_dist=mc_dist, size=size_array)
+        param_array = mc_enum_to_dist(arrival_enum=arrival_enum,
+                                      mc_dist=mc_dist,
+                                      number_flows=number_servers,
+                                      number_servers=number_servers,
+                                      total_iterations=total_iterations)
 
         time_array = np.empty([total_iterations, 2])
 
         for i in tqdm(range(total_iterations)):
             if arrival_enum == ArrivalEnum.DM1:
                 arrive_list = [
-                    DM1(lamb=param_array[i, j]) for j in range(num_serv)
+                    DM1(lamb=param_array[i, j]) for j in range(number_servers)
                 ]
             elif arrival_enum == ArrivalEnum.MMOOFluid:
                 arrive_list = [
                     MMOOFluid(mu=param_array[i, j],
-                              lamb=param_array[i, num_serv + j],
-                              burst=param_array[i, 2 * num_serv + j])
-                    for j in range(num_serv)
+                              lamb=param_array[i, number_servers + j],
+                              burst=param_array[i, 2 * number_servers + j])
+                    for j in range(number_servers)
                 ]
 
             else:
@@ -65,9 +64,11 @@ def csv_fat_cross_time(arrival_enum: ArrivalEnum,
                                 f"is infeasible")
 
             service_list = [
-                ConstantRateServer(rate=param_array[
-                    i, arrival_enum.number_parameters() * num_serv + j])
-                for j in range(num_serv)
+                ConstantRateServer(
+                    rate=param_array[i,
+                                     arrival_enum.number_parameters() *
+                                     number_servers + j])
+                for j in range(number_servers)
             ]
 
             fat_cross_setting = FatCrossPerform(arr_list=arrive_list,
@@ -88,12 +89,12 @@ def csv_fat_cross_time(arrival_enum: ArrivalEnum,
                 time_array[i, 0], time_array[i, 1] = compare_time(
                     setting=fat_cross_setting,
                     opt_method=opt_method,
-                    number_l=num_serv - 1)
+                    number_l=number_servers - 1)
 
         print(
             time_array_to_results(arrival_enum=arrival_enum,
                                   time_array=time_array,
-                                  number_servers=num_serv,
+                                  number_servers=number_servers,
                                   time_ratio=time_ratio))
 
     filename = (f"time_{perform_param.to_name()}_{arrival_enum.name}"

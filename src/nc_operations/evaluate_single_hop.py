@@ -9,7 +9,7 @@ from utils.perform_parameter import PerformParameter
 
 
 def evaluate_single_hop(foi: ArrivalDistribution,
-                        s_net: Server,
+                        s_e2e: Server,
                         theta: float,
                         perform_param: PerformParameter,
                         indep=True,
@@ -20,7 +20,7 @@ def evaluate_single_hop(foi: ArrivalDistribution,
 
     if perform_param.perform_metric == PerformEnum.BACKLOG_PROB:
         return backlog_prob(arr=foi,
-                            ser=s_net,
+                            ser=s_e2e,
                             theta=theta,
                             backlog_value=perform_param.value,
                             indep=indep,
@@ -29,7 +29,7 @@ def evaluate_single_hop(foi: ArrivalDistribution,
 
     elif perform_param.perform_metric == PerformEnum.BACKLOG:
         return backlog(arr=foi,
-                       ser=s_net,
+                       ser=s_e2e,
                        theta=theta,
                        prob_b=perform_param.value,
                        indep=indep,
@@ -38,7 +38,7 @@ def evaluate_single_hop(foi: ArrivalDistribution,
 
     elif perform_param.perform_metric == PerformEnum.DELAY_PROB:
         return delay_prob(arr=foi,
-                          ser=s_net,
+                          ser=s_e2e,
                           theta=theta,
                           delay_value=perform_param.value,
                           indep=indep,
@@ -47,7 +47,7 @@ def evaluate_single_hop(foi: ArrivalDistribution,
 
     elif perform_param.perform_metric == PerformEnum.DELAY:
         return delay(arr=foi,
-                     ser=s_net,
+                     ser=s_e2e,
                      theta=theta,
                      prob_d=perform_param.value,
                      indep=indep,
@@ -56,7 +56,7 @@ def evaluate_single_hop(foi: ArrivalDistribution,
 
     elif perform_param.perform_metric == PerformEnum.OUTPUT:
         return output(arr=foi,
-                      ser=s_net,
+                      ser=s_e2e,
                       theta=theta,
                       delta_time=perform_param.value,
                       indep=indep,

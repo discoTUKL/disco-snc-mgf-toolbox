@@ -4,7 +4,7 @@ from typing import List
 
 import pandas as pd
 
-from bound_evaluation.data_frame_to_csv import data_frame_to_csv
+from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
 from h_mitigator.fat_cross_perform import FatCrossPerform
 from h_mitigator.optimize_mitigator import OptimizeMitigator
 from nc_arrivals.arrival_distribution import ArrivalDistribution
@@ -38,10 +38,10 @@ def fat_cross_power_mit_df(arr_list: List[ArrivalDistribution],
     h_mit_bound = [0.0] * len(perform_param_list)
 
     for i in range(len(perform_param_list)):
-        perform_param = perform_param_list.get_parameter_at_i(i)
-        setting = FatCrossPerform(arr_list=arr_list,
-                                  ser_list=ser_list,
-                                  perform_param=perform_param)
+        setting = FatCrossPerform(
+            arr_list=arr_list,
+            ser_list=ser_list,
+            perform_param=perform_param_list.get_parameter_at_i(i))
 
         if opt_method == OptMethod.GRID_SEARCH:
             standard_bound[i] = Optimize(setting=setting).grid_search(
@@ -88,59 +88,59 @@ if __name__ == '__main__':
                                        values_list=range(4, 11))
 
     print(
-        data_frame_to_csv(prefix="simple_setting_",
-                          data_frame_creator=fat_cross_power_mit_df,
-                          arr_list=[DM1(lamb=0.2),
-                                    DM1(lamb=8.0)],
-                          ser_list=[
-                              ConstantRateServer(rate=8.0),
-                              ConstantRateServer(rate=0.2)
-                          ],
-                          perform_param_list=DELAY_PROB_LIST,
-                          opt_method=OptMethod.GRID_SEARCH))
+        perform_param_list_to_csv(prefix="simple_setting_",
+                                  data_frame_creator=fat_cross_power_mit_df,
+                                  arr_list=[DM1(lamb=0.2),
+                                            DM1(lamb=8.0)],
+                                  ser_list=[
+                                      ConstantRateServer(rate=8.0),
+                                      ConstantRateServer(rate=0.2)
+                                  ],
+                                  perform_param_list=DELAY_PROB_LIST,
+                                  opt_method=OptMethod.GRID_SEARCH))
 
     print(
-        data_frame_to_csv(prefix="simple_setting_",
-                          data_frame_creator=fat_cross_power_mit_df,
-                          arr_list=[DM1(lamb=0.4),
-                                    DM1(lamb=3.5)],
-                          ser_list=[
-                              ConstantRateServer(rate=4.5),
-                              ConstantRateServer(rate=0.4)
-                          ],
-                          perform_param_list=DELAY_PROB_LIST,
-                          opt_method=OptMethod.GRID_SEARCH))
+        perform_param_list_to_csv(prefix="simple_setting_",
+                                  data_frame_creator=fat_cross_power_mit_df,
+                                  arr_list=[DM1(lamb=0.4),
+                                            DM1(lamb=3.5)],
+                                  ser_list=[
+                                      ConstantRateServer(rate=4.5),
+                                      ConstantRateServer(rate=0.4)
+                                  ],
+                                  perform_param_list=DELAY_PROB_LIST,
+                                  opt_method=OptMethod.GRID_SEARCH))
 
     print(
-        data_frame_to_csv(prefix="simple_setting_",
-                          data_frame_creator=fat_cross_power_mit_df,
-                          arr_list=[
-                              MMOOFluid(mu=1.2, lamb=2.1, burst=3.5),
-                              MMOOFluid(mu=3.7, lamb=1.5, burst=0.4)
-                          ],
-                          ser_list=[
-                              ConstantRateServer(rate=2.0),
-                              ConstantRateServer(rate=0.3)
-                          ],
-                          perform_param_list=DELAY_PROB_LIST,
-                          opt_method=OptMethod.GRID_SEARCH))
+        perform_param_list_to_csv(prefix="simple_setting_",
+                                  data_frame_creator=fat_cross_power_mit_df,
+                                  arr_list=[
+                                      MMOOFluid(mu=1.2, lamb=2.1, burst=3.5),
+                                      MMOOFluid(mu=3.7, lamb=1.5, burst=0.4)
+                                  ],
+                                  ser_list=[
+                                      ConstantRateServer(rate=2.0),
+                                      ConstantRateServer(rate=0.3)
+                                  ],
+                                  perform_param_list=DELAY_PROB_LIST,
+                                  opt_method=OptMethod.GRID_SEARCH))
 
     print(
-        data_frame_to_csv(prefix="simple_setting_",
-                          data_frame_creator=fat_cross_power_mit_df,
-                          arr_list=[
-                              MMOOFluid(mu=1.0, lamb=2.2, burst=3.4),
-                              MMOOFluid(mu=3.6, lamb=1.6, burst=0.4)
-                          ],
-                          ser_list=[
-                              ConstantRateServer(rate=2.0),
-                              ConstantRateServer(rate=0.3)
-                          ],
-                          perform_param_list=DELAY_PROB_LIST,
-                          opt_method=OptMethod.GRID_SEARCH))
+        perform_param_list_to_csv(prefix="simple_setting_",
+                                  data_frame_creator=fat_cross_power_mit_df,
+                                  arr_list=[
+                                      MMOOFluid(mu=1.0, lamb=2.2, burst=3.4),
+                                      MMOOFluid(mu=3.6, lamb=1.6, burst=0.4)
+                                  ],
+                                  ser_list=[
+                                      ConstantRateServer(rate=2.0),
+                                      ConstantRateServer(rate=0.3)
+                                  ],
+                                  perform_param_list=DELAY_PROB_LIST,
+                                  opt_method=OptMethod.GRID_SEARCH))
 
     print(
-        data_frame_to_csv(
+        perform_param_list_to_csv(
             prefix="simple_setting_",
             data_frame_creator=fat_cross_power_mit_df,
             arr_list=[MD1(lamb=1.6, mu=1.0),
@@ -153,7 +153,7 @@ if __name__ == '__main__':
             opt_method=OptMethod.GRID_SEARCH))
 
     print(
-        data_frame_to_csv(
+        perform_param_list_to_csv(
             prefix="simple_setting_",
             data_frame_creator=fat_cross_power_mit_df,
             arr_list=[MD1(lamb=3.6, mu=1.0),

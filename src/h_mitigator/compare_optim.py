@@ -147,11 +147,11 @@ if __name__ == '__main__':
 
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
-    EXP_ARRIVAL = DM1(lamb=4.4)
-    CONST_RATE = ConstantRateServer(rate=0.24)
+    EXP_ARRIVAL = [DM1(lamb=4.4)]
+    CONST_RATE = [ConstantRateServer(rate=0.24)]
 
-    SETTING1 = SingleServerMitPerform(arr=EXP_ARRIVAL,
-                                      const_rate=CONST_RATE,
+    SETTING1 = SingleServerMitPerform(arr_list=EXP_ARRIVAL,
+                                      ser_list=CONST_RATE,
                                       perform_param=OUTPUT_TIME)
     OPT_METHODS = [
         OptMethod.GRID_SEARCH, OptMethod.GS_OLD, OptMethod.PATTERN_SEARCH,

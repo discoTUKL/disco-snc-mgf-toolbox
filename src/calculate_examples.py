@@ -20,8 +20,8 @@ if __name__ == '__main__':
     OUTPUT_TIME6 = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=6)
 
     SINGLE_SERVER = SingleServerMitPerform(
-        arr=DM1(lamb=1.0),
-        const_rate=ConstantRateServer(rate=10.0),
+        arr_list=[DM1(lamb=1.0)],
+        ser_list=[ConstantRateServer(rate=10.0)],
         perform_param=OUTPUT_TIME6)
 
     print(SINGLE_SERVER.standard_bound(param_list=[0.1]))
@@ -46,8 +46,8 @@ if __name__ == '__main__':
                                    value=8)
 
     SINGLE_SERVER2 = SingleServerMitPerform(
-        arr=MMOOFluid(mu=0.7, lamb=0.4, burst=1.2),
-        const_rate=ConstantRateServer(rate=1.0),
+        arr_list=[MMOOFluid(mu=0.7, lamb=0.4, burst=1.2)],
+        ser_list=[ConstantRateServer(rate=1.0)],
         perform_param=DELAY_PROB8)
 
     print(
@@ -74,8 +74,8 @@ if __name__ == '__main__':
                                       value=0.0183)
 
     SINGLE_SERVER2 = SingleServerMitPerform(
-        arr=MMOOFluid(mu=0.7, lamb=0.4, burst=1.2),
-        const_rate=ConstantRateServer(rate=1.0),
+        arr_list=[MMOOFluid(mu=0.7, lamb=0.4, burst=1.2)],
+        ser_list=[ConstantRateServer(rate=1.0)],
         perform_param=DELAY_PROB_REV)
 
     print(

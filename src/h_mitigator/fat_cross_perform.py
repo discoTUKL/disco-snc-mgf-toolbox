@@ -8,24 +8,23 @@ from nc_arrivals.arrival import Arrival
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateList, Deconvolve, Leftover
-from nc_server.constant_rate_server import ConstantRateServer
 from nc_server.server import Server
+from nc_server.server_distribution import ServerDistribution
 from utils.perform_parameter import PerformParameter
 
 
 class FatCrossPerform(SettingMitigator):
     """Fat tree cross topology with the Simple topology as a sub-problem."""
     def __init__(self, arr_list: List[ArrivalDistribution],
-                 ser_list: List[ConstantRateServer],
+                 ser_list: List[ServerDistribution],
                  perform_param: PerformParameter) -> None:
         # The first element in these lists in dedicated to the foi
         if len(arr_list) != len(ser_list):
             raise ValueError(f"number of arrivals {len(arr_list)}"
                              f"and servers {len(ser_list)} have to match")
-
-        self.arr_list = arr_list
-        self.ser_list = ser_list
-        self.perform_param = perform_param
+        super().__init__(arr_list=arr_list,
+                         ser_list=ser_list,
+                         perform_param=perform_param)
         self.number_servers = len(ser_list)
 
     def standard_bound(self, param_list: List[float]) -> float:
@@ -42,7 +41,7 @@ class FatCrossPerform(SettingMitigator):
         s_net: Server = Leftover(ser=self.ser_list[0], arr=aggregated_cross)
 
         return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_net=s_net,
+                                   s_e2e=s_net,
                                    theta=theta,
                                    perform_param=self.perform_param)
 
@@ -64,7 +63,7 @@ class FatCrossPerform(SettingMitigator):
         s_net: Server = Leftover(ser=self.ser_list[0], arr=aggregated_cross)
 
         return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_net=s_net,
+                                   s_e2e=s_net,
                                    theta=param_l_list[0],
                                    perform_param=self.perform_param)
 

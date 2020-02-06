@@ -36,7 +36,7 @@ class EBB(ArrivalDistribution):
         return self.n * self.rho_single
 
     def is_discrete(self) -> bool:
-        return True
+        return False
 
     def average_rate(self) -> float:
         return self.rho()

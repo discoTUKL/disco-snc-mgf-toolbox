@@ -233,8 +233,8 @@ if __name__ == '__main__':
     EXP_ARRIVAL = DM1(lamb=4.4)
     CONST_RATE = ConstantRateServer(rate=0.24)
 
-    SETTING1 = SingleServerMitPerform(arr=EXP_ARRIVAL,
-                                      const_rate=CONST_RATE,
+    SETTING1 = SingleServerMitPerform(arr_list=EXP_ARRIVAL,
+                                      ser_list=CONST_RATE,
                                       perform_param=OUTPUT_TIME)
 
     # print(

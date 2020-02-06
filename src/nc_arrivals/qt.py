@@ -3,16 +3,23 @@
 from math import exp, log
 
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.iid_arrivals import IIDArrivals
 from utils.exceptions import ParameterOutOfBounds
 
 
-class DM1(IIDArrivals):
+class DM1(ArrivalDistribution):
     """Corresponds to D/M/1 queue."""
 
     def __init__(self, lamb: float, n=1) -> None:
         self.lamb = lamb
         self.n = n
+
+    def sigma(self, theta=0.0) -> float:
+        """
+
+        :param theta: mgf parameter
+        :return:      sigma(theta)
+        """
+        return 0.0
 
     def rho(self, theta: float) -> float:
         """
@@ -27,6 +34,9 @@ class DM1(IIDArrivals):
                 f"theta = {theta} must be < lambda = {self.lamb}")
 
         return (self.n / theta) * log(self.lamb / (self.lamb - theta))
+
+    def is_discrete(self) -> bool:
+        return True
 
     def average_rate(self) -> float:
         return self.n / self.lamb
@@ -118,12 +128,20 @@ class MM1(ArrivalDistribution):
                                                     str(self.mu))
 
 
-class DPoisson1(IIDArrivals):
+class DPoisson1(ArrivalDistribution):
     """Corresponds to D/Poisson/1 queue."""
 
     def __init__(self, lamb: float, n=1) -> None:
         self.lamb = lamb
         self.n = n
+
+    def sigma(self, theta=0.0) -> float:
+        """
+
+        :param theta: mgf parameter
+        :return:      sigma(theta)
+        """
+        return 0.0
 
     def rho(self, theta: float) -> float:
         """
@@ -134,6 +152,9 @@ class DPoisson1(IIDArrivals):
             raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
         return (self.n / theta) * self.lamb * (exp(theta) - 1)
+
+    def is_discrete(self) -> bool:
+        return True
 
     def average_rate(self) -> float:
         return self.n * self.lamb

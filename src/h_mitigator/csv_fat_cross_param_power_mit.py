@@ -28,7 +28,8 @@ from utils.perform_parameter import PerformParameter
 ########################################################################
 
 
-def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
+def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_flows: int,
+                              number_servers: int,
                               perform_param: PerformParameter,
                               opt_method: OptMethod, mc_dist: MonteCarloDist,
                               total_iterations: int,
@@ -37,14 +38,11 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
     valid_iterations = total_iterations
     compare_metric = ChangeEnum.RATIO_REF_NEW
 
-    size_array = [
-        total_iterations,
-        (arrival_enum.number_parameters() + 1) * number_servers
-        # const_rate has 1 parameter
-    ]
-    # [rows, columns]
-
-    param_array = mc_enum_to_dist(mc_dist=mc_dist, size=size_array)
+    param_array = mc_enum_to_dist(arrival_enum=arrival_enum,
+                                  mc_dist=mc_dist,
+                                  number_flows=number_flows,
+                                  number_servers=number_servers,
+                                  total_iterations=total_iterations)
 
     res_array = np.empty([total_iterations, 2])
 
@@ -53,46 +51,45 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
     for i in tqdm(range(total_iterations), total=total_iterations):
         if arrival_enum == ArrivalEnum.DM1:
             arr_list = [
-                DM1(lamb=param_array[i, j]) for j in range(number_servers)
+                DM1(lamb=param_array[i, j]) for j in range(number_flows)
             ]
 
         elif arrival_enum == ArrivalEnum.MD1:
             arr_list = [
                 MD1(lamb=param_array[i, j], mu=1.0)
-                for j in range(number_servers)
+                for j in range(number_flows)
             ]
 
         elif arrival_enum == ArrivalEnum.MMOOFluid:
             arr_list = [
                 MMOOFluid(mu=param_array[i, j],
-                          lamb=param_array[i, number_servers + j],
-                          burst=param_array[i, 2 * number_servers + j])
-                for j in range(number_servers)
+                          lamb=param_array[i, number_flows + j],
+                          burst=param_array[i, 2 * number_flows + j])
+                for j in range(number_flows)
             ]
 
         elif arrival_enum == ArrivalEnum.EBB:
             arr_list = [
                 EBB(factor_m=param_array[i, j],
-                    decay=param_array[i, number_servers + j],
-                    rho_single=param_array[i, 2 * number_servers + j])
-                for j in range(number_servers)
+                    decay=param_array[i, number_flows + j],
+                    rho_single=param_array[i, 2 * number_flows + j])
+                for j in range(number_flows)
             ]
 
         elif arrival_enum == ArrivalEnum.MassOne:
             arr_list = [
                 LeakyBucketMassOne(sigma_single=param_array[i, j],
-                                   rho_single=param_array[i, number_servers +
-                                                          j],
-                                   n=20) for j in range(number_servers)
+                                   rho_single=param_array[i, number_flows + j],
+                                   n=20) for j in range(number_flows)
             ]
             # TODO: note that n is fixed
 
         elif arrival_enum == ArrivalEnum.TBConst:
             arr_list = [
                 TokenBucketConstant(sigma_single=param_array[i, j],
-                                    rho_single=param_array[i, number_servers +
+                                    rho_single=param_array[i, number_flows +
                                                            j],
-                                    n=1) for j in range(number_servers)
+                                    n=1) for j in range(number_flows)
             ]
 
         else:
@@ -101,7 +98,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_servers: int,
 
         ser_list = [
             ConstantRateServer(rate=param_array[
-                i, arrival_enum.number_parameters() * number_servers + j])
+                i, arrival_enum.number_parameters() * number_flows + j])
             for j in range(number_servers)
         ]
 
@@ -179,6 +176,7 @@ if __name__ == '__main__':
     for PROCESS in ARRIVAL_PROCESSES:
         print(
             csv_fat_cross_param_power(arrival_enum=PROCESS,
+                                      number_flows=2,
                                       number_servers=2,
                                       perform_param=DELAY_PROB10,
                                       opt_method=COMMON_OPTIMIZATION,
@@ -188,6 +186,7 @@ if __name__ == '__main__':
 
         print(
             csv_fat_cross_param_power(arrival_enum=PROCESS,
+                                      number_flows=2,
                                       number_servers=2,
                                       perform_param=DELAY_PROB10,
                                       opt_method=COMMON_OPTIMIZATION,

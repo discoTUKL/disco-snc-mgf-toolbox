@@ -4,7 +4,7 @@ from typing import List
 
 import pandas as pd
 
-from bound_evaluation.data_frame_to_csv import data_frame_to_csv
+from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.qt import MD1, MM1
 from nc_operations.perform_enum import PerformEnum
@@ -33,8 +33,8 @@ def single_server_df(arr_list: List[ArrivalDistribution],
 
     for i in range(len(perform_param_list)):
         setting = SingleServerPerform(
-            arr=arr_list[0],
-            ser=ser_list[0],
+            arr_list=arr_list,
+            ser_list=ser_list,
             perform_param=perform_param_list.get_parameter_at_i(i))
 
         if opt_method == OptMethod.GRID_SEARCH:
@@ -63,17 +63,17 @@ if __name__ == '__main__':
     CONST1 = ConstantRateServer(rate=1.0)
 
     print(
-        data_frame_to_csv(prefix="single_",
-                          data_frame_creator=single_server_df,
-                          arr_list=[MD1(lamb=0.8, mu=1.0)],
-                          ser_list=[CONST1],
-                          perform_param_list=DELAY_LIST,
-                          opt_method=OptMethod.GRID_SEARCH))
+        perform_param_list_to_csv(prefix="single_",
+                                  data_frame_creator=single_server_df,
+                                  arr_list=[MD1(lamb=0.8, mu=1.0)],
+                                  ser_list=[CONST1],
+                                  perform_param_list=DELAY_LIST,
+                                  opt_method=OptMethod.GRID_SEARCH))
 
     print(
-        data_frame_to_csv(prefix="single_",
-                          data_frame_creator=single_server_df,
-                          arr_list=[MM1(lamb=0.8, mu=1.0)],
-                          ser_list=[CONST1],
-                          perform_param_list=DELAY_LIST,
-                          opt_method=OptMethod.GRID_SEARCH))
+        perform_param_list_to_csv(prefix="single_",
+                                  data_frame_creator=single_server_df,
+                                  arr_list=[MM1(lamb=0.8, mu=1.0)],
+                                  ser_list=[CONST1],
+                                  perform_param_list=DELAY_LIST,
+                                  opt_method=OptMethod.GRID_SEARCH))

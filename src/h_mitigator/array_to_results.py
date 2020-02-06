@@ -1,6 +1,5 @@
 """This file takes arrays and writes them into dictionaries"""
 
-import sys
 from warnings import warn
 
 import numpy as np
@@ -55,8 +54,7 @@ def two_col_array_to_results(
              f"{iterations - valid_iterations} out of {iterations}!")
 
         if valid_iterations < 100:
-            warn("result is useless")
-            sys.exit(1)
+            raise ValueError("result is useless")
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
 
@@ -158,8 +156,7 @@ def three_col_array_to_results(
              f"{iterations - valid_iterations} nan out of {iterations}!")
 
         if valid_iterations < 100:
-            warn("result in useless")
-            sys.exit(1)
+            raise ValueError("result is useless")
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
 

@@ -7,7 +7,7 @@ from utils.exceptions import ParameterOutOfBounds
 
 
 class MMOOFluid(ArrivalDistribution):
-    """Continuous Markov Modulated On-Off Traffic"""
+    """Continuous-time Markov Modulated On-Off Traffic"""
     def __init__(self, mu: float, lamb: float, burst: float, n=1) -> None:
         self.mu = mu
         self.lamb = lamb
@@ -48,8 +48,11 @@ class MMOOFluid(ArrivalDistribution):
 
 
 class MMOODisc(ArrivalDistribution):
-    """Discrete Markov Modulated On-Off Traffic"""
-    def __init__(self, stay_on: float, stay_off: float, burst: float,
+    """Discrete-time Markov Modulated On-Off Traffic"""
+    def __init__(self,
+                 stay_on: float,
+                 stay_off: float,
+                 burst: float,
                  n=1) -> None:
         self.stay_on = stay_on
         self.stay_off = stay_off
@@ -63,14 +66,22 @@ class MMOODisc(ArrivalDistribution):
         if theta <= 0:
             raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
 
+        if self.stay_on <= 0.0 or self.stay_on >= 1.0:
+            raise ValueError(f"p_stay_on = {self.stay_on} must be in (0,1)")
+
+        if self.stay_off <= 0.0 or self.stay_off >= 1.0:
+            raise ValueError(f"p_stay_off = {self.stay_off} must be in (0,1)")
+
         off_on = self.stay_off + self.stay_on * exp(theta * self.burst)
         sqrt_part = sqrt(off_on**2 - 4 * (self.stay_off + self.stay_on - 1) *
                          exp(theta * self.burst))
 
-        if log(0.5 * (off_on + sqrt_part)) < 0:
-            raise ValueError("rho must be >= 0")
+        rho_mmoo_disc = log(0.5 * (off_on + sqrt_part))
 
-        return log(0.5 * (off_on + sqrt_part)) / theta
+        if rho_mmoo_disc < 0:
+            raise ParameterOutOfBounds("rho must be >= 0")
+
+        return rho_mmoo_disc / theta
 
     def is_discrete(self) -> bool:
         return True

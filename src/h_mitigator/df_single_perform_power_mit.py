@@ -4,7 +4,7 @@ from typing import List
 
 import pandas as pd
 
-from bound_evaluation.data_frame_to_csv import data_frame_to_csv
+from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
 from h_mitigator.optimize_mitigator import OptimizeMitigator
 from h_mitigator.single_server_mit_perform import SingleServerMitPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
@@ -43,8 +43,8 @@ def single_server_df(arr_list: List[ArrivalDistribution],
 
     for _i in range(len(perform_param_list)):
         setting = SingleServerMitPerform(
-            arr=arr_list[0],
-            const_rate=ser_list[0],
+            arr_list=arr_list,
+            ser_list=ser_list,
             perform_param=perform_param_list.get_parameter_at_i(_i))
 
         if opt_method == OptMethod.GRID_SEARCH:
@@ -82,15 +82,15 @@ if __name__ == '__main__':
                                    values_list=range(4, 15))
 
     print(
-        data_frame_to_csv(prefix="single_",
-                          data_frame_creator=single_server_df,
-                          arr_list=[DM1(lamb=3.8, n=1)],
-                          ser_list=[ConstantRateServer(rate=3.0)],
-                          perform_param_list=OUTPUT_LIST,
-                          opt_method=OptMethod.GRID_SEARCH))
+        perform_param_list_to_csv(prefix="single_",
+                                  data_frame_creator=single_server_df,
+                                  arr_list=[DM1(lamb=3.8, n=1)],
+                                  ser_list=[ConstantRateServer(rate=3.0)],
+                                  perform_param_list=OUTPUT_LIST,
+                                  opt_method=OptMethod.GRID_SEARCH))
 
     print(
-        data_frame_to_csv(
+        perform_param_list_to_csv(
             prefix="single_",
             data_frame_creator=single_server_df,
             arr_list=[MMOOFluid(mu=8.0, lamb=12.0, burst=3.0, n=1)],
@@ -101,9 +101,9 @@ if __name__ == '__main__':
     RATE_1 = ConstantRateServer(rate=1.0)
 
     print(
-        data_frame_to_csv(prefix="single_",
-                          data_frame_creator=single_server_df,
-                          arr_list=[MD1(lamb=0.5, mu=1.0)],
-                          ser_list=[RATE_1],
-                          perform_param_list=OUTPUT_LIST,
-                          opt_method=OptMethod.GRID_SEARCH))
+        perform_param_list_to_csv(prefix="single_",
+                                  data_frame_creator=single_server_df,
+                                  arr_list=[MD1(lamb=0.5, mu=1.0)],
+                                  ser_list=[RATE_1],
+                                  perform_param_list=OUTPUT_LIST,
+                                  opt_method=OptMethod.GRID_SEARCH))

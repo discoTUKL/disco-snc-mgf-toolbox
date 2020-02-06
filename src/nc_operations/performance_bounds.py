@@ -39,7 +39,7 @@ def backlog_prob(arr: Arrival,
         if not use_standard:
             if arr.is_discrete():
                 return exp(-theta * backlog_value) * exp(
-                    theta * sigma_sum) / (-theta * rho_diff)
+                    theta * sigma_sum) / (theta * (-rho_diff))
             else:
                 raise NotImplementedError
 
@@ -83,7 +83,7 @@ def backlog(arr: Arrival,
 
     if not use_standard:
         if arr.is_discrete():
-            return sigma_sum - (log(-prob_b * theta * rho_diff)) / theta
+            return sigma_sum - (log(prob_b * theta * (-rho_diff))) / theta
         else:
             raise NotImplementedError
 
@@ -126,7 +126,7 @@ def delay_prob(arr: Arrival,
             if arr.is_discrete():
                 return exp(
                     -theta * ser.rho(theta=q * theta) * delay_value) * exp(
-                        theta * sigma_sum) / (-theta * rho_diff)
+                        theta * sigma_sum) / (theta * (-rho_diff))
             else:
                 raise NotImplementedError
 
@@ -170,7 +170,7 @@ def delay(arr: Arrival,
 
     if not use_standard:
         if arr.is_discrete():
-            log_part = log(-prob_d * theta * rho_diff)
+            log_part = log(prob_d * theta * (-rho_diff))
             return (sigma_sum - log_part / theta) / ser.rho(theta=q * theta)
         else:
             raise NotImplementedError
