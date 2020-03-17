@@ -17,11 +17,10 @@ from optimization.optimize import Optimize
 from utils.perform_param_list import PerformParamList
 
 
-def fat_cross_power_mit_df(arr_list: List[ArrivalDistribution],
-                           ser_list: List[ConstantRateServer],
-                           opt_method: OptMethod,
-                           perform_param_list: PerformParamList
-                           ) -> pd.DataFrame:
+def fat_cross_power_mit_df(
+        arr_list: List[ArrivalDistribution],
+        ser_list: List[ConstantRateServer], opt_method: OptMethod,
+        perform_param_list: PerformParamList) -> pd.DataFrame:
     """Compute delay standard_bound for T in T_list and write into dataframe.
 
     Args:
@@ -44,29 +43,39 @@ def fat_cross_power_mit_df(arr_list: List[ArrivalDistribution],
             perform_param=perform_param_list.get_parameter_at_i(i))
 
         if opt_method == OptMethod.GRID_SEARCH:
-            standard_bound[i] = Optimize(setting=setting).grid_search(
-                bound_list=[(0.1, 10.0)], delta=0.1)
-            h_mit_bound[i] = OptimizeMitigator(
-                setting_h_mit=setting).grid_search(bound_list=[(0.1, 5.0),
+            standard_bound[i] = Optimize(setting=setting,
+                                         number_param=1).grid_search(
+                                             bound_list=[(0.1, 10.0)],
+                                             delta=0.1)
+            h_mit_bound[i] = OptimizeMitigator(setting_h_mit=setting,
+                                               number_param=2).grid_search(
+                                                   bound_list=[(0.1, 5.0),
                                                                (0.9, 10.0)],
                                                    delta=0.05)
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
-            standard_bound[i] = Optimize(setting=setting).pattern_search(
-                start_list=[0.5], delta=3.0, delta_min=0.01)
+            standard_bound[i] = Optimize(setting=setting,
+                                         number_param=1).pattern_search(
+                                             start_list=[0.5],
+                                             delta=3.0,
+                                             delta_min=0.01)
 
-            h_mit_bound[i] = OptimizeMitigator(
-                setting_h_mit=setting).pattern_search(start_list=[0.5, 2.0],
-                                                      delta=3.0,
-                                                      delta_min=0.01)
+            h_mit_bound[i] = OptimizeMitigator(setting_h_mit=setting,
+                                               number_param=2).pattern_search(
+                                                   start_list=[0.5, 2.0],
+                                                   delta=3.0,
+                                                   delta_min=0.01)
 
         elif opt_method == OptMethod.GS_OLD:
-            standard_bound[i] = Optimize(setting=setting).grid_search_old(
-                bound_list=[(0.1, 5.0)], delta=0.1)
-            h_mit_bound[i] = OptimizeMitigator(
-                setting_h_mit=setting).grid_search_old(bound_list=[(0.1, 5.0),
-                                                                   (0.9, 6.0)],
-                                                       delta=0.1)
+            standard_bound[i] = Optimize(setting=setting,
+                                         number_param=1).grid_search_old(
+                                             bound_list=[(0.1, 5.0)],
+                                             delta=0.1)
+            h_mit_bound[i] = OptimizeMitigator(setting_h_mit=setting,
+                                               number_param=2).grid_search_old(
+                                                   bound_list=[(0.1, 5.0),
+                                                               (0.9, 6.0)],
+                                                   delta=0.1)
 
         else:
             raise ValueError(

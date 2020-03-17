@@ -7,7 +7,8 @@ from h_mitigator.setting_mitigator import SettingMitigator
 from nc_arrivals.arrival import Arrival
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.evaluate_single_hop import evaluate_single_hop
-from nc_operations.operations import AggregateList, Deconvolve, Leftover
+from nc_operations.operations import AggregateList, Deconvolve
+from nc_operations.scheduling import LeftoverARB
 from nc_server.server import Server
 from nc_server.server_distribution import ServerDistribution
 from utils.perform_parameter import PerformParameter
@@ -38,7 +39,7 @@ class FatCrossPerform(SettingMitigator):
 
         aggregated_cross: Arrival = AggregateList(arr_list=output_list,
                                                   p_list=[])
-        s_net: Server = Leftover(ser=self.ser_list[0], arr=aggregated_cross)
+        s_net: Server = LeftoverARB(ser=self.ser_list[0], arr=aggregated_cross)
 
         return evaluate_single_hop(foi=self.arr_list[0],
                                    s_e2e=s_net,
@@ -46,10 +47,6 @@ class FatCrossPerform(SettingMitigator):
                                    perform_param=self.perform_param)
 
     def h_mit_bound(self, param_l_list: List[float]) -> float:
-        # len(param_list) = theta (1) + output bounds (len(arr_list)-1)
-        if len(param_l_list) != len(self.arr_list):
-            raise NameError("Check number of parameters")
-
         output_list: List[Arrival] = [
             DeconvolvePowerMit(arr=self.arr_list[i],
                                ser=self.ser_list[i],
@@ -60,7 +57,7 @@ class FatCrossPerform(SettingMitigator):
 
         aggregated_cross: Arrival = AggregateList(arr_list=output_list,
                                                   p_list=[])
-        s_net: Server = Leftover(ser=self.ser_list[0], arr=aggregated_cross)
+        s_net: Server = LeftoverARB(ser=self.ser_list[0], arr=aggregated_cross)
 
         return evaluate_single_hop(foi=self.arr_list[0],
                                    s_e2e=s_net,
@@ -79,9 +76,6 @@ class FatCrossPerform(SettingMitigator):
         #         max_util = util_at_server_i
 
         return sum_average_rates / self.ser_list[0].rate
-
-    def parameters_to_opt(self) -> int:
-        return 1
 
     def to_string(self) -> str:
         for arr in self.arr_list:

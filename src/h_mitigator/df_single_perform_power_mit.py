@@ -48,20 +48,27 @@ def single_server_df(arr_list: List[ArrivalDistribution],
             perform_param=perform_param_list.get_parameter_at_i(_i))
 
         if opt_method == OptMethod.GRID_SEARCH:
-            standard_bound[_i] = Optimize(setting=setting).grid_search(
-                bound_list=[(0.1, 4.0)], delta=0.1)
-            new_bound[_i] = OptimizeMitigator(
-                setting_h_mit=setting).grid_search(bound_list=[(0.1, 4.0),
-                                                               (0.9, 8.0)],
-                                                   delta=0.05)
+            standard_bound[_i] = Optimize(setting=setting,
+                                          number_param=1).grid_search(
+                                              bound_list=[(0.1, 4.0)],
+                                              delta=0.1)
+            new_bound[_i] = OptimizeMitigator(setting_h_mit=setting,
+                                              number_param=2).grid_search(
+                                                  bound_list=[(0.1, 4.0),
+                                                              (0.9, 8.0)],
+                                                  delta=0.05)
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
-            standard_bound[_i] = Optimize(setting=setting).pattern_search(
-                start_list=[0.5], delta=3.0, delta_min=0.01)
-            new_bound[_i] = OptimizeMitigator(
-                setting_h_mit=setting).pattern_search(start_list=[0.5, 2.0],
-                                                      delta=3.0,
-                                                      delta_min=0.01)
+            standard_bound[_i] = Optimize(setting=setting,
+                                          number_param=1).pattern_search(
+                                              start_list=[0.5],
+                                              delta=3.0,
+                                              delta_min=0.01)
+            new_bound[_i] = OptimizeMitigator(setting_h_mit=setting,
+                                              number_param=2).pattern_search(
+                                                  start_list=[0.5, 2.0],
+                                                  delta=3.0,
+                                                  delta_min=0.01)
         else:
             raise NameError(
                 f"Optimization parameter {opt_method} is infeasible")

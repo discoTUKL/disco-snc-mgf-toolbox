@@ -31,6 +31,7 @@ def compare_optimization(setting: SettingMitigator,
                 bound_list.append((0.9, 4.0))
 
             bound = OptimizeMitigator(setting_h_mit=setting,
+                                      number_param=number_l + 1,
                                       print_x=print_x).grid_search(
                                           bound_list=bound_list, delta=0.1)
 
@@ -40,6 +41,7 @@ def compare_optimization(setting: SettingMitigator,
             start_list = [theta_start] + [1.0] * number_l
 
             bound = OptimizeMitigator(setting_h_mit=setting,
+                                      number_param=number_l + 1,
                                       print_x=print_x).pattern_search(
                                           start_list=start_list,
                                           delta=3.0,
@@ -53,6 +55,7 @@ def compare_optimization(setting: SettingMitigator,
                                            1).gao_han(start_list=start_list)
 
             bound = OptimizeMitigator(setting_h_mit=setting,
+                                      number_param=number_l + 1,
                                       print_x=print_x).nelder_mead(
                                           simplex=start_simplex,
                                           sd_min=10**(-2))
@@ -64,6 +67,7 @@ def compare_optimization(setting: SettingMitigator,
 
             bound = OptimizeMitigator(
                 setting_h_mit=setting,
+                number_param=number_l + 1,
                 print_x=print_x).basin_hopping(start_list=start_list)
 
         elif opt == OptMethod.SIMULATED_ANNEALING:
@@ -73,6 +77,7 @@ def compare_optimization(setting: SettingMitigator,
             start_list = [theta_start] + [1.0] * number_l
 
             bound = OptimizeMitigator(setting_h_mit=setting,
+                                      number_param=number_l + 1,
                                       print_x=print_x).sim_annealing(
                                           start_list=start_list,
                                           sim_anneal_params=simul_anneal_param)
@@ -86,6 +91,7 @@ def compare_optimization(setting: SettingMitigator,
 
             bound = OptimizeMitigator(
                 setting_h_mit=setting,
+                number_param=number_l + 1,
                 print_x=print_x).diff_evolution(bound_list=bound_list)
 
         elif opt == OptMethod.BFGS:
@@ -95,6 +101,7 @@ def compare_optimization(setting: SettingMitigator,
 
             bound = OptimizeMitigator(
                 setting_h_mit=setting,
+                number_param=number_l + 1,
                 print_x=print_x).bfgs(start_list=start_list)
 
         elif opt == OptMethod.GS_OLD:
@@ -105,6 +112,7 @@ def compare_optimization(setting: SettingMitigator,
                 bound_list.append((0.9, 4.0))
 
             bound = OptimizeMitigator(setting_h_mit=setting,
+                                      number_param=number_l + 1,
                                       print_x=print_x).grid_search_old(
                                           bound_list=bound_list, delta=0.1)
 
@@ -117,6 +125,7 @@ def compare_optimization(setting: SettingMitigator,
                                            1).gao_han(start_list=start_list)
 
             bound = OptimizeMitigator(setting_h_mit=setting,
+                                      number_param=number_l + 1,
                                       print_x=print_x).nelder_mead_old(
                                           simplex=start_simplex,
                                           nelder_mead_param=nelder_mead_param,

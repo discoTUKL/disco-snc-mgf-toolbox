@@ -31,9 +31,5 @@ class Setting(object):
     def approximate_utilization(self) -> float:
         pass
 
-    @abstractmethod
-    def parameters_to_opt(self) -> int:
-        pass
-
     def to_name(self) -> str:
         return self.__class__.__name__

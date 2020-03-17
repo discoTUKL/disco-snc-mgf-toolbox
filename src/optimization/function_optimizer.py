@@ -21,6 +21,10 @@ def optimizer_st(fun: callable,
                  ranges: list,
                  print_x=False) -> float:
     def helper_fun(param_list: [float, float]) -> float:
+        # if len(param_list) != number_param:
+        #     raise ValueError(
+        #         f"Number of parameters {len(param_list)} is wrong")
+
         if number_param == 1:
             try:
                 return fun(theta=param_list[0],
@@ -49,12 +53,9 @@ def optimizer_st(fun: callable,
     # np.seterr("raise")
     np.seterr("warn")
 
-    try:
-        grid_res = scipy.optimize.brute(func=helper_fun,
-                                        ranges=ranges,
-                                        full_output=True)
-    except (FloatingPointError, OverflowError):
-        return inf
+    grid_res = scipy.optimize.brute(func=helper_fun,
+                                    ranges=ranges,
+                                    full_output=True)
 
     if print_x:
         print("grid search optimal x: ", grid_res[0].tolist())
@@ -70,13 +71,18 @@ def optimizer_perform(fun: callable,
                       ranges: list,
                       print_x=False) -> float:
     def helper_fun(param_list: [float, float]) -> float:
+        # if len(param_list) != number_param:
+        #     raise ValueError(
+        #         f"Number of parameters {len(param_list)} is wrong")
+
         if number_param == 1:
             try:
                 return fun(theta=param_list[0],
                            perform_param=perform_param,
                            arr_list=arr_list,
                            ser_list=ser_list)
-            except (FloatingPointError, ParameterOutOfBounds, OverflowError):
+            except (FloatingPointError, OverflowError, ParameterOutOfBounds,
+                    ValueError):
                 return inf
 
         elif number_param == 2:
@@ -86,7 +92,8 @@ def optimizer_perform(fun: callable,
                            arr_list=arr_list,
                            ser_list=ser_list,
                            p=param_list[1])
-            except (FloatingPointError, ParameterOutOfBounds, OverflowError):
+            except (FloatingPointError, OverflowError, ParameterOutOfBounds,
+                    ValueError):
                 return inf
 
         elif number_param > 2:
@@ -96,7 +103,8 @@ def optimizer_perform(fun: callable,
                            arr_list=arr_list,
                            ser_list=ser_list,
                            p_list=param_list[1:])
-            except (FloatingPointError, ParameterOutOfBounds, OverflowError):
+            except (FloatingPointError, OverflowError, ParameterOutOfBounds,
+                    ValueError):
                 return inf
 
         else:
@@ -106,12 +114,9 @@ def optimizer_perform(fun: callable,
     # np.seterr("raise")
     np.seterr("warn")
 
-    try:
-        grid_res = scipy.optimize.brute(func=helper_fun,
-                                        ranges=ranges,
-                                        full_output=True)
-    except (FloatingPointError, OverflowError):
-        return inf
+    grid_res = scipy.optimize.brute(func=helper_fun,
+                                    ranges=ranges,
+                                    full_output=True)
 
     if print_x:
         print("grid search optimal x: ", grid_res[0].tolist())

@@ -17,7 +17,7 @@ from nc_arrivals.ebb import EBB
 from nc_arrivals.markov_modulated import MMOOFluid
 from nc_arrivals.qt import DM1, MD1
 from nc_arrivals.regulated_arrivals import (LeakyBucketMassOne,
-                                            TokenBucketConstant)
+                                            DetermTokenBucket)
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
@@ -82,13 +82,14 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_flows: int,
                                    rho_single=param_array[i, number_flows + j],
                                    n=20) for j in range(number_flows)
             ]
+            # TODO: note that n is fixed
 
         elif arrival_enum == ArrivalEnum.TBConst:
             arr_list = [
-                TokenBucketConstant(sigma_single=param_array[i, j],
-                                    rho_single=param_array[i,
-                                                           number_flows + j],
-                                    n=1) for j in range(number_flows)
+                DetermTokenBucket(sigma_single=param_array[i, j],
+                                  rho_single=param_array[i, number_flows +
+                                                           j],
+                                  n=1) for j in range(number_flows)
             ]
 
         else:
@@ -96,10 +97,8 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_flows: int,
                                       f"is infeasible")
 
         ser_list = [
-            ConstantRateServer(
-                rate=param_array[i,
-                                 arrival_enum.number_parameters() *
-                                 number_flows + j])
+            ConstantRateServer(rate=param_array[
+                i, arrival_enum.number_parameters() * number_flows + j])
             for j in range(number_servers)
         ]
 

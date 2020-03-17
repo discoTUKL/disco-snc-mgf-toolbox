@@ -51,10 +51,8 @@ class SingleServerPerform(Setting):
                                    use_standard=self.use_standard)
 
     def approximate_utilization(self) -> float:
-        return self.arr_list[0].average_rate() / self.ser_list[0].average_rate()
-
-    def parameters_to_opt(self) -> int:
-        return 1
+        return self.arr_list[0].average_rate() / self.ser_list[0].average_rate(
+        )
 
     def to_string(self) -> str:
         return self.to_name() + "_" + self.arr_list.to_value(

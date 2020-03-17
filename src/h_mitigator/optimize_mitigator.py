@@ -14,10 +14,13 @@ from utils.exceptions import ParameterOutOfBounds
 
 class OptimizeMitigator(Optimize):
     """Optimize class"""
-
-    def __init__(self, setting_h_mit: SettingMitigator, print_x=False) -> None:
-        super().__init__(setting_h_mit, print_x)
+    def __init__(self,
+                 setting_h_mit: SettingMitigator,
+                 number_param: int,
+                 print_x=False) -> None:
+        super().__init__(setting_h_mit, number_param, print_x)
         self.setting_h_mit = setting_h_mit
+        self.number_param = number_param
         self.print_x = print_x
 
     def eval_except(self, param_list: List[float]) -> float:
@@ -27,7 +30,6 @@ class OptimizeMitigator(Optimize):
         :param param_list: theta parameter and Lyapunov parameters l_i
         :return:           function to_value
         """
-
         try:
             return self.setting_h_mit.h_mit_bound(param_l_list=param_list)
         except (ParameterOutOfBounds, OverflowError):
@@ -60,7 +62,7 @@ if __name__ == '__main__':
                               ser_list=[CONST_RATE_1, CONST_RATE_2],
                               perform_param=DELAY_4)
 
-    OPTI_OLD = Optimize(setting=SETTING, print_x=True)
+    OPTI_OLD = Optimize(setting=SETTING, number_param=1, print_x=True)
     print(OPTI_OLD.grid_search(bound_list=[(0.1, 4.0)], delta=0.1))
     print(OPTI_OLD.pattern_search(start_list=[0.5], delta=3.0, delta_min=0.01))
     print(Optimize.nelder_mead(self=OPTI_OLD, simplex=SIMPLEX_RAND))
@@ -72,7 +74,9 @@ if __name__ == '__main__':
     print(OPTI_OLD.diff_evolution(bound_list=[(0.1, 4.0)]))
     print(OPTI_OLD.bfgs(start_list=[0.4]))
 
-    OPTI_NEW = OptimizeMitigator(setting_h_mit=SETTING, print_x=True)
+    OPTI_NEW = OptimizeMitigator(setting_h_mit=SETTING,
+                                 number_param=2,
+                                 print_x=True)
     print(
         OPTI_NEW.grid_search_old(bound_list=[(0.1, 4.0), (0.9, 4.0)],
                                  delta=0.1))

@@ -10,7 +10,7 @@ import scipy.optimize
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.sim_anneal_param import SimAnnealParams
 from utils.deprecated import deprecated
-from utils.exceptions import ParameterOutOfBounds
+from utils.exceptions import ParameterOutOfBounds, WrongDimension
 from utils.helper_functions import (average_towards_best_row,
                                     centroid_without_one_row, expand_grid)
 from utils.setting import Setting
@@ -18,8 +18,12 @@ from utils.setting import Setting
 
 class Optimize(object):
     """Optimize class"""
-    def __init__(self, setting: Setting, print_x=False) -> None:
+    def __init__(self,
+                 setting: Setting,
+                 number_param: int,
+                 print_x=False) -> None:
         self.setting = setting
+        self.number_param = number_param
         self.print_x = print_x
 
     def eval_except(self, param_list: List[float]) -> float:
@@ -29,10 +33,9 @@ class Optimize(object):
         :param param_list: theta parameter and Lyapunov parameters l_i
         :return:           function to_value
         """
-
         try:
             return self.setting.standard_bound(param_list=param_list)
-        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
+        except (OverflowError, ParameterOutOfBounds, ValueError):
             return inf
 
     def grid_search(self, bound_list: List[Tuple[float, float]],
@@ -44,6 +47,9 @@ class Optimize(object):
         :param delta:      granularity of the grid search
         :return:           optimized standard_bound
         """
+        if len(bound_list) != self.number_param:
+            raise WrongDimension(
+                f"Number of parameters {len(bound_list)} is wrong")
 
         list_slices = [slice(0)] * len(bound_list)
 
@@ -82,6 +88,10 @@ class Optimize(object):
         :param delta_min:  final granularity
         :return:           optimized standard_bound
         """
+
+        if len(start_list) != self.number_param:
+            raise WrongDimension(
+                f"Number of parameters {len(start_list)} is wrong")
 
         optimum_current = self.eval_except(param_list=start_list)
 
@@ -334,7 +344,7 @@ class Optimize(object):
         # number of rows is the number of points = number of columns + 1
         # number of columns is the number of parameters
         if number_rows is not number_columns + 1:
-            raise ValueError(
+            raise WrongDimension(
                 f"array argument is not a simplex, rows: {number_rows},"
                 f" columns: {number_columns}")
 

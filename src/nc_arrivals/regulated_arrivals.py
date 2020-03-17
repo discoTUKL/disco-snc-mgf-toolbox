@@ -10,7 +10,6 @@ from utils.exceptions import ParameterOutOfBounds
 
 class RegulatedArrivals(ArrivalDistribution):
     """Abstract class for all leaky-bucket classes"""
-
     def __init__(self, sigma_single=0.0, rho_single=0.0, n=1) -> None:
         self.sigma_single = sigma_single
         self.rho_single = rho_single
@@ -52,13 +51,12 @@ class RegulatedArrivals(ArrivalDistribution):
             return f"sigma={str(self.sigma_single)}_rho={str(self.rho_single)}"
 
 
-class TokenBucketConstant(RegulatedArrivals):
+class DetermTokenBucket(RegulatedArrivals):
     """Primitive TokenBucket (quasi deterministic and independent of theta)"""
-
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
         super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
 
-    def sigma(self, theta=0.0) -> float:
+    def sigma(self, theta: float) -> float:
         return self.n * self.sigma_single
 
     def __str__(self) -> str:
@@ -68,7 +66,6 @@ class TokenBucketConstant(RegulatedArrivals):
 
 class LeakyBucketMassOne(RegulatedArrivals):
     """Leaky Bucket according to Massoulie using directly Lemma 2"""
-
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
         super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
 
@@ -87,7 +84,6 @@ class LeakyBucketMassOne(RegulatedArrivals):
 @deprecated
 class LeakyBucketMassTwo(RegulatedArrivals):
     """Exact Leaky Bucket according to Massoulie after MGF transformation"""
-
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
         super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
 

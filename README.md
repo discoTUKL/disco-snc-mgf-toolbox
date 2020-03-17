@@ -51,15 +51,18 @@ Assume we want to optimize the parameter for the above setting. Therefore, we ch
 We optimize the bound in the SINGLE_SERVER setting with the old approach "Optimize" and the approach OptimizeMitigator and want to print the optimal parameter set ("print_x=true"). The last step is to choose the method "grid_search()" and to set the search's granularity (in this case = 0.1):
 
 ```python
-print(Optimize(SINGLE_SERVER, print_x=True).grid_search(
-        bound_list=[(0.1, 5.0)], delta=0.1))
+print(Optimize(SINGLE_SERVER, number_param=1,
+               print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
 ```
 
 and for the h_mitigator:
 
 ```python
-print(OptimizeMitigator(SINGLE_SERVER, print_x=True).grid_search(
-        bound_list=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))
+print(
+    OptimizeMitigator(SINGLE_SERVER, number_param=2,
+                      print_x=True).grid_search(bound_list=[(0.1, 5.0),
+                                                            (0.9, 8.0)],
+                                                delta=0.1))
 ```
 
 ## Status of Implementation

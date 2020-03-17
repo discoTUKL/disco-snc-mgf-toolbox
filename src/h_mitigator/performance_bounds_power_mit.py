@@ -30,12 +30,12 @@ def output_power_mit(arr: Arrival,
     if arr.is_discrete():
         numerator = exp(theta * arr.rho(theta=l_theta) * delta_time) * exp(
             theta * sigma_l_sum)
-        denominator = (1 - exp(l_theta * rho_l_diff))**(1 / l_power)
 
     else:
         numerator = exp(theta * arr.rho(theta=l_theta) *
                         (delta_time + 1)) * exp(theta * sigma_l_sum)
-        denominator = (1 - exp(l_theta * rho_l_diff))**(1 / l_power)
+
+    denominator = (1 - exp(l_theta * rho_l_diff))**(1 / l_power)
 
     try:
         return numerator / denominator

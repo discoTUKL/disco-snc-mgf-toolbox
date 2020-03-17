@@ -5,7 +5,7 @@ from typing import List
 
 from nc_arrivals.arrival import Arrival
 from nc_operations.stability_check import stability_check
-from nc_server.constant_rate_server import ConstantRateServer
+from nc_server.rate_latency_server import RateLatencyServer
 from nc_server.server import Server
 from utils.exceptions import ParameterOutOfBounds
 from utils.helper_functions import get_p_n, get_q, is_equal
@@ -84,9 +84,9 @@ class Convolve(Server):
         self.q = get_q(p=p, indep=indep)
 
     def sigma(self, theta: float) -> float:
-        if isinstance(self.ser1, ConstantRateServer) and isinstance(
-                self.ser2, ConstantRateServer):
-            return 0.0
+        if isinstance(self.ser1, RateLatencyServer) and isinstance(
+                self.ser2, RateLatencyServer):
+            return self.ser1.latency + self.ser2.latency
 
         ser_1_sigma_p = self.ser1.sigma(self.p * theta)
         ser_2_sigma_q = self.ser2.sigma(self.q * theta)
@@ -104,8 +104,8 @@ class Convolve(Server):
             return ser_1_sigma_p + ser_2_sigma_q
 
     def rho(self, theta: float) -> float:
-        if isinstance(self.ser1, ConstantRateServer) and isinstance(
-                self.ser2, ConstantRateServer):
+        if isinstance(self.ser1, RateLatencyServer) and isinstance(
+                self.ser2, RateLatencyServer):
             return min(self.ser1.rate, self.ser2.rate)
 
         ser_1_rho_p = self.ser1.rho(self.p * theta)
@@ -142,9 +142,9 @@ class ConvolveAlter(Server):
         self.delta = delta
 
     def sigma(self, theta: float) -> float:
-        if isinstance(self.ser1, ConstantRateServer) and isinstance(
-                self.ser2, ConstantRateServer):
-            return 0.0
+        if isinstance(self.ser1, RateLatencyServer) and isinstance(
+                self.ser2, RateLatencyServer):
+            return self.ser1.latency + self.ser2.latency
 
         ser_1_sigma_p = self.ser1.sigma(self.p * theta)
         ser_2_sigma_q = self.ser2.sigma(self.q * theta)
@@ -163,8 +163,8 @@ class ConvolveAlter(Server):
                                                                self.delta))
 
     def rho(self, theta: float) -> float:
-        if isinstance(self.ser1, ConstantRateServer) and isinstance(
-                self.ser2, ConstantRateServer):
+        if isinstance(self.ser1, RateLatencyServer) and isinstance(
+                self.ser2, RateLatencyServer):
             return min(self.ser1.rate, self.ser2.rate)
 
         ser_1_rho_p = self.ser1.rho(self.p * theta)
@@ -178,33 +178,6 @@ class ConvolveAlter(Server):
 
         else:
             return ser_1_rho_p - self.delta
-
-
-class Leftover(Server):
-    """Class to compute the leftover service."""
-    def __init__(self, ser: Server, arr: Arrival, indep=True, p=1.0) -> None:
-        self.arr = arr
-        self.ser = ser
-        self.indep = indep
-
-        if indep:
-            self.p = 1.0
-        else:
-            self.p = p
-
-        self.q = get_q(p=p, indep=indep)
-
-    def sigma(self, theta):
-        return self.ser.sigma(self.q * theta) + self.arr.sigma(self.p * theta)
-
-    def rho(self, theta):
-        arr_rho_p_theta = self.arr.rho(self.p * theta)
-        ser_rho_q_theta = self.ser.rho(self.q * theta)
-
-        if ser_rho_q_theta < 0 or arr_rho_p_theta < 0:
-            raise ParameterOutOfBounds("The rhos must be >= 0")
-
-        return ser_rho_q_theta - arr_rho_p_theta
 
 
 class AggregateList(Arrival):
@@ -229,8 +202,8 @@ class AggregateList(Arrival):
     def sigma(self, theta: float) -> float:
         res = 0.0
         if self.indep:
-            for i in range(len(self.arr_list)):
-                res += self.arr_list[i].sigma(theta)
+            for arr in self.arr_list:
+                res += arr.sigma(theta)
         else:
             for i in range(len(self.arr_list) - 1):
                 res += self.arr_list[i].sigma(self.p_list[i] * theta)
@@ -306,10 +279,10 @@ class AggregateTwo(Arrival):
 
 if __name__ == '__main__':
     from timeit import default_timer as timer
-    from nc_arrivals.regulated_arrivals import TokenBucketConstant
+    from nc_arrivals.regulated_arrivals import DetermTokenBucket
     ARR_LIST = [
-        TokenBucketConstant(sigma_single=1.0, rho_single=1.5, n=8),
-        TokenBucketConstant(sigma_single=2.0, rho_single=3.0, n=10)
+        DetermTokenBucket(sigma_single=1.0, rho_single=1.5, n=8),
+        DetermTokenBucket(sigma_single=2.0, rho_single=3.0, n=10)
     ]
 
     START = timer()

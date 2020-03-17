@@ -216,8 +216,10 @@ def csv_single_param_exp(start_time: int,
 
             theta_bounds = [(0.1, 4.0)]
 
-            res_array[i, 0] = Optimize(setting=single_setting).grid_search(
-                bound_list=theta_bounds, delta=delta)
+            res_array[i, 0] = Optimize(setting=single_setting,
+                                       number_param=1).grid_search(
+                                           bound_list=theta_bounds,
+                                           delta=delta)
 
             res_array[i,
                       1] = delay_prob_lower_exp_dm1_opt(t=start_time,
@@ -331,7 +333,8 @@ def csv_single_param_exp(start_time: int,
 #     bound_array_power = theta_bounds[:]
 #     bound_array_power.append((0.9, 4.0))
 #
-#     res_array[index, 1] = OptimizeMitigator(setting_h_mit=setting).grid_search(
+#     res_array[index, 1] = OptimizeMitigator(
+#         setting_h_mit=setting).grid_search(
 #         bound_list=bound_array_power, delta=DELTA)
 #
 #     res_array[index, 2] = delay_prob_lower_exp_dm1_opt(
@@ -413,8 +416,9 @@ if __name__ == '__main__':
     #                                    value=DELTA_TIME))
     #
     # DM1_STANDARD_OPT = Optimize(
-    #     setting=DM1_SINGLE, print_x=PRINT_X).grid_search(bound_list=BOUND_LIST,
-    #                                                      delta=DELTA)
+    #     setting=DM1_SINGLE,
+    #     number_param=1,
+    #     print_x=PRINT_X).grid_search(bound_list=BOUND_LIST, delta=DELTA)
     # print("DM1 Standard Opt: ", DM1_STANDARD_OPT)
     #
     # DM1_POWER_OPT = OptimizeMitigator(setting_h_mit=DM1_SINGLE,
