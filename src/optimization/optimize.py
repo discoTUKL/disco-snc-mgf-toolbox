@@ -1,4 +1,4 @@
-"""Optimize theta and all Lyapunov l's"""
+"""Optimize theta and all other parameters"""
 
 from math import exp, inf
 from typing import List, Tuple
@@ -30,7 +30,7 @@ class Optimize(object):
         """
         Shortens the exception handling and case distinction in a small method.
 
-        :param param_list: theta parameter and Lyapunov parameters l_i
+        :param param_list: theta ond other parameters
         :return:           function to_value
         """
         try:
@@ -181,10 +181,42 @@ class Optimize(object):
             return inf
 
         if self.print_x:
-            print(f"Basin Hopping optimal x: {bh_res.x}")
+            print(f"basin hopping optimal x: {bh_res.x}")
 
         return bh_res.fun
 
+    def diff_evolution(self, bound_list: List[tuple]) -> float:
+        """
+        Differential Evolution optimization from the sciPy package.
+
+        :param bound_list: list of tuples of lower and upper bounds
+        :return:           optimized standard_bound
+        """
+        np.seterr("raise")
+
+        try:
+            de_res = scipy.optimize.differential_evolution(
+                func=self.eval_except, bounds=bound_list)
+
+        except FloatingPointError:
+            return inf
+
+        if self.print_x:
+            print(f"differential evolution optimal x: {de_res.x}")
+
+        return de_res.fun
+
+    def dual_annealing(self, bound_list: List[Tuple[float, float]]):
+
+        dual_anneal_res = scipy.optimize.dual_annealing(func=self.eval_except,
+                                                        bounds=bound_list)
+
+        if self.print_x:
+            print(f"dual annealing optimal x: {dual_anneal_res.x}")
+
+        return dual_anneal_res.fun
+
+    @deprecated
     def sim_annealing(self, start_list: List[float],
                       sim_anneal_params: SimAnnealParams) -> float:
         """
@@ -243,45 +275,6 @@ class Optimize(object):
             print(f"simulated annealing optimal x: {param_best}")
 
         return optimum_best
-
-    def diff_evolution(self, bound_list: List[tuple]) -> float:
-        """
-        Differential Evolution optimization from the sciPy package.
-
-        :param bound_list: list of tuples of lower and upper bounds
-        :return:           optimized standard_bound
-        """
-        np.seterr("raise")
-
-        try:
-            de_res = scipy.optimize.differential_evolution(
-                func=self.eval_except, bounds=bound_list)
-
-        except FloatingPointError:
-            return inf
-
-        if self.print_x:
-            print(f"Differential Evolution optimal x: {de_res.x}")
-
-        return de_res.fun
-
-    def bfgs(self, start_list: list) -> float:
-        x0 = np.array(start_list)
-
-        np.seterr("raise")
-
-        try:
-            bfgs_res = scipy.optimize.minimize(fun=self.eval_except,
-                                               x0=x0,
-                                               method="BFGS")
-
-        except FloatingPointError:
-            return inf
-
-        if self.print_x:
-            print(f"BFGS optimal x: {bfgs_res.x}")
-
-        return bfgs_res.fun
 
     @deprecated
     def grid_search_old(self, bound_list: List[Tuple[float, float]],
@@ -438,3 +431,21 @@ class Optimize(object):
             print(f"NM old optimal x: {simplex[best_index]}")
 
         return y_value[best_index]
+
+    def bfgs(self, start_list: list) -> float:
+        x0 = np.array(start_list)
+
+        np.seterr("raise")
+
+        try:
+            bfgs_res = scipy.optimize.minimize(fun=self.eval_except,
+                                               x0=x0,
+                                               method="BFGS")
+
+        except FloatingPointError:
+            return inf
+
+        if self.print_x:
+            print(f"BFGS optimal x: {bfgs_res.x}")
+
+        return bfgs_res.fun

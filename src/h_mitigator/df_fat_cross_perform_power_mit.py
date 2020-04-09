@@ -124,8 +124,12 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="simple_setting_",
                                   data_frame_creator=fat_cross_power_mit_df,
                                   arr_list=[
-                                      MMOOFluid(mu=1.2, lamb=2.1, burst=3.5),
-                                      MMOOFluid(mu=3.7, lamb=1.5, burst=0.4)
+                                      MMOOFluid(mu=1.2,
+                                                lamb=2.1,
+                                                peak_rate=3.5),
+                                      MMOOFluid(mu=3.7,
+                                                lamb=1.5,
+                                                peak_rate=0.4)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=2.0),
@@ -138,8 +142,12 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="simple_setting_",
                                   data_frame_creator=fat_cross_power_mit_df,
                                   arr_list=[
-                                      MMOOFluid(mu=1.0, lamb=2.2, burst=3.4),
-                                      MMOOFluid(mu=3.6, lamb=1.6, burst=0.4)
+                                      MMOOFluid(mu=1.0,
+                                                lamb=2.2,
+                                                peak_rate=3.4),
+                                      MMOOFluid(mu=3.6,
+                                                lamb=1.6,
+                                                peak_rate=0.4)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=2.0),

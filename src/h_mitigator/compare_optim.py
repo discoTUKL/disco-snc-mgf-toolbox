@@ -8,7 +8,6 @@ from h_mitigator.setting_mitigator import SettingMitigator
 from optimization.initial_simplex import InitialSimplex
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.opt_method import OptMethod
-from optimization.sim_anneal_param import SimAnnealParams
 
 
 def compare_optimization(setting: SettingMitigator,
@@ -70,17 +69,17 @@ def compare_optimization(setting: SettingMitigator,
                 number_param=number_l + 1,
                 print_x=print_x).basin_hopping(start_list=start_list)
 
-        elif opt == OptMethod.SIMULATED_ANNEALING:
-            simul_anneal_param = SimAnnealParams()
-            theta_start = 0.5
+        elif opt == OptMethod.DUAL_ANNEALING:
+            theta_bounds = [(0.1, 4.0)]
 
-            start_list = [theta_start] + [1.0] * number_l
+            bound_array = theta_bounds[:]
+            for _i in range(1, number_l + 1):
+                bound_array.append((0.9, 4.0))
 
-            bound = OptimizeMitigator(setting_h_mit=setting,
-                                      number_param=number_l + 1,
-                                      print_x=print_x).sim_annealing(
-                                          start_list=start_list,
-                                          sim_anneal_params=simul_anneal_param)
+            bound = OptimizeMitigator(
+                setting_h_mit=setting,
+                number_param=number_l + 1,
+                print_x=print_x).dual_annealing(bound_list=bound_array)
 
         elif opt == OptMethod.DIFFERENTIAL_EVOLUTION:
             theta_bounds = [(0.1, 4.0)]
@@ -141,7 +140,7 @@ def compare_optimization(setting: SettingMitigator,
         list_of_approaches.append(opt.name)
 
     print("list_of_approaches: ", list_of_approaches)
-    print("list_of_times: ", list_of_times)
+    print("list_of_runtimes: ", list_of_times)
     print("list_of_bounds: ")
     return list_of_bounds
 
@@ -157,14 +156,14 @@ if __name__ == '__main__':
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
     EXP_ARRIVAL = [DM1(lamb=4.4)]
-    CONST_RATE = [ConstantRateServer(rate=0.24)]
+    CONST_RATE = ConstantRateServer(rate=0.24)
 
     SETTING1 = SingleServerMitPerform(arr_list=EXP_ARRIVAL,
-                                      ser_list=CONST_RATE,
+                                      server=CONST_RATE,
                                       perform_param=OUTPUT_TIME)
     OPT_METHODS = [
         OptMethod.GRID_SEARCH, OptMethod.GS_OLD, OptMethod.PATTERN_SEARCH,
-        OptMethod.BASIN_HOPPING, OptMethod.SIMULATED_ANNEALING,
+        OptMethod.BASIN_HOPPING, OptMethod.DUAL_ANNEALING,
         OptMethod.DIFFERENTIAL_EVOLUTION
     ]
 

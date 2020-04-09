@@ -34,7 +34,7 @@ def single_server_df(arr_list: List[ArrivalDistribution],
     for i in range(len(perform_param_list)):
         setting = SingleServerPerform(
             arr_list=arr_list,
-            ser_list=ser_list,
+            server=ser_list[0],
             perform_param=perform_param_list.get_parameter_at_i(i))
 
         if opt_method == OptMethod.GRID_SEARCH:

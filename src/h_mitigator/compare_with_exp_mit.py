@@ -199,7 +199,7 @@ def csv_single_param_exp(start_time: int,
     for i in tqdm(range(total_iterations)):
         single_setting = SingleServerMitPerform(
             arr_list=[DM1(lamb=param_array[i, 0])],
-            ser_list=[ConstantRateServer(rate=param_array[i, 1])],
+            server=ConstantRateServer(rate=param_array[i, 1]),
             perform_param=PerformParameter(
                 perform_metric=PerformEnum.DELAY_PROB, value=delay))
 

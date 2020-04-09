@@ -6,9 +6,9 @@ from h_mitigator.deconvolve_power_mit import DeconvolvePowerMit
 from h_mitigator.setting_mitigator import SettingMitigator
 from nc_arrivals.arrival import Arrival
 from nc_arrivals.arrival_distribution import ArrivalDistribution
+from nc_operations.arb_scheduling import LeftoverARB
 from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateList, Deconvolve
-from nc_operations.scheduling import LeftoverARB
 from nc_server.server import Server
 from nc_server.server_distribution import ServerDistribution
 from utils.perform_parameter import PerformParameter
@@ -23,9 +23,10 @@ class FatCrossPerform(SettingMitigator):
         if len(arr_list) != len(ser_list):
             raise ValueError(f"number of arrivals {len(arr_list)}"
                              f"and servers {len(ser_list)} have to match")
-        super().__init__(arr_list=arr_list,
-                         ser_list=ser_list,
-                         perform_param=perform_param)
+        self.arr_list = arr_list
+        self.ser_list = ser_list
+        self.perform_param = perform_param
+
         self.number_servers = len(ser_list)
 
     def standard_bound(self, param_list: List[float]) -> float:
@@ -39,10 +40,11 @@ class FatCrossPerform(SettingMitigator):
 
         aggregated_cross: Arrival = AggregateList(arr_list=output_list,
                                                   p_list=[])
-        s_net: Server = LeftoverARB(ser=self.ser_list[0], arr=aggregated_cross)
+        s_e2e: Server = LeftoverARB(ser=self.ser_list[0],
+                                    cross_arr=aggregated_cross)
 
         return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_e2e=s_net,
+                                   s_e2e=s_e2e,
                                    theta=theta,
                                    perform_param=self.perform_param)
 
@@ -57,10 +59,11 @@ class FatCrossPerform(SettingMitigator):
 
         aggregated_cross: Arrival = AggregateList(arr_list=output_list,
                                                   p_list=[])
-        s_net: Server = LeftoverARB(ser=self.ser_list[0], arr=aggregated_cross)
+        s_e2e: Server = LeftoverARB(ser=self.ser_list[0],
+                                    cross_arr=aggregated_cross)
 
         return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_e2e=s_net,
+                                   s_e2e=s_e2e,
                                    theta=param_l_list[0],
                                    perform_param=self.perform_param)
 
@@ -75,7 +78,7 @@ class FatCrossPerform(SettingMitigator):
         #     if util_at_server_i > max_util:
         #         max_util = util_at_server_i
 
-        return sum_average_rates / self.ser_list[0].rate
+        return sum_average_rates / self.ser_list[0].average_rate()
 
     def to_string(self) -> str:
         for arr in self.arr_list:

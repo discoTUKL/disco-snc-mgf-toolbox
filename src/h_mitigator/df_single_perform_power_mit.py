@@ -44,7 +44,7 @@ def single_server_df(arr_list: List[ArrivalDistribution],
     for _i in range(len(perform_param_list)):
         setting = SingleServerMitPerform(
             arr_list=arr_list,
-            ser_list=ser_list,
+            server=ser_list[0],
             perform_param=perform_param_list.get_parameter_at_i(_i))
 
         if opt_method == OptMethod.GRID_SEARCH:
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         perform_param_list_to_csv(
             prefix="single_",
             data_frame_creator=single_server_df,
-            arr_list=[MMOOFluid(mu=8.0, lamb=12.0, burst=3.0, n=1)],
+            arr_list=[MMOOFluid(mu=8.0, lamb=12.0, peak_rate=3.0, n=1)],
             ser_list=[ConstantRateServer(rate=1.5)],
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))

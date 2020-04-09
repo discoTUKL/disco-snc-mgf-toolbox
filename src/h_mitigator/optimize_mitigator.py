@@ -18,7 +18,9 @@ class OptimizeMitigator(Optimize):
                  setting_h_mit: SettingMitigator,
                  number_param: int,
                  print_x=False) -> None:
-        super().__init__(setting_h_mit, number_param, print_x)
+        super().__init__(setting=setting_h_mit,
+                         number_param=number_param,
+                         print_x=print_x)
         self.setting_h_mit = setting_h_mit
         self.number_param = number_param
         self.print_x = print_x
@@ -45,8 +47,8 @@ if __name__ == '__main__':
 
     DELAY_4 = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.0001)
 
-    MMOO_1 = MMOOFluid(mu=1.0, lamb=2.2, burst=3.4)
-    MMOO_2 = MMOOFluid(mu=3.6, lamb=1.6, burst=0.4)
+    MMOO_1 = MMOOFluid(mu=1.0, lamb=2.2, peak_rate=3.4)
+    MMOO_2 = MMOOFluid(mu=3.6, lamb=1.6, peak_rate=0.4)
     CONST_RATE_1 = ConstantRateServer(rate=2.0)
     CONST_RATE_2 = ConstantRateServer(rate=0.3)
 

@@ -4,6 +4,7 @@ from math import exp, log
 from typing import List
 
 from nc_arrivals.arrival import Arrival
+from nc_arrivals.regulated_arrivals import DetermTokenBucket
 from nc_operations.stability_check import stability_check
 from nc_server.rate_latency_server import RateLatencyServer
 from nc_server.server import Server
@@ -20,10 +21,10 @@ class Deconvolve(Arrival):
 
         if indep:
             self.p = 1.0
+            self.q = 1.0
         else:
             self.p = p
-
-        self.q = get_q(p=p, indep=indep)
+            self.q = get_q(p=p)
 
     def sigma(self, theta: float) -> float:
         """
@@ -31,6 +32,9 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return:      sigma(theta)
         """
+        if isinstance(self.arr, DetermTokenBucket) and isinstance(
+                self.ser, RateLatencyServer):
+            return self.arr.burst + self.arr.arr_rate * self.ser.latency
 
         arr_sigma_p = self.arr.sigma(self.p * theta)
         ser_sigma_q = self.ser.sigma(self.q * theta)
@@ -51,6 +55,11 @@ class Deconvolve(Arrival):
         :param theta: mgf parameter
         :return: rho(theta)
         """
+        if isinstance(self.arr, DetermTokenBucket) and isinstance(
+                self.ser, RateLatencyServer):
+            stability_check(arr=self.arr, ser=self.ser, theta=theta)
+            return self.arr.arr_rate
+
         arr_rho_p = self.arr.rho(self.p * theta)
 
         if arr_rho_p < 0 or self.ser.rho(self.q * theta) < 0:
@@ -78,10 +87,10 @@ class Convolve(Server):
 
         if indep:
             self.p = 1.0
+            self.q = 1.0
         else:
             self.p = p
-
-        self.q = get_q(p=p, indep=indep)
+            self.q = get_q(p=p)
 
     def sigma(self, theta: float) -> float:
         if isinstance(self.ser1, RateLatencyServer) and isinstance(
@@ -135,10 +144,11 @@ class ConvolveAlter(Server):
 
         if indep:
             self.p = 1.0
+            self.q = 1.0
         else:
             self.p = p
+            self.q = get_q(p=p)
 
-        self.q = get_q(p=p, indep=indep)
         self.delta = delta
 
     def sigma(self, theta: float) -> float:
@@ -189,6 +199,7 @@ class AggregateList(Arrival):
         self.arr_list = arr_list
         if indep:
             self.p_list = [1.0]
+            # self.p_n = 1.0
         else:
             if len(p_list) != (len(self.arr_list) - 1):
                 raise ValueError(
@@ -196,7 +207,7 @@ class AggregateList(Arrival):
                     f"arr_list={len(self.arr_list)} - 1 have to match")
 
             self.p_list = p_list
-            self.p_n = get_p_n(p_list=p_list, indep=False)
+            self.p_n = get_p_n(p_list=p_list)
         self.indep = indep
 
     def sigma(self, theta: float) -> float:
@@ -255,10 +266,10 @@ class AggregateTwo(Arrival):
         self.indep = indep
         if indep:
             self.p = 1.0
+            self.q = 1.0
         else:
             self.p = p
-
-        self.q = get_q(p=p, indep=indep)
+            self.q = get_q(p=p)
 
     def sigma(self, theta: float) -> float:
         return self.arr1.sigma(self.p * theta) + self.arr2.sigma(
@@ -275,6 +286,25 @@ class AggregateTwo(Arrival):
 
     def is_discrete(self):
         return self.arr1.is_discrete()
+
+
+class AggregateHomogeneous(Arrival):
+    """Multiple (list) aggregation class."""
+    def __init__(self, arr: Arrival, n: int, indep=True) -> None:
+        self.arr = arr
+        self.n = n
+
+        if not indep:
+            raise NotImplementedError
+
+    def sigma(self, theta: float) -> float:
+        return self.n * self.arr.sigma(theta=theta)
+
+    def rho(self, theta: float) -> float:
+        return self.n * self.arr.rho(theta=theta)
+
+    def is_discrete(self):
+        return self.arr.is_discrete()
 
 
 if __name__ == '__main__':

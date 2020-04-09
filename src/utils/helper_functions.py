@@ -11,40 +11,32 @@ from utils.exceptions import ParameterOutOfBounds
 EPSILON = 1e-09
 
 
-def get_q(p: float, indep: bool) -> float:
+def get_q(p: float) -> float:
     """
     :param p: Hoelder p
-    :param indep: if true, p=q=1, else q = p / (p - 1)
     :return: q
     """
-    if indep:
-        return 1.0
-    else:
-        if p <= 1.0:
-            raise ParameterOutOfBounds(f"p={p} must be >1")
+    if p <= 1.0:
+        raise ParameterOutOfBounds(f"p={p} must be >1")
 
-        # 1/p + 1/q = 1
-        # 1/q = (p - 1) / p
+    # 1/p + 1/q = 1
+    # 1/q = (p - 1) / p
 
-        return p / (p - 1.0)
+    return p / (p - 1.0)
 
 
-def get_p_n(p_list: List[float], indep: bool) -> float:
+def get_p_n(p_list: List[float]) -> float:
     """
     :param p_list: first p_1, ..., p_n in generalized Hoelder inequality
-    :param indep: if true, all p_i = 1, else sum (1 / p_i) = 1
     :return: last p_n
     """
-    if indep:
-        return 1.0
-    else:
-        inv_p = [0.0] * len(p_list)
-        for i in range(len(p_list)):
-            if p_list[i] <= 1.0:
-                raise ParameterOutOfBounds(f"p={p_list[i]} must be >1")
-            inv_p[i] = 1.0 / p_list[i]
+    inv_p = [0.0] * len(p_list)
+    for i in range(len(p_list)):
+        if p_list[i] <= 1.0:
+            raise ParameterOutOfBounds(f"p={p_list[i]} must be >1")
+        inv_p[i] = 1.0 / p_list[i]
 
-        return 1.0 / (1.0 - sum(inv_p))
+    return 1.0 / (1.0 - sum(inv_p))
 
 
 def is_equal(float1: float, float2: float, epsilon=EPSILON) -> bool:
@@ -98,12 +90,12 @@ def get_unit_vector(length: int, index: int) -> List[float]:
 
 
 if __name__ == '__main__':
-    print(get_p_n(p_list=[3.0, 3.0], indep=True))
-    print(get_p_n(p_list=[3.0, 3.0], indep=False))
+    print(get_p_n(p_list=[3.0, 3.0]))
 
     SIMPLEX_START_TEST = np.array([[0.1, 2.0], [1.0, 3.0], [2.0, 2.0]])
     print(SIMPLEX_START_TEST)
     print(centroid_without_one_row(simplex=SIMPLEX_START_TEST, index=0))
     print(
-        average_towards_best_row(
-            SIMPLEX_START_TEST, best_index=0, shrink_factor=0.5))
+        average_towards_best_row(SIMPLEX_START_TEST,
+                                 best_index=0,
+                                 shrink_factor=0.5))

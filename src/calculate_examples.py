@@ -12,6 +12,7 @@ from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.optimize import Optimize
+from optimization.sim_anneal_param import SimAnnealParams
 from utils.perform_parameter import PerformParameter
 
 if __name__ == '__main__':
@@ -21,7 +22,7 @@ if __name__ == '__main__':
 
     SINGLE_SERVER = SingleServerMitPerform(
         arr_list=[DM1(lamb=1.0)],
-        ser_list=[ConstantRateServer(rate=10.0)],
+        server=ConstantRateServer(rate=10.0),
         perform_param=OUTPUT_TIME6)
 
     print(SINGLE_SERVER.standard_bound(param_list=[0.1]))
@@ -46,18 +47,18 @@ if __name__ == '__main__':
                                    value=8)
 
     SINGLE_SERVER2 = SingleServerMitPerform(
-        arr_list=[MMOOFluid(mu=0.7, lamb=0.4, burst=1.2)],
-        ser_list=[ConstantRateServer(rate=1.0)],
+        arr_list=[MMOOFluid(mu=0.7, lamb=0.4, peak_rate=1.2)],
+        server=ConstantRateServer(rate=1.0),
         perform_param=DELAY_PROB8)
+
+    print(
+        Optimize(SINGLE_SERVER2, number_param=1,
+                 print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
 
     print(
         Optimize(SINGLE_SERVER2, number_param=1,
                  print_x=True).grid_search_old(bound_list=[(0.1, 5.0)],
                                                delta=0.1))
-
-    print(
-        Optimize(SINGLE_SERVER2, number_param=1,
-                 print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
 
     print(
         OptimizeMitigator(SINGLE_SERVER2, number_param=2,
@@ -74,8 +75,8 @@ if __name__ == '__main__':
                                       value=0.0183)
 
     SINGLE_SERVER2 = SingleServerMitPerform(
-        arr_list=[MMOOFluid(mu=0.7, lamb=0.4, burst=1.2)],
-        ser_list=[ConstantRateServer(rate=1.0)],
+        arr_list=[MMOOFluid(mu=0.7, lamb=0.4, peak_rate=1.2)],
+        server=ConstantRateServer(rate=1.0),
         perform_param=DELAY_PROB_REV)
 
     print(
@@ -96,14 +97,18 @@ if __name__ == '__main__':
         ConstantRateServer(rate=0.5)
     ]
 
+    EXAMPLE_1 = FatCrossPerform(arr_list=ARR_LIST1,
+                                ser_list=SER_LIST1,
+                                perform_param=DELAY_PROB6)
+
+    print("EXAMPLE_1\n")
     print(
-        FatCrossPerform(arr_list=ARR_LIST1,
-                        ser_list=SER_LIST1,
-                        perform_param=DELAY_PROB6).standard_bound([0.3]))
+        Optimize(setting=EXAMPLE_1, number_param=1,
+                 print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
 
     ARR_LIST2: List[ArrivalDistribution] = [
-        MMOOFluid(mu=0.5, lamb=0.5, burst=1.5),
-        MMOOFluid(mu=0.5, lamb=0.5, burst=0.7)
+        MMOOFluid(mu=0.5, lamb=0.5, peak_rate=1.5),
+        MMOOFluid(mu=0.5, lamb=0.5, peak_rate=0.7)
     ]
 
     SER_LIST2: List[ConstantRateServer] = [
@@ -111,12 +116,13 @@ if __name__ == '__main__':
         ConstantRateServer(rate=0.5)
     ]
 
-    EXAMPLE = FatCrossPerform(arr_list=ARR_LIST2,
-                              ser_list=SER_LIST2,
-                              perform_param=DELAY_PROB6)
+    EXAMPLE_2 = FatCrossPerform(arr_list=ARR_LIST2,
+                                ser_list=SER_LIST2,
+                                perform_param=DELAY_PROB6)
 
+    print("\nEXAMPLE_2\n")
     print(
-        Optimize(EXAMPLE, number_param=1,
+        Optimize(EXAMPLE_2, number_param=1,
                  print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
 
     DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY,
@@ -130,36 +136,42 @@ if __name__ == '__main__':
         Optimize(EXAMPLE_REVERSE, number_param=1,
                  print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
 
-    # DELAY_PROB4 = PerformParameter(
-    #     perform_metric=PerformEnum.DELAY_PROB, value=4)
-    #
-    # print(
-    #     Optimize(EXAMPLE, number_parameters=1, print_x=True).grid_search_old(
-    #         bound_list=[(0.1, 5.0)], delta=0.1))
-    #
-    # print(
-    #     OptimizeMitigator(EXAMPLE,
-    #                       number_parameters=2,
-    #                       print_x=True).grid_search(
-    #         bound_list=[(0.1, 5.0), (0.9, 5)], delta=0.1))
-    #
-    # print(
-    #     Optimize(EXAMPLE, print_x=True, number_parameters=1).grid_search(
-    #         bound_list=[(0.1, 5.0)], delta=0.1))
-    #
-    # OPTIMIZE_NEW = OptimizeMitigator(EXAMPLE,
-    #                                  number_parameters=2,
-    #                                  print_x=True)
-    #
-    # print(
-    #     OPTIMIZE_NEW.pattern_search(
-    #         start_list=[0.5, 1.0], delta=3, delta_min=0.01))
-    #
-    # SIMU_ANNEAL_PARAM = SimAnnealParams(
-    #     rep_max=15, temp_start=1000.0, cooling_factor=0.95, search_radius=1.0)
-    #
-    # print(OPTIMIZE_NEW.basin_hopping(start_list=[0.5, 1.0]))
-    #
-    # print(
-    #     OPTIMIZE_NEW.sim_annealing(
-    #         start_list=[0.5, 1.0], sim_anneal_params=SIMU_ANNEAL_PARAM))
+    DELAY_PROB4 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
+                                   value=4)
+
+    print(
+        Optimize(EXAMPLE_2, number_param=1,
+                 print_x=True).grid_search_old(bound_list=[(0.1, 5.0)],
+                                               delta=0.1))
+
+    print(
+        OptimizeMitigator(EXAMPLE_2, number_param=2,
+                          print_x=True).grid_search(bound_list=[(0.1, 5.0),
+                                                                (0.9, 5)],
+                                                    delta=0.1))
+
+    print(
+        OptimizeMitigator(EXAMPLE_2, number_param=2,
+                          print_x=True).pattern_search(start_list=[0.5, 1.0],
+                                                       delta=3,
+                                                       delta_min=0.01))
+
+    SIMU_ANNEAL_PARAM = SimAnnealParams(rep_max=15,
+                                        temp_start=1000.0,
+                                        cooling_factor=0.95,
+                                        search_radius=1.0)
+
+    print(
+        OptimizeMitigator(EXAMPLE_2, number_param=2,
+                          print_x=True).basin_hopping(start_list=[0.5, 1.0]))
+
+    print(
+        OptimizeMitigator(EXAMPLE_2, number_param=2,
+                          print_x=True).dual_annealing(bound_list=[(0.1, 5.0),
+                                                                   (0.9, 5)]))
+
+    print(
+        OptimizeMitigator(EXAMPLE_2, number_param=2,
+                          print_x=True).sim_annealing(
+                              start_list=[0.5, 1.0],
+                              sim_anneal_params=SIMU_ANNEAL_PARAM))

@@ -64,7 +64,7 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_flows: int,
             arr_list = [
                 MMOOFluid(mu=param_array[i, j],
                           lamb=param_array[i, number_flows + j],
-                          burst=param_array[i, 2 * number_flows + j])
+                          peak_rate=param_array[i, 2 * number_flows + j])
                 for j in range(number_flows)
             ]
 
@@ -82,13 +82,12 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_flows: int,
                                    rho_single=param_array[i, number_flows + j],
                                    n=20) for j in range(number_flows)
             ]
-            # TODO: note that n is fixed
+            # NOTE: n is fixed
 
         elif arrival_enum == ArrivalEnum.TBConst:
             arr_list = [
                 DetermTokenBucket(sigma_single=param_array[i, j],
-                                  rho_single=param_array[i, number_flows +
-                                                           j],
+                                  rho_single=param_array[i, number_flows + j],
                                   n=1) for j in range(number_flows)
             ]
 
@@ -97,8 +96,10 @@ def csv_fat_cross_param_power(arrival_enum: ArrivalEnum, number_flows: int,
                                       f"is infeasible")
 
         ser_list = [
-            ConstantRateServer(rate=param_array[
-                i, arrival_enum.number_parameters() * number_flows + j])
+            ConstantRateServer(
+                rate=param_array[i,
+                                 arrival_enum.number_parameters() *
+                                 number_flows + j])
             for j in range(number_servers)
         ]
 

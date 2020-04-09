@@ -14,6 +14,7 @@ class RegulatedArrivals(ArrivalDistribution):
         self.sigma_single = sigma_single
         self.rho_single = rho_single
         self.n = n
+        self.arr_rate = n * rho_single
 
     @abstractmethod
     def sigma(self, theta: float) -> float:
@@ -55,6 +56,7 @@ class DetermTokenBucket(RegulatedArrivals):
     """Primitive TokenBucket (quasi deterministic and independent of theta)"""
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
         super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
+        self.burst = self.n * self.sigma_single
 
     def sigma(self, theta: float) -> float:
         return self.n * self.sigma_single

@@ -10,7 +10,6 @@ from nc_operations.perform_enum import PerformEnum
 from optimization.initial_simplex import InitialSimplex
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
-from optimization.sim_anneal_param import SimAnnealParams
 
 
 def compare_mitigator(setting: SettingMitigator,
@@ -94,41 +93,33 @@ def compare_mitigator(setting: SettingMitigator,
         start_list = [theta_start]
 
         standard_bound = Optimize(
-            setting=setting,
-            number_param=1,
+            setting=setting, number_param=1,
             print_x=print_x).basin_hopping(start_list=start_list)
 
         start_list_new = [theta_start] + [1.0] * number_l
 
         h_mit_bound = OptimizeMitigator(
-            setting_h_mit=setting,
-            number_param=number_l + 1,
+            setting_h_mit=setting, number_param=number_l + 1,
             print_x=print_x).basin_hopping(start_list=start_list_new)
 
         # This part is there to overcome opt_method issues
         if h_mit_bound > standard_bound:
             h_mit_bound = standard_bound
 
-    elif opt_method == OptMethod.SIMULATED_ANNEALING:
-        simul_anneal_param = SimAnnealParams()
-        theta_start = 0.5
+    elif opt_method == OptMethod.DUAL_ANNEALING:
+        theta_bounds = [(0.1, 4.0)]
 
-        start_list = [theta_start]
+        standard_bound = Optimize(
+            setting=setting, number_param=1,
+            print_x=print_x).dual_annealing(bound_list=theta_bounds)
 
-        standard_bound = Optimize(setting=setting,
-                                  number_param=1,
-                                  print_x=print_x).sim_annealing(
-                                      start_list=start_list,
-                                      sim_anneal_params=simul_anneal_param)
-
-        start_list_new = [theta_start] + [1.0] * number_l
+        bound_array = theta_bounds[:]
+        for _i in range(1, number_l + 1):
+            bound_array.append((0.9, 4.0))
 
         h_mit_bound = OptimizeMitigator(
-            setting_h_mit=setting,
-            number_param=number_l + 1,
-            print_x=print_x).sim_annealing(
-                start_list=start_list_new,
-                sim_anneal_params=simul_anneal_param)
+            setting_h_mit=setting, number_param=number_l + 1,
+            print_x=print_x).dual_annealing(bound_list=bound_array)
 
         # This part is there to overcome opt_method issues
         if h_mit_bound > standard_bound:
@@ -138,8 +129,7 @@ def compare_mitigator(setting: SettingMitigator,
         theta_bounds = [(0.1, 8.0)]
 
         standard_bound = Optimize(
-            setting=setting,
-            number_param=1,
+            setting=setting, number_param=1,
             print_x=print_x).diff_evolution(bound_list=theta_bounds)
 
         bound_array = theta_bounds[:]
@@ -147,8 +137,7 @@ def compare_mitigator(setting: SettingMitigator,
             bound_array.append((0.9, 8.0))
 
         h_mit_bound = OptimizeMitigator(
-            setting_h_mit=setting,
-            number_param=number_l + 1,
+            setting_h_mit=setting, number_param=number_l + 1,
             print_x=print_x).diff_evolution(bound_list=bound_array)
 
     else:
@@ -166,7 +155,8 @@ def compare_mitigator(setting: SettingMitigator,
     return standard_bound, h_mit_bound
 
 
-def compare_time(setting: SettingMitigator, opt_method: OptMethod,
+def compare_time(setting: SettingMitigator,
+                 opt_method: OptMethod,
                  number_l=1) -> tuple:
     """Compare computation times."""
 
@@ -175,8 +165,7 @@ def compare_time(setting: SettingMitigator, opt_method: OptMethod,
 
         start = timer()
         Optimize(setting=setting,
-                 number_param=1).grid_search(bound_list=bound_array,
-                                             delta=0.1)
+                 number_param=1).grid_search(bound_list=bound_array, delta=0.1)
         stop = timer()
         time_standard = stop - start
 
@@ -184,9 +173,8 @@ def compare_time(setting: SettingMitigator, opt_method: OptMethod,
             bound_array.append((0.9, 4.0))
 
         start = timer()
-        OptimizeMitigator(setting_h_mit=setting,
-                          number_param=number_l + 1).grid_search(
-            bound_list=bound_array, delta=0.1)
+        OptimizeMitigator(setting_h_mit=setting, number_param=number_l +
+                          1).grid_search(bound_list=bound_array, delta=0.1)
         stop = timer()
         time_lyapunov = stop - start
 
@@ -204,9 +192,10 @@ def compare_time(setting: SettingMitigator, opt_method: OptMethod,
         start_list = [0.5] + [1.0] * number_l
 
         start = timer()
-        OptimizeMitigator(setting_h_mit=setting,
-                          number_param=number_l + 1).pattern_search(
-            start_list=start_list, delta=3.0, delta_min=0.01)
+        OptimizeMitigator(setting_h_mit=setting, number_param=number_l +
+                          1).pattern_search(start_list=start_list,
+                                            delta=3.0,
+                                            delta_min=0.01)
         stop = timer()
         time_lyapunov = stop - start
 
@@ -226,9 +215,27 @@ def compare_time(setting: SettingMitigator, opt_method: OptMethod,
                                                            max_l=2.0)
 
         start = timer()
-        OptimizeMitigator(setting_h_mit=setting,
-                          number_param=number_l + 1).nelder_mead(
-            simplex=start_simplex_new, sd_min=10**(-2))
+        OptimizeMitigator(setting_h_mit=setting, number_param=number_l +
+                          1).nelder_mead(simplex=start_simplex_new,
+                                         sd_min=10**(-2))
+        stop = timer()
+        time_lyapunov = stop - start
+
+    elif opt_method == OptMethod.DUAL_ANNEALING:
+        bound_array = [(0.1, 4.0)]
+
+        start = timer()
+        Optimize(setting=setting,
+                 number_param=1).dual_annealing(bound_list=bound_array)
+        stop = timer()
+        time_standard = stop - start
+
+        for _ in range(1, number_l + 1):
+            bound_array.append((0.9, 4.0))
+
+        start = timer()
+        OptimizeMitigator(setting_h_mit=setting, number_param=number_l +
+                          1).dual_annealing(bound_list=bound_array)
         stop = timer()
         time_lyapunov = stop - start
 
@@ -249,7 +256,7 @@ if __name__ == '__main__':
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 
     SETTING1 = SingleServerMitPerform(arr_list=[DM1(lamb=4.4)],
-                                      ser_list=[ConstantRateServer(rate=0.24)],
+                                      server=ConstantRateServer(rate=0.24),
                                       perform_param=OUTPUT_TIME)
 
     # print(
@@ -267,6 +274,8 @@ if __name__ == '__main__':
                                ser_list=SER_LIST,
                                perform_param=DELAY_PROB)
 
+    print("compare bounds\n")
+
     print(
         compare_mitigator(setting=SETTING2,
                           opt_method=OptMethod.GRID_SEARCH,
@@ -278,6 +287,18 @@ if __name__ == '__main__':
                           print_x=True))
 
     print(
+        compare_mitigator(setting=SETTING2,
+                          opt_method=OptMethod.DUAL_ANNEALING,
+                          print_x=True))
+
+    print("\ncompare runtimes\n")
+
+    print(
         compare_time(setting=SETTING2,
                      opt_method=OptMethod.GRID_SEARCH,
+                     number_l=1))
+
+    print(
+        compare_time(setting=SETTING2,
+                     opt_method=OptMethod.DUAL_ANNEALING,
                      number_l=1))

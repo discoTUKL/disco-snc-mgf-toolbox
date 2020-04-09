@@ -55,7 +55,7 @@ def csv_fat_cross_time(arrival_enum: ArrivalEnum,
                 arrive_list = [
                     MMOOFluid(mu=param_array[i, j],
                               lamb=param_array[i, number_servers + j],
-                              burst=param_array[i, 2 * number_servers + j])
+                              peak_rate=param_array[i, 2 * number_servers + j])
                     for j in range(number_servers)
                 ]
 
