@@ -171,10 +171,12 @@ class OverlappingTandemPerform(SettingMSOBFP):
         return self.to_name() + "_" + self.perform_param.__str__()
 
 
-def sfa_bound_old(theta: float, perform_param: PerformParameter,
-                  arr_list: List[ArrivalDistribution],
+def sfa_bound_old(param_list: [float, float,
+                               float], arr_list: List[ArrivalDistribution],
                   ser_list: List[ConstantRateServer],
-                  p_list: [float, float]) -> float:
+                  perform_param: PerformParameter) -> float:
+    theta = param_list[0]
+
     foi = arr_list[0]
     a_2 = arr_list[1]
     a_3 = arr_list[2]
@@ -192,9 +194,9 @@ def sfa_bound_old(theta: float, perform_param: PerformParameter,
     # d_3_2 = Deconvolve(arr=a_3, ser=Leftover(ser=s_2, arr=a_2))
     s3_lo = LeftoverARB(ser=s_3, cross_arr=d_3_2)
 
-    s_23_lo = Convolve(ser1=s2_lo, ser2=s3_lo, indep=False, p=p_list[0])
+    s_23_lo = Convolve(ser1=s2_lo, ser2=s3_lo, indep=False, p=param_list[1])
 
-    s_e2e = Convolve(ser1=s1_lo, ser2=s_23_lo, indep=False, p=p_list[1])
+    s_e2e = Convolve(ser1=s1_lo, ser2=s_23_lo, indep=False, p=param_list[2])
 
     return evaluate_single_hop(foi=foi,
                                s_e2e=s_e2e,
@@ -295,7 +297,6 @@ if __name__ == '__main__':
                           arr_list=ARR_LIST,
                           ser_list=SER_LIST,
                           perform_param=DELAY_PROB_TIME,
-                          number_param=3,
                           ranges=RANGES_3,
                           print_x=PRINT_X))
 
