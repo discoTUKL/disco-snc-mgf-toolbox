@@ -188,6 +188,8 @@ def delay_prob(arr: Arrival,
                             -rho_diff * theta * tau_1)
 
                 if one_res < opt_res:
+                    # warning should not occur anymore, since missing tau -
+                    # factor has been fixed
                     warnings.warn("tau_opt yields a worse result than tau_1")
 
                 return min(opt_res, one_res)
