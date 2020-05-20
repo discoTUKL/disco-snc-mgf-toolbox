@@ -7,6 +7,7 @@ from nc_arrivals.arrival import Arrival
 from nc_operations.get_sigma_rho import get_sigma_rho
 from nc_operations.stability_check import stability_check
 from nc_server.server import Server
+from utils.exceptions import IllegalArgumentError
 from utils.helper_functions import get_q
 
 
@@ -86,6 +87,9 @@ def backlog(arr: Arrival,
             p=1.0,
             geom_series=True) -> float:
     """Implements stationary standard_bound method"""
+    if prob_b < 0.0 or prob_b > 1.0:
+        raise IllegalArgumentError(f"prob_b={prob_b} must be in (0,1)")
+
     if indep:
         p = 1.0
         q = 1.0
@@ -174,14 +178,14 @@ def delay_prob(arr: Arrival,
                     -theta * ser.rho(theta=q * theta) * delay_value) * exp(
                         theta *
                         (ser.rho(theta=q * theta) * tau_opt + sigma_sum)) / (
-                            -rho_diff * theta)
+                            -rho_diff * theta * tau_opt)
 
                 tau_1 = 1.0
                 one_res = exp(
                     -theta * ser.rho(theta=q * theta) * delay_value) * exp(
                         theta *
                         (ser.rho(theta=q * theta) * tau_1 + sigma_sum)) / (
-                            -rho_diff * theta)
+                            -rho_diff * theta * tau_1)
 
                 if one_res < opt_res:
                     warnings.warn("tau_opt yields a worse result than tau_1")
@@ -223,6 +227,9 @@ def delay(arr: Arrival,
           p=1.0,
           geom_series=True) -> float:
     """Implements stationary standard_bound method"""
+    if prob_d < 0.0 or prob_d > 1.0:
+        raise IllegalArgumentError(f"prob_b={prob_d} must be in (0,1)")
+
     if indep:
         p = 1.0
         q = 1.0
