@@ -97,10 +97,12 @@ def csv_msob_fp_param(name: str,
             setting = OverlappingTandemPerform(arr_list=arr_list,
                                                ser_list=ser_list,
                                                perform_param=perform_param)
+
         elif name == "square":
             setting = SquarePerform(arr_list=arr_list,
                                     ser_list=ser_list,
                                     perform_param=perform_param)
+
         else:
             raise NotImplementedError("this topology is not implemented")
 
@@ -159,6 +161,7 @@ def csv_msob_fp_param(name: str,
 
     res_dict.update({
         "iterations": total_iterations,
+        "target_util": target_util,
         "T": perform_param.value,
         "optimization": opt_method.name,
         "compare_metric": compare_metric.name,
