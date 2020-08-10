@@ -7,8 +7,8 @@ from msob_and_fp.setting_avoid_dep import SettingMSOBFP
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
 from nc_operations.arb_scheduling import LeftoverARB
-from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import Convolve, Deconvolve
+from nc_operations.single_hop_bound import single_hop_bound
 from nc_server.constant_rate_server import ConstantRateServer
 from utils.exceptions import ParameterOutOfBounds
 from utils.perform_parameter import PerformParameter
@@ -45,11 +45,11 @@ class SquarePerform(SettingMSOBFP):
 
         s_e2e = Convolve(ser1=s_1_lo, ser2=s_2_lo, indep=False, p=p)
 
-        return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_e2e=s_e2e,
-                                   theta=theta,
-                                   perform_param=self.perform_param,
-                                   indep=True)
+        return single_hop_bound(foi=self.arr_list[0],
+                                s_e2e=s_e2e,
+                                theta=theta,
+                                perform_param=self.perform_param,
+                                indep=True)
 
     def server_bound(self, param_list: List[float]) -> float:
         theta = param_list[0]
@@ -76,10 +76,10 @@ class SquarePerform(SettingMSOBFP):
 
             s_net_1 = Convolve(ser1=s_1_lo, ser2=s_2_lo)
 
-            res_1 = evaluate_single_hop(foi=self.arr_list[0],
-                                        s_e2e=s_net_1,
-                                        theta=theta,
-                                        perform_param=self.perform_param)
+            res_1 = single_hop_bound(foi=self.arr_list[0],
+                                     s_e2e=s_net_1,
+                                     theta=theta,
+                                     perform_param=self.perform_param)
 
         except ParameterOutOfBounds:
             res_1 = inf
@@ -96,10 +96,10 @@ class SquarePerform(SettingMSOBFP):
 
             s_net_2 = Convolve(ser1=s_1_lo, ser2=s_2_lo)
 
-            res_2 = evaluate_single_hop(foi=self.arr_list[0],
-                                        s_e2e=s_net_2,
-                                        theta=theta,
-                                        perform_param=self.perform_param)
+            res_2 = single_hop_bound(foi=self.arr_list[0],
+                                     s_e2e=s_net_2,
+                                     theta=theta,
+                                     perform_param=self.perform_param)
 
         except ParameterOutOfBounds:
             res_2 = inf
@@ -129,11 +129,11 @@ class SquarePerform(SettingMSOBFP):
 
         s_net = LeftoverARB(ser=s_12_conv, cross_arr=d_3_3, indep=False, p=p)
 
-        return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_e2e=s_net,
-                                   theta=theta,
-                                   perform_param=self.perform_param,
-                                   indep=True)
+        return single_hop_bound(foi=self.arr_list[0],
+                                s_e2e=s_net,
+                                theta=theta,
+                                perform_param=self.perform_param,
+                                indep=True)
 
     def approximate_utilization(self) -> float:
         a_foi_rate = self.arr_list[0].average_rate()

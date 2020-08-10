@@ -7,7 +7,7 @@ from h_mitigator.performance_bounds_power_mit import (delay_prob_power_mit,
 from h_mitigator.setting_mitigator import SettingMitigator
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.qt import DM1
-from nc_operations.evaluate_single_hop import evaluate_single_hop
+from nc_operations.single_hop_bound import single_hop_bound
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from utils.perform_parameter import PerformParameter
@@ -40,12 +40,12 @@ class SingleServerMitPerform(SettingMitigator):
         else:
             p = param_list[1]
 
-        return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_e2e=self.server,
-                                   theta=theta,
-                                   perform_param=self.perform_param,
-                                   indep=self.indep,
-                                   p=p)
+        return single_hop_bound(foi=self.arr_list[0],
+                                s_e2e=self.server,
+                                theta=theta,
+                                perform_param=self.perform_param,
+                                indep=self.indep,
+                                p=p)
 
     def h_mit_bound(self, param_l_list: List[float]) -> float:
         if not self.indep:

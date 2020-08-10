@@ -4,8 +4,8 @@ from typing import List
 
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.qt import DM1
-from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.perform_enum import PerformEnum
+from nc_operations.single_hop_bound import single_hop_bound
 from nc_server.constant_rate_server import ConstantRateServer
 from nc_server.server_distribution import ServerDistribution
 from utils.perform_parameter import PerformParameter
@@ -42,13 +42,13 @@ class SingleServerPerform(Setting):
         else:
             p = param_list[1]
 
-        return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_e2e=self.server,
-                                   theta=theta,
-                                   perform_param=self.perform_param,
-                                   indep=self.indep,
-                                   p=p,
-                                   geom_series=self.geom_series)
+        return single_hop_bound(foi=self.arr_list[0],
+                                s_e2e=self.server,
+                                theta=theta,
+                                perform_param=self.perform_param,
+                                indep=self.indep,
+                                p=p,
+                                geom_series=self.geom_series)
 
     def approximate_utilization(self) -> float:
         sum_average_rates = 0.0

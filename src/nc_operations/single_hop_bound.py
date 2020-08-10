@@ -9,13 +9,13 @@ from nc_server.server import Server
 from utils.perform_parameter import PerformParameter
 
 
-def evaluate_single_hop(foi: Arrival,
-                        s_e2e: Server,
-                        theta: float,
-                        perform_param: PerformParameter,
-                        indep=True,
-                        p=1.0,
-                        geom_series=True) -> float:
+def single_hop_bound(foi: Arrival,
+                     s_e2e: Server,
+                     theta: float,
+                     perform_param: PerformParameter,
+                     indep=True,
+                     p=1.0,
+                     geom_series=True) -> float:
     if indep:
         p = 1.0
 
@@ -68,27 +68,27 @@ def evaluate_single_hop(foi: Arrival,
                         f"performance metric")
 
 
-def evaluate_homogeneous_aggregate(foi_arr_single: Arrival,
-                                   n: int,
-                                   s_e2e: Server,
-                                   theta: float,
-                                   perform_param: PerformParameter,
-                                   indep=True,
-                                   geom_series=True):
+def single_hop_homog_agg(foi_arr_single: Arrival,
+                         n: int,
+                         s_e2e: Server,
+                         theta: float,
+                         perform_param: PerformParameter,
+                         indep=True,
+                         geom_series=True):
     if not indep:
         raise NotImplementedError
 
     if n > 1:
-        return evaluate_single_hop(foi=AggregateHomogeneous(arr=foi_arr_single,
-                                                            n=n,
-                                                            indep=indep),
-                                   s_e2e=s_e2e,
-                                   theta=theta,
-                                   perform_param=perform_param,
-                                   geom_series=geom_series)
+        return single_hop_bound(foi=AggregateHomogeneous(arr=foi_arr_single,
+                                                         n=n,
+                                                         indep=indep),
+                                s_e2e=s_e2e,
+                                theta=theta,
+                                perform_param=perform_param,
+                                geom_series=geom_series)
     else:
-        return evaluate_single_hop(foi=foi_arr_single,
-                                   s_e2e=s_e2e,
-                                   theta=theta,
-                                   perform_param=perform_param,
-                                   geom_series=geom_series)
+        return single_hop_bound(foi=foi_arr_single,
+                                s_e2e=s_e2e,
+                                theta=theta,
+                                perform_param=perform_param,
+                                geom_series=geom_series)

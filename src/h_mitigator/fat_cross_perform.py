@@ -7,7 +7,7 @@ from h_mitigator.setting_mitigator import SettingMitigator
 from nc_arrivals.arrival import Arrival
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.arb_scheduling import LeftoverARB
-from nc_operations.evaluate_single_hop import evaluate_single_hop
+from nc_operations.single_hop_bound import single_hop_bound
 from nc_operations.operations import AggregateList, Deconvolve
 from nc_server.server import Server
 from nc_server.server_distribution import ServerDistribution
@@ -43,10 +43,10 @@ class FatCrossPerform(SettingMitigator):
         s_e2e: Server = LeftoverARB(ser=self.ser_list[0],
                                     cross_arr=aggregated_cross)
 
-        return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_e2e=s_e2e,
-                                   theta=theta,
-                                   perform_param=self.perform_param)
+        return single_hop_bound(foi=self.arr_list[0],
+                                s_e2e=s_e2e,
+                                theta=theta,
+                                perform_param=self.perform_param)
 
     def h_mit_bound(self, param_l_list: List[float]) -> float:
         output_list: List[Arrival] = [
@@ -62,10 +62,10 @@ class FatCrossPerform(SettingMitigator):
         s_e2e: Server = LeftoverARB(ser=self.ser_list[0],
                                     cross_arr=aggregated_cross)
 
-        return evaluate_single_hop(foi=self.arr_list[0],
-                                   s_e2e=s_e2e,
-                                   theta=param_l_list[0],
-                                   perform_param=self.perform_param)
+        return single_hop_bound(foi=self.arr_list[0],
+                                s_e2e=s_e2e,
+                                theta=param_l_list[0],
+                                perform_param=self.perform_param)
 
     def approximate_utilization(self) -> float:
         sum_average_rates = 0.0

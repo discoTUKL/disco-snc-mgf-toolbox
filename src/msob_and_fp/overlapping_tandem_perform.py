@@ -6,8 +6,8 @@ from msob_and_fp.setting_avoid_dep import SettingMSOBFP
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
 from nc_operations.arb_scheduling import LeftoverARB
-from nc_operations.evaluate_single_hop import evaluate_single_hop
 from nc_operations.operations import AggregateTwo, Convolve, Deconvolve
+from nc_operations.single_hop_bound import single_hop_bound
 from nc_server.constant_rate_server import ConstantRateServer
 from utils.perform_parameter import PerformParameter
 
@@ -42,11 +42,11 @@ class OverlappingTandemPerform(SettingMSOBFP):
 
         s_e2e_1 = Convolve(ser1=conv_s1_s2_lo, ser2=s3_lo, indep=False, p=p)
 
-        res_1 = evaluate_single_hop(foi=foi,
-                                    s_e2e=s_e2e_1,
-                                    theta=theta,
-                                    perform_param=self.perform_param,
-                                    indep=True)
+        res_1 = single_hop_bound(foi=foi,
+                                 s_e2e=s_e2e_1,
+                                 theta=theta,
+                                 perform_param=self.perform_param,
+                                 indep=True)
 
         d_2_1 = Deconvolve(arr=a_2, ser=s_1)
         conv_s2_s3_lo = LeftoverARB(ser=Convolve(ser1=LeftoverARB(
@@ -57,11 +57,11 @@ class OverlappingTandemPerform(SettingMSOBFP):
 
         s_e2e_2 = Convolve(ser1=s1_lo, ser2=conv_s2_s3_lo, indep=False, p=p)
 
-        res_2 = evaluate_single_hop(foi=foi,
-                                    s_e2e=s_e2e_2,
-                                    theta=theta,
-                                    perform_param=self.perform_param,
-                                    indep=True)
+        res_2 = single_hop_bound(foi=foi,
+                                 s_e2e=s_e2e_2,
+                                 theta=theta,
+                                 perform_param=self.perform_param,
+                                 indep=True)
 
         return min(res_1, res_2)
 
@@ -85,11 +85,11 @@ class OverlappingTandemPerform(SettingMSOBFP):
 
         s_e2e_1 = Convolve(ser1=conv_s1_s2_lo, ser2=s3_lo)
 
-        res_1 = evaluate_single_hop(foi=foi,
-                                    s_e2e=s_e2e_1,
-                                    theta=theta,
-                                    perform_param=self.perform_param,
-                                    indep=True)
+        res_1 = single_hop_bound(foi=foi,
+                                 s_e2e=s_e2e_1,
+                                 theta=theta,
+                                 perform_param=self.perform_param,
+                                 indep=True)
 
         d_2_1 = DetermTokenBucket(sigma_single=0.0, rho_single=s_1.rate, n=1)
         conv_s2_s3_lo = LeftoverARB(ser=Convolve(ser1=LeftoverARB(
@@ -100,11 +100,11 @@ class OverlappingTandemPerform(SettingMSOBFP):
 
         s_e2e_2 = Convolve(ser1=s1_lo, ser2=conv_s2_s3_lo)
 
-        res_2 = evaluate_single_hop(foi=self.arr_list[0],
-                                    s_e2e=s_e2e_2,
-                                    theta=theta,
-                                    perform_param=self.perform_param,
-                                    indep=True)
+        res_2 = single_hop_bound(foi=self.arr_list[0],
+                                 s_e2e=s_e2e_2,
+                                 theta=theta,
+                                 perform_param=self.perform_param,
+                                 indep=True)
 
         return min(res_1, res_2)
 
@@ -124,11 +124,11 @@ class OverlappingTandemPerform(SettingMSOBFP):
         s_123_conv = Convolve(ser1=s_1, ser2=s_23_lo)
         s_e2e = LeftoverARB(ser=s_123_conv, cross_arr=a_2)
 
-        return evaluate_single_hop(foi=foi,
-                                   s_e2e=s_e2e,
-                                   theta=theta,
-                                   perform_param=self.perform_param,
-                                   indep=True)
+        return single_hop_bound(foi=foi,
+                                s_e2e=s_e2e,
+                                theta=theta,
+                                perform_param=self.perform_param,
+                                indep=True)
 
     def approximate_utilization(self) -> float:
         foi_rate = self.arr_list[0].average_rate()
@@ -198,11 +198,11 @@ def sfa_bound_old(param_list: [float, float,
 
     s_e2e = Convolve(ser1=s1_lo, ser2=s_23_lo, indep=False, p=param_list[2])
 
-    return evaluate_single_hop(foi=foi,
-                               s_e2e=s_e2e,
-                               theta=theta,
-                               perform_param=perform_param,
-                               indep=True)
+    return single_hop_bound(foi=foi,
+                            s_e2e=s_e2e,
+                            theta=theta,
+                            perform_param=perform_param,
+                            indep=True)
 
 
 if __name__ == '__main__':
