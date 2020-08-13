@@ -6,6 +6,7 @@ from typing import List
 import numpy as np
 
 from nc_arrivals.arrival import Arrival
+from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
 from nc_operations.stability_check import stability_check
 from nc_server.rate_latency_server import RateLatencyServer
@@ -301,6 +302,10 @@ class AggregateHomogeneous(Arrival):
 
     def is_discrete(self):
         return self.arr.is_discrete()
+
+    def average_rate(self) -> float:
+        if isinstance(self.arr, ArrivalDistribution):
+            return self.n * self.arr.average_rate()
 
 
 if __name__ == '__main__':
