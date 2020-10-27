@@ -1,5 +1,4 @@
 """Small examples to play with."""
-# TODO: Add .to_name-method to classes
 
 from typing import List
 
@@ -9,7 +8,7 @@ import scipy.optimize
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.markov_modulated import MMOOFluid
 from nc_operations.perform_enum import PerformEnum
-from nc_operations.single_server_perform import SingleServerPerform
+from nc_operations.single_server_bandwidth import SingleServerBandwidth
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
@@ -27,9 +26,9 @@ def get_bandwidth_from_delay(arr_list: List[ArrivalDistribution],
     def helper_function(rate: float):
         if opt_method == OptMethod.GRID_SEARCH:
             if indep:
-                single_server = SingleServerPerform(
+                single_server = SingleServerBandwidth(
                     arr_list=arr_list,
-                    server=ConstantRateServer(rate=rate),
+                    s_e2e=ConstantRateServer(rate=rate),
                     perform_param=PerformParameter(
                         perform_metric=PerformEnum.DELAY_PROB,
                         value=target_delay),
@@ -41,9 +40,9 @@ def get_bandwidth_from_delay(arr_list: List[ArrivalDistribution],
                                                   bound_list=[(0.1, 5.0)],
                                                   delta=0.1)
             else:
-                single_server = SingleServerPerform(
+                single_server = SingleServerBandwidth(
                     arr_list=arr_list,
-                    server=ConstantRateServer(rate=rate),
+                    s_e2e=ConstantRateServer(rate=rate),
                     perform_param=PerformParameter(
                         perform_metric=PerformEnum.DELAY_PROB,
                         value=target_delay),
@@ -79,9 +78,9 @@ if __name__ == '__main__':
 
     ARR_LIST = [MMOOFluid(mu=0.2, lamb=0.5, peak_rate=2.6)]
 
-    SINGLE_SERVER = SingleServerPerform(arr_list=ARR_LIST,
-                                        server=ConstantRateServer(rate=2.0),
-                                        perform_param=DELAY6)
+    SINGLE_SERVER = SingleServerBandwidth(arr_list=ARR_LIST,
+                                          s_e2e=ConstantRateServer(rate=2.0),
+                                          perform_param=DELAY6)
     RESULTING_DELAY_PROB = Optimize(SINGLE_SERVER,
                                     number_param=1,
                                     print_x=True).grid_search(bound_list=[
