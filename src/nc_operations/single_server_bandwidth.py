@@ -5,7 +5,6 @@ from typing import List
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_operations.single_hop_bound import single_hop_bound
 from nc_server.server import Server
-from utils.exceptions import IllegalArgumentError
 from utils.perform_parameter import PerformParameter
 from utils.setting import Setting
 
@@ -49,4 +48,4 @@ class SingleServerBandwidth(Setting):
                                 geom_series=self.geom_series)
 
     def approximate_utilization(self) -> float:
-        raise IllegalArgumentError("this method cannot be called")
+        raise NotImplementedError("this method cannot be called")
