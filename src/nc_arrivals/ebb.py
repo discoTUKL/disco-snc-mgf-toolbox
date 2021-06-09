@@ -28,8 +28,6 @@ class EBB(ArrivalDistribution):
             raise ParameterOutOfBounds(f"theta={theta} must "
                                        f"be < decay={self.decay}")
 
-        theta_over_decay = theta / self.decay
-
         return (self.n / theta) * log(1 + self.factor_m * theta /
                                       (self.decay - theta))
 
