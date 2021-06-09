@@ -60,7 +60,27 @@ class MMOODisc(ArrivalDistribution):
         self.n = n
 
     def sigma(self, theta=0.0) -> float:
-        return 0.0
+        off_on = self.stay_off + self.stay_on * exp(theta * self.peak_rate)
+        sqrt_part = sqrt(off_on ** 2 - 4 * (self.stay_off + self.stay_on - 1) *
+                         exp(theta * self.peak_rate))
+
+        spectral_density_mmoo = 0.5 * (off_on + sqrt_part)
+        v_1 = [spectral_density_mmoo - self.stay_off, 1 - self.stay_off]
+        v_2 = [
+            (1 - self.stay_on) * exp(theta * self.peak_rate),
+            spectral_density_mmoo - self.stay_on * exp(theta * self.peak_rate)
+        ]
+
+        if min(v_1) > 0:
+            factor = max(v_1) / min(v_1)
+        elif min(v_2) > 0:
+            factor = max(v_2) / min(v_2)
+        else:
+            raise ParameterOutOfBounds(f"no factor is > 0")
+
+        return self.n * log(
+            exp(theta * self.peak_rate) * factor /
+            spectral_density_mmoo) / theta
 
     def rho(self, theta: float) -> float:
         if theta <= 0:

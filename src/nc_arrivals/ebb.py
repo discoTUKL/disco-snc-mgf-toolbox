@@ -7,13 +7,17 @@ from utils.exceptions import ParameterOutOfBounds
 
 
 class EBB(ArrivalDistribution):
-    """Exponentially Bounded Burstiness obtained via Conversion Theorem"""
-
-    def __init__(self, factor_m: float, decay: float, rho_single: float,
+    """Exponentially Bounded Burstiness obtained via CCDF"""
+    def __init__(self,
+                 factor_m: float,
+                 decay: float,
+                 rho_single: float,
+                 discr_time=False,
                  n=1) -> None:
         self.factor_m = factor_m
         self.decay = decay
         self.rho_single = rho_single
+        self.discr_time = discr_time
         self.n = n
 
     def sigma(self, theta: float) -> float:
@@ -29,14 +33,14 @@ class EBB(ArrivalDistribution):
         if log((self.factor_m**theta_over_decay) / (1 - theta_over_decay)) < 0:
             raise ParameterOutOfBounds("rho must be >= 0")
 
-        return (self.n / theta) * log(
-            (self.factor_m**theta_over_decay) / (1 - theta_over_decay))
+        return (self.n / theta) * log(1 + self.factor_m * theta /
+                                      (self.decay - theta))
 
     def rho(self, theta=0.0) -> float:
         return self.n * self.rho_single
 
     def is_discrete(self) -> bool:
-        return False
+        return self.discr_time
 
     def average_rate(self) -> float:
         return self.rho()
