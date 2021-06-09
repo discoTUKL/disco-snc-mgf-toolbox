@@ -6,7 +6,7 @@ import pandas as pd
 
 from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.qt import MD1, MM1
+from nc_arrivals.iid import MD1, MM1
 from nc_operations.perform_enum import PerformEnum
 from nc_operations.single_server_perform import SingleServerPerform
 from nc_server.constant_rate_server import ConstantRateServer
@@ -33,7 +33,7 @@ def single_server_df(arr_list: List[ArrivalDistribution],
 
     for i in range(len(perform_param_list)):
         setting = SingleServerPerform(
-            arr_list=arr_list,
+            foi=arr_list[0],
             server=ser_list[0],
             perform_param=perform_param_list.get_parameter_at_i(i))
 

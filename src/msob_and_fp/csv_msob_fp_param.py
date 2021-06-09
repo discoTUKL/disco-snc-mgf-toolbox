@@ -19,7 +19,7 @@ from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
 from msob_and_fp.square_perform import SquarePerform
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.markov_modulated import MMOODisc, MMOOFluid
-from nc_arrivals.qt import DM1, MD1
+from nc_arrivals.iid import DM1, MD1
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod

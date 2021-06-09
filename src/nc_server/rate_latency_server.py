@@ -11,7 +11,7 @@ class RateLatencyServer(ServerDistribution):
         self.latency = latency
 
     def sigma(self, theta: float) -> float:
-        return self.latency
+        return self.latency * self.rate
 
     def rho(self, theta: float) -> float:
         return self.rate

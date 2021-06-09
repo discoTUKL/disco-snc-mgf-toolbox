@@ -16,7 +16,7 @@ from h_mitigator.arrivals_time_dep import expect_dm1
 from h_mitigator.server_time_dep import expect_const_rate
 from h_mitigator.single_server_mit_perform import SingleServerMitPerform
 from nc_arrivals.arrival_enum import ArrivalEnum
-from nc_arrivals.qt import DM1
+from nc_arrivals.iid import DM1
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.optimize import Optimize

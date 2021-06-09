@@ -251,7 +251,7 @@ if __name__ == '__main__':
     from h_mitigator.single_server_mit_perform import SingleServerMitPerform
     from utils.perform_parameter import PerformParameter
     from nc_server.constant_rate_server import ConstantRateServer
-    from nc_arrivals.qt import DM1
+    from nc_arrivals.iid import DM1
 
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 

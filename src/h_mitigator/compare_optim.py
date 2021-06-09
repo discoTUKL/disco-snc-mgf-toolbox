@@ -148,7 +148,7 @@ def compare_optimization(setting: SettingMitigator,
 if __name__ == '__main__':
     from nc_operations.perform_enum import PerformEnum
     from nc_server.constant_rate_server import ConstantRateServer
-    from nc_arrivals.qt import DM1
+    from nc_arrivals.iid import DM1
     from h_mitigator.fat_cross_perform import FatCrossPerform
     from h_mitigator.single_server_mit_perform import SingleServerMitPerform
     from utils.perform_parameter import PerformParameter

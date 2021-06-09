@@ -14,7 +14,7 @@ from h_mitigator.compare_mitigator import compare_time
 from h_mitigator.fat_cross_perform import FatCrossPerform
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.markov_modulated import MMOOFluid
-from nc_arrivals.qt import DM1
+from nc_arrivals.iid import DM1
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod

@@ -9,7 +9,7 @@ from h_mitigator.fat_cross_perform import FatCrossPerform
 from h_mitigator.optimize_mitigator import OptimizeMitigator
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.markov_modulated import MMOOFluid
-from nc_arrivals.qt import DM1, MD1
+from nc_arrivals.iid import DM1, MD1
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod

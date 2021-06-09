@@ -181,7 +181,7 @@ class SquarePerform(SettingMSOBFP):
 if __name__ == '__main__':
     from msob_and_fp.optimize_fp_bound import OptimizeFPBound
     from msob_and_fp.optimize_server_bound import OptimizeServerBound
-    from nc_arrivals.qt import DM1
+    from nc_arrivals.iid import DM1
     from nc_operations.perform_enum import PerformEnum
     from nc_server.constant_rate_server import ConstantRateServer
     from optimization.optimize import Optimize

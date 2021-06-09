@@ -6,7 +6,7 @@ from h_mitigator.performance_bounds_power_mit import (delay_prob_power_mit,
                                                       output_power_mit)
 from h_mitigator.setting_mitigator import SettingMitigator
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.qt import DM1
+from nc_arrivals.iid import DM1
 from nc_operations.single_hop_bound import single_hop_bound
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer

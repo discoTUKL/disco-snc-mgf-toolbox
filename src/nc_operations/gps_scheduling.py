@@ -2,7 +2,6 @@
 
 from typing import List
 
-from nc_arrivals.arrival import Arrival
 from nc_server.server import Server
 from utils.exceptions import ParameterOutOfBounds
 

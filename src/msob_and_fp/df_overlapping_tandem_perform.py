@@ -9,7 +9,7 @@ from msob_and_fp.optimize_fp_bound import OptimizeFPBound
 from msob_and_fp.optimize_server_bound import OptimizeServerBound
 from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.qt import DM1
+from nc_arrivals.iid import DM1
 from nc_arrivals.markov_modulated import MMOODisc, MMOOFluid
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer

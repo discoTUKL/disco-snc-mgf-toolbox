@@ -1,6 +1,5 @@
 """Compare standard standard_bound with negative dependence."""
 
-from math import inf, nan
 from timeit import default_timer as timer
 from typing import Tuple
 
@@ -133,7 +132,7 @@ if __name__ == '__main__':
     from msob_and_fp.overlapping_tandem_perform import \
         OverlappingTandemPerform
     from nc_server.constant_rate_server import ConstantRateServer
-    from nc_arrivals.qt import DM1
+    from nc_arrivals.iid import DM1
     from utils.perform_parameter import PerformParameter
 
     DELAY_PROB = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,

@@ -39,6 +39,7 @@ class FatCrossPerform(SettingMitigator):
         # we use i + 1, since i = 0 is the foi
 
         aggregated_cross: Arrival = AggregateList(arr_list=output_list,
+                                                  indep=True,
                                                   p_list=[])
         s_e2e: Server = LeftoverARB(ser=self.ser_list[0],
                                     cross_arr=aggregated_cross)
@@ -58,6 +59,7 @@ class FatCrossPerform(SettingMitigator):
         # we use i + 1, since i = 0 is the foi
 
         aggregated_cross: Arrival = AggregateList(arr_list=output_list,
+                                                  indep=True,
                                                   p_list=[])
         s_e2e: Server = LeftoverARB(ser=self.ser_list[0],
                                     cross_arr=aggregated_cross)
