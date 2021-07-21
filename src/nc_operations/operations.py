@@ -2,17 +2,18 @@
 
 from math import exp, log
 from typing import List
+from warnings import warn
 
 import numpy as np
-
 from nc_arrivals.arrival import Arrival
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
-from nc_operations.stability_check import stability_check
 from nc_server.rate_latency_server import RateLatencyServer
 from nc_server.server import Server
 from utils.exceptions import IllegalArgumentError, ParameterOutOfBounds
 from utils.helper_functions import get_p_n, get_q, is_equal
+
+from nc_operations.stability_check import stability_check
 
 
 class Deconvolve(Arrival):
@@ -130,10 +131,11 @@ class Convolve(Server):
             return min(ser_1_rho_p, ser_2_rho_q)
 
         else:
+            warn("better use ConvolveRateReduct() for equal rhos")
             return ser_1_rho_p - 1 / theta
 
 
-class ConvolveAlter(Server):
+class ConvolveRateReduct(Server):
     """Convolution class."""
     def __init__(self,
                  ser1: Server,
@@ -190,6 +192,9 @@ class ConvolveAlter(Server):
             return min(ser_1_rho_p, ser_2_rho_q)
 
         else:
+            if self.delta < 0 or ser_1_rho_p - self.delta <= 0:
+                raise ParameterOutOfBounds("Residual rate must be > 0")
+
             return ser_1_rho_p - self.delta
 
 
