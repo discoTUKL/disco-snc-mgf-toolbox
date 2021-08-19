@@ -27,10 +27,9 @@ class LeftoverARB(Server):
             self.q = get_q(p=p)
 
     def sigma(self, theta):
-        if isinstance(self.ser, RateLatencyServer) and isinstance(
-                self.cross_arr, DetermTokenBucket):
-            return (self.cross_arr.burst + self.ser.rate * self.ser.latency
-                    ) / (self.ser.rate - self.cross_arr.arr_rate)
+        if (isinstance(self.ser, RateLatencyServer)
+                and isinstance(self.cross_arr, DetermTokenBucket)):
+            return self.cross_arr.burst + self.ser.rate * self.ser.latency
 
         return self.ser.sigma(theta=self.q * theta) + self.cross_arr.sigma(
             theta=self.p * theta)
