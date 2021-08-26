@@ -3,11 +3,12 @@
 from timeit import default_timer as timer
 from typing import Tuple
 
+from nc_operations.perform_enum import PerformEnum
+from optimization.optimize import Optimize
+
 from msob_and_fp.optimize_fp_bound import OptimizeFPBound
 from msob_and_fp.optimize_server_bound import OptimizeServerBound
 from msob_and_fp.setting_avoid_dep import SettingMSOBFP
-from nc_operations.perform_enum import PerformEnum
-from optimization.optimize import Optimize
 
 
 def compare_avoid_dep_211(setting: SettingMSOBFP,
@@ -21,18 +22,18 @@ def compare_avoid_dep_211(setting: SettingMSOBFP,
 
     standard_bound = Optimize(setting=setting, number_param=2,
                               print_x=print_x).grid_search(
-                                  bound_list=two_param_bounds, delta=delta_val)
+                                  grid_bounds=two_param_bounds, delta=delta_val)
 
     server_bound = OptimizeServerBound(setting_msob_fp=setting,
                                        number_param=1,
                                        print_x=print_x).grid_search(
-                                           bound_list=one_param_bounds,
+                                           grid_bounds=one_param_bounds,
                                            delta=delta_val)
 
     fp_bound = OptimizeFPBound(setting_msob_fp=setting,
                                number_param=1,
                                print_x=print_x).grid_search(
-                                   bound_list=one_param_bounds,
+                                   grid_bounds=one_param_bounds,
                                    delta=delta_val)
 
     return standard_bound, server_bound, fp_bound
@@ -49,18 +50,18 @@ def compare_avoid_dep_212(setting: SettingMSOBFP,
 
     standard_bound = Optimize(setting=setting, number_param=2,
                               print_x=print_x).grid_search(
-                                  bound_list=two_param_bounds, delta=delta_val)
+                                  grid_bounds=two_param_bounds, delta=delta_val)
 
     server_bound = OptimizeServerBound(setting_msob_fp=setting,
                                        number_param=1,
                                        print_x=print_x).grid_search(
-                                           bound_list=one_param_bounds,
+                                           grid_bounds=one_param_bounds,
                                            delta=delta_val)
 
     fp_bound = OptimizeFPBound(setting_msob_fp=setting,
                                number_param=2,
                                print_x=print_x).grid_search(
-                                   bound_list=two_param_bounds,
+                                   grid_bounds=two_param_bounds,
                                    delta=delta_val)
 
     return standard_bound, server_bound, fp_bound
@@ -76,20 +77,20 @@ def compare_time_211(setting: SettingMSOBFP) -> Tuple[float, float, float]:
 
     start = timer()
     Optimize(setting=setting,
-             number_param=2).grid_search(bound_list=two_param_bounds,
+             number_param=2).grid_search(grid_bounds=two_param_bounds,
                                          delta=delta_val)
     stop = timer()
     time_standard = stop - start
 
     start = timer()
     OptimizeServerBound(setting_msob_fp=setting, number_param=1).grid_search(
-        bound_list=one_param_bounds, delta=delta_val)
+        grid_bounds=one_param_bounds, delta=delta_val)
     stop = timer()
     time_server_bound = stop - start
 
     start = timer()
     OptimizeFPBound(setting_msob_fp=setting,
-                    number_param=1).grid_search(bound_list=one_param_bounds,
+                    number_param=1).grid_search(grid_bounds=one_param_bounds,
                                                 delta=delta_val)
     stop = timer()
     time_fp_bound = stop - start
@@ -107,20 +108,20 @@ def compare_time_212(setting: SettingMSOBFP) -> Tuple[float, float, float]:
 
     start = timer()
     Optimize(setting=setting,
-             number_param=2).grid_search(bound_list=two_param_bounds,
+             number_param=2).grid_search(grid_bounds=two_param_bounds,
                                          delta=delta_val)
     stop = timer()
     time_standard = stop - start
 
     start = timer()
     OptimizeServerBound(setting_msob_fp=setting, number_param=1).grid_search(
-        bound_list=one_param_bounds, delta=delta_val)
+        grid_bounds=one_param_bounds, delta=delta_val)
     stop = timer()
     time_server_bound = stop - start
 
     start = timer()
     OptimizeFPBound(setting_msob_fp=setting,
-                    number_param=2).grid_search(bound_list=two_param_bounds,
+                    number_param=2).grid_search(grid_bounds=two_param_bounds,
                                                 delta=delta_val)
     stop = timer()
     time_fp_bound = stop - start
@@ -129,11 +130,11 @@ def compare_time_212(setting: SettingMSOBFP) -> Tuple[float, float, float]:
 
 
 if __name__ == '__main__':
-    from msob_and_fp.overlapping_tandem_perform import \
-        OverlappingTandemPerform
-    from nc_server.constant_rate_server import ConstantRateServer
     from nc_arrivals.iid import DM1
+    from nc_server.constant_rate_server import ConstantRateServer
     from utils.perform_parameter import PerformParameter
+
+    from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
 
     DELAY_PROB = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
                                   value=10)

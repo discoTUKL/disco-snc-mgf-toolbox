@@ -218,7 +218,7 @@ def csv_single_param_exp(start_time: int,
 
             res_array[i, 0] = Optimize(setting=single_setting,
                                        number_param=1).grid_search(
-                                           bound_list=theta_bounds,
+                                           grid_bounds=theta_bounds,
                                            delta=delta)
 
             res_array[i,

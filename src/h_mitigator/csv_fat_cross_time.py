@@ -4,21 +4,21 @@ import csv
 from typing import List
 
 import numpy as np
-from tqdm import tqdm  # Progressbar in for loop
-
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
-from h_mitigator.array_to_results import time_array_to_results
-from h_mitigator.compare_mitigator import compare_time
-from h_mitigator.fat_cross_perform import FatCrossPerform
 from nc_arrivals.arrival_enum import ArrivalEnum
-from nc_arrivals.markov_modulated import MMOOFluid
 from nc_arrivals.iid import DM1
+from nc_arrivals.markov_modulated import MMOOFluid
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
+from tqdm import tqdm  # Progressbar in for loop
 from utils.perform_parameter import PerformParameter
+
+from h_mitigator.array_to_results import time_array_to_results
+from h_mitigator.compare_mitigator import compare_time
+from h_mitigator.fat_cross_perform import FatCrossPerform
 
 ########################################################################
 # Find Optimal Parameters
@@ -60,8 +60,8 @@ def csv_fat_cross_time(arrival_enum: ArrivalEnum,
                 ]
 
             else:
-                raise NameError(f"Arrival parameter {arrival_enum.name} "
-                                f"is infeasible")
+                raise NotImplementedError(f"Arrival parameter "
+                                          f"{arrival_enum.name} is infeasible")
 
             service_list = [
                 ConstantRateServer(

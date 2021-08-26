@@ -287,8 +287,8 @@ if __name__ == '__main__':
             ser_list=SER_LIST,
             perform_param=DELAY_PROB_TIME),
                  number_param=2,
-                 print_x=PRINT_X).grid_search(bound_list=[(0.1, 10.0),
-                                                          (1.1, 10.0)],
+                 print_x=PRINT_X).grid_search(grid_bounds=[(0.1, 10.0),
+                                                           (1.1, 10.0)],
                                               delta=0.1))
 
     print("Standard Approach with SFA old:")

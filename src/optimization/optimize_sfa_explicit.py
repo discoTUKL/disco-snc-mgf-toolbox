@@ -5,20 +5,19 @@ from typing import List
 
 from optimization.optimize import Optimize
 from utils.exceptions import ParameterOutOfBounds
+from utils.setting_sfa import SettingSFA
 
-from msob_and_fp.setting_avoid_dep import SettingMSOBFP
 
-
-class OptimizeServerBound(Optimize):
+class OptimizeSFAExplicit(Optimize):
     """Optimize class"""
     def __init__(self,
-                 setting_msob_fp: SettingMSOBFP,
+                 setting_sfa: SettingSFA,
                  number_param: int,
                  print_x=False) -> None:
-        super().__init__(setting=setting_msob_fp,
+        super().__init__(setting=setting_sfa,
                          number_param=number_param,
                          print_x=print_x)
-        self.setting_msob_fp = setting_msob_fp
+        self.setting_sfa = setting_sfa
         self.number_param = number_param
         self.print_x = print_x
 
@@ -30,6 +29,7 @@ class OptimizeServerBound(Optimize):
         :return:           function to_value
         """
         try:
-            return self.setting_msob_fp.server_bound(param_list=param_list)
-        except (ParameterOutOfBounds, OverflowError):
+            return self.setting_sfa.sfa_explicit(
+                param_list=param_list)
+        except (ParameterOutOfBounds, OverflowError, ZeroDivisionError):
             return inf

@@ -39,8 +39,8 @@ def single_server_df(arr_list: List[ArrivalDistribution],
 
         if opt_method == OptMethod.GRID_SEARCH:
             bound[i] = Optimize(setting=setting,
-                                number_param=1).grid_search(bound_list=[(0.1,
-                                                                         4.0)],
+                                number_param=1).grid_search(grid_bounds=[(0.1,
+                                                                          4.0)],
                                                             delta=0.1)
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
@@ -62,7 +62,7 @@ def single_server_df(arr_list: List[ArrivalDistribution],
 
 if __name__ == '__main__':
     DELAY_LIST = PerformParamList(perform_metric=PerformEnum.DELAY_PROB,
-                                  values_list=range(15, 41))
+                                  values_list=list(range(15, 41)))
     CONST1 = ConstantRateServer(rate=1.0)
 
     print(

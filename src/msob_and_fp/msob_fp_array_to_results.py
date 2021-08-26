@@ -4,7 +4,6 @@ import csv
 from math import inf
 
 import numpy as np
-
 from bound_evaluation.change_enum import ChangeEnum
 from bound_evaluation.manipulate_data import remove_full_nan_rows
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
@@ -56,9 +55,9 @@ def msob_fp_array_to_results(title: str, arrival_enum: ArrivalEnum,
     only_improved_pmoo_fp = change_vec_pmoo_fp[res_array[:, 0] > res_array[:,
                                                                            2]]
 
-    row_max_server_bound = np.nanargmax(change_vec_server_bound)
-    opt_server_bound = change_vec_server_bound[row_max_server_bound]
-    mean_server_bound = np.nanmean(change_vec_server_bound)
+    row_max_msob = np.nanargmax(change_vec_server_bound)
+    opt_msob = change_vec_server_bound[row_max_msob]
+    mean_msob = np.nanmean(change_vec_server_bound)
     median_improved_server_bound = np.nanmedian(only_improved_server_bound)
 
     row_max_pmoo_fp = np.nanargmax(change_vec_pmoo_fp)
@@ -86,7 +85,7 @@ def msob_fp_array_to_results(title: str, arrival_enum: ArrivalEnum,
 
     best_approach = np.nanargmin(res_array_no_full_nan, axis=1)
     standard_best = np.count_nonzero(best_approach == 0)
-    server_best = np.count_nonzero(best_approach == 1)
+    msob_best = np.count_nonzero(best_approach == 1)
     fp_best = np.count_nonzero(best_approach == 2)
 
     res_dict = {
@@ -106,13 +105,13 @@ def msob_fp_array_to_results(title: str, arrival_enum: ArrivalEnum,
             opt_dict[f"pmoo_fp_lamb{j + 1}"] = format(
                 param_array[row_max_pmoo_fp, j], '.3f')
             opt_dict[f"server_bound_lamb{j + 1}"] = format(
-                param_array[row_max_server_bound, j], '.3f')
+                param_array[row_max_msob, j], '.3f')
 
         elif arrival_enum == ArrivalEnum.MD1:
             opt_dict[f"pmoo_fp_lamb{j + 1}"] = format(
                 param_array[row_max_pmoo_fp, j], '.3f')
             opt_dict[f"ser_bound_lamb{j + 1}"] = format(
-                param_array[row_max_server_bound, j], '.3f')
+                param_array[row_max_msob, j], '.3f')
 
         elif arrival_enum == ArrivalEnum.MMOODisc:
             opt_dict[f"pmoo_fp_stay_on{j + 1}"] = format(
@@ -123,11 +122,11 @@ def msob_fp_array_to_results(title: str, arrival_enum: ArrivalEnum,
                 param_array[row_max_pmoo_fp, 2 * number_flows + j], '.3f')
 
             opt_dict[f"ser_bound_stay_on{j + 1}"] = format(
-                param_array[row_max_server_bound, j], '.3f')
+                param_array[row_max_msob, j], '.3f')
             opt_dict[f"ser_bound_stay_off{j + 1}"] = format(
-                param_array[row_max_server_bound, number_flows + j], '.3f')
+                param_array[row_max_msob, number_flows + j], '.3f')
             opt_dict[f"ser_bound_burst{j + 1}"] = format(
-                param_array[row_max_server_bound, 2 * number_flows + j], '.3f')
+                param_array[row_max_msob, 2 * number_flows + j], '.3f')
 
         elif arrival_enum == ArrivalEnum.MMOOFluid:
             opt_dict[f"pmoo_fp_mu{j + 1}"] = format(
@@ -138,11 +137,11 @@ def msob_fp_array_to_results(title: str, arrival_enum: ArrivalEnum,
                 param_array[row_max_pmoo_fp, 2 * number_flows + j], '.3f')
 
             opt_dict[f"ser_bound_mu{j + 1}"] = format(
-                param_array[row_max_server_bound, j], '.3f')
+                param_array[row_max_msob, j], '.3f')
             opt_dict[f"ser_bound_lamb{j + 1}"] = format(
-                param_array[row_max_server_bound, number_flows + j], '.3f')
+                param_array[row_max_msob, number_flows + j], '.3f')
             opt_dict[f"ser_bound_burst{j + 1}"] = format(
-                param_array[row_max_server_bound, 2 * number_flows + j], '.3f')
+                param_array[row_max_msob, 2 * number_flows + j], '.3f')
 
         else:
             raise NotImplementedError(
@@ -154,15 +153,15 @@ def msob_fp_array_to_results(title: str, arrival_enum: ArrivalEnum,
                         arrival_enum.number_parameters() * number_flows + j],
             '.3f')
         opt_dict[f"server_bound_rate{j + 1}"] = format(
-            param_array[row_max_server_bound,
+            param_array[row_max_msob,
                         arrival_enum.number_parameters() * number_flows + j],
             '.3f')
 
     opt_dict.update({
         "opt_pmoo_fp": format(opt_pmoo_fp, '.3f'),
-        "opt_server_bound": format(opt_server_bound, '.3f'),
+        "opt_msob": format(opt_msob, '.3f'),
         "valid iterations": res_array.shape[0],
-        "T": perform_param.value,
+        "PerformParamValue": perform_param.value,
         "optimization": opt_method.name,
         "compare_metric": compare_metric.name,
         "MCDistribution": mc_dist.to_name(),
@@ -171,7 +170,7 @@ def msob_fp_array_to_results(title: str, arrival_enum: ArrivalEnum,
 
     res_dict.update({
         "mean_pmoo_fp": mean_pmoo_fp,
-        "mean_server_bound": mean_server_bound,
+        "mean_msob": mean_msob,
         "median_improved_pmoo_fp": median_improved_pmoo_fp,
         "median_improved_server_bound": median_improved_server_bound,
         "number standard bound is valid": number_standard_bound_valid,
@@ -181,7 +180,7 @@ def msob_fp_array_to_results(title: str, arrival_enum: ArrivalEnum,
         "number PMOO_FP is improvement": number_improved_pmoo_fp,
         "valid iterations": valid_iterations,
         "number standard bound is best": standard_best,
-        "number server bound is best": server_best,
+        "number server bound is best": msob_best,
         "number PMOO_FP bound is best": fp_best,
     })
 

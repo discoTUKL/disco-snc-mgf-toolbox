@@ -10,7 +10,7 @@ import scipy.optimize
 from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.sim_anneal_param import SimAnnealParams
 from utils.deprecated import deprecated
-from utils.exceptions import ParameterOutOfBounds, WrongDimension
+from utils.exceptions import IllegalArgumentError, ParameterOutOfBounds
 from utils.helper_functions import (average_towards_best_row,
                                     centroid_without_one_row, expand_grid)
 from utils.setting import Setting
@@ -25,6 +25,7 @@ class Optimize(object):
         self.setting = setting
         self.number_param = number_param
         self.print_x = print_x
+        self.opt_x = [0.0] * number_param
 
     def eval_except(self, param_list: List[float]) -> float:
         """
@@ -35,44 +36,42 @@ class Optimize(object):
         """
         try:
             return self.setting.standard_bound(param_list=param_list)
-        except (OverflowError, ParameterOutOfBounds, ValueError):
+        except (FloatingPointError, OverflowError, ParameterOutOfBounds):
             return inf
 
-    def grid_search(self, bound_list: List[Tuple[float, float]],
+    def grid_search(self, grid_bounds: List[Tuple[float, float]],
                     delta: float) -> float:
         """
         Search optimal values along a grid in the parameter space.
 
-        :param bound_list: list of tuples of lower and upper bounds
+        :param grid_bounds: list of tuples of lower and upper bounds
         :param delta:      granularity of the grid search
         :return:           optimized standard_bound
         """
-        if len(bound_list) != self.number_param:
-            raise WrongDimension(
-                f"Number of parameters {len(bound_list)} is wrong")
+        if len(grid_bounds) != self.number_param:
+            raise IllegalArgumentError(
+                f"Number of parameters = {len(grid_bounds)} != {self.number_param}"
+            )
 
-        list_slices = [slice(0)] * len(bound_list)
+        list_slices = [slice(0)] * len(grid_bounds)
 
-        for i in range(len(bound_list)):
-            list_slices[i] = slice(bound_list[i][0], bound_list[i][1], delta)
+        for i in range(len(grid_bounds)):
+            list_slices[i] = slice(grid_bounds[i][0], grid_bounds[i][1], delta)
 
         np.seterr("raise")
-
-        # grid_res = scipy.optimize.brute(
-        #     func=self.eval_except, ranges=tuple(list_slices),
-        #     full_output=True)
 
         try:
             grid_res = scipy.optimize.brute(func=self.eval_except,
                                             ranges=tuple(list_slices),
                                             full_output=True)
-        #     use "finish=None" to disable the "after-optimization"
-
+        #     TODO: This exception is at the wrong spot!
         except FloatingPointError:
             return inf
 
+        self.opt_x = grid_res[0].tolist()
+
         if self.print_x:
-            print(f"grid search optimal x: {grid_res[0].tolist()}")
+            print(f"grid search optimal x: {self.opt_x}")
 
         return grid_res[1]
 
@@ -84,13 +83,13 @@ class Optimize(object):
         Optimization in Hooke and Jeeves.
 
         :param start_list: list of starting values
-        :param delta:      initial granularity
-        :param delta_min:  final granularity
+        :param delta:      initial step length
+        :param delta_min:  final step length
         :return:           optimized standard_bound
         """
 
         if len(start_list) != self.number_param:
-            raise WrongDimension(
+            raise IllegalArgumentError(
                 f"Number of parameters {len(start_list)} is wrong")
 
         optimum_current = self.eval_except(param_list=start_list)
@@ -120,7 +119,7 @@ class Optimize(object):
                 param_old = param_list[:]
                 param_list = param_new[:]
                 optimum_current = optimum_new
-                for index, value in enumerate(param_new):
+                for index in range(len(param_list)):
                     param_new[index] = 2 * param_list[index] - param_old[index]
 
                 # try a pattern step
@@ -133,8 +132,10 @@ class Optimize(object):
                 param_new = param_list[:]
                 delta *= 0.5
 
+        self.opt_x = param_list
+
         if self.print_x:
-            print(f"pattern search optimal x: {param_list}")
+            print(f"patten search optimal x: {self.opt_x}")
 
         return optimum_new
 
@@ -161,8 +162,10 @@ class Optimize(object):
         except FloatingPointError:
             return inf
 
+        self.opt_x = nm_res.x
+
         if self.print_x:
-            print(f"Nelder Mead optimal x: {nm_res.x}")
+            print(f"Nelder Mead optimal x: {self.opt_x}")
 
         return nm_res.fun
 
@@ -180,8 +183,10 @@ class Optimize(object):
         except FloatingPointError:
             return inf
 
+        self.opt_x = bh_res.x
+
         if self.print_x:
-            print(f"basin hopping optimal x: {bh_res.x}")
+            print(f"basin hopping optimal x: {self.opt_x}")
 
         return bh_res.fun
 
@@ -201,8 +206,10 @@ class Optimize(object):
         except FloatingPointError:
             return inf
 
+        self.opt_x = de_res.x
+
         if self.print_x:
-            print(f"differential evolution optimal x: {de_res.x}")
+            print(f"differential evolution optimal x: {self.opt_x}")
 
         return de_res.fun
 
@@ -271,8 +278,10 @@ class Optimize(object):
 
             temperature *= sim_anneal_params.cooling_factor
 
+        self.opt_x = param_best
+
         if self.print_x:
-            print(f"simulated annealing optimal x: {param_best}")
+            print(f"simulated annealing optimal x: {self.opt_x}")
 
         return optimum_best
 
@@ -312,8 +321,10 @@ class Optimize(object):
                 y_opt = candidate_opt
                 opt_row = row
 
+        self.opt_x = param_grid_df.iloc[opt_row].tolist()
+
         if self.print_x:
-            print(f"GS old optimal x: {param_grid_df.iloc[opt_row].tolist()}")
+            print(f"GS old optimal x: {self.opt_x}")
 
         return y_opt
 
@@ -337,7 +348,7 @@ class Optimize(object):
         # number of rows is the number of points = number of columns + 1
         # number of columns is the number of parameters
         if number_rows is not number_columns + 1:
-            raise WrongDimension(
+            raise IllegalArgumentError(
                 f"array argument is not a simplex, rows: {number_rows},"
                 f" columns: {number_columns}")
 
@@ -427,25 +438,27 @@ class Optimize(object):
                 simplex[worst_index] = p_reflection
                 y_value[worst_index] = y_p_reflection
 
+        self.opt_x = simplex[best_index]
+
         if self.print_x:
-            print(f"NM old optimal x: {simplex[best_index]}")
+            print(f"NM old optimal x: {self.opt_x}")
 
         return y_value[best_index]
 
     def bfgs(self, start_list: list) -> float:
-        x0 = np.array(start_list)
-
         np.seterr("raise")
 
         try:
             bfgs_res = scipy.optimize.minimize(fun=self.eval_except,
-                                               x0=x0,
+                                               x0=np.array(start_list),
                                                method="BFGS")
 
         except FloatingPointError:
             return inf
 
+        self.opt_x = bfgs_res.x
+
         if self.print_x:
-            print(f"BFGS optimal x: {bfgs_res.x}")
+            print(f"BFGS optimal x: {self.opt_x}")
 
         return bfgs_res.fun

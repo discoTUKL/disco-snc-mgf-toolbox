@@ -3,9 +3,10 @@
 from math import inf
 from typing import List
 
-from msob_and_fp.setting_avoid_dep import SettingMSOBFP
 from optimization.optimize import Optimize
 from utils.exceptions import ParameterOutOfBounds
+
+from msob_and_fp.setting_avoid_dep import SettingMSOBFP
 
 
 class OptimizeFPBound(Optimize):

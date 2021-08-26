@@ -3,18 +3,18 @@
 from typing import List
 
 import pandas as pd
-
 from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
-from h_mitigator.optimize_mitigator import OptimizeMitigator
-from h_mitigator.single_server_mit_perform import SingleServerMitPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.markov_modulated import MMOOFluid
 from nc_arrivals.iid import DM1, MD1
+from nc_arrivals.markov_modulated import MMOOFluid
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
 from utils.perform_param_list import PerformParamList
+
+from h_mitigator.optimize_mitigator import OptimizeMitigator
+from h_mitigator.single_server_mit_perform import SingleServerMitPerform
 
 # import sys
 # import os
@@ -50,12 +50,12 @@ def single_server_df(arr_list: List[ArrivalDistribution],
         if opt_method == OptMethod.GRID_SEARCH:
             standard_bound[_i] = Optimize(setting=setting,
                                           number_param=1).grid_search(
-                                              bound_list=[(0.1, 4.0)],
+                                              grid_bounds=[(0.1, 4.0)],
                                               delta=0.1)
             new_bound[_i] = OptimizeMitigator(setting_h_mit=setting,
                                               number_param=2).grid_search(
-                                                  bound_list=[(0.1, 4.0),
-                                                              (0.9, 8.0)],
+                                                  grid_bounds=[(0.1, 4.0),
+                                                               (0.9, 8.0)],
                                                   delta=0.05)
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
@@ -70,7 +70,7 @@ def single_server_df(arr_list: List[ArrivalDistribution],
                                                   delta=3.0,
                                                   delta_min=0.01)
         else:
-            raise NameError(
+            raise NotImplementedError(
                 f"Optimization parameter {opt_method} is infeasible")
 
     delay_bounds_df = pd.DataFrame(
@@ -79,14 +79,13 @@ def single_server_df(arr_list: List[ArrivalDistribution],
             "h_mit_bound": new_bound
         },
         index=perform_param_list.values_list)
-    delay_bounds_df = delay_bounds_df[["standard_bound", "h_mit_bound"]]
 
     return delay_bounds_df
 
 
 if __name__ == '__main__':
     OUTPUT_LIST = PerformParamList(perform_metric=PerformEnum.OUTPUT,
-                                   values_list=range(4, 15))
+                                   values_list=list(range(4, 15)))
 
     print(
         perform_param_list_to_csv(prefix="single_",

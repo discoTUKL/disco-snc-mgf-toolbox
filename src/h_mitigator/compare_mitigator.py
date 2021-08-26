@@ -4,12 +4,13 @@ from math import nan
 from timeit import default_timer as timer
 from typing import Tuple
 
-from h_mitigator.optimize_mitigator import OptimizeMitigator
-from h_mitigator.setting_mitigator import SettingMitigator
 from nc_operations.perform_enum import PerformEnum
 from optimization.initial_simplex import InitialSimplex
 from optimization.opt_method import OptMethod
 from optimization.optimize import Optimize
+
+from h_mitigator.optimize_mitigator import OptimizeMitigator
+from h_mitigator.setting_mitigator import SettingMitigator
 
 
 def compare_mitigator(setting: SettingMitigator,
@@ -19,21 +20,23 @@ def compare_mitigator(setting: SettingMitigator,
     """Compare standard_bound with the new Lyapunov standard_bound."""
 
     if opt_method == OptMethod.GRID_SEARCH:
-        theta_bounds = [(0.1, 4.0)]
+        delta_val = 0.1
+        theta_bounds = [(delta_val, 4.0)]
 
         standard_bound = Optimize(setting=setting,
                                   number_param=1,
                                   print_x=print_x).grid_search(
-                                      bound_list=theta_bounds, delta=0.1)
+                                      grid_bounds=theta_bounds, delta=delta_val)
 
         bound_array = theta_bounds[:]
         for _i in range(1, number_l + 1):
-            bound_array.append((0.9, 4.0))
+            bound_array.append((1.0 + delta_val, 4.0))
 
         h_mit_bound = OptimizeMitigator(setting_h_mit=setting,
                                         number_param=number_l + 1,
                                         print_x=print_x).grid_search(
-                                            bound_list=bound_array, delta=0.1)
+                                            grid_bounds=bound_array,
+                                            delta=delta_val)
 
     elif opt_method == OptMethod.PATTERN_SEARCH:
         theta_start = 0.5
@@ -165,7 +168,7 @@ def compare_time(setting: SettingMitigator,
 
         start = timer()
         Optimize(setting=setting,
-                 number_param=1).grid_search(bound_list=bound_array, delta=0.1)
+                 number_param=1).grid_search(grid_bounds=bound_array, delta=0.1)
         stop = timer()
         time_standard = stop - start
 
@@ -174,7 +177,7 @@ def compare_time(setting: SettingMitigator,
 
         start = timer()
         OptimizeMitigator(setting_h_mit=setting, number_param=number_l +
-                          1).grid_search(bound_list=bound_array, delta=0.1)
+                          1).grid_search(grid_bounds=bound_array, delta=0.1)
         stop = timer()
         time_lyapunov = stop - start
 
@@ -247,11 +250,12 @@ def compare_time(setting: SettingMitigator,
 
 
 if __name__ == '__main__':
+    from nc_arrivals.iid import DM1
+    from nc_server.constant_rate_server import ConstantRateServer
+    from utils.perform_parameter import PerformParameter
+
     from h_mitigator.fat_cross_perform import FatCrossPerform
     from h_mitigator.single_server_mit_perform import SingleServerMitPerform
-    from utils.perform_parameter import PerformParameter
-    from nc_server.constant_rate_server import ConstantRateServer
-    from nc_arrivals.iid import DM1
 
     OUTPUT_TIME = PerformParameter(perform_metric=PerformEnum.OUTPUT, value=4)
 

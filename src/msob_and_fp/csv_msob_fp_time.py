@@ -3,23 +3,23 @@
 import csv
 
 import numpy as np
-from tqdm import tqdm
-
 from bound_evaluation.change_enum import ChangeEnum
 from bound_evaluation.mc_enum import MCEnum
 from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
-from msob_and_fp.compare_avoid_dep import compare_time_211, compare_time_212
-from msob_and_fp.msob_fp_array_to_results import time_array_to_results
-from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
-from msob_and_fp.square_perform import SquarePerform
 from nc_arrivals.arrival_enum import ArrivalEnum
-from nc_arrivals.markov_modulated import MMOODisc, MMOOFluid
 from nc_arrivals.iid import DM1, MD1
+from nc_arrivals.markov_modulated import MMOODisc, MMOOFluid
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
+from tqdm import tqdm
 from utils.perform_parameter import PerformParameter
+
+from msob_and_fp.compare_avoid_dep import compare_time_211
+from msob_and_fp.msob_fp_array_to_results import time_array_to_results
+from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
+from msob_and_fp.square_perform import SquarePerform
 
 ########################################################################
 # Find Optimal Parameters
@@ -161,14 +161,38 @@ if __name__ == '__main__':
                          total_iterations=10**4,
                          target_util=TARGET_UTIL))
 
-    print(
-        csv_msob_fp_time(name="square",
-                         number_flows=4,
-                         number_servers=4,
-                         arrival_enum=PROCESS,
-                         perform_param=COMMON_PERFORM_PARAM,
-                         opt_method=COMMON_OPTIMIZATION,
-                         mc_dist=MC_UNIF10,
-                         comparator=compare_time_212,
-                         total_iterations=10**4,
-                         target_util=TARGET_UTIL))
+    # print(
+    #     csv_msob_fp_time(name="the_L_tandem",
+    #                        number_flows=3,
+    #                        number_servers=3,
+    #                        arrival_enum=PROCESS,
+    #                        perform_param=COMMON_PERFORM_PARAM,
+    #                        opt_method=COMMON_OPTIMIZATION,
+    #                        mc_dist=MC_UNIF10,
+    #                        comparator=compare_time_211,
+    #                        total_iterations=10**4,
+    #                        target_util=TARGET_UTIL))
+    #
+    # print(
+    #     csv_msob_fp_time(name="square",
+    #                        number_flows=4,
+    #                        number_servers=4,
+    #                        arrival_enum=PROCESS,
+    #                        perform_param=COMMON_PERFORM_PARAM,
+    #                        opt_method=COMMON_OPTIMIZATION,
+    #                        mc_dist=MC_UNIF10,
+    #                        comparator=compare_time_212,
+    #                        total_iterations=10**4,
+    #                        target_util=TARGET_UTIL))
+
+# print(
+#     csv_msob_fp_time(name="splitting_triangle",
+#                        number_flows=3,
+#                        number_servers=3,
+#                        arrival_enum=PROCESS,
+#                        perform_param=COMMON_PERFORM_PARAM,
+#                        opt_method=COMMON_OPTIMIZATION,
+#                        mc_dist=MC_UNIF10,
+#                        comparator=compare_time_212,
+#                        total_iterations=10**5,
+#                        target_util=TARGET_UTIL))

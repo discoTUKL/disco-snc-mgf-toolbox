@@ -1,11 +1,11 @@
 """Abstract Leaky-Bucket class."""
 
 from abc import abstractmethod
-from math import erf, exp, inf, log, pi, sqrt
+from math import exp, log
+
+from utils.exceptions import ParameterOutOfBounds
 
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from utils.deprecated import deprecated
-from utils.exceptions import ParameterOutOfBounds
 
 
 class RegulatedArrivals(ArrivalDistribution):
@@ -29,6 +29,9 @@ class RegulatedArrivals(ArrivalDistribution):
         rho(theta)
         :param theta: mgf parameter
         """
+        if theta <= 0:
+            raise ParameterOutOfBounds(f"theta = {theta} must be > 0")
+
         return self.n * self.rho_single
 
     def is_discrete(self) -> bool:
@@ -66,8 +69,8 @@ class DetermTokenBucket(RegulatedArrivals):
             f"rho={self.rho_single}_n={self.n}"
 
 
-class LeakyBucketMassOne(RegulatedArrivals):
-    """Leaky Bucket according to Massoulie using directly Lemma 2"""
+class LeakyBucketMassoulie(RegulatedArrivals):
+    """Leaky Bucket according to Massoulié using directly Lemma 2"""
     def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
         super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
 
@@ -80,28 +83,4 @@ class LeakyBucketMassOne(RegulatedArrivals):
 
     def __str__(self) -> str:
         return f"MassOne_sigma={self.sigma_single}_" \
-            f"rho={self.rho_single}_n={self.n}"
-
-
-@deprecated
-class LeakyBucketMassTwo(RegulatedArrivals):
-    """Exact Leaky Bucket according to Massoulie after MGF transformation"""
-    def __init__(self, sigma_single: float, rho_single: float, n=1) -> None:
-        super().__init__(sigma_single=sigma_single, rho_single=rho_single, n=n)
-
-    def sigma(self, theta: float) -> float:
-        if theta <= 0:
-            raise ParameterOutOfBounds(f"theta={theta} must be > 0")
-
-        try:
-            return log(1.0 + sqrt(0.5 * pi * self.n * (self.sigma_single**2)) *
-                       theta * exp(0.5 * self.n * (self.sigma_single**2) *
-                                   (theta**2)) *
-                       erf(1.0 + theta * sqrt(0.5 * self.n *
-                                              (self.sigma_single**2)))) / theta
-        except OverflowError:
-            return inf
-
-    def __str__(self) -> str:
-        return f"MassTwo_sigma={self.sigma_single}_" \
             f"rho={self.rho_single}_n={self.n}"

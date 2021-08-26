@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     print(
         Optimize(SINGLE_SERVER, number_param=1,
-                 print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
+                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 
     SINGLE_SERVER2 = SingleServerPerform(
         foi=MMOOFluid(mu=0.7, lamb=0.4, peak_rate=1.2),
@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     print(
         Optimize(SINGLE_SERVER2, number_param=1,
-                 print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
+                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 
     DELAY_PROB_REV = PerformParameter(perform_metric=PerformEnum.DELAY,
                                       value=0.0183)
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     print(
         Optimize(SINGLE_SERVER2, number_param=1,
-                 print_x=False).grid_search(bound_list=[(0.1, 5.0)],
+                 print_x=False).grid_search(grid_bounds=[(0.1, 5.0)],
                                             delta=0.1))
 
     print("\n-------------------------------------------\n")
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     print("EXAMPLE_1\n")
     print(
         Optimize(setting=EXAMPLE_1, number_param=1,
-                 print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
+                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 
     ARR_LIST2: List[ArrivalDistribution] = [
         MMOOFluid(mu=0.5, lamb=0.5, peak_rate=1.5),
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     print("\nEXAMPLE_2\n")
     print(
         Optimize(EXAMPLE_2, number_param=1,
-                 print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
+                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 
     DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY,
                                   value=0.010)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     print(
         Optimize(EXAMPLE_REVERSE, number_param=1,
-                 print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
+                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 
     DELAY_PROB4 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
                                    value=4)

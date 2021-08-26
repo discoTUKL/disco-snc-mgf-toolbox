@@ -3,7 +3,6 @@
 from math import inf
 from typing import List
 
-from msob_and_fp.setting_avoid_dep import SettingMSOBFP
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
 from nc_operations.arb_scheduling import LeftoverARB
@@ -12,6 +11,8 @@ from nc_operations.single_hop_bound import single_hop_bound
 from nc_server.constant_rate_server import ConstantRateServer
 from utils.exceptions import ParameterOutOfBounds
 from utils.perform_parameter import PerformParameter
+
+from msob_and_fp.setting_avoid_dep import SettingMSOBFP
 
 
 class SquarePerform(SettingMSOBFP):
@@ -179,17 +180,17 @@ class SquarePerform(SettingMSOBFP):
 
 
 if __name__ == '__main__':
-    from msob_and_fp.optimize_fp_bound import OptimizeFPBound
-    from msob_and_fp.optimize_server_bound import OptimizeServerBound
     from nc_arrivals.iid import DM1
     from nc_operations.perform_enum import PerformEnum
     from nc_server.constant_rate_server import ConstantRateServer
     from optimization.optimize import Optimize
-    # from optimization.function_optimizer import optimizer_perform
 
+    from msob_and_fp.optimize_fp_bound import OptimizeFPBound
+    from msob_and_fp.optimize_server_bound import OptimizeServerBound
+
+    # from optimization.function_optimizer import optimizer_perform
     # DELAY_PROB_TIME = PerformParameter(
     #     perform_metric=PerformEnum.DELAY_PROB, value=6)
-
     # DELAY_PROB_TIME = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
     #                                    value=8)
     DELAY_PROB_TIME = PerformParameter(perform_metric=PerformEnum.DELAY,
@@ -224,8 +225,8 @@ if __name__ == '__main__':
                                        ser_list=SER_LIST,
                                        perform_param=DELAY_PROB_TIME),
                  number_param=2,
-                 print_x=PRINT_X).grid_search(bound_list=[(0.1, 10.0),
-                                                          (1.1, 10.0)],
+                 print_x=PRINT_X).grid_search(grid_bounds=[(0.1, 10.0),
+                                                           (1.1, 10.0)],
                                               delta=0.1))
 
     print("Server Bound:")
@@ -235,7 +236,7 @@ if __name__ == '__main__':
                                           ser_list=SER_LIST,
                                           perform_param=DELAY_PROB_TIME),
             number_param=1,
-            print_x=PRINT_X).grid_search(bound_list=[(0.1, 10.0)], delta=0.1))
+            print_x=PRINT_X).grid_search(grid_bounds=[(0.1, 10.0)], delta=0.1))
 
     print("Flow Prolongation:")
     print(
@@ -244,6 +245,6 @@ if __name__ == '__main__':
             ser_list=SER_LIST,
             perform_param=DELAY_PROB_TIME),
                         number_param=2,
-                        print_x=PRINT_X).grid_search(bound_list=[(0.1, 10.0),
-                                                                 (1.1, 10.0)],
+                        print_x=PRINT_X).grid_search(grid_bounds=[(0.1, 10.0),
+                                                                  (1.1, 10.0)],
                                                      delta=0.1))

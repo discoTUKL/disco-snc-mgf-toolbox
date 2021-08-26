@@ -65,7 +65,7 @@ if __name__ == '__main__':
                               perform_param=DELAY_4)
 
     OPTI_OLD = Optimize(setting=SETTING, number_param=1, print_x=True)
-    print(OPTI_OLD.grid_search(bound_list=[(0.1, 4.0)], delta=0.1))
+    print(OPTI_OLD.grid_search(grid_bounds=[(0.1, 4.0)], delta=0.1))
     print(OPTI_OLD.pattern_search(start_list=[0.5], delta=3.0, delta_min=0.01))
     print(Optimize.nelder_mead(self=OPTI_OLD, simplex=SIMPLEX_RAND))
     print(
@@ -79,10 +79,8 @@ if __name__ == '__main__':
     OPTI_NEW = OptimizeMitigator(setting_h_mit=SETTING,
                                  number_param=2,
                                  print_x=True)
-    print(
-        OPTI_NEW.grid_search_old(bound_list=[(0.1, 4.0), (0.9, 4.0)],
-                                 delta=0.1))
-    print(OPTI_NEW.grid_search(bound_list=[(0.1, 4.0), (0.9, 4.0)], delta=0.1))
+
+    print(OPTI_NEW.grid_search(grid_bounds=[(0.1, 4.0), (0.9, 4.0)], delta=0.1))
     print(
         OPTI_NEW.pattern_search(start_list=[0.5] + [1.0],
                                 delta=3.0,

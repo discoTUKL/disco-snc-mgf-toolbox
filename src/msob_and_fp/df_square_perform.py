@@ -3,11 +3,7 @@
 from typing import List
 
 import pandas as pd
-
 from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
-from msob_and_fp.optimize_fp_bound import OptimizeFPBound
-from msob_and_fp.optimize_server_bound import OptimizeServerBound
-from msob_and_fp.square_perform import SquarePerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 # from nc_arrivals.qt import DM1
 from nc_arrivals.markov_modulated import MMOOFluid
@@ -15,6 +11,10 @@ from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.optimize import Optimize
 from utils.perform_param_list import PerformParamList
+
+from msob_and_fp.optimize_fp_bound import OptimizeFPBound
+from msob_and_fp.optimize_server_bound import OptimizeServerBound
+from msob_and_fp.square_perform import SquarePerform
 
 
 def square_df(arr_list: List[ArrivalDistribution],
@@ -48,15 +48,15 @@ def square_df(arr_list: List[ArrivalDistribution],
 
         standard_bound[i] = Optimize(setting=square_setting,
                                      number_param=2).grid_search(
-                                         bound_list=two_param_bounds,
+                                         grid_bounds=two_param_bounds,
                                          delta=delta_val)
         server_bound[i] = OptimizeServerBound(setting_msob_fp=square_setting,
                                               number_param=1).grid_search(
-                                                  bound_list=one_param_bounds,
+                                                  grid_bounds=one_param_bounds,
                                                   delta=delta_val)
         fp_bound[i] = OptimizeFPBound(setting_msob_fp=square_setting,
                                       number_param=2).grid_search(
-                                          bound_list=two_param_bounds,
+                                          grid_bounds=two_param_bounds,
                                           delta=delta_val)
 
     results_df = pd.DataFrame(
@@ -66,7 +66,6 @@ def square_df(arr_list: List[ArrivalDistribution],
             "fp_bound": fp_bound
         },
         index=perform_param_list.values_list)
-    results_df = results_df[["standard_bound", "server_bound", "fp_bound"]]
 
     print(f"utilization: {square_setting.approximate_utilization()}")
 

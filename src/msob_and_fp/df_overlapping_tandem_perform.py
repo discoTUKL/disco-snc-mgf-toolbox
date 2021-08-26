@@ -49,15 +49,15 @@ def overlapping_tandem_df(
 
         standard_bound[i] = Optimize(setting=overlapping_tandem_setting,
                                      number_param=2).grid_search(
-                                         bound_list=two_param_bounds,
+                                         grid_bounds=two_param_bounds,
                                          delta=delta_val)
         server_bound[i] = OptimizeServerBound(
             setting_msob_fp=overlapping_tandem_setting,
-            number_param=1).grid_search(bound_list=one_param_bounds,
+            number_param=1).grid_search(grid_bounds=one_param_bounds,
                                         delta=delta_val)
         fp_bound[i] = OptimizeFPBound(
             setting_msob_fp=overlapping_tandem_setting,
-            number_param=1).grid_search(bound_list=one_param_bounds,
+            number_param=1).grid_search(grid_bounds=one_param_bounds,
                                         delta=delta_val)
 
     results_df = pd.DataFrame(

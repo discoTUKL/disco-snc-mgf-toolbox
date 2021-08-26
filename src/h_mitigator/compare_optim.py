@@ -32,7 +32,7 @@ def compare_optimization(setting: SettingMitigator,
             bound = OptimizeMitigator(setting_h_mit=setting,
                                       number_param=number_l + 1,
                                       print_x=print_x).grid_search(
-                                          bound_list=bound_list, delta=0.1)
+                                          grid_bounds=bound_list, delta=0.1)
 
         elif opt == OptMethod.PATTERN_SEARCH:
             theta_start = 0.5
@@ -102,18 +102,6 @@ def compare_optimization(setting: SettingMitigator,
                 setting_h_mit=setting,
                 number_param=number_l + 1,
                 print_x=print_x).bfgs(start_list=start_list)
-
-        elif opt == OptMethod.GS_OLD:
-            theta_bounds = [(0.1, 4.0)]
-
-            bound_list = theta_bounds[:]
-            for _i in range(number_l):
-                bound_list.append((0.9, 4.0))
-
-            bound = OptimizeMitigator(setting_h_mit=setting,
-                                      number_param=number_l + 1,
-                                      print_x=print_x).grid_search_old(
-                                          bound_list=bound_list, delta=0.1)
 
         elif opt == OptMethod.NM_OLD:
             nelder_mead_param = NelderMeadParameters()

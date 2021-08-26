@@ -52,17 +52,17 @@ We optimize the bound in the SINGLE_SERVER setting with the old approach "Optimi
 
 ```python
 print(Optimize(SINGLE_SERVER, number_param=1,
-               print_x=True).grid_search(bound_list=[(0.1, 5.0)], delta=0.1))
+               print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 ```
 
 and for the h_mitigator:
 
 ```python
 print(
-    OptimizeMitigator(SINGLE_SERVER, number_param=2,
-                      print_x=True).grid_search(bound_list=[(0.1, 5.0),
-                                                            (0.9, 8.0)],
-                                                delta=0.1))
+  OptimizeMitigator(SINGLE_SERVER, number_param=2,
+                    print_x=True).grid_search(grid_bounds=[(0.1, 5.0),
+                                                           (0.9, 8.0)],
+                                              delta=0.1))
 ```
 
 ## Status of Implementation
