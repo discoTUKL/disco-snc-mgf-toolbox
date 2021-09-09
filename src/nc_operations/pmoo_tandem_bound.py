@@ -72,11 +72,7 @@ def pmoo_tandem_bound(foi: Flow,
         if res_rate_with_foi <= 0:
             raise ParameterOutOfBounds("Stability condition is violated")
 
-    if ser_not_on_foi_path is None:
-        # ser_not_on_foi_path = []
-        factor_not_on_foi = 1.0
-    else:
-        factor_not_on_foi = 1.0
+    if ser_not_on_foi_path is not None:
         residual_rate_not_on_foi_list = [0.0] * len(ser_not_on_foi_path)
 
         for j, server in enumerate(ser_not_on_foi_path):
