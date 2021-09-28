@@ -9,7 +9,7 @@ from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.iid import DM1
-from nc_arrivals.markov_modulated import MMOOFluid
+from nc_arrivals.markov_modulated import MMOOCont
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
@@ -53,9 +53,9 @@ def csv_fat_cross_time(arrival_enum: ArrivalEnum,
                 ]
             elif arrival_enum == ArrivalEnum.MMOOFluid:
                 arrive_list = [
-                    MMOOFluid(mu=param_array[i, j],
-                              lamb=param_array[i, number_servers + j],
-                              peak_rate=param_array[i, 2 * number_servers + j])
+                    MMOOCont(mu=param_array[i, j],
+                             lamb=param_array[i, number_servers + j],
+                             peak_rate=param_array[i, 2 * number_servers + j])
                     for j in range(number_servers)
                 ]
 

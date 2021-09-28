@@ -6,7 +6,7 @@ import numpy as np
 import scipy.optimize
 
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.markov_modulated import MMOOFluid
+from nc_arrivals.markov_modulated import MMOOCont
 from nc_operations.perform_enum import PerformEnum
 from nc_operations.single_server_bandwidth import SingleServerBandwidth
 from nc_server.constant_rate_server import ConstantRateServer
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     DELAY6 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB, value=6)
 
-    ARR_LIST = [MMOOFluid(mu=0.2, lamb=0.5, peak_rate=2.6)]
+    ARR_LIST = [MMOOCont(mu=0.2, lamb=0.5, peak_rate=2.6)]
 
     SINGLE_SERVER = SingleServerBandwidth(arr_list=ARR_LIST,
                                           s_e2e=ConstantRateServer(rate=2.0),

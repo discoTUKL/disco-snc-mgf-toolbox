@@ -6,7 +6,7 @@ import pandas as pd
 from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 # from nc_arrivals.qt import DM1
-from nc_arrivals.markov_modulated import MMOOFluid
+from nc_arrivals.markov_modulated import MMOOCont
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.optimize import Optimize
@@ -158,18 +158,18 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="square_",
                                   data_frame_creator=square_df,
                                   arr_list=[
-                                      MMOOFluid(mu=7.2,
-                                                lamb=4.8,
-                                                peak_rate=4.9),
-                                      MMOOFluid(mu=2.5,
-                                                lamb=2.1,
-                                                peak_rate=3.7),
-                                      MMOOFluid(mu=4.1,
-                                                lamb=3.1,
-                                                peak_rate=1.3),
-                                      MMOOFluid(mu=3.3,
-                                                lamb=3.3,
-                                                peak_rate=1.7)
+                                      MMOOCont(mu=7.2,
+                                               lamb=4.8,
+                                               peak_rate=4.9),
+                                      MMOOCont(mu=2.5,
+                                               lamb=2.1,
+                                               peak_rate=3.7),
+                                      MMOOCont(mu=4.1,
+                                               lamb=3.1,
+                                               peak_rate=1.3),
+                                      MMOOCont(mu=3.3,
+                                               lamb=3.3,
+                                               peak_rate=1.7)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=5.2),

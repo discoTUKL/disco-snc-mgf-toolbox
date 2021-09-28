@@ -4,7 +4,7 @@ from typing import List
 
 from h_mitigator.fat_cross_perform import FatCrossPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.markov_modulated import MMOOFluid
+from nc_arrivals.markov_modulated import MMOOCont
 from nc_arrivals.iid import DM1
 from nc_operations.single_server_perform import SingleServerPerform
 from nc_operations.perform_enum import PerformEnum
@@ -28,7 +28,7 @@ if __name__ == '__main__':
                  print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 
     SINGLE_SERVER2 = SingleServerPerform(
-        foi=MMOOFluid(mu=0.7, lamb=0.4, peak_rate=1.2),
+        foi=MMOOCont(mu=0.7, lamb=0.4, peak_rate=1.2),
         server=ConstantRateServer(rate=1.0),
         perform_param=DELAY_PROB8)
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
                                       value=0.0183)
 
     SINGLE_SERVER2 = SingleServerPerform(
-        foi=MMOOFluid(mu=0.7, lamb=0.4, peak_rate=1.2),
+        foi=MMOOCont(mu=0.7, lamb=0.4, peak_rate=1.2),
         server=ConstantRateServer(rate=1.0),
         perform_param=DELAY_PROB_REV)
 
@@ -72,8 +72,8 @@ if __name__ == '__main__':
                  print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 
     ARR_LIST2: List[ArrivalDistribution] = [
-        MMOOFluid(mu=0.5, lamb=0.5, peak_rate=1.5),
-        MMOOFluid(mu=0.5, lamb=0.5, peak_rate=0.7)
+        MMOOCont(mu=0.5, lamb=0.5, peak_rate=1.5),
+        MMOOCont(mu=0.5, lamb=0.5, peak_rate=0.7)
     ]
 
     SER_LIST2: List[ConstantRateServer] = [

@@ -43,12 +43,12 @@ if __name__ == '__main__':
     from utils.perform_parameter import PerformParameter
     from nc_operations.perform_enum import PerformEnum
     from nc_server.constant_rate_server import ConstantRateServer
-    from nc_arrivals.markov_modulated import MMOOFluid
+    from nc_arrivals.markov_modulated import MMOOCont
 
     DELAY_4 = PerformParameter(perform_metric=PerformEnum.DELAY, value=0.0001)
 
-    MMOO_1 = MMOOFluid(mu=1.0, lamb=2.2, peak_rate=3.4)
-    MMOO_2 = MMOOFluid(mu=3.6, lamb=1.6, peak_rate=0.4)
+    MMOO_1 = MMOOCont(mu=1.0, lamb=2.2, peak_rate=3.4)
+    MMOO_2 = MMOOCont(mu=3.6, lamb=1.6, peak_rate=0.4)
     CONST_RATE_1 = ConstantRateServer(rate=2.0)
     CONST_RATE_2 = ConstantRateServer(rate=0.3)
 

@@ -100,7 +100,7 @@ def fat_cross_perform_df(
 if __name__ == '__main__':
     from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
     from nc_arrivals.iid import DM1, MD1
-    from nc_arrivals.markov_modulated import MMOOFluid
+    from nc_arrivals.markov_modulated import MMOOCont
 
     DELAY_PROB_LIST = PerformParamList(perform_metric=PerformEnum.DELAY_PROB,
                                        values_list=list(range(4, 11)))
@@ -133,12 +133,12 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="simple_setting_",
                                   data_frame_creator=fat_cross_perform_df,
                                   arr_list=[
-                                      MMOOFluid(mu=1.2,
-                                                lamb=2.1,
-                                                peak_rate=3.5),
-                                      MMOOFluid(mu=3.7,
-                                                lamb=1.5,
-                                                peak_rate=0.4)
+                                      MMOOCont(mu=1.2,
+                                               lamb=2.1,
+                                               peak_rate=3.5),
+                                      MMOOCont(mu=3.7,
+                                               lamb=1.5,
+                                               peak_rate=0.4)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=2.0),
@@ -151,12 +151,12 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="simple_setting_",
                                   data_frame_creator=fat_cross_perform_df,
                                   arr_list=[
-                                      MMOOFluid(mu=1.0,
-                                                lamb=2.2,
-                                                peak_rate=3.4),
-                                      MMOOFluid(mu=3.6,
-                                                lamb=1.6,
-                                                peak_rate=0.4)
+                                      MMOOCont(mu=1.0,
+                                               lamb=2.2,
+                                               peak_rate=3.4),
+                                      MMOOCont(mu=3.6,
+                                               lamb=1.6,
+                                               peak_rate=0.4)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=2.0),

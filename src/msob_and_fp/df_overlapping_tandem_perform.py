@@ -10,7 +10,7 @@ from msob_and_fp.optimize_server_bound import OptimizeServerBound
 from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.iid import DM1
-from nc_arrivals.markov_modulated import MMOODisc, MMOOFluid
+from nc_arrivals.markov_modulated import MMOODisc, MMOOCont
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.optimize import Optimize
@@ -127,9 +127,9 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="overlapping_tandem_",
                                   data_frame_creator=overlapping_tandem_df,
                                   arr_list=[
-                                      MMOOFluid(mu=7.3, lamb=3.4, peak_rate=1.2),
-                                      MMOOFluid(mu=1.5, lamb=3.6, peak_rate=8.2),
-                                      MMOOFluid(mu=1.3, lamb=1.1, peak_rate=0.4)
+                                      MMOOCont(mu=7.3, lamb=3.4, peak_rate=1.2),
+                                      MMOOCont(mu=1.5, lamb=3.6, peak_rate=8.2),
+                                      MMOOCont(mu=1.3, lamb=1.1, peak_rate=0.4)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=9.0),
@@ -142,15 +142,15 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="overlapping_tandem_",
                                   data_frame_creator=overlapping_tandem_df,
                                   arr_list=[
-                                      MMOOFluid(mu=2.0,
-                                                lamb=7.0,
-                                                peak_rate=5.0),
-                                      MMOOFluid(mu=4.0,
-                                                lamb=8.5,
-                                                peak_rate=5.3),
-                                      MMOOFluid(mu=0.5,
-                                                lamb=4.0,
-                                                peak_rate=9.0)
+                                      MMOOCont(mu=2.0,
+                                               lamb=7.0,
+                                               peak_rate=5.0),
+                                      MMOOCont(mu=4.0,
+                                               lamb=8.5,
+                                               peak_rate=5.3),
+                                      MMOOCont(mu=0.5,
+                                               lamb=4.0,
+                                               peak_rate=9.0)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=4.0),

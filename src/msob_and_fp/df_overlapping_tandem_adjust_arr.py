@@ -9,7 +9,7 @@ from msob_and_fp.optimize_fp_bound import OptimizeFPBound
 from msob_and_fp.optimize_server_bound import OptimizeServerBound
 from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.markov_modulated import MMOOFluid
+from nc_arrivals.markov_modulated import MMOOCont
 # from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
@@ -133,74 +133,74 @@ if __name__ == '__main__':
             prefix="overlapping_tandem_",
             data_frame_creator=overlapping_tandem_adjust_arr_df,
             list_arr_list=[[
-                MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                MMOOFluid(mu=0.5, lamb=6.0, peak_rate=9.0)
+                MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                MMOOCont(mu=0.5, lamb=6.0, peak_rate=9.0)
             ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=5.0, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=5.0, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=4.0, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=4.0, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=3.0, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=3.0, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=2.5, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=2.5, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=2.0, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=2.0, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=1.8, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=1.8, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=1.5, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=1.5, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=1.3, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=1.3, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=1.2, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=1.2, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=1.1, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=1.1, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=1.0, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=1.0, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=0.95, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=0.95, peak_rate=9.0)
                            ],
                            [
-                               MMOOFluid(mu=0.8, lamb=7.0, peak_rate=2.0),
-                               MMOOFluid(mu=4.0, lamb=8.5, peak_rate=5.3),
-                               MMOOFluid(mu=0.5, lamb=0.9, peak_rate=9.0)
+                               MMOOCont(mu=0.8, lamb=7.0, peak_rate=2.0),
+                               MMOOCont(mu=4.0, lamb=8.5, peak_rate=5.3),
+                               MMOOCont(mu=0.5, lamb=0.9, peak_rate=9.0)
                            ]],
             ser_list=[
                 ConstantRateServer(rate=2.2),

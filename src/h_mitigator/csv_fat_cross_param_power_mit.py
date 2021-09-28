@@ -11,7 +11,7 @@ from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.iid import DM1, MD1, DGamma1, DWeibull1
-from nc_arrivals.markov_modulated import MMOODisc, MMOOFluid
+from nc_arrivals.markov_modulated import MMOODisc, MMOOCont
 from nc_arrivals.regulated_arrivals import (DetermTokenBucket,
                                             LeakyBucketMassoulie)
 from nc_operations.perform_enum import PerformEnum
@@ -78,9 +78,9 @@ def csv_fat_cross_param_power(name: str, arrival_enum: ArrivalEnum,
 
         elif arrival_enum == ArrivalEnum.MMOOFluid:
             arr_list = [
-                MMOOFluid(mu=param_array[i, j],
-                          lamb=param_array[i, number_flows + j],
-                          peak_rate=param_array[i, 2 * number_flows + j])
+                MMOOCont(mu=param_array[i, j],
+                         lamb=param_array[i, number_flows + j],
+                         peak_rate=param_array[i, 2 * number_flows + j])
                 for j in range(number_flows)
             ]
 

@@ -6,7 +6,7 @@ import pandas as pd
 from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.iid import DM1, MD1
-from nc_arrivals.markov_modulated import MMOOFluid
+from nc_arrivals.markov_modulated import MMOOCont
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         perform_param_list_to_csv(
             prefix="single_",
             data_frame_creator=single_server_df,
-            arr_list=[MMOOFluid(mu=8.0, lamb=12.0, peak_rate=3.0, n=1)],
+            arr_list=[MMOOCont(mu=8.0, lamb=12.0, peak_rate=3.0, n=1)],
             ser_list=[ConstantRateServer(rate=1.5)],
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))
