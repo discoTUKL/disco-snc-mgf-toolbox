@@ -26,7 +26,7 @@ class Convolve(Server):
     def sigma(self, theta: float) -> float:
         if isinstance(self.ser1, RateLatencyServer) and isinstance(
                 self.ser2, RateLatencyServer):
-            return self.ser1.latency + self.ser2.latency
+            return self.ser1.rate * self.ser1.latency + self.ser2.rate * self.ser2.latency
 
         ser_1_sigma_p = self.ser1.sigma(self.p * theta)
         ser_2_sigma_q = self.ser2.sigma(self.q * theta)
@@ -86,7 +86,7 @@ class ConvolveRateReduction(Server):
     def sigma(self, theta: float) -> float:
         if isinstance(self.ser1, RateLatencyServer) and isinstance(
                 self.ser2, RateLatencyServer):
-            return self.ser1.latency + self.ser2.latency
+            return self.ser1.rate * self.ser1.latency + self.ser2.rate * self.ser2.latency
 
         ser_1_sigma_p = self.ser1.sigma(self.p * theta)
         ser_2_sigma_q = self.ser2.sigma(self.q * theta)

@@ -35,14 +35,21 @@ class LeftoverARB(Server):
             theta=self.p * theta)
 
     def rho(self, theta):
-        if isinstance(self.ser, RateLatencyServer) and isinstance(
-                self.cross_arr, DetermTokenBucket):
-            return self.ser.rate - self.cross_arr.arr_rate
+        if (isinstance(self.ser, RateLatencyServer)
+                and isinstance(self.cross_arr, DetermTokenBucket)):
+            residual_rate = self.ser.rate - self.cross_arr.arr_rate
+
+            if residual_rate <= 0:
+                raise ParameterOutOfBounds("The residual rate must be > 0")
+
+            return residual_rate
 
         arr_rho_p_theta = self.cross_arr.rho(theta=self.p * theta)
         ser_rho_q_theta = self.ser.rho(theta=self.q * theta)
 
-        if ser_rho_q_theta < 0 or arr_rho_p_theta < 0:
-            raise ParameterOutOfBounds("The rhos must be >= 0")
+        residual_rate = ser_rho_q_theta - arr_rho_p_theta
 
-        return ser_rho_q_theta - arr_rho_p_theta
+        if residual_rate <= 0:
+            raise ParameterOutOfBounds("The residual rate must be > 0")
+
+        return residual_rate
