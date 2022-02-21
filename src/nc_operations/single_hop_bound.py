@@ -1,7 +1,7 @@
 """Helper function to evaluate a single hop."""
 
 from nc_arrivals.arrival import Arrival
-from nc_operations.operations import AggregateHomogeneous
+from nc_operations.aggregate import AggregateHomogeneous
 from nc_operations.perform_enum import PerformEnum
 from nc_operations.performance_bounds import (backlog, backlog_prob, delay,
                                               delay_prob, output)

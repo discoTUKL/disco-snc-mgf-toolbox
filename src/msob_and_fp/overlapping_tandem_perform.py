@@ -5,8 +5,10 @@ from typing import List
 from msob_and_fp.setting_avoid_dep import SettingMSOBFP
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
+from nc_operations.aggregate import AggregateTwo
 from nc_operations.arb_scheduling import LeftoverARB
-from nc_operations.operations import AggregateTwo, Convolve, Deconvolve
+from nc_operations.deconvolve import Deconvolve
+from nc_operations.convolve import Convolve
 from nc_operations.single_hop_bound import single_hop_bound
 from nc_server.constant_rate_server import ConstantRateServer
 from utils.perform_parameter import PerformParameter

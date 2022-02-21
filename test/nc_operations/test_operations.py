@@ -4,7 +4,8 @@ import pytest
 
 from nc_arrivals.iid import DM1
 from nc_operations.arb_scheduling import LeftoverARB
-from nc_operations.operations import Convolve, Deconvolve
+from nc_operations.deconvolve import Deconvolve
+from nc_operations.convolve import Convolve
 from nc_server.constant_rate_server import ConstantRateServer
 
 

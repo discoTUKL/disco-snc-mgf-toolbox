@@ -6,9 +6,10 @@ from h_mitigator.deconvolve_power_mit import DeconvolvePowerMit
 from h_mitigator.setting_mitigator import SettingMitigator
 from nc_arrivals.arrival import Arrival
 from nc_arrivals.arrival_distribution import ArrivalDistribution
+from nc_operations.aggregate import AggregateList
 from nc_operations.arb_scheduling import LeftoverARB
 from nc_operations.single_hop_bound import single_hop_bound
-from nc_operations.operations import AggregateList, Deconvolve
+from nc_operations.deconvolve import Deconvolve
 from nc_server.server import Server
 from nc_server.server_distribution import ServerDistribution
 from utils.perform_parameter import PerformParameter

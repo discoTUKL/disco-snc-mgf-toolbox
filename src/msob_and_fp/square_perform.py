@@ -6,7 +6,8 @@ from typing import List
 from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
 from nc_operations.arb_scheduling import LeftoverARB
-from nc_operations.operations import Convolve, Deconvolve
+from nc_operations.deconvolve import Deconvolve
+from nc_operations.convolve import Convolve
 from nc_operations.single_hop_bound import single_hop_bound
 from nc_server.constant_rate_server import ConstantRateServer
 from utils.exceptions import ParameterOutOfBounds
