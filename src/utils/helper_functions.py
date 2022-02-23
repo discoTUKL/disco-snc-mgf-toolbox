@@ -1,8 +1,10 @@
 """Helper functions"""
 
 from itertools import product
+from math import isinf
 from typing import List
 
+import mpmath as mp
 import numpy as np
 import pandas as pd
 
@@ -25,7 +27,7 @@ def get_q(p: float) -> float:
     return p / (p - 1.0)
 
 
-def get_p_n(p_list: List[float]) -> float:
+def get_p_n(p_list) -> float:
     """
     :param p_list: first p_1, ..., p_n in generalized Hoelder inequality
     :return: last p_n
@@ -35,6 +37,8 @@ def get_p_n(p_list: List[float]) -> float:
         if p_list[i] <= 1.0:
             raise ParameterOutOfBounds(f"p={p_list[i]} must be >1")
         inv_p[i] = 1.0 / p_list[i]
+        if sum(inv_p) >= 1:
+            raise ParameterOutOfBounds(f"p_i's are too small")
 
     return 1.0 / (1.0 - sum(inv_p))
 
@@ -46,6 +50,9 @@ def is_equal(float1: float, float2: float, epsilon=EPSILON) -> bool:
     :param epsilon: accuracy of the comparison (default is the global Epsilon)
     :return: returns true if distance is less than epsilon
     """
+    if isinf(float1) and isinf(float2):
+        return True
+
     return abs(float1 - float2) < epsilon
 
 
@@ -87,6 +94,43 @@ def get_unit_vector(length: int, index: int) -> List[float]:
     res[index] = 1.0
 
     return res
+
+
+def same_sign(a, b):
+    return a * b > 0
+
+
+def bisect(func, low, high) -> float:
+    """Find root of continuous function where f(low) and f(high) have
+    opposite signs"""
+
+    counter = 20
+
+    while func(low) >= -EPSILON and counter > 0:
+        low /= 2.0
+        counter -= 1
+
+    if func(low) >= 0:
+        return low
+
+    while func(high) <= EPSILON and counter > 0:
+        high *= 2.0
+        counter -= 1
+
+    assert not same_sign(func(low), func(high))
+
+    midpoint = mp.mpf((low + high) / 2.0)
+
+    for i in range(54):
+        midpoint = mp.mpf((low + high) / 2.0)
+        if same_sign(func(low), func(midpoint)):
+            low = mp.mpf(midpoint)
+        else:
+            high = mp.mpf(midpoint)
+        if abs(high - low) < EPSILON:
+            break
+
+    return midpoint
 
 
 if __name__ == '__main__':
