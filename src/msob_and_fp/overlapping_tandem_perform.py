@@ -82,7 +82,7 @@ class OverlappingTandemPerform(SettingMSOBFP):
                                                  ser2=LeftoverARB(
                                                      ser=s_2, cross_arr=a_3)),
                                     cross_arr=a_2)
-        d_3_2 = DetermTokenBucket(sigma_single=0.0, rho_single=s_2.rate, n=1)
+        d_3_2 = DetermTokenBucket(sigma_single=0.0, rho_single=s_2.rate, m=1)
         s3_lo = LeftoverARB(ser=s_3, cross_arr=d_3_2)
 
         s_e2e_1 = Convolve(ser1=conv_s1_s2_lo, ser2=s3_lo)
@@ -93,7 +93,7 @@ class OverlappingTandemPerform(SettingMSOBFP):
                                  perform_param=self.perform_param,
                                  indep=True)
 
-        d_2_1 = DetermTokenBucket(sigma_single=0.0, rho_single=s_1.rate, n=1)
+        d_2_1 = DetermTokenBucket(sigma_single=0.0, rho_single=s_1.rate, m=1)
         conv_s2_s3_lo = LeftoverARB(ser=Convolve(ser1=LeftoverARB(
             ser=s_2, cross_arr=d_2_1),
                                                  ser2=s_3),

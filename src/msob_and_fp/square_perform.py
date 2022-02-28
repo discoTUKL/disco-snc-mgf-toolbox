@@ -67,7 +67,7 @@ class SquarePerform(SettingMSOBFP):
         try:
             d_3_3 = DetermTokenBucket(sigma_single=0.0,
                                       rho_single=s_3.rate,
-                                      n=1)
+                                      m=1)
             d_4_4 = Deconvolve(arr=a_4,
                                ser=LeftoverARB(ser=s_4,
                                                cross_arr=Deconvolve(arr=a_2,
@@ -91,7 +91,7 @@ class SquarePerform(SettingMSOBFP):
                                ser=LeftoverARB(ser=s_3, cross_arr=a_2))
             d_4_4 = DetermTokenBucket(sigma_single=0.0,
                                       rho_single=s_4.rate,
-                                      n=1)
+                                      m=1)
 
             s_1_lo = LeftoverARB(ser=s_1, cross_arr=d_3_3)
             s_2_lo = LeftoverARB(ser=s_2, cross_arr=d_4_4)

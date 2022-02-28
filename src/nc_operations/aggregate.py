@@ -129,8 +129,8 @@ if __name__ == '__main__':
     from timeit import default_timer as timer
 
     ARR_LIST = [
-        DetermTokenBucket(sigma_single=1.0, rho_single=1.5, n=8),
-        DetermTokenBucket(sigma_single=2.0, rho_single=3.0, n=10)
+        DetermTokenBucket(sigma_single=1.0, rho_single=1.5, m=8),
+        DetermTokenBucket(sigma_single=2.0, rho_single=3.0, m=10)
     ]
 
     START = timer()

@@ -89,7 +89,7 @@ def csv_fat_cross_param_power(name: str, arrival_enum: ArrivalEnum,
                 LeakyBucketMassoulie(sigma_single=param_array[i, j],
                                      rho_single=param_array[i,
                                                             number_flows + j],
-                                     n=20) for j in range(number_flows)
+                                     m=20) for j in range(number_flows)
             ]
             # NOTE: n is fixed
 
@@ -97,7 +97,7 @@ def csv_fat_cross_param_power(name: str, arrival_enum: ArrivalEnum,
             arr_list = [
                 DetermTokenBucket(sigma_single=param_array[i, j],
                                   rho_single=param_array[i, number_flows + j],
-                                  n=1) for j in range(number_flows)
+                                  m=1) for j in range(number_flows)
             ]
 
         else:

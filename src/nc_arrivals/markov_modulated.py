@@ -8,11 +8,11 @@ from utils.exceptions import ParameterOutOfBounds
 
 class MMOOCont(ArrivalDistribution):
     """Continuous-time Markov Modulated On-Off Traffic"""
-    def __init__(self, mu: float, lamb: float, peak_rate: float, n=1) -> None:
+    def __init__(self, mu: float, lamb: float, peak_rate: float, m=1) -> None:
         self.mu = mu
         self.lamb = lamb
         self.peak_rate = peak_rate
-        self.n = n
+        self.m = m
 
     def sigma(self, theta=0.0) -> float:
         return 0.0
@@ -23,7 +23,7 @@ class MMOOCont(ArrivalDistribution):
 
         bb = theta * self.peak_rate - self.mu - self.lamb
 
-        return 0.5 * self.n * (bb + sqrt(
+        return 0.5 * self.m * (bb + sqrt(
             (bb**2) + 4 * self.mu * theta * self.peak_rate)) / theta
 
     def is_discrete(self) -> bool:
@@ -31,17 +31,17 @@ class MMOOCont(ArrivalDistribution):
 
     def average_rate(self) -> float:
         on_probability = self.mu / (self.lamb + self.mu)
-        return self.n * on_probability * self.peak_rate
+        return self.m * on_probability * self.peak_rate
 
     def __str__(self) -> str:
         return f"MMOOFluid_mu={self.mu}_lamb={self.lamb}_" \
-            f"peak_rate={self.peak_rate}_n={self.n}"
+            f"peak_rate={self.peak_rate}_n={self.m}"
 
-    def to_value(self, number=1, show_n=False) -> str:
-        if show_n:
+    def to_value(self, number=1, show_m=False) -> str:
+        if show_m:
             return "mu{0}={1}_lambda{0}={2}_peak_rate{0}={3}_n{0}={4}".format(
                 str(number), str(self.mu), str(self.lamb), str(self.peak_rate),
-                str(self.n))
+                str(self.m))
         else:
             return "mu{0}={1}_lambda{0}={2}_peak_rate{0}={3}".format(
                 str(number), str(self.mu), str(self.lamb), str(self.peak_rate))
@@ -53,11 +53,11 @@ class MMOODisc(ArrivalDistribution):
                  stay_on: float,
                  stay_off: float,
                  peak_rate: float,
-                 n=1) -> None:
+                 m=1) -> None:
         self.stay_on = stay_on
         self.stay_off = stay_off
         self.peak_rate = peak_rate
-        self.n = n
+        self.m = m
 
     def sigma(self, theta=0.0) -> float:
         off_on = self.stay_off + self.stay_on * exp(theta * self.peak_rate)
@@ -78,7 +78,7 @@ class MMOODisc(ArrivalDistribution):
         else:
             raise ParameterOutOfBounds(f"no factor is > 0")
 
-        return self.n * log(
+        return self.m * log(
             exp(theta * self.peak_rate) * factor /
             spectral_density_mmoo) / theta
 
@@ -107,19 +107,19 @@ class MMOODisc(ArrivalDistribution):
         return True
 
     def average_rate(self) -> float:
-        return self.n * (1 - self.stay_off) / (2 - self.stay_off -
+        return self.m * (1 - self.stay_off) / (2 - self.stay_off -
                                                self.stay_on) * self.peak_rate
 
     def __str__(self) -> str:
         return f"MMOODisc_stay_on={self.stay_on}_stay_off={self.stay_off}_" \
-            f"peak_rate={self.peak_rate}_n={self.n}"
+            f"peak_rate={self.peak_rate}_n={self.m}"
 
-    def to_value(self, number=1, show_n=False) -> str:
-        if show_n:
+    def to_value(self, number=1, show_m=False) -> str:
+        if show_m:
             return "stay_on{0}={1}_stay_off{0}={2}_peak_rate{0}={3}_" \
                    "n{0}={4}".format(
                 str(number), str(self.stay_on), str(self.stay_off),
-                str(self.peak_rate), str(self.n))
+                str(self.peak_rate), str(self.m))
         else:
             return "stay_on{0}={1}_stay_off{0}={2}_peak_rate{0}={3}".format(
                 str(number), str(self.stay_on), str(self.stay_off),

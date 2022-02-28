@@ -90,7 +90,7 @@ if __name__ == '__main__':
     print(
         perform_param_list_to_csv(prefix="single_",
                                   data_frame_creator=single_server_df,
-                                  arr_list=[DM1(lamb=3.8, n=1)],
+                                  arr_list=[DM1(lamb=3.8, m=1)],
                                   ser_list=[ConstantRateServer(rate=3.0)],
                                   perform_param_list=OUTPUT_LIST,
                                   opt_method=OptMethod.GRID_SEARCH))
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         perform_param_list_to_csv(
             prefix="single_",
             data_frame_creator=single_server_df,
-            arr_list=[MMOOCont(mu=8.0, lamb=12.0, peak_rate=3.0, n=1)],
+            arr_list=[MMOOCont(mu=8.0, lamb=12.0, peak_rate=3.0, m=1)],
             ser_list=[ConstantRateServer(rate=1.5)],
             perform_param_list=OUTPUT_LIST,
             opt_method=OptMethod.GRID_SEARCH))

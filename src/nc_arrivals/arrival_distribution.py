@@ -9,7 +9,6 @@ from nc_arrivals.arrival import Arrival
 class ArrivalDistribution(Arrival):
     """Abstract class for arrival processes that are of
     a distinct distribution."""
-
     @abstractmethod
     def sigma(self, theta: float) -> float:
         """
@@ -49,5 +48,5 @@ class ArrivalDistribution(Arrival):
             (self.rho(theta=theta) * delta_time + self.sigma(theta=theta)))
 
     @abstractmethod
-    def to_value(self, number=1, show_n=False) -> str:
+    def to_value(self, number=1, show_m=False) -> str:
         pass
