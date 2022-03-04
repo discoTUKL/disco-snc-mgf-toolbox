@@ -14,7 +14,7 @@ from utils.perform_parameter import PerformParameter
 
 from msob_and_fp.optimize_fp_bound import OptimizeFPBound
 from msob_and_fp.optimize_server_bound import OptimizeServerBound
-from msob_and_fp.square_perform import SquarePerform
+from msob_and_fp.square import Square
 
 
 def square_adjust_arr_df(list_arr_list: List[List[ArrivalDistribution]],
@@ -43,22 +43,22 @@ def square_adjust_arr_df(list_arr_list: List[List[ArrivalDistribution]],
     utilizations = [0.0] * len(list_arr_list)
 
     for i in range(len(list_arr_list)):
-        overlapping_tandem_setting = SquarePerform(arr_list=list_arr_list[i],
-                                                   ser_list=ser_list,
-                                                   perform_param=perform_param)
+        overlapping_tandem_setting = Square(arr_list=list_arr_list[i],
+                                            ser_list=ser_list,
+                                            perform_param=perform_param)
 
         standard_bound[i] = Optimize(setting=overlapping_tandem_setting,
                                      number_param=2).grid_search(
                                          grid_bounds=two_param_bounds,
-                                         delta=delta_val)
+                                         delta=delta_val).obj_value
         server_bound[i] = OptimizeServerBound(
             setting_msob_fp=overlapping_tandem_setting,
             number_param=1).grid_search(grid_bounds=one_param_bounds,
-                                        delta=delta_val)
+                                        delta=delta_val).obj_value
         fp_bound[i] = OptimizeFPBound(
             setting_msob_fp=overlapping_tandem_setting,
             number_param=2).grid_search(grid_bounds=two_param_bounds,
-                                        delta=delta_val)
+                                        delta=delta_val).obj_value
 
         utilizations[i] = overlapping_tandem_setting.server_util(
             server_index=server_index)

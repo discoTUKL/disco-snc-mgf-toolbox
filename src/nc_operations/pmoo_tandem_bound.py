@@ -275,26 +275,6 @@ def pmoo_tandem_bound(foi: Flow,
                 f"{perform_param.perform_metric} is an infeasible "
                 f"performance metric")
 
-    elif e2e_enum == E2EEnum.BINOM:
-        min_residual_rate = min(residual_rate_list)
-        min_residual_rate_with_foi = min_residual_rate - foi_rate
-
-        q = exp(-theta * min_residual_rate_with_foi)
-        p = 1 - q
-
-        if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            T = perform_param.value
-            mu = (T + len(ser_on_foi_path) - 1) * p
-
-            return exp(-(theta * foi_rate) * perform_param.value) * exp(
-                theta * sigma_sum) * factor_not_on_foi * exp(
-                    0.5 * (mu - len(ser_on_foi_path) + 1)**2 /
-                    mu) / (1 - q)**len(ser_on_foi_path)
-
-        else:
-            raise NotImplementedError("This function can only be used "
-                                      "for the delay / delay probability")
-
     else:
         raise NotImplementedError("PMOO Analysis is not implemented")
 

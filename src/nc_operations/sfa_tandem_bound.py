@@ -256,37 +256,5 @@ def sfa_tandem_bound(foi: ArrivalDistribution,
                 f"{perform_param.perform_metric} is an infeasible "
                 f"performance metric")
 
-    elif e2e_enum == E2EEnum.BINOM:
-        min_residual_rate = min(residual_rate_list)
-        min_rate_with_foi = min_residual_rate - foi_rate
-
-        q = exp(-theta * min_rate_with_foi)
-        # print(f"q = {q}")
-        d_upper = len(leftover_service_list) * q / (1 - q)
-
-        if perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            if perform_param.value >= d_upper:
-                return exp(-(theta * foi_rate + q) *
-                           perform_param.value) * exp(theta * sigma_sum) / (
-                               1 - q)**len(leftover_service_list)
-            else:
-                raise ParameterOutOfBounds("Zeta condition is violated")
-
-        elif perform_param.perform_metric == PerformEnum.DELAY:
-            delay_bound = (theta * sigma_sum + log(1 / perform_param.value) +
-                           len(leftover_service_list) * log(1 / (1 - q))) / (
-                               theta * foi_rate + q)
-
-            if delay_bound <= d_upper:
-                return delay_bound
-
-            else:
-                raise ParameterOutOfBounds(f"delay_bound={delay_bound} must "
-                                           f"be <= d_upper={d_upper}")
-
-        else:
-            raise NotImplementedError(f"{perform_param.perform_metric} is an "
-                                      f"infeasible performance metric")
-
     else:
         raise NotImplementedError("SFA Analysis is not implemented")

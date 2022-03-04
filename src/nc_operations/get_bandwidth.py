@@ -38,7 +38,7 @@ def get_bandwidth_from_delay(arr_list: List[ArrivalDistribution],
                 current_delay_prob = Optimize(setting=single_server,
                                               number_param=1).grid_search(
                                                   grid_bounds=[(0.1, 5.0)],
-                                                  delta=0.1)
+                                                  delta=0.1).obj_value
             else:
                 single_server = SingleServerBandwidth(
                     arr_list=arr_list,
@@ -53,7 +53,7 @@ def get_bandwidth_from_delay(arr_list: List[ArrivalDistribution],
                                               number_param=2).grid_search(
                                                   grid_bounds=[(0.1, 5.0),
                                                                (1.1, 5.0)],
-                                                  delta=0.1)
+                                                  delta=0.1).obj_value
 
         else:
             raise NotImplementedError("This optimization method is not "
@@ -82,11 +82,10 @@ if __name__ == '__main__':
                                           s_e2e=ConstantRateServer(rate=2.0),
                                           perform_param=DELAY6)
     RESULTING_DELAY_PROB = Optimize(SINGLE_SERVER,
-                                    number_param=1,
-                                    print_x=True).grid_search(grid_bounds=[
+                                    number_param=1).grid_search(grid_bounds=[
                                         (0.1, 5.0)
                                     ],
-                                                              delta=0.1)
+                                                                delta=0.1)
     print(f"delay probability = {RESULTING_DELAY_PROB}")
 
     REQUIRED_BANDWIDTH = get_bandwidth_from_delay(arr_list=ARR_LIST,

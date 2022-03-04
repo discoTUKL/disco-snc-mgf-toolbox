@@ -3,11 +3,12 @@ from enum import Enum
 
 class OptMethod(Enum):
     GRID_SEARCH = "GridSearch"
-    NELDER_MEAD = "NelderMead"
     PATTERN_SEARCH = "PatternSearch"
+    NELDER_MEAD = "NelderMead"
     BASIN_HOPPING = "BasinHopping"
-    SIMULATED_ANNEALING = "SimulatedAnnealing"
     DIFFERENTIAL_EVOLUTION = "DifferentialEvolution"
-    BFGS = "BFGS"
+    DUAL_ANNEALING = "DualAnnealing"
+    SIMULATED_ANNEALING = "SimulatedAnnealing"
     GS_OLD = "GridSearchOld"
     NM_OLD = "NelderMeadOld"
+    BFGS = "BFGS"

@@ -21,5 +21,8 @@ class ConstantRateServer(RateLatencyServer):
     def __str__(self):
         return f"ConstRate_rate={self.rate}"
 
+    def __repr__(self):
+        return str(self)
+
     def to_value(self, number=1):
         return f"rate{str(number)}={str(self.rate)}"

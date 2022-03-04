@@ -6,7 +6,6 @@ from typing import List
 from h_mitigator.optimize_mitigator import OptimizeMitigator
 from h_mitigator.setting_mitigator import SettingMitigator
 from optimization.initial_simplex import InitialSimplex
-from optimization.nelder_mead_parameters import NelderMeadParameters
 from optimization.opt_method import OptMethod
 
 
@@ -14,7 +13,8 @@ def compare_optimization(setting: SettingMitigator,
                          opt_methods: List[OptMethod],
                          number_l=1) -> List[float]:
     """Measures time for different optimizations"""
-    print_x = False
+    optim_mit = OptimizeMitigator(setting_h_mit=setting,
+                                  number_param=number_l + 1)
 
     list_of_bounds: List[float] = []
     list_of_times: List[float] = []
@@ -29,22 +29,17 @@ def compare_optimization(setting: SettingMitigator,
             for _i in range(number_l):
                 bound_list.append((0.9, 4.0))
 
-            bound = OptimizeMitigator(setting_h_mit=setting,
-                                      number_param=number_l + 1,
-                                      print_x=print_x).grid_search(
-                                          grid_bounds=bound_list, delta=0.1)
+            bound = optim_mit.grid_search(grid_bounds=bound_list,
+                                          delta=0.1).obj_value
 
         elif opt == OptMethod.PATTERN_SEARCH:
             theta_start = 0.5
 
             start_list = [theta_start] + [1.0] * number_l
 
-            bound = OptimizeMitigator(setting_h_mit=setting,
-                                      number_param=number_l + 1,
-                                      print_x=print_x).pattern_search(
-                                          start_list=start_list,
-                                          delta=3.0,
-                                          delta_min=0.01)
+            bound = optim_mit.pattern_search(start_list=start_list,
+                                             delta=3.0,
+                                             delta_min=0.01)
 
         elif opt == OptMethod.NELDER_MEAD:
             theta_start = 0.5
@@ -53,21 +48,15 @@ def compare_optimization(setting: SettingMitigator,
             start_simplex = InitialSimplex(parameters_to_optimize=number_l +
                                            1).gao_han(start_list=start_list)
 
-            bound = OptimizeMitigator(setting_h_mit=setting,
-                                      number_param=number_l + 1,
-                                      print_x=print_x).nelder_mead(
-                                          simplex=start_simplex,
-                                          sd_min=10**(-2))
+            bound = optim_mit.nelder_mead(simplex=start_simplex,
+                                          sd_min=10**(-2)).obj_value
 
         elif opt == OptMethod.BASIN_HOPPING:
             theta_start = 0.5
 
             start_list = [theta_start] + [1.0] * number_l
 
-            bound = OptimizeMitigator(
-                setting_h_mit=setting,
-                number_param=number_l + 1,
-                print_x=print_x).basin_hopping(start_list=start_list)
+            bound = optim_mit.basin_hopping(start_list=start_list).obj_value
 
         elif opt == OptMethod.DUAL_ANNEALING:
             theta_bounds = [(0.1, 4.0)]
@@ -76,10 +65,7 @@ def compare_optimization(setting: SettingMitigator,
             for _i in range(1, number_l + 1):
                 bound_array.append((0.9, 4.0))
 
-            bound = OptimizeMitigator(
-                setting_h_mit=setting,
-                number_param=number_l + 1,
-                print_x=print_x).dual_annealing(bound_list=bound_array)
+            bound = optim_mit.dual_annealing(bound_list=bound_array).obj_value
 
         elif opt == OptMethod.DIFFERENTIAL_EVOLUTION:
             theta_bounds = [(0.1, 4.0)]
@@ -88,39 +74,17 @@ def compare_optimization(setting: SettingMitigator,
             for _i in range(number_l):
                 bound_list.append((0.9, 4.0))
 
-            bound = OptimizeMitigator(
-                setting_h_mit=setting,
-                number_param=number_l + 1,
-                print_x=print_x).diff_evolution(bound_list=bound_list)
+            bound = optim_mit.diff_evolution(bound_list=bound_list).obj_value
 
         elif opt == OptMethod.BFGS:
             theta_start = 0.5
 
             start_list = [theta_start] + [1.0] * number_l
 
-            bound = OptimizeMitigator(
-                setting_h_mit=setting,
-                number_param=number_l + 1,
-                print_x=print_x).bfgs(start_list=start_list)
-
-        elif opt == OptMethod.NM_OLD:
-            nelder_mead_param = NelderMeadParameters()
-            theta_start = 0.5
-
-            start_list = [theta_start] + [1.0] * number_l
-            start_simplex = InitialSimplex(parameters_to_optimize=number_l +
-                                           1).gao_han(start_list=start_list)
-
-            bound = OptimizeMitigator(setting_h_mit=setting,
-                                      number_param=number_l + 1,
-                                      print_x=print_x).nelder_mead_old(
-                                          simplex=start_simplex,
-                                          nelder_mead_param=nelder_mead_param,
-                                          sd_min=10**(-2))
+            bound = optim_mit.bfgs(start_list=start_list).obj_value
 
         else:
-            raise NameError("Optimization parameter {0} is infeasible".format(
-                opt.name))
+            raise NotImplementedError(f"Heuristic is not implemented")
 
         stop = timer()
         list_of_bounds.append(bound)

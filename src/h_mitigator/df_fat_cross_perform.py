@@ -15,10 +15,10 @@ from h_mitigator.fat_cross_perform import FatCrossPerform
 from h_mitigator.optimize_mitigator import OptimizeMitigator
 
 
-def fat_cross_perform_df(
-        arr_list: List[ArrivalDistribution],
-        ser_list: List[ConstantRateServer], opt_method: OptMethod,
-        perform_param_list: PerformParamList) -> pd.DataFrame:
+def fat_cross_perform_df(arr_list: List[ArrivalDistribution],
+                         ser_list: List[ConstantRateServer],
+                         opt_method: OptMethod,
+                         perform_param_list: PerformParamList) -> pd.DataFrame:
     """Compute delay standard_bound for T in T_list and write into dataframe.
 
     Args:
@@ -38,8 +38,6 @@ def fat_cross_perform_df(
     standard_bound = [0.0] * len(perform_param_list)
     h_mit_bound = [0.0] * len(perform_param_list)
 
-    print_x = False
-
     fat_cross_setting = FatCrossPerform(
         arr_list=arr_list,
         ser_list=ser_list,
@@ -57,31 +55,27 @@ def fat_cross_perform_df(
 
         if opt_method == OptMethod.GRID_SEARCH:
             standard_bound[i] = Optimize(setting=fat_cross_setting,
-                                         number_param=1,
-                                         print_x=print_x).grid_search(
+                                         number_param=1).grid_search(
                                              grid_bounds=one_param_bounds,
-                                             delta=delta_val)
+                                             delta=delta_val).obj_value
             h_mit_bound[i] = OptimizeMitigator(
                 setting_h_mit=fat_cross_setting,
-                number_param=2,
-                print_x=print_x).grid_search(grid_bounds=[(delta_val, 10.0),
-                                                          (1 + delta_val, 8.0)],
-                                             delta=delta_val)
+                number_param=2).grid_search(grid_bounds=[(delta_val, 10.0),
+                                                         (1 + delta_val, 8.0)],
+                                            delta=delta_val).obj_value
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
             standard_bound[i] = Optimize(setting=fat_cross_setting,
-                                         number_param=1,
-                                         print_x=print_x).pattern_search(
+                                         number_param=1).pattern_search(
                                              start_list=[0.5],
                                              delta=3.0,
-                                             delta_min=0.01)
+                                             delta_min=0.01).obj_value
 
             h_mit_bound[i] = OptimizeMitigator(setting_h_mit=fat_cross_setting,
-                                               number_param=2,
-                                               print_x=print_x).pattern_search(
+                                               number_param=2).pattern_search(
                                                    start_list=[0.5, 2.0],
                                                    delta=3.0,
-                                                   delta_min=0.01)
+                                                   delta_min=0.01).obj_value
 
         else:
             raise NotImplementedError(f"Optimization parameter {opt_method} "
@@ -133,12 +127,9 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="simple_setting_",
                                   data_frame_creator=fat_cross_perform_df,
                                   arr_list=[
-                                      MMOOCont(mu=1.2,
-                                               lamb=2.1,
+                                      MMOOCont(mu=1.2, lamb=2.1,
                                                peak_rate=3.5),
-                                      MMOOCont(mu=3.7,
-                                               lamb=1.5,
-                                               peak_rate=0.4)
+                                      MMOOCont(mu=3.7, lamb=1.5, peak_rate=0.4)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=2.0),
@@ -151,12 +142,9 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="simple_setting_",
                                   data_frame_creator=fat_cross_perform_df,
                                   arr_list=[
-                                      MMOOCont(mu=1.0,
-                                               lamb=2.2,
+                                      MMOOCont(mu=1.0, lamb=2.2,
                                                peak_rate=3.4),
-                                      MMOOCont(mu=3.6,
-                                               lamb=1.6,
-                                               peak_rate=0.4)
+                                      MMOOCont(mu=3.6, lamb=1.6, peak_rate=0.4)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=2.0),

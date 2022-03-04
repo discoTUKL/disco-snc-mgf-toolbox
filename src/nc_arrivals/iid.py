@@ -243,7 +243,7 @@ class DWeibull1(ArrivalDistribution):
 
         error_part = erf(sigma * theta / sqrt(2)) + 1
 
-        return self.m * log(1 + sigma * theta * exp(0.5 * (sigma * theta) ** 2) *
+        return self.m * log(1 + sigma * theta * exp(0.5 * (sigma * theta)**2) *
                             sqrt(0.5 * pi) * error_part) / theta
 
     def is_discrete(self) -> bool:

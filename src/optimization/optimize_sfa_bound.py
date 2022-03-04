@@ -11,18 +11,12 @@ from utils.setting_sfa import SettingSFA
 
 class OptimizeSFABound(Optimize):
     """Optimize class"""
-    def __init__(self,
-                 setting_sfa: SettingSFA,
-                 e2e_enum: E2EEnum,
-                 number_param: int,
-                 print_x=False) -> None:
-        super().__init__(setting=setting_sfa,
-                         number_param=number_param,
-                         print_x=print_x)
+    def __init__(self, setting_sfa: SettingSFA, e2e_enum: E2EEnum,
+                 number_param: int) -> None:
+        super().__init__(setting=setting_sfa, number_param=number_param)
         self.setting_sfa = setting_sfa
         self.e2e_enum = e2e_enum
         self.number_param = number_param
-        self.print_x = print_x
 
     def eval_except(self, param_list: List[float]) -> float:
         """
@@ -46,8 +40,7 @@ class OptimizeSFABound(Optimize):
                     param_list=param_list)
 
             elif self.e2e_enum == E2EEnum.ANALYTIC_COMBINATORICS:
-                return self.setting_sfa.sfa_ac_bound(
-                    param_list=param_list)
+                return self.setting_sfa.sfa_ac_bound(param_list=param_list)
 
             else:
                 NotImplementedError("This analysis is not implemented")

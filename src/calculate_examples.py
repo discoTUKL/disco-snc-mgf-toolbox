@@ -24,30 +24,34 @@ if __name__ == '__main__':
                                         perform_param=DELAY_PROB8)
 
     print(
-        Optimize(SINGLE_SERVER, number_param=1,
-                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
+        Optimize(SINGLE_SERVER,
+                 number_param=1).grid_search(grid_bounds=[(0.1, 5.0)],
+                                             delta=0.1))
 
-    SINGLE_SERVER2 = SingleServerPerform(
-        foi=MMOOCont(mu=0.7, lamb=0.4, peak_rate=1.2),
-        server=ConstantRateServer(rate=1.0),
-        perform_param=DELAY_PROB8)
+    SINGLE_SERVER2 = SingleServerPerform(foi=MMOOCont(mu=0.7,
+                                                      lamb=0.4,
+                                                      peak_rate=1.2),
+                                         server=ConstantRateServer(rate=1.0),
+                                         perform_param=DELAY_PROB8)
 
     print(
-        Optimize(SINGLE_SERVER2, number_param=1,
-                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
+        Optimize(SINGLE_SERVER2,
+                 number_param=1).grid_search(grid_bounds=[(0.1, 5.0)],
+                                             delta=0.1))
 
     DELAY_PROB_REV = PerformParameter(perform_metric=PerformEnum.DELAY,
                                       value=0.0183)
 
-    SINGLE_SERVER2 = SingleServerPerform(
-        foi=MMOOCont(mu=0.7, lamb=0.4, peak_rate=1.2),
-        server=ConstantRateServer(rate=1.0),
-        perform_param=DELAY_PROB_REV)
+    SINGLE_SERVER2 = SingleServerPerform(foi=MMOOCont(mu=0.7,
+                                                      lamb=0.4,
+                                                      peak_rate=1.2),
+                                         server=ConstantRateServer(rate=1.0),
+                                         perform_param=DELAY_PROB_REV)
 
     print(
-        Optimize(SINGLE_SERVER2, number_param=1,
-                 print_x=False).grid_search(grid_bounds=[(0.1, 5.0)],
-                                            delta=0.1))
+        Optimize(SINGLE_SERVER2,
+                 number_param=1).grid_search(grid_bounds=[(0.1, 5.0)],
+                                             delta=0.1))
 
     print("\n-------------------------------------------\n")
     print("Fat Cross Performance Bounds:\n")
@@ -68,8 +72,9 @@ if __name__ == '__main__':
 
     print("EXAMPLE_1\n")
     print(
-        Optimize(setting=EXAMPLE_1, number_param=1,
-                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
+        Optimize(setting=EXAMPLE_1,
+                 number_param=1).grid_search(grid_bounds=[(0.1, 5.0)],
+                                             delta=0.1))
 
     ARR_LIST2: List[ArrivalDistribution] = [
         MMOOCont(mu=0.5, lamb=0.5, peak_rate=1.5),
@@ -87,8 +92,9 @@ if __name__ == '__main__':
 
     print("\nEXAMPLE_2\n")
     print(
-        Optimize(EXAMPLE_2, number_param=1,
-                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
+        Optimize(EXAMPLE_2,
+                 number_param=1).grid_search(grid_bounds=[(0.1, 5.0)],
+                                             delta=0.1))
 
     DELAY_TIME = PerformParameter(perform_metric=PerformEnum.DELAY,
                                   value=0.010)
@@ -98,31 +104,29 @@ if __name__ == '__main__':
                                       perform_param=DELAY_TIME)
 
     print(
-        Optimize(EXAMPLE_REVERSE, number_param=1,
-                 print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
+        Optimize(EXAMPLE_REVERSE,
+                 number_param=1).grid_search(grid_bounds=[(0.1, 5.0)],
+                                             delta=0.1))
 
     DELAY_PROB4 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
                                    value=4)
 
     print(
-        Optimize(EXAMPLE_2, number_param=1,
-                 print_x=True).pattern_search(start_list=[0.5],
-                                              delta=3,
-                                              delta_min=0.01))
+        Optimize(EXAMPLE_2, number_param=1).pattern_search(start_list=[0.5],
+                                                           delta=3,
+                                                           delta_min=0.01))
 
     SIMU_ANNEAL_PARAM = SimAnnealParams(rep_max=15,
                                         temp_start=1000.0,
                                         cooling_factor=0.95,
                                         search_radius=1.0)
 
-    print(
-        Optimize(EXAMPLE_2, number_param=1,
-                 print_x=True).basin_hopping(start_list=[0.5]))
-
-    # print(
-    #     Optimize(EXAMPLE_2, number_param=1,
-    #                       print_x=True).dual_annealing(bound_list=[(0.1, 5.0)]))
+    print(Optimize(EXAMPLE_2, number_param=1).basin_hopping(start_list=[1.0]))
 
     print(
-        Optimize(EXAMPLE_2, number_param=1, print_x=True).sim_annealing(
+        Optimize(EXAMPLE_2,
+                 number_param=1).dual_annealing(bound_list=[(0.1, 5.0)]))
+
+    print(
+        Optimize(EXAMPLE_2, number_param=1).sim_annealing(
             start_list=[0.5], sim_anneal_params=SIMU_ANNEAL_PARAM))

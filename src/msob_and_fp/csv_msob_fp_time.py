@@ -9,7 +9,7 @@ from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.iid import DM1, MD1
-from nc_arrivals.markov_modulated import MMOODisc, MMOOCont
+from nc_arrivals.markov_modulated import MMOOCont, MMOODisc
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
@@ -18,8 +18,8 @@ from utils.perform_parameter import PerformParameter
 
 from msob_and_fp.compare_avoid_dep import compare_time_211
 from msob_and_fp.msob_fp_array_to_results import time_array_to_results
-from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
-from msob_and_fp.square_perform import SquarePerform
+from msob_and_fp.overlapping_tandem import OverlappingTandem
+from msob_and_fp.square import Square
 
 ########################################################################
 # Find Optimal Parameters
@@ -83,13 +83,14 @@ def csv_msob_fp_time(name: str, number_flows: int, number_servers: int,
         ]
 
         if name == "overlapping_tandem":
-            setting = OverlappingTandemPerform(arr_list=arr_list,
-                                               ser_list=ser_list,
-                                               perform_param=perform_param)
+            setting = OverlappingTandem(arr_list=arr_list,
+                                        ser_list=ser_list,
+                                        perform_param=perform_param)
         elif name == "square":
-            setting = SquarePerform(arr_list=arr_list,
-                                    ser_list=ser_list,
-                                    perform_param=perform_param)
+            setting = Square(arr_list=arr_list,
+                             ser_list=ser_list,
+                             perform_param=perform_param)
+
         else:
             raise NotImplementedError("this topology is not implemented")
 

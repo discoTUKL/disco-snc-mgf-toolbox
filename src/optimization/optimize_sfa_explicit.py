@@ -10,16 +10,10 @@ from utils.setting_sfa import SettingSFA
 
 class OptimizeSFAExplicit(Optimize):
     """Optimize class"""
-    def __init__(self,
-                 setting_sfa: SettingSFA,
-                 number_param: int,
-                 print_x=False) -> None:
-        super().__init__(setting=setting_sfa,
-                         number_param=number_param,
-                         print_x=print_x)
+    def __init__(self, setting_sfa: SettingSFA, number_param: int) -> None:
+        super().__init__(setting=setting_sfa, number_param=number_param)
         self.setting_sfa = setting_sfa
         self.number_param = number_param
-        self.print_x = print_x
 
     def eval_except(self, param_list: List[float]) -> float:
         """
@@ -29,7 +23,6 @@ class OptimizeSFAExplicit(Optimize):
         :return:           function to_value
         """
         try:
-            return self.setting_sfa.sfa_explicit(
-                param_list=param_list)
+            return self.setting_sfa.sfa_explicit(param_list=param_list)
         except (ParameterOutOfBounds, OverflowError, ZeroDivisionError):
             return inf

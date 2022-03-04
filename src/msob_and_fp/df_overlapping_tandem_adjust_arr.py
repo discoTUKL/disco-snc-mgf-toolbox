@@ -3,18 +3,15 @@
 from typing import List
 
 import pandas as pd
-
-from bound_evaluation.data_frame_to_csv import arrival_list_to_csv
-from msob_and_fp.optimize_fp_bound import OptimizeFPBound
-from msob_and_fp.optimize_server_bound import OptimizeServerBound
-from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.markov_modulated import MMOOCont
-# from nc_arrivals.qt import DM1
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.optimize import Optimize
 from utils.perform_parameter import PerformParameter
+
+from msob_and_fp.optimize_fp_bound import OptimizeFPBound
+from msob_and_fp.optimize_server_bound import OptimizeServerBound
+from msob_and_fp.overlapping_tandem import OverlappingTandem
 
 
 def overlapping_tandem_adjust_arr_df(
@@ -44,7 +41,7 @@ def overlapping_tandem_adjust_arr_df(
     utilizations = [0.0] * len(list_arr_list)
 
     for i in range(len(list_arr_list)):
-        overlapping_tandem_setting = OverlappingTandemPerform(
+        overlapping_tandem_setting = OverlappingTandem(
             arr_list=list_arr_list[i],
             ser_list=ser_list,
             perform_param=perform_param)
@@ -52,15 +49,15 @@ def overlapping_tandem_adjust_arr_df(
         standard_bound[i] = Optimize(setting=overlapping_tandem_setting,
                                      number_param=2).grid_search(
                                          grid_bounds=two_param_bounds,
-                                         delta=delta_val)
+                                         delta=delta_val).obj_value
         server_bound[i] = OptimizeServerBound(
             setting_msob_fp=overlapping_tandem_setting,
             number_param=1).grid_search(grid_bounds=one_param_bounds,
-                                        delta=delta_val)
+                                        delta=delta_val).obj_value
         fp_bound[i] = OptimizeFPBound(
             setting_msob_fp=overlapping_tandem_setting,
             number_param=1).grid_search(grid_bounds=one_param_bounds,
-                                        delta=delta_val)
+                                        delta=delta_val).obj_value
 
         utilizations[i] = overlapping_tandem_setting.server_util(
             server_index=server_index)
@@ -72,12 +69,16 @@ def overlapping_tandem_adjust_arr_df(
             "fp_bound": fp_bound
         },
         index=utilizations)
-    results_df = results_df[["standard_bound", "server_bound", "fp_bound"]]
 
     return results_df
 
 
 if __name__ == '__main__':
+    from bound_evaluation.data_frame_to_csv import arrival_list_to_csv
+    from nc_arrivals.markov_modulated import MMOOCont
+
+    # from nc_arrivals.qt import DM1
+
     DELAY3 = PerformParameter(perform_metric=PerformEnum.DELAY, value=10**(-3))
 
     # print(

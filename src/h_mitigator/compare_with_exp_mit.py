@@ -251,7 +251,6 @@ def csv_single_param_exp(start_time: int,
                                         param_array=param_array,
                                         res_array=res_array,
                                         number_servers=1,
-                                        valid_iterations=valid_iterations,
                                         compare_metric=metric)
 
     res_dict.update({
@@ -271,7 +270,6 @@ def csv_single_param_exp(start_time: int,
             param_array=param_array,
             res_array=res_array_sample,
             number_servers=1,
-            valid_iterations=valid_iterations,
             compare_metric=metric)
 
         res_dict_sample.update({

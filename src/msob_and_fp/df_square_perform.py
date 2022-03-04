@@ -14,7 +14,7 @@ from utils.perform_param_list import PerformParamList
 
 from msob_and_fp.optimize_fp_bound import OptimizeFPBound
 from msob_and_fp.optimize_server_bound import OptimizeServerBound
-from msob_and_fp.square_perform import SquarePerform
+from msob_and_fp.square import Square
 
 
 def square_df(arr_list: List[ArrivalDistribution],
@@ -41,7 +41,7 @@ def square_df(arr_list: List[ArrivalDistribution],
     fp_bound = [0.0] * len(perform_param_list)
 
     for i in range(len(perform_param_list)):
-        square_setting = SquarePerform(
+        square_setting = Square(
             arr_list=arr_list,
             ser_list=ser_list,
             perform_param=perform_param_list.get_parameter_at_i(i))
@@ -49,15 +49,15 @@ def square_df(arr_list: List[ArrivalDistribution],
         standard_bound[i] = Optimize(setting=square_setting,
                                      number_param=2).grid_search(
                                          grid_bounds=two_param_bounds,
-                                         delta=delta_val)
+                                         delta=delta_val).obj_value
         server_bound[i] = OptimizeServerBound(setting_msob_fp=square_setting,
                                               number_param=1).grid_search(
                                                   grid_bounds=one_param_bounds,
-                                                  delta=delta_val)
+                                                  delta=delta_val).obj_value
         fp_bound[i] = OptimizeFPBound(setting_msob_fp=square_setting,
                                       number_param=2).grid_search(
                                           grid_bounds=two_param_bounds,
-                                          delta=delta_val)
+                                          delta=delta_val).obj_value
 
     results_df = pd.DataFrame(
         {
@@ -158,18 +158,13 @@ if __name__ == '__main__':
         perform_param_list_to_csv(prefix="square_",
                                   data_frame_creator=square_df,
                                   arr_list=[
-                                      MMOOCont(mu=7.2,
-                                               lamb=4.8,
+                                      MMOOCont(mu=7.2, lamb=4.8,
                                                peak_rate=4.9),
-                                      MMOOCont(mu=2.5,
-                                               lamb=2.1,
+                                      MMOOCont(mu=2.5, lamb=2.1,
                                                peak_rate=3.7),
-                                      MMOOCont(mu=4.1,
-                                               lamb=3.1,
+                                      MMOOCont(mu=4.1, lamb=3.1,
                                                peak_rate=1.3),
-                                      MMOOCont(mu=3.3,
-                                               lamb=3.3,
-                                               peak_rate=1.7)
+                                      MMOOCont(mu=3.3, lamb=3.3, peak_rate=1.7)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=5.2),

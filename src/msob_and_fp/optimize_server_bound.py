@@ -6,21 +6,16 @@ from typing import List
 from optimization.optimize import Optimize
 from utils.exceptions import ParameterOutOfBounds
 
-from msob_and_fp.setting_avoid_dep import SettingMSOBFP
+from msob_and_fp.setting_msob_fp import SettingMSOBFP
 
 
 class OptimizeServerBound(Optimize):
     """Optimize class"""
-    def __init__(self,
-                 setting_msob_fp: SettingMSOBFP,
-                 number_param: int,
-                 print_x=False) -> None:
-        super().__init__(setting=setting_msob_fp,
-                         number_param=number_param,
-                         print_x=print_x)
+    def __init__(self, setting_msob_fp: SettingMSOBFP,
+                 number_param: int) -> None:
+        super().__init__(setting=setting_msob_fp, number_param=number_param)
         self.setting_msob_fp = setting_msob_fp
         self.number_param = number_param
-        self.print_x = print_x
 
     def eval_except(self, param_list: List[float]) -> float:
         """

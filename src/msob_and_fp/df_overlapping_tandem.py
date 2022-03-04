@@ -3,18 +3,15 @@
 from typing import List
 
 import pandas as pd
-
-from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
-from msob_and_fp.optimize_fp_bound import OptimizeFPBound
-from msob_and_fp.optimize_server_bound import OptimizeServerBound
-from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
 from nc_arrivals.arrival_distribution import ArrivalDistribution
-from nc_arrivals.iid import DM1
-from nc_arrivals.markov_modulated import MMOODisc, MMOOCont
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.optimize import Optimize
 from utils.perform_param_list import PerformParamList
+
+from msob_and_fp.optimize_fp_bound import OptimizeFPBound
+from msob_and_fp.optimize_server_bound import OptimizeServerBound
+from msob_and_fp.overlapping_tandem import OverlappingTandem
 
 
 def overlapping_tandem_df(
@@ -42,7 +39,7 @@ def overlapping_tandem_df(
     fp_bound = [0.0] * len(perform_param_list)
 
     for i in range(len(perform_param_list)):
-        overlapping_tandem_setting = OverlappingTandemPerform(
+        overlapping_tandem_setting = OverlappingTandem(
             arr_list=arr_list,
             ser_list=ser_list,
             perform_param=perform_param_list.get_parameter_at_i(i))
@@ -50,15 +47,15 @@ def overlapping_tandem_df(
         standard_bound[i] = Optimize(setting=overlapping_tandem_setting,
                                      number_param=2).grid_search(
                                          grid_bounds=two_param_bounds,
-                                         delta=delta_val)
+                                         delta=delta_val).obj_value
         server_bound[i] = OptimizeServerBound(
             setting_msob_fp=overlapping_tandem_setting,
             number_param=1).grid_search(grid_bounds=one_param_bounds,
-                                        delta=delta_val)
+                                        delta=delta_val).obj_value
         fp_bound[i] = OptimizeFPBound(
             setting_msob_fp=overlapping_tandem_setting,
             number_param=1).grid_search(grid_bounds=one_param_bounds,
-                                        delta=delta_val)
+                                        delta=delta_val).obj_value
 
     results_df = pd.DataFrame(
         {
@@ -67,7 +64,6 @@ def overlapping_tandem_df(
             "fp_bound": fp_bound,
         },
         index=perform_param_list.values_list)
-    results_df = results_df[["standard_bound", "server_bound", "fp_bound"]]
 
     print(
         f"utilization: {overlapping_tandem_setting.approximate_utilization()}")
@@ -76,81 +72,86 @@ def overlapping_tandem_df(
 
 
 if __name__ == '__main__':
+    from bound_evaluation.data_frame_to_csv import perform_param_list_to_csv
+    from nc_arrivals.markov_modulated import MMOODisc, MMOOCont
+
     # DELAY_PROB_LIST = PerformParamList(perform_metric=PerformEnum.DELAY_PROB,
     #                                    values_list=range(4, 11))
     DELAY_LIST = PerformParamList(perform_metric=PerformEnum.DELAY,
                                   values_list=[10**(-x) for x in range(10)])
 
-    print(
-        perform_param_list_to_csv(
-            prefix="overlapping_tandem_",
-            data_frame_creator=overlapping_tandem_df,
-            arr_list=[DM1(lamb=2.0),
-                      DM1(lamb=1.0),
-                      DM1(lamb=2.0)],
-            ser_list=[
-                ConstantRateServer(rate=3.5),
-                ConstantRateServer(rate=5.0),
-                ConstantRateServer(rate=6.0)
-            ],
-            perform_param_list=DELAY_LIST))
+    # print(
+    #     perform_param_list_to_csv(
+    #         prefix="overlapping_tandem_",
+    #         data_frame_creator=overlapping_tandem_df,
+    #         arr_list=[DM1(lamb=2.0),
+    #                   DM1(lamb=1.0),
+    #                   DM1(lamb=2.0)],
+    #         ser_list=[
+    #             ConstantRateServer(rate=3.5),
+    #             ConstantRateServer(rate=5.0),
+    #             ConstantRateServer(rate=6.0)
+    #         ],
+    #         perform_param_list=DELAY_LIST))
+    #
+    # print(
+    #     perform_param_list_to_csv(
+    #         prefix="overlapping_tandem_",
+    #         data_frame_creator=overlapping_tandem_df,
+    #         arr_list=[DM1(lamb=2.3),
+    #                   DM1(lamb=4.5),
+    #                   DM1(lamb=1.7)],
+    #         ser_list=[
+    #             ConstantRateServer(rate=1.2),
+    #             ConstantRateServer(rate=6.2),
+    #             ConstantRateServer(rate=7.3)
+    #         ],
+    #         perform_param_list=DELAY_LIST))
+    #
+    # print(
+    #     perform_param_list_to_csv(
+    #         prefix="overlapping_tandem_",
+    #         data_frame_creator=overlapping_tandem_df,
+    #         arr_list=[DM1(lamb=2.0),
+    #                   DM1(lamb=2.4),
+    #                   DM1(lamb=5.3)],
+    #         ser_list=[
+    #             ConstantRateServer(rate=4.3),
+    #             ConstantRateServer(rate=2.1),
+    #             ConstantRateServer(rate=5.8)
+    #         ],
+    #         perform_param_list=DELAY_LIST))
 
-    print(
-        perform_param_list_to_csv(
-            prefix="overlapping_tandem_",
-            data_frame_creator=overlapping_tandem_df,
-            arr_list=[DM1(lamb=2.3),
-                      DM1(lamb=4.5),
-                      DM1(lamb=1.7)],
-            ser_list=[
-                ConstantRateServer(rate=1.2),
-                ConstantRateServer(rate=6.2),
-                ConstantRateServer(rate=7.3)
-            ],
-            perform_param_list=DELAY_LIST))
-
-    print(
-        perform_param_list_to_csv(
-            prefix="overlapping_tandem_",
-            data_frame_creator=overlapping_tandem_df,
-            arr_list=[DM1(lamb=2.0),
-                      DM1(lamb=2.4),
-                      DM1(lamb=5.3)],
-            ser_list=[
-                ConstantRateServer(rate=4.3),
-                ConstantRateServer(rate=2.1),
-                ConstantRateServer(rate=5.8)
-            ],
-            perform_param_list=DELAY_LIST))
+    # print(
+    #     perform_param_list_to_csv(prefix="overlapping_tandem_",
+    #                               data_frame_creator=overlapping_tandem_df,
+    #                               arr_list=[
+    #                                   MMOOFluid(mu=7.3,
+    #                                             lamb=3.4,
+    #                                             peak_rate=1.2),
+    #                                   MMOOFluid(mu=1.5,
+    #                                             lamb=3.6,
+    #                                             peak_rate=8.2),
+    #                                   MMOOFluid(mu=1.3,
+    #                                             lamb=1.1,
+    #                                             peak_rate=0.4)
+    #                               ],
+    #                               ser_list=[
+    #                                   ConstantRateServer(rate=9.0),
+    #                                   ConstantRateServer(rate=4.1),
+    #                                   ConstantRateServer(rate=4.7)
+    #                               ],
+    #                               perform_param_list=DELAY_LIST))
 
     print(
         perform_param_list_to_csv(prefix="overlapping_tandem_",
                                   data_frame_creator=overlapping_tandem_df,
                                   arr_list=[
-                                      MMOOCont(mu=7.3, lamb=3.4, peak_rate=1.2),
-                                      MMOOCont(mu=1.5, lamb=3.6, peak_rate=8.2),
-                                      MMOOCont(mu=1.3, lamb=1.1, peak_rate=0.4)
-                                  ],
-                                  ser_list=[
-                                      ConstantRateServer(rate=9.0),
-                                      ConstantRateServer(rate=4.1),
-                                      ConstantRateServer(rate=4.7)
-                                  ],
-                                  perform_param_list=DELAY_LIST))
-
-    print(
-        perform_param_list_to_csv(prefix="overlapping_tandem_",
-                                  data_frame_creator=overlapping_tandem_df,
-                                  arr_list=[
-                                      MMOOCont(mu=2.0,
-                                               lamb=7.0,
+                                      MMOOCont(mu=2.0, lamb=7.0,
                                                peak_rate=5.0),
-                                      MMOOCont(mu=4.0,
-                                               lamb=8.5,
+                                      MMOOCont(mu=4.0, lamb=8.5,
                                                peak_rate=5.3),
-                                      MMOOCont(mu=0.5,
-                                               lamb=4.0,
-                                               peak_rate=9.0)
+                                      MMOOCont(mu=0.5, lamb=4.0, peak_rate=9.0)
                                   ],
                                   ser_list=[
                                       ConstantRateServer(rate=4.0),

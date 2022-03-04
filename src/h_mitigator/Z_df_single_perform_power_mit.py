@@ -51,24 +51,24 @@ def single_server_df(arr_list: List[ArrivalDistribution],
             standard_bound[_i] = Optimize(setting=setting,
                                           number_param=1).grid_search(
                                               grid_bounds=[(0.1, 4.0)],
-                                              delta=0.1)
+                                              delta=0.1).obj_value
             new_bound[_i] = OptimizeMitigator(setting_h_mit=setting,
                                               number_param=2).grid_search(
                                                   grid_bounds=[(0.1, 4.0),
                                                                (0.9, 8.0)],
-                                                  delta=0.05)
+                                                  delta=0.05).obj_value
 
         elif opt_method == OptMethod.PATTERN_SEARCH:
             standard_bound[_i] = Optimize(setting=setting,
                                           number_param=1).pattern_search(
                                               start_list=[0.5],
                                               delta=3.0,
-                                              delta_min=0.01)
+                                              delta_min=0.01).obj_value
             new_bound[_i] = OptimizeMitigator(setting_h_mit=setting,
                                               number_param=2).pattern_search(
                                                   start_list=[0.5, 2.0],
                                                   delta=3.0,
-                                                  delta_min=0.01)
+                                                  delta_min=0.01).obj_value
         else:
             raise NotImplementedError(
                 f"Optimization parameter {opt_method} is infeasible")

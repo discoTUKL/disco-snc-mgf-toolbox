@@ -1,5 +1,7 @@
-numpy>=1.16
-pandas>=0.24
-pytest>=4.4
-scipy>=1.2
-tqdm>=4.31
+mpmath>=1.2.0
+numpy>=1.19
+pandas>=1.0
+pytest>=5.4
+scipy>=1.5
+tqdm>=4.4
+isodate>=0.5

@@ -3,9 +3,10 @@
 from warnings import warn
 
 import numpy as np
-
 from bound_evaluation.change_enum import ChangeEnum
+from bound_evaluation.manipulate_data import remove_full_nan_rows
 from nc_arrivals.arrival_enum import ArrivalEnum
+from utils.exceptions import IllegalArgumentError
 
 
 def two_col_array_to_results(
@@ -13,13 +14,16 @@ def two_col_array_to_results(
         param_array: np.array,
         res_array: np.array,
         number_servers: int,
-        valid_iterations: int,
         compare_metric: ChangeEnum = ChangeEnum.RATIO_REF_NEW) -> dict:
     """Writes the array values into a dictionary"""
     if res_array.shape[1] != 2:
-        raise NameError(f"Array must have 2 columns, not {res_array.shape[1]}")
+        raise IllegalArgumentError(
+            f"Array must have 2 columns, not {res_array.shape[1]}")
 
-    iterations = int(res_array.shape[0])
+    np.seterr(all='warn')
+
+    res_array_no_full_nan = remove_full_nan_rows(full_array=res_array)
+    valid_iterations = res_array_no_full_nan.shape[0]
 
     if compare_metric == ChangeEnum.RATIO_REF_NEW:
         improvement_vec = np.divide(res_array[:, 0], res_array[:, 1])
@@ -38,28 +42,25 @@ def two_col_array_to_results(
     mean_improvement = np.nanmean(improvement_vec)
     median_improvement = np.nanmedian(improvement_vec)
 
-    # number_improved = np.sum(np.greater(res_array[:, 0], res_array[:, 1]))
     number_improved = np.sum(res_array[:, 0] > res_array[:, 1])
-
-    count_nan = np.count_nonzero(np.isnan(res_array), axis=0)
-    count_nan_standard = count_nan[0]
-    count_nan_h_mit = count_nan[1]
-
-    if count_nan_standard != count_nan_h_mit:
-        warn(f"number of nan's does not match, "
-             f"{count_nan_standard} != {count_nan_h_mit}")
-
-    if valid_iterations < iterations * 0.2:
-        warn(f"way too many nan's: "
-             f"{iterations - valid_iterations} out of {iterations}!")
-
-        if valid_iterations < 100:
-            raise ValueError("result is useless")
 
     res_dict = {"Name": "Value", "arrival_distribution": arrival_enum.name}
 
     for j in range(number_servers):
         if arrival_enum == ArrivalEnum.DM1:
+            res_dict[f"lamb{j + 1}"] = format(param_array[row_max, j], '.3f')
+            res_dict[f"rate{j + 1}"] = format(
+                param_array[row_max, number_servers + j], '.3f')
+
+        elif arrival_enum == ArrivalEnum.DGamma1:
+            res_dict[f"alpha_shape{j + 1}"] = format(param_array[row_max, j],
+                                                     '.3f')
+            res_dict[f"beta_rate{j + 1}"] = format(
+                param_array[row_max, number_servers + j], '.3f')
+            res_dict[f"rate{j + 1}"] = format(
+                param_array[row_max, 2 * number_servers + j], '.3f')
+
+        elif arrival_enum == ArrivalEnum.DWeibull1:
             res_dict[f"lamb{j + 1}"] = format(param_array[row_max, j], '.3f')
             res_dict[f"rate{j + 1}"] = format(
                 param_array[row_max, number_servers + j], '.3f')
@@ -71,11 +72,21 @@ def two_col_array_to_results(
             res_dict[f"packet_size{j + 1}"] = format(
                 param_array[row_max, number_servers + j], '.3f')
 
+        elif arrival_enum == ArrivalEnum.MMOODisc:
+            res_dict[f"stay_on{j + 1}"] = format(param_array[row_max, j],
+                                                 '.3f')
+            res_dict[f"stay_off{j + 1}"] = format(
+                param_array[row_max, number_servers + j], '.3f')
+            res_dict[f"peak_rate{j + 1}"] = format(
+                param_array[row_max, 2 * number_servers + j], '.3f')
+            res_dict[f"rate{j + 1}"] = format(
+                param_array[row_max, 3 * number_servers + j], '.3f')
+
         elif arrival_enum == ArrivalEnum.MMOOFluid:
             res_dict[f"mu{j + 1}"] = format(param_array[row_max, j], '.3f')
             res_dict[f"lamb{j + 1}"] = format(
                 param_array[row_max, number_servers + j], '.3f')
-            res_dict[f"burst{j + 1}"] = format(
+            res_dict[f"peak_rate{j + 1}"] = format(
                 param_array[row_max, 2 * number_servers + j], '.3f')
             res_dict[f"rate{j + 1}"] = format(
                 param_array[row_max, 3 * number_servers + j], '.3f')

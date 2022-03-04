@@ -13,10 +13,10 @@ from nc_server.constant_rate_server import ConstantRateServer
 from utils.exceptions import ParameterOutOfBounds
 from utils.perform_parameter import PerformParameter
 
-from msob_and_fp.setting_avoid_dep import SettingMSOBFP
+from msob_and_fp.setting_msob_fp import SettingMSOBFP
 
 
-class SquarePerform(SettingMSOBFP):
+class Square(SettingMSOBFP):
     def __init__(self, arr_list: List[ArrivalDistribution],
                  ser_list: List[ConstantRateServer],
                  perform_param: PerformParameter) -> None:
@@ -216,36 +216,32 @@ if __name__ == '__main__':
 
     print("Utilization:")
     print(
-        SquarePerform(arr_list=ARR_LIST,
-                      ser_list=SER_LIST,
-                      perform_param=DELAY_PROB_TIME).approximate_utilization())
+        Square(arr_list=ARR_LIST,
+               ser_list=SER_LIST,
+               perform_param=DELAY_PROB_TIME).approximate_utilization())
 
     print("Standard Approach:")
     print(
-        Optimize(setting=SquarePerform(arr_list=ARR_LIST,
-                                       ser_list=SER_LIST,
-                                       perform_param=DELAY_PROB_TIME),
-                 number_param=2,
-                 print_x=PRINT_X).grid_search(grid_bounds=[(0.1, 10.0),
-                                                           (1.1, 10.0)],
-                                              delta=0.1))
+        Optimize(setting=Square(arr_list=ARR_LIST,
+                                ser_list=SER_LIST,
+                                perform_param=DELAY_PROB_TIME),
+                 number_param=2).grid_search(grid_bounds=[(0.1, 10.0),
+                                                          (1.1, 10.0)],
+                                             delta=0.1))
 
     print("Server Bound:")
     print(
-        OptimizeServerBound(
-            setting_msob_fp=SquarePerform(arr_list=ARR_LIST,
-                                          ser_list=SER_LIST,
-                                          perform_param=DELAY_PROB_TIME),
-            number_param=1,
-            print_x=PRINT_X).grid_search(grid_bounds=[(0.1, 10.0)], delta=0.1))
+        OptimizeServerBound(setting_msob_fp=Square(arr_list=ARR_LIST,
+                                                   ser_list=SER_LIST,
+                                                   perform_param=DELAY_PROB_TIME),
+                            number_param=1).grid_search(grid_bounds=[(0.1, 10.0)], delta=0.1))
 
     print("Flow Prolongation:")
     print(
-        OptimizeFPBound(setting_msob_fp=SquarePerform(
+        OptimizeFPBound(setting_msob_fp=Square(
             arr_list=ARR_LIST,
             ser_list=SER_LIST,
             perform_param=DELAY_PROB_TIME),
-                        number_param=2,
-                        print_x=PRINT_X).grid_search(grid_bounds=[(0.1, 10.0),
-                                                                  (1.1, 10.0)],
-                                                     delta=0.1))
+            number_param=2).grid_search(grid_bounds=[(0.1, 10.0),
+                                                     (1.1, 10.0)],
+                                        delta=0.1))

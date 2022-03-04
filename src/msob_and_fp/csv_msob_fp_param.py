@@ -12,7 +12,7 @@ from bound_evaluation.mc_enum_to_dist import mc_enum_to_dist
 from bound_evaluation.monte_carlo_dist import MonteCarloDist
 from nc_arrivals.arrival_enum import ArrivalEnum
 from nc_arrivals.iid import DM1, MD1, DGamma1, DWeibull1
-from nc_arrivals.markov_modulated import MMOODisc, MMOOCont
+from nc_arrivals.markov_modulated import MMOOCont, MMOODisc
 from nc_operations.perform_enum import PerformEnum
 from nc_server.constant_rate_server import ConstantRateServer
 from optimization.opt_method import OptMethod
@@ -22,8 +22,8 @@ from utils.perform_parameter import PerformParameter
 
 from msob_and_fp.compare_avoid_dep import compare_avoid_dep_211
 from msob_and_fp.msob_fp_array_to_results import msob_fp_array_to_results
-from msob_and_fp.overlapping_tandem_perform import OverlappingTandemPerform
-from msob_and_fp.square_perform import SquarePerform
+from msob_and_fp.overlapping_tandem import OverlappingTandem
+from msob_and_fp.square import Square
 
 ########################################################################
 # Find Optimal Parameters
@@ -105,14 +105,15 @@ def csv_msob_fp_param(name: str,
         ]
 
         if name == "overlapping_tandem":
-            setting = OverlappingTandemPerform(arr_list=arr_list,
-                                               ser_list=ser_list,
-                                               perform_param=perform_param)
+            setting = OverlappingTandem(arr_list=arr_list,
+                                        ser_list=ser_list,
+                                        perform_param=perform_param)
 
         elif name == "square":
-            setting = SquarePerform(arr_list=arr_list,
-                                    ser_list=ser_list,
-                                    perform_param=perform_param)
+            setting = Square(arr_list=arr_list,
+                             ser_list=ser_list,
+                             perform_param=perform_param)
+
         else:
             raise NotImplementedError("this topology is not implemented")
 
@@ -196,12 +197,12 @@ def csv_msob_fp_param(name: str,
 
 
 if __name__ == '__main__':
-    # DELAY_PROB10 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
-    #                                 value=10)
-    DELAY_3 = PerformParameter(perform_metric=PerformEnum.DELAY,
-                               value=10**(-3))
+    DELAY_PROB10 = PerformParameter(perform_metric=PerformEnum.DELAY_PROB,
+                                    value=10)
+    # DELAY_3 = PerformParameter(perform_metric=PerformEnum.DELAY,
+    #                            value=10**(-6))
 
-    COMMON_PERFORM_PARAM = DELAY_3
+    COMMON_PERFORM_PARAM = DELAY_PROB10
     COMMON_OPTIMIZATION = OptMethod.GRID_SEARCH
     COMMON_METRIC = ChangeEnum.RATIO_REF_NEW
     TARGET_UTIL = 0.75
@@ -209,20 +210,20 @@ if __name__ == '__main__':
     # MC_UNIF20 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[20.0])
     MC_UNIF10 = MonteCarloDist(mc_enum=MCEnum.UNIFORM, param_list=[10.0])
 
-    PROCESS = ArrivalEnum.MMOOFluid
+    ARRIVAL_PROCESS = ArrivalEnum.DM1
 
-    # print(
-    #     csv_msob_fp_param(name="overlapping_tandem",
-    #                         number_flows=3,
-    #                         number_servers=3,
-    #                         arrival_enum=PROCESS,
-    #                         perform_param=COMMON_PERFORM_PARAM,
-    #                         opt_method=COMMON_OPTIMIZATION,
-    #                         mc_dist=MC_UNIF10,
-    #                         comparator=compare_avoid_dep_211,
-    #                         compare_metric=COMMON_METRIC,
-    #                         total_iterations=10**4,
-    #                         target_util=TARGET_UTIL))
+    print(
+        csv_msob_fp_param(name="overlapping_tandem",
+                          number_flows=3,
+                          number_servers=3,
+                          arrival_enum=ARRIVAL_PROCESS,
+                          perform_param=COMMON_PERFORM_PARAM,
+                          opt_method=COMMON_OPTIMIZATION,
+                          mc_dist=MC_UNIF10,
+                          comparator=compare_avoid_dep_211,
+                          compare_metric=COMMON_METRIC,
+                          total_iterations=10**4,
+                          target_util=TARGET_UTIL))
 
     # print(
     #     csv_msob_fp_param(name="square",
@@ -237,18 +238,18 @@ if __name__ == '__main__':
     #                         total_iterations=10**4,
     #                         target_util=TARGET_UTIL))
 
-    print(
-        csv_msob_fp_param(name="the_L_tandem",
-                          number_flows=3,
-                          number_servers=3,
-                          arrival_enum=PROCESS,
-                          perform_param=COMMON_PERFORM_PARAM,
-                          opt_method=COMMON_OPTIMIZATION,
-                          mc_dist=MC_UNIF10,
-                          comparator=compare_avoid_dep_211,
-                          compare_metric=COMMON_METRIC,
-                          total_iterations=10**4,
-                          target_util=TARGET_UTIL))
+    # print(
+    #     csv_msob_fp_param(name="the_L_tandem",
+    #                       number_flows=3,
+    #                       number_servers=3,
+    #                       arrival_enum=PROCESS,
+    #                       perform_param=COMMON_PERFORM_PARAM,
+    #                       opt_method=COMMON_OPTIMIZATION,
+    #                       mc_dist=MC_UNIF10,
+    #                       comparator=compare_avoid_dep_211,
+    #                       compare_metric=COMMON_METRIC,
+    #                       total_iterations=10**4,
+    #                       target_util=TARGET_UTIL))
 
     # print(
     #     csv_msob_fp_param(name="splitting_triangle",

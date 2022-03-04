@@ -6,26 +6,22 @@ from typing import List, Tuple
 import numpy as np
 import pandas as pd
 import scipy.optimize
-
-from optimization.nelder_mead_parameters import NelderMeadParameters
-from optimization.sim_anneal_param import SimAnnealParams
 from utils.deprecated import deprecated
 from utils.exceptions import IllegalArgumentError, ParameterOutOfBounds
 from utils.helper_functions import (average_towards_best_row,
                                     centroid_without_one_row, expand_grid)
 from utils.setting import Setting
 
+from optimization.nelder_mead_parameters import NelderMeadParameters
+from optimization.optimization_result import OptimizationResult
+from optimization.sim_anneal_param import SimAnnealParams
+
 
 class Optimize(object):
     """Optimize class"""
-    def __init__(self,
-                 setting: Setting,
-                 number_param: int,
-                 print_x=False) -> None:
+    def __init__(self, setting: Setting, number_param: int) -> None:
         self.setting = setting
         self.number_param = number_param
-        self.print_x = print_x
-        self.opt_x = [0.0] * number_param
 
     def eval_except(self, param_list: List[float]) -> float:
         """
@@ -40,7 +36,7 @@ class Optimize(object):
             return inf
 
     def grid_search(self, grid_bounds: List[Tuple[float, float]],
-                    delta: float) -> float:
+                    delta: float) -> OptimizationResult:
         """
         Search optimal values along a grid in the parameter space.
 
@@ -50,8 +46,8 @@ class Optimize(object):
         """
         if len(grid_bounds) != self.number_param:
             raise IllegalArgumentError(
-                f"Number of parameters = {len(grid_bounds)} != {self.number_param}"
-            )
+                f"Number of parameters = {len(grid_bounds)} "
+                f"!= {self.number_param}")
 
         list_slices = [slice(0)] * len(grid_bounds)
 
@@ -60,25 +56,27 @@ class Optimize(object):
 
         np.seterr("raise")
 
+        # grid_res = scipy.optimize.brute(func=self.eval_except,
+        #                                 ranges=tuple(list_slices),
+        #                                 full_output=True)
+
         try:
             grid_res = scipy.optimize.brute(func=self.eval_except,
                                             ranges=tuple(list_slices),
                                             full_output=True)
-        #     TODO: This exception is at the wrong spot!
         except FloatingPointError:
-            return inf
+            return OptimizationResult(opt_x=[0.0] * self.number_param,
+                                      obj_value=inf,
+                                      heuristic="grid_search")
 
-        self.opt_x = grid_res[0].tolist()
-
-        if self.print_x:
-            print(f"grid search optimal x: {self.opt_x}")
-
-        return grid_res[1]
+        return OptimizationResult(opt_x=grid_res[0].tolist(),
+                                  obj_value=grid_res[1],
+                                  heuristic="grid_search")
 
     def pattern_search(self,
                        start_list: List[float],
                        delta=3.0,
-                       delta_min=0.01) -> float:
+                       delta_min=0.01) -> OptimizationResult:
         """
         Optimization in Hooke and Jeeves.
 
@@ -90,7 +88,8 @@ class Optimize(object):
 
         if len(start_list) != self.number_param:
             raise IllegalArgumentError(
-                f"Number of parameters {len(start_list)} is wrong")
+                f"Number of parameters {len(start_list)} is wrong, "
+                f"should be {self.number_param} instead")
 
         optimum_current = self.eval_except(param_list=start_list)
 
@@ -132,14 +131,12 @@ class Optimize(object):
                 param_new = param_list[:]
                 delta *= 0.5
 
-        self.opt_x = param_list
+        return OptimizationResult(opt_x=param_list,
+                                  obj_value=optimum_new,
+                                  heuristic="pattern_search")
 
-        if self.print_x:
-            print(f"patten search optimal x: {self.opt_x}")
-
-        return optimum_new
-
-    def nelder_mead(self, simplex: np.ndarray, sd_min=10**(-2)) -> float:
+    def nelder_mead(
+        self, simplex: np.ndarray, sd_min=10**(-2)) -> OptimizationResult:
         """
         Nelder-Mead optimization from the sciPy package.
 
@@ -160,16 +157,15 @@ class Optimize(object):
                 })
 
         except FloatingPointError:
-            return inf
+            return OptimizationResult(opt_x=[0.0] * self.number_param,
+                                      obj_value=inf,
+                                      heuristic="nelder_mead")
 
-        self.opt_x = nm_res.x
+        return OptimizationResult(opt_x=nm_res.x,
+                                  obj_value=nm_res.fun,
+                                  heuristic="nelder_mead")
 
-        if self.print_x:
-            print(f"Nelder Mead optimal x: {self.opt_x}")
-
-        return nm_res.fun
-
-    def basin_hopping(self, start_list: List[float]) -> float:
+    def basin_hopping(self, start_list: List[float]) -> OptimizationResult:
         """
         Basin Hopping optimization from the sciPy package.
 
@@ -181,16 +177,15 @@ class Optimize(object):
                                                  x0=start_list)
 
         except FloatingPointError:
-            return inf
+            return OptimizationResult(opt_x=[0.0] * self.number_param,
+                                      obj_value=inf,
+                                      heuristic="basin_hopping")
 
-        self.opt_x = bh_res.x
+        return OptimizationResult(opt_x=bh_res.x,
+                                  obj_value=bh_res.fun,
+                                  heuristic="basin_hopping")
 
-        if self.print_x:
-            print(f"basin hopping optimal x: {self.opt_x}")
-
-        return bh_res.fun
-
-    def diff_evolution(self, bound_list: List[tuple]) -> float:
+    def diff_evolution(self, bound_list: List[tuple]) -> OptimizationResult:
         """
         Differential Evolution optimization from the sciPy package.
 
@@ -204,28 +199,34 @@ class Optimize(object):
                 func=self.eval_except, bounds=bound_list)
 
         except FloatingPointError:
-            return inf
+            return OptimizationResult(opt_x=[0.0] * self.number_param,
+                                      obj_value=inf,
+                                      heuristic="diff_evolution")
 
-        self.opt_x = de_res.x
+        return OptimizationResult(opt_x=de_res.x,
+                                  obj_value=de_res.fun,
+                                  heuristic="diff_evolution")
 
-        if self.print_x:
-            print(f"differential evolution optimal x: {self.opt_x}")
+    def dual_annealing(
+            self, bound_list: List[Tuple[float, float]]) -> OptimizationResult:
 
-        return de_res.fun
+        try:
+            dual_anneal_res = scipy.optimize.dual_annealing(
+                func=self.eval_except, bounds=bound_list)
 
-    def dual_annealing(self, bound_list: List[Tuple[float, float]]):
+        except FloatingPointError:
+            return OptimizationResult(opt_x=[0.0] * self.number_param,
+                                      obj_value=inf,
+                                      heuristic="dual_annealing")
 
-        dual_anneal_res = scipy.optimize.dual_annealing(func=self.eval_except,
-                                                        bounds=bound_list)
-
-        if self.print_x:
-            print(f"dual annealing optimal x: {dual_anneal_res.x}")
-
-        return dual_anneal_res.fun
+        return OptimizationResult(opt_x=dual_anneal_res.x,
+                                  obj_value=dual_anneal_res.fun,
+                                  heuristic="dual_annealing")
 
     @deprecated
-    def sim_annealing(self, start_list: List[float],
-                      sim_anneal_params: SimAnnealParams) -> float:
+    def sim_annealing(
+            self, start_list: List[float],
+            sim_anneal_params: SimAnnealParams) -> OptimizationResult:
         """
 
         :param start_list:       initial parameter set
@@ -278,16 +279,13 @@ class Optimize(object):
 
             temperature *= sim_anneal_params.cooling_factor
 
-        self.opt_x = param_best
-
-        if self.print_x:
-            print(f"simulated annealing optimal x: {self.opt_x}")
-
-        return optimum_best
+        return OptimizationResult(opt_x=param_best,
+                                  obj_value=optimum_best,
+                                  heuristic="sim_annealing")
 
     @deprecated
     def grid_search_old(self, bound_list: List[Tuple[float, float]],
-                        delta: float) -> float:
+                        delta: float) -> OptimizationResult:
         """
         Search optimal values along a grid in the parameter space.
 
@@ -321,18 +319,17 @@ class Optimize(object):
                 y_opt = candidate_opt
                 opt_row = row
 
-        self.opt_x = param_grid_df.iloc[opt_row].tolist()
-
-        if self.print_x:
-            print(f"GS old optimal x: {self.opt_x}")
-
-        return y_opt
+        return OptimizationResult(opt_x=param_grid_df.iloc[opt_row].tolist(),
+                                  obj_value=y_opt,
+                                  heuristic="grid_search_old")
 
     @deprecated
-    def nelder_mead_old(self,
-                        simplex: np.ndarray,
-                        nelder_mead_param: NelderMeadParameters,
-                        sd_min=10**(-2)):
+    def nelder_mead_old(
+        self,
+        simplex: np.ndarray,
+        nelder_mead_param: NelderMeadParameters,
+        sd_min=10**(-2)
+    ) -> OptimizationResult:
         """
         Nelder-Mead Optimization.
 
@@ -438,14 +435,11 @@ class Optimize(object):
                 simplex[worst_index] = p_reflection
                 y_value[worst_index] = y_p_reflection
 
-        self.opt_x = simplex[best_index]
+        return OptimizationResult(opt_x=simplex[best_index],
+                                  obj_value=y_value[best_index],
+                                  heuristic="nelder_mead_old")
 
-        if self.print_x:
-            print(f"NM old optimal x: {self.opt_x}")
-
-        return y_value[best_index]
-
-    def bfgs(self, start_list: list) -> float:
+    def bfgs(self, start_list: list) -> OptimizationResult:
         np.seterr("raise")
 
         try:
@@ -454,11 +448,10 @@ class Optimize(object):
                                                method="BFGS")
 
         except FloatingPointError:
-            return inf
+            return OptimizationResult(opt_x=[0.0] * self.number_param,
+                                      obj_value=inf,
+                                      heuristic="bfgs")
 
-        self.opt_x = bfgs_res.x
-
-        if self.print_x:
-            print(f"BFGS optimal x: {self.opt_x}")
-
-        return bfgs_res.fun
+        return OptimizationResult(opt_x=bfgs_res.x,
+                                  obj_value=bfgs_res.fun,
+                                  heuristic="bfgs")
