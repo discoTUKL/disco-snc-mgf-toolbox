@@ -209,12 +209,13 @@ class Optimize(object):
 
     def dual_annealing(
             self, bound_list: List[Tuple[float, float]]) -> OptimizationResult:
+        np.seterr("raise")
 
         try:
             dual_anneal_res = scipy.optimize.dual_annealing(
                 func=self.eval_except, bounds=bound_list)
 
-        except FloatingPointError:
+        except (FloatingPointError, ValueError):
             return OptimizationResult(opt_x=[0.0] * self.number_param,
                                       obj_value=inf,
                                       heuristic="dual_annealing")
