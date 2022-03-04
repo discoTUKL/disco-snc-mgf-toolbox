@@ -4,8 +4,8 @@ The (sigma, rho)-calculus is implemented in this toolbox. It provides a list a t
 
 ## Prerequisites
 
-- Python 3.7 or higher
-- Python packages in `requiremets.txt`
+- Python 3.8 or higher
+- Python packages in `requirements.txt`
 
 ## Introduction
 
@@ -20,15 +20,15 @@ OUTPUT_TIME6 = PerformParameter(perform_metric=PerformMetric.OUTPUT, value=6)
 we compute the output bound for time delta = 6.
 
 ```python
-SINGLE_SERVER = SingleServerPerform(arr=DM1(lamb=1.0),
-                                    ser=ConstantRate(rate=10.0),
-                                    perform_param=OUTPUT_TIME6)
+SINGLE_SERVER = SingleServerMitPerform(arr=DM1(lamb=1.0),
+                                       ser=ConstantRate(rate=10.0),
+                                       perform_param=OUTPUT_TIME6)
 ```
 
 means that we consider the single hop topology with exponentially distributed arrival increments (DM1 with parameter lambda equal to 1) and a constant rate server (with rate 10).
 
 ```python
-print(SINGLE_SERVER.bound(0.1))
+print(SINGLE_SERVER.standard_bound(0.1))
 ```
 
 for theta = 0.1.
@@ -48,21 +48,18 @@ print(SINGLE_SERVER.h_mit_bound([0.1, 2.7]))
 #### Compute Optimized Bound
 
 Assume we want to optimize the parameter for the above setting. Therefore, we choose to optimize, e.g., via grid search.
-We optimize the bound in the SINGLE_SERVER setting with the old approach "Optimize" and the approach OptimizeMitigator and want to print the optimal parameter set ("print_x=true"). The last step is to choose the method "grid_search()" and to set the search's granularity (in this case = 0.1):
+We optimize the bound in the SINGLE_SERVER setting with the old approach "Optimize" and the approach OptimizeMitigator. The last step is to choose the method "grid_search()" and to set the search's granularity (in this case = 0.1):
 
 ```python
-print(Optimize(SINGLE_SERVER, number_param=1,
-               print_x=True).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
+print(
+    Optimize(SINGLE_SERVER, number_param=1).grid_search(grid_bounds=[(0.1, 5.0)], delta=0.1))
 ```
 
 and for the h_mitigator:
 
 ```python
 print(
-  OptimizeMitigator(SINGLE_SERVER, number_param=2,
-                    print_x=True).grid_search(grid_bounds=[(0.1, 5.0),
-                                                           (0.9, 8.0)],
-                                              delta=0.1))
+    OptimizeMitigator(SINGLE_SERVER, number_param=2).grid_search(grid_bounds=[(0.1, 5.0), (0.9, 8.0)], delta=0.1))
 ```
 
 ## Status of Implementation
