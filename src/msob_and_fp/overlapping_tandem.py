@@ -7,10 +7,10 @@ from nc_arrivals.arrival_distribution import ArrivalDistribution
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
 from nc_operations.aggregate import AggregateTwo
 from nc_operations.arb_scheduling import LeftoverARB
+from nc_operations.convolve import Convolve
 from nc_operations.deconvolve import Deconvolve
 from nc_operations.e2e_enum import E2EEnum
 from nc_operations.gps_scheduling import LeftoverGPSPG
-from nc_operations.convolve import Convolve
 from nc_operations.sfa_tandem_bound import sfa_tandem_bound
 from nc_operations.single_hop_bound import single_hop_bound
 from nc_server.constant_rate_server import ConstantRateServer
@@ -22,6 +22,7 @@ from msob_and_fp.setting_msob_fp import SettingMSOBFP
 
 
 class OverlappingTandem(SettingMSOBFP):
+    """Tandem with priorities f_1 <= f_2 <= f_3"""
     def __init__(self, arr_list: List[ArrivalDistribution],
                  ser_list: List[ConstantRateServer],
                  perform_param: PerformParameter) -> None:
@@ -523,8 +524,9 @@ if __name__ == '__main__':
             ser_list=SER_LIST,
             perform_param=DELAY_PROB_TIME).approximate_utilization())
 
-    OVERLAPPING_TANDEM = OverlappingTandem(
-        arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB_TIME)
+    OVERLAPPING_TANDEM = OverlappingTandem(arr_list=ARR_LIST,
+                                           ser_list=SER_LIST,
+                                           perform_param=DELAY_PROB_TIME)
 
     OVERLAPPING_TANDEM_SFA = OverlappingTandemSFAPerform(
         arr_list=ARR_LIST, ser_list=SER_LIST, perform_param=DELAY_PROB_TIME)
