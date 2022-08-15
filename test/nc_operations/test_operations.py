@@ -14,6 +14,10 @@ def test_deconvolve_sigma():
         arr=DM1(lamb=1.2), ser=ConstantRateServer(2.0),
         indep=True).sigma(theta=1.0) == pytest.approx(1.671375549)
 
+    assert Deconvolve(
+        arr=DM1(lamb=1.2), ser=ConstantRateServer(3.0),
+        indep=True).sigma(theta=1.0) == pytest.approx(0.3548514792)
+
 
 def test_deconvolve_rho():
     assert Deconvolve(arr=DM1(lamb=1.2),
@@ -34,15 +38,30 @@ def test_leftover_rho():
                        indep=True,
                        p=1.0).rho(theta=0.5) == pytest.approx(0.9220069985)
 
+    assert LeftoverARB(ser=ConstantRateServer(3.0),
+                       cross_arr=DM1(lamb=1.2),
+                       indep=True,
+                       p=1.0).rho(theta=0.5) == pytest.approx(1.922006999)
+
     assert LeftoverARB(ser=ConstantRateServer(2.0),
                        cross_arr=DM1(lamb=1.2),
                        indep=False,
                        p=2.0).rho(theta=0.5) == pytest.approx(0.2082405308)
 
+    assert LeftoverARB(ser=ConstantRateServer(3.0),
+                       cross_arr=DM1(lamb=1.2),
+                       indep=False,
+                       p=2.0).rho(theta=0.5) == pytest.approx(1.208240531)
+
     assert LeftoverARB(ser=ConstantRateServer(2.0),
                        cross_arr=DM1(lamb=1.2),
                        indep=False,
                        p=1.1).rho(theta=0.5) == pytest.approx(0.8852645948)
+
+    assert LeftoverARB(ser=ConstantRateServer(3.0),
+                       cross_arr=DM1(lamb=1.2),
+                       indep=False,
+                       p=1.1).rho(theta=0.5) == pytest.approx(1.885264595)
 
 
 def test_convolve_leftover_sigma():
