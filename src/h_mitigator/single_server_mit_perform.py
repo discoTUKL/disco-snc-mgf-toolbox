@@ -52,24 +52,25 @@ class SingleServerMitPerform(SettingMitigator):
         if not self.indep:
             raise NotImplementedError
 
-        if self.perform_param.perform_metric == PerformEnum.OUTPUT:
-            return output_power_mit(arr=self.arr_list[0],
-                                    ser=self.server,
-                                    theta=param_l_list[0],
-                                    delta_time=self.perform_param.value,
-                                    l_power=param_l_list[1])
-
-        elif self.perform_param.perform_metric == PerformEnum.DELAY_PROB:
-            return delay_prob_power_mit(arr=self.arr_list[0],
+        match self.perform_param.perform_metric:
+            case PerformEnum.OUTPUT:
+                return output_power_mit(arr=self.arr_list[0],
                                         ser=self.server,
                                         theta=param_l_list[0],
-                                        delay=self.perform_param.value,
+                                        delta_time=self.perform_param.value,
                                         l_power=param_l_list[1])
 
-        else:
-            raise NotImplementedError(
-                f"{self.perform_param.perform_metric} is "
-                f"not implemented")
+            case PerformEnum.DELAY_PROB:
+                return delay_prob_power_mit(arr=self.arr_list[0],
+                                            ser=self.server,
+                                            theta=param_l_list[0],
+                                            delay=self.perform_param.value,
+                                            l_power=param_l_list[1])
+
+            case _:
+                raise NotImplementedError(
+                    f"{self.perform_param.perform_metric} is "
+                    f"not implemented")
 
     def approximate_utilization(self) -> float:
         sum_average_rates = 0.0

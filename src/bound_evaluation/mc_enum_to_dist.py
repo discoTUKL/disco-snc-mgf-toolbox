@@ -19,47 +19,54 @@ def mc_enum_to_dist(arrival_enum: ArrivalEnum, mc_dist: MonteCarloDist,
     if arrival_enum == ArrivalEnum.MMOODisc:
         probabilities = np.random.uniform(
             low=0.0, high=1.0, size=[total_iterations, 2 * number_flows])
-        if mc_dist.mc_enum == MCEnum.UNIFORM:
-            return np.concatenate(
-                (probabilities,
-                 np.random.uniform(
-                     low=0.0,
-                     high=mc_dist.param_list[0],
-                     size=[total_iterations, number_flows + number_servers])),
-                axis=1)
-        elif mc_dist.mc_enum == MCEnum.EXPONENTIAL:
-            return np.concatenate(
-                (probabilities,
-                 np.random.exponential(
-                     scale=1 / mc_dist.param_list[0],
-                     size=[total_iterations, number_flows + number_servers])),
-                axis=1)
-        # watch out: scale is the expectation 1 / lambda
-        elif mc_dist.mc_enum == MCEnum.PARETO:
-            return np.concatenate(
-                (probabilities,
-                 np.random.pareto(
-                     a=mc_dist.param_list[0],
-                     size=[total_iterations, number_flows + number_servers])),
-                axis=1)
-        elif mc_dist.mc_enum == MCEnum.LOG_NORMAL:
-            return np.concatenate(
-                (probabilities,
-                 np.random.lognormal(
-                     mean=mc_dist.param_list[0],
-                     sigma=mc_dist.param_list[1],
-                     size=[total_iterations, number_flows + number_servers])),
-                axis=1)
-        elif mc_dist.mc_enum == MCEnum.CHI_SQUARED:
-            return np.concatenate(
-                (probabilities,
-                 np.random.chisquare(
-                     df=mc_dist.param_list[0],
-                     size=[total_iterations, number_flows + number_servers])),
-                axis=1)
-        else:
-            raise NameError(
-                f"Distribution parameter {mc_dist.mc_enum} is infeasible")
+
+        match mc_dist.mc_enum:
+            case MCEnum.UNIFORM:
+                return np.concatenate(
+                    (probabilities,
+                     np.random.uniform(
+                         low=0.0,
+                         high=mc_dist.param_list[0],
+                         size=[total_iterations,
+                               number_flows + number_servers])),
+                    axis=1)
+            case MCEnum.EXPONENTIAL:
+                # watch out: scale is the expectation 1 / lambda
+                return np.concatenate(
+                    (probabilities,
+                     np.random.exponential(
+                         scale=1 / mc_dist.param_list[0],
+                         size=[total_iterations,
+                               number_flows + number_servers])),
+                    axis=1)
+            case MCEnum.PARETO:
+                return np.concatenate(
+                    (probabilities,
+                     np.random.pareto(
+                         a=mc_dist.param_list[0],
+                         size=[total_iterations,
+                               number_flows + number_servers])),
+                    axis=1)
+            case MCEnum.LOG_NORMAL:
+                return np.concatenate(
+                    (probabilities,
+                     np.random.lognormal(
+                         mean=mc_dist.param_list[0],
+                         sigma=mc_dist.param_list[1],
+                         size=[total_iterations,
+                               number_flows + number_servers])),
+                    axis=1)
+            case MCEnum.CHI_SQUARED:
+                return np.concatenate(
+                    (probabilities,
+                     np.random.chisquare(
+                         df=mc_dist.param_list[0],
+                         size=[total_iterations,
+                               number_flows + number_servers])),
+                    axis=1)
+            case _:
+                raise NameError(
+                    f"Distribution parameter {mc_dist.mc_enum} is infeasible")
 
     else:
         if mc_dist.mc_enum == MCEnum.UNIFORM:

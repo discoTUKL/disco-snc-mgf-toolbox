@@ -22,69 +22,74 @@ def compare_optimization(setting: SettingMitigator,
 
     for opt in opt_methods:
         start = timer()
-        if opt == OptMethod.GRID_SEARCH:
-            theta_bounds = [(0.1, 4.0)]
 
-            bound_list = theta_bounds[:]
-            for _i in range(number_l):
-                bound_list.append((0.9, 4.0))
+        match opt:
+            case OptMethod.GRID_SEARCH:
+                theta_bounds = [(0.1, 4.0)]
 
-            bound = optim_mit.grid_search(grid_bounds=bound_list,
-                                          delta=0.1).obj_value
+                bound_list = theta_bounds[:]
+                for _i in range(number_l):
+                    bound_list.append((0.9, 4.0))
 
-        elif opt == OptMethod.PATTERN_SEARCH:
-            theta_start = 0.5
+                bound = optim_mit.grid_search(grid_bounds=bound_list,
+                                              delta=0.1).obj_value
 
-            start_list = [theta_start] + [1.0] * number_l
+            case OptMethod.PATTERN_SEARCH:
+                theta_start = 0.5
 
-            bound = optim_mit.pattern_search(start_list=start_list,
-                                             delta=3.0,
-                                             delta_min=0.01)
+                start_list = [theta_start] + [1.0] * number_l
 
-        elif opt == OptMethod.NELDER_MEAD:
-            theta_start = 0.5
+                bound = optim_mit.pattern_search(starting_point=start_list,
+                                                 delta=3.0,
+                                                 delta_min=0.01)
 
-            start_list = [theta_start] + [1.0] * number_l
-            start_simplex = InitialSimplex(parameters_to_optimize=number_l +
-                                           1).gao_han(start_list=start_list)
+            case OptMethod.NELDER_MEAD:
+                theta_start = 0.5
 
-            bound = optim_mit.nelder_mead(simplex=start_simplex,
-                                          sd_min=10**(-2)).obj_value
+                start_list = [theta_start] + [1.0] * number_l
+                start_simplex = InitialSimplex(parameters_to_optimize=number_l +
+                                               1).gao_han(start_list=start_list)
 
-        elif opt == OptMethod.BASIN_HOPPING:
-            theta_start = 0.5
+                bound = optim_mit.nelder_mead(simplex=start_simplex,
+                                              sd_min=10**(-2)).obj_value
 
-            start_list = [theta_start] + [1.0] * number_l
+            case OptMethod.BASIN_HOPPING:
+                theta_start = 0.5
 
-            bound = optim_mit.basin_hopping(start_list=start_list).obj_value
+                start_list = [theta_start] + [1.0] * number_l
 
-        elif opt == OptMethod.DUAL_ANNEALING:
-            theta_bounds = [(0.1, 4.0)]
+                bound = optim_mit.basin_hopping(
+                    starting_point=start_list).obj_value
 
-            bound_array = theta_bounds[:]
-            for _i in range(1, number_l + 1):
-                bound_array.append((0.9, 4.0))
+            case OptMethod.DUAL_ANNEALING:
+                theta_bounds = [(0.1, 4.0)]
 
-            bound = optim_mit.dual_annealing(bound_list=bound_array).obj_value
+                bound_array = theta_bounds[:]
+                for _i in range(1, number_l + 1):
+                    bound_array.append((0.9, 4.0))
 
-        elif opt == OptMethod.DIFFERENTIAL_EVOLUTION:
-            theta_bounds = [(0.1, 4.0)]
+                bound = optim_mit.dual_annealing(
+                    bound_list=bound_array).obj_value
 
-            bound_list = theta_bounds[:]
-            for _i in range(number_l):
-                bound_list.append((0.9, 4.0))
+            case OptMethod.DIFFERENTIAL_EVOLUTION:
+                theta_bounds = [(0.1, 4.0)]
 
-            bound = optim_mit.diff_evolution(bound_list=bound_list).obj_value
+                bound_list = theta_bounds[:]
+                for _i in range(number_l):
+                    bound_list.append((0.9, 4.0))
 
-        elif opt == OptMethod.BFGS:
-            theta_start = 0.5
+                bound = optim_mit.diff_evolution(
+                    bound_list=bound_list).obj_value
 
-            start_list = [theta_start] + [1.0] * number_l
+            case OptMethod.BFGS:
+                theta_start = 0.5
 
-            bound = optim_mit.bfgs(start_list=start_list).obj_value
+                start_list = [theta_start] + [1.0] * number_l
 
-        else:
-            raise NotImplementedError(f"Heuristic is not implemented")
+                bound = optim_mit.bfgs(start_list=start_list).obj_value
+
+            case _:
+                raise NotImplementedError(f"Heuristic is not implemented")
 
         stop = timer()
         list_of_bounds.append(bound)

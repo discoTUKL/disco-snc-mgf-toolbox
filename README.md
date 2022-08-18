@@ -4,7 +4,7 @@ The (sigma, rho)-calculus is implemented in this toolbox. It provides a list a t
 
 ## Prerequisites
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - Python packages in `requirements.txt`
 
 ## Introduction
