@@ -1,4 +1,4 @@
-# DISCO Stochastic Network Calculus with Moment-Generating Functions Toolbox (DISCO SNC-MGF-TOOLBOX)
+# DISCO Stochastic Network Calculus with Moment-Generating Functions Toolbox (SNC-MGF Toolbox)
 
 The (sigma, rho)-calculus is implemented in this toolbox. 
 It provides a list a typical stochastic network calculus arrival processes, operators, and performance bounds in order to conduct a network analysis.
