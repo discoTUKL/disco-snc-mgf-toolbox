@@ -1,8 +1,11 @@
 # DISCO SNC-MGF Toolbox
 
-A toolbox for the stochastic network calculus with moment-generating functions is implement.
+A toolbox for the stochastic network calculus with moment-generating functions is implemented.
 To be precise, it focuses on $(\sigma, \rho)$-constrained processes.
 It provides a list a typical stochastic network calculus arrival processes, operators, and performance bounds in order to conduct a end-to-end network analysis.
+
+The toolbox works well with the PyCharm IDE and supports many of its features.
+See also the project page at disco: [https://disco.cs.uni-kl.de/projects/snc-toolbox](https://disco.cs.uni-kl.de/projects/snc-toolbox)
 
 ## Prerequisites
 
