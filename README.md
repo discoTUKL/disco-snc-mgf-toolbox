@@ -1,4 +1,4 @@
-# DISCO SNC-MGF Toolbox
+# DISCO SNC MGF Toolbox
 
 A toolbox for the stochastic network calculus with moment-generating functions is implemented.
 To be precise, it focuses on $(\sigma, \rho)$-constrained processes.
