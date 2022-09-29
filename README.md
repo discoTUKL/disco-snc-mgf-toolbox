@@ -2,7 +2,7 @@
 
 A toolbox for the stochastic network calculus (SNC) with moment-generating functions (MGFs) is implemented.
 It is focused on $(\sigma, \rho)$-constrained processes.
-It provides a list a typical stochastic network calculus arrival processes, operators, and performance bounds in order to conduct a end-to-end network analysis.
+It provides a list a typical stochastic network calculus arrival processes, operators, and performance bounds in order to conduct end-to-end network analyses.
 
 The toolbox works well with the PyCharm IDE and supports, e.g., features like type hints.
 See also the project page at disco: [https://disco.cs.uni-kl.de/projects/snc-toolbox](https://disco.cs.uni-kl.de/projects/snc-toolbox)
