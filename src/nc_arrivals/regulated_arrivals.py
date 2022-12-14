@@ -1,11 +1,10 @@
 """Abstract Leaky-Bucket class."""
 
+import math
 from abc import abstractmethod
-from math import exp, log
-
-from utils.exceptions import ParameterOutOfBounds
 
 from nc_arrivals.arrival_distribution import ArrivalDistribution
+from utils.exceptions import ParameterOutOfBounds
 
 
 class RegulatedArrivals(ArrivalDistribution):
@@ -65,8 +64,7 @@ class DetermTokenBucket(RegulatedArrivals):
         return self.m * self.sigma_single
 
     def __str__(self) -> str:
-        return f"TBconst_sigma={self.sigma_single}_" \
-            f"rho={self.rho_single}_n={self.m}"
+        return f"TBconst_sigma={self.sigma_single}_rho={self.rho_single}_n={self.m}"
 
 
 class LeakyBucketMassoulie(RegulatedArrivals):
@@ -78,8 +76,8 @@ class LeakyBucketMassoulie(RegulatedArrivals):
         if theta <= 0:
             raise ParameterOutOfBounds(f"theta={theta} must be > 0")
 
-        return self.m * log(0.5 * (exp(theta * self.sigma_single) +
-                                   exp(-theta * self.sigma_single))) / theta
+        return self.m * math.log(0.5 *
+                                 (math.exp(theta * self.sigma_single) + math.exp(-theta * self.sigma_single))) / theta
 
     def __str__(self) -> str:
         return f"MassOne_sigma={self.sigma_single}_" \

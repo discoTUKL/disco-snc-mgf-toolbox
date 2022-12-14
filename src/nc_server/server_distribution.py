@@ -1,7 +1,7 @@
 """Implemented service classes for different distributions"""
 
 from abc import abstractmethod
-from math import exp
+import math
 
 from nc_server.server import Server
 
@@ -37,9 +37,7 @@ class ServerDistribution(Server):
         if delta_time < 0:
             raise ValueError(f"time is non-negative")
 
-        return exp(
-            theta *
-            (-self.rho(theta=theta) * delta_time + self.sigma(theta=theta)))
+        return math.exp(theta * (-self.rho(theta=theta) * delta_time + self.sigma(theta=theta)))
 
     @abstractmethod
     def to_value(self, number=1) -> str:
