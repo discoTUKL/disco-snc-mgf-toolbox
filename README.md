@@ -7,6 +7,10 @@ It provides a list a typical stochastic network calculus arrival processes, oper
 The toolbox works well with [JetBrains PyCharm](https://www.jetbrains.com/pycharm/) and supports, e.g., features like type hints.
 See also the project page at disco: [https://disco.cs.uni-kl.de/projects/snc-toolbox](https://disco.cs.uni-kl.de/projects/snc-toolbox)
 
+Screenshot in PyCharm:
+
+![ProjectStructure](img/PyCharm-screenshot.png)
+
 ## Prerequisites
 
 - Python 3.10 or higher
