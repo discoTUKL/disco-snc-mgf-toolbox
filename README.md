@@ -77,11 +77,11 @@ print(
 
 Arrival processes:
 
-- DM1
-- MD1
-- Markov modulated on-off traffic (MMOO)
+- Exponentually (DM1) / Gamma (DGamma1) / Poisson (DPoisson1) -distributed increments
+- Class to an MD1 queue
+- Markov modulated on-off traffic (MMOO), discrete and continuous time
+- Token / leaky bucket arrivals in regulated_arrivals.py
 - Exponentially bounded burstiness (EBB)
-- Token Bucket
 
 For the service, the typical constant rate server is available.
 
@@ -92,7 +92,7 @@ Network Calculus operations:
 - Aggregation
 - Leftover service
 
-Performance Metrics:
+Performance Metrics (for discrete- and continuous-time processes):
 
 - Backlog bound for a given probability and vice versa
 - Delay bound for a given probability and vice versa
@@ -104,19 +104,24 @@ Topologies / settings:
 - Fat tree
 - Canonical tandem
 
+The toolbox can be used to arbitrarily extend to any feed-forward network (you just of to take care of all dependencies...)
+
 ## Folder Structure
 
 - nc_arrivals
-  All arrival processes, such as MMOO and constant rate server
+  All arrival processes, such as MMOO arrivals
 - nc_operations
   Network Calculus Operations, (De-)Convolution and computation of performance metrics (delay, backlog, delay probability)
 - nc_service
-  Constant rate server and the abstract class Service
+  Server classes, such as constant-rate server
 - optimization
-  All classes that are necessary for the parameter optimization, as this is an important aspect of MGF-calculus.
+  All classes that are necessary for the parameter ($\theta$ and Hölder parameters) optimization, as this is an important aspect of MGF-calculus
 - utils
   Contains all helper classes, for example:
   - `exceptions.py` includes special ParameterOutOfBounds class that is handled in the optimization
   - `perform_parameter.py` stores emum PerformMetric (delay, output,...) and its value
 - h_mitigator
-  contains all classes and functions concerning the new $h$-mitigator approach to improve performance bounds
+  contains all classes and functions concerning the *$h$-mitigator* approach to improve performance bounds
+- msob_and_fp
+  contains all classes and functions concerning the *maximum service output bound* (MSOB) and *the flow prolongation* (FP)
+
