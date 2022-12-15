@@ -91,7 +91,7 @@ Network Calculus operations:
 - Deconvolution
 - Aggregation
 - Leftover service
-- (Pay multiplexing only one) PMOO analysis presented in [[BNS22]](#references)
+- (Pay multiplexing only one) PMOO analysis presented in [[BNS22], [Nik22]](#references)
 
 Performance Metrics (for discrete- and continuous-time processes):
 
@@ -132,6 +132,11 @@ The toolbox can be used to arbitrarily extend to any feed-forward network (you j
 “Unleashing the Power of Paying Multiplexing Only Once in Stochastic Network Calculus.” 
 In: Proceedings of the ACM on Measurement and Analysis of Computing Systems (POMACS) 6.2 (2022), p. 34.
 [(Link)](https://dl.acm.org/doi/10.1145/3530897)
+
+- [[Nik22]](https://kluedo.ub.uni-kl.de/frontdoor/index/index/start/0/rows/10/sortfield/score/sortorder/desc/searchtype/simple/query/nikolaus%2C+paul/docId/6909) Paul Nikolaus. 
+Dealing with Dependence in the End-to-End Performance Analysis in Stochastic Network Calculus.
+PhD thesis, Technische Universität Kaiserslautern, 2022.
+[(Link)](https://kluedo.ub.uni-kl.de/frontdoor/index/index/start/0/rows/10/sortfield/score/sortorder/desc/searchtype/simple/query/nikolaus%2C+paul/docId/6909)
 
 - [[NS20]](https://dl.acm.org/doi/10.1145/3388831.3388848) Paul Nikolaus and Jens Schmitt. 
 “Improving Delay Bounds in the Stochastic Network Calculus by Using less Stochastic Inequalities.” 
