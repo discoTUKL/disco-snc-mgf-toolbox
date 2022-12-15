@@ -91,6 +91,7 @@ Network Calculus operations:
 - Deconvolution
 - Aggregation
 - Leftover service
+- (Pay multiplexing only one) PMOO analysis presented in [[BNS22]](#references)
 
 Performance Metrics (for discrete- and continuous-time processes):
 
@@ -121,7 +122,23 @@ The toolbox can be used to arbitrarily extend to any feed-forward network (you j
   - `exceptions.py` includes special ParameterOutOfBounds class that is handled in the optimization
   - `perform_parameter.py` stores emum PerformMetric (delay, output,...) and its value
 - h_mitigator
-  contains all classes and functions concerning the *$h$-mitigator* approach to improve performance bounds
+  contains all classes and functions concerning the *$h$-mitigator* approach to improve performance bounds (see also [[NSS19]](#references))
 - msob_and_fp
-  contains all classes and functions concerning the *maximum service output bound* (MSOB) and *the flow prolongation* (FP)
+  contains all classes and functions concerning the *maximum service output bound* (MSOB) and *the flow prolongation* (FP) (see also [[NS20]](#references))
 
+## References
+
+- [[BNS22]](https://dl.acm.org/doi/10.1145/3530897) Anne Bouillard, Paul Nikolaus, and Jens Schmitt. 
+“Unleashing the Power of Paying Multiplexing Only Once in Stochastic Network Calculus.” 
+In: Proceedings of the ACM on Measurement and Analysis of Computing Systems (POMACS) 6.2 (2022), p. 34.
+[(Link)](https://dl.acm.org/doi/10.1145/3530897)
+
+- [[NS20]](https://dl.acm.org/doi/10.1145/3388831.3388848) Paul Nikolaus and Jens Schmitt. 
+“Improving Delay Bounds in the Stochastic Network Calculus by Using less Stochastic Inequalities.” 
+In: Proc. 13th EAI International Conference on Performance Evaluation Methodologies and Tools (VALUETOOLS 2020). Tsukuba, Japan, 2020.
+[(Link)](https://dl.acm.org/doi/10.1145/3388831.3388848)
+
+- [[NSS19]](https://www.sciencedirect.com/science/article/abs/pii/S0140366419303809?via%3Dihub) Paul Nikolaus, Jens Schmitt, and Malte Schütze. 
+“h-Mitigators: Improving your stochastic network calculus output bounds.” 
+In: Computer Communications 144 (2019), pp. 188–197
+[(Link)](https://www.sciencedirect.com/science/article/abs/pii/S0140366419303809?via%3Dihub)
