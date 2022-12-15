@@ -24,7 +24,7 @@ In order to run the code from any file in PyCharm, go to Settings -> Project -> 
 
 ## Introduction
 
-#### Compute Bound Directly
+#### Compute Bounds Directly
 
 The easiest start is to use `Calculate_Examples.py`. Set a performance parameter, e.g., by
 
@@ -60,7 +60,7 @@ and compute
 print(SINGLE_SERVER.h_mit_bound([0.1, 2.7]))
 ```
 
-#### Compute Optimized Bound
+#### Compute Optimized Bounds
 
 Assume we want to optimize the parameter for the above setting. Therefore, we choose to optimize, e.g., via grid search.
 We optimize the bound in the SINGLE_SERVER setting with the old approach "Optimize" and the approach OptimizeMitigator. The last step is to choose the method "grid_search()" and to set the search's granularity (in this case = 0.1):
