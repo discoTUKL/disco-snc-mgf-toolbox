@@ -4,13 +4,19 @@ A toolbox for the stochastic network calculus (SNC) with moment-generating funct
 It is focused on $(\sigma, \rho)$-constrained processes.
 It provides a list a typical stochastic network calculus arrival processes, operators, and performance bounds in order to conduct end-to-end network analyses.
 
-The toolbox works well with the PyCharm IDE and supports, e.g., features like type hints.
+The toolbox works well with [JetBrains PyCharm](https://www.jetbrains.com/pycharm/) and supports, e.g., features like type hints.
 See also the project page at disco: [https://disco.cs.uni-kl.de/projects/snc-toolbox](https://disco.cs.uni-kl.de/projects/snc-toolbox)
 
 ## Prerequisites
 
 - Python 3.10 or higher
 - Python packages in `requirements.txt`
+
+## Installation
+
+In order to run the code from any file in PyCharm, go to Settings -> Project -> Project Structure and select the src/ folder as a source in the project structure:
+
+![ProjectStructure](img/project_structure.png)
 
 ## Introduction
 
