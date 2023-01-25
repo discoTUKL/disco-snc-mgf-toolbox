@@ -11,21 +11,22 @@ from utils.setting import Setting
 
 class SingleServerBandwidth(Setting):
     """Single server topology class."""
+
     def __init__(self,
-                 arr_list: List[ArrivalDistribution],
+                 foi: ArrivalDistribution,
                  s_e2e: Server,
                  perform_param: PerformParameter,
                  indep=True,
-                 geom_series=True) -> None:
+                 geom_series=False) -> None:
         """
 
-        :param arr_list:           arrival process
+        :param foi:           arrival process
         :param s_e2e:           e2e service process
         :param perform_param: performance parameter
         :param indep:        true if arrivals and service are independent
         :param geom_series: use geometric series or integral bound
         """
-        self.arr_list = arr_list
+        self.foi = foi
         self.s_e2e = s_e2e
         self.perform_param = perform_param
         self.indep = indep
@@ -39,7 +40,7 @@ class SingleServerBandwidth(Setting):
         else:
             p = param_list[1]
 
-        return single_hop_bound(foi=self.arr_list[0],
+        return single_hop_bound(foi=self.foi,
                                 s_e2e=self.s_e2e,
                                 theta=theta,
                                 perform_param=self.perform_param,

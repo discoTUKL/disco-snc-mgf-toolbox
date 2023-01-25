@@ -2,11 +2,6 @@
 
 from nc_arrivals.arrival import Arrival
 from nc_arrivals.regulated_arrivals import DetermTokenBucket
-from nc_server.rate_latency_server import RateLatencyServer
-from nc_server.server import Server
-from utils.exceptions import IllegalArgumentError
-from utils.perform_parameter import PerformParameter
-
 from nc_operations.aggregate import AggregateHomogeneous
 from nc_operations.dnc_delay import dnc_delay
 from nc_operations.perform_enum import PerformEnum
@@ -15,6 +10,10 @@ from nc_operations.performance_bounds import (backlog, backlog_prob, delay,
 from nc_operations.performance_bounds_geom import (backlog_geom,
                                                    backlog_prob_geom,
                                                    delay_geom, delay_prob_geom)
+from nc_server.rate_latency_server import RateLatencyServer
+from nc_server.server import Server
+from utils.exceptions import IllegalArgumentError
+from utils.perform_parameter import PerformParameter
 
 
 def single_hop_bound(foi: Arrival,

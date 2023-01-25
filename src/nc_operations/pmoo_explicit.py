@@ -1,6 +1,6 @@
 """Evaluate a general tandem."""
 
-from math import exp
+import math
 from typing import List
 
 import scipy.optimize
@@ -21,13 +21,11 @@ def pmoo_explicit(foi: Flow,
     """Explicit computation"""
 
     if foi.arr.is_discrete() is False:
-        raise NotImplementedError(
-            "Only implemented for discrete-time processes")
+        raise NotImplementedError("Only implemented for discrete-time processes")
 
-    if (perform_param.perform_metric is not PerformEnum.DELAY_PROB
-            and perform_param.perform_metric is not PerformEnum.DELAY):
-        raise IllegalArgumentError(
-            "This function can only be used for the delay / delay probability")
+    if (perform_param.perform_metric is not PerformEnum.DELAY_PROB and
+            perform_param.perform_metric is not PerformEnum.DELAY):
+        raise IllegalArgumentError("This function can only be used for the delay / delay probability")
 
     if indep is False:
         raise NotImplementedError("Only implemented for independent processes")
@@ -70,12 +68,10 @@ def pmoo_explicit(foi: Flow,
                     if rate_diff == 0.0:
                         raise IllegalArgumentError("Multiplicity is not = 1")
 
-                    prod_k *= 1 / (1 - exp(theta * rate_diff))
+                    prod_k *= 1 / (1 - math.exp(theta * rate_diff))
 
-            prod_k *= exp(
-                theta * sigma_sum) / (1 - exp(theta *
-                                              (foi_rate - residual_rate_j)))
-            prod_k *= exp(-theta * residual_rate_j * perform_param.value)
+            prod_k *= math.exp(theta * sigma_sum) / (1 - math.exp(theta * (foi_rate - residual_rate_j)))
+            prod_k *= math.exp(-theta * residual_rate_j * perform_param.value)
             sum_j += prod_k
 
         return sum_j
@@ -84,8 +80,7 @@ def pmoo_explicit(foi: Flow,
         target_delay_prob = perform_param.value
 
         def helper_function(delay: float) -> float:
-            perform_delay = PerformParameter(
-                perform_metric=PerformEnum.DELAY_PROB, value=delay)
+            perform_delay = PerformParameter(perform_metric=PerformEnum.DELAY_PROB, value=delay)
             current_delay_prob = pmoo_explicit(foi=foi,
                                                cross_flows=cross_flows,
                                                ser_list=ser_list,
@@ -95,13 +90,8 @@ def pmoo_explicit(foi: Flow,
 
             return target_delay_prob - current_delay_prob
 
-        res = scipy.optimize.bisect(helper_function,
-                                    a=0.1,
-                                    b=10000,
-                                    full_output=True)
+        res = scipy.optimize.bisect(helper_function, a=0.1, b=10000, full_output=True)
         return res[0]
 
     else:
-        raise IllegalArgumentError(
-            f"{perform_param.perform_metric} is an infeasible "
-            f"performance metric")
+        raise IllegalArgumentError(f"{perform_param.perform_metric} is an infeasible " f"performance metric")
