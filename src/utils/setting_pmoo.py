@@ -7,7 +7,7 @@ from utils.setting import Setting
 
 
 class SettingPMOO(Setting):
-    """Each setting (topology) has to implements methods to obtain
+    """Each setting (topology) has to implement methods to obtain
     the bounds"""
     @abstractmethod
     def pmoo_arr_bound(self, param_list: List[float]) -> float:

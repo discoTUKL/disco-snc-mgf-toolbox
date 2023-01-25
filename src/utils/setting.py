@@ -5,7 +5,7 @@ from typing import List
 
 
 class Setting(object):
-    """Each setting (topology) has to implements methods to obtain
+    """Each setting (topology) has to implement methods to obtain
     the bounds"""
 
     @abstractmethod
